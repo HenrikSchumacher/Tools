@@ -61,7 +61,7 @@
 
 //https://stackoverflow.com/a/43587319/8248900
 
-#define REPULSION__ADD_CLONE_CODE_FOR_BASE_CLASS(BASE)                          \
+#define __ADD_CLONE_CODE_FOR_BASE_CLASS__(BASE)                                 \
 public:                                                                         \
     std::unique_ptr<BASE> Clone () const                                        \
     {                                                                           \
@@ -70,7 +70,7 @@ public:                                                                         
 private:                                                                        \
     virtual BASE * CloneImplementation() const = 0;                             
 
-#define REPULSION__ADD_CLONE_CODE_FOR_ABSTRACT_CLASS(CLASS)                     \
+#define __ADD_CLONE_CODE_FOR_ABSTRACT_CLASS__(CLASS)                            \
 public:                                                                         \
     std::unique_ptr<CLASS> Clone () const                                       \
     {                                                                           \
@@ -80,7 +80,7 @@ private:                                                                        
     virtual CLASS * CloneImplementation() const override = 0;
 
 
-#define REPULSION__ADD_CLONE_CODE(DERIVED)                                      \
+#define __ADD_CLONE_CODE__(DERIVED)                                             \
 public:                                                                         \
     std::unique_ptr<DERIVED> Clone () const                                     \
     {                                                                           \
