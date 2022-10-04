@@ -10,6 +10,7 @@
 
 #include <deque>
 #include <vector>
+#include <array>
 #include <string>
 #include <chrono>
 #include <iostream>
@@ -52,6 +53,10 @@
 #include "src/ParallelAlgorithms.hpp"
 #include "src/JobPointers.hpp"
 #include "src/BitFiddling.hpp"
+
+#define _USE_MATH_DEFINES
+#include <cmath>
+#include "src/MyMath/MyMath.hpp"
 
 
 //https://stackoverflow.com/a/43587319/8248900
