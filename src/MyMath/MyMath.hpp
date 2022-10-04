@@ -166,8 +166,8 @@ namespace MyMath
         constexpr Real half   = static_cast<Real>(1)/static_cast<Real>(2);
 
         
-        constexpr Real Pi_third = static_cast<Real>(PI) * third;
-        constexpr Real Pi_sixth = static_cast<Real>(PI) * third * half;
+        constexpr Real Pi_third = static_cast<Real>(M_PI) * third;
+        constexpr Real Pi_sixth = static_cast<Real>(M_PI) * third * half;
         
         constexpr Real sqrt_three          = 1.7320508075688772;
         constexpr Real two_over_sqrt_three = 1.1547005383792517;
