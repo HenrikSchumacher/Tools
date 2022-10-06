@@ -165,7 +165,7 @@ namespace Tools
         }
     }
     
-#ifdef REPULSION_PROFILE
+#ifdef TOOLS_PROFILE
     #define ptic(tag) ptic_(tag)
     #define ptoc(tag) ptoc_(tag)
 #else
@@ -174,7 +174,7 @@ namespace Tools
 #endif
     
     
-//#ifdef REPULSION_PROFILE
+//#ifdef TOOLS_PROFILE
 //    #define ptic(tag) ptic_(tag)
 //    #define ptoc(tag) ptoc_(tag)
 //#else
