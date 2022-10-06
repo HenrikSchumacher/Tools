@@ -165,7 +165,7 @@ namespace Tools
         }
     }
     
-#ifdef TOOLS_PROFILE
+#ifdef TOOLS_ENABLE_PROFILER
     #define ptic(tag) ptic_(tag)
     #define ptoc(tag) ptoc_(tag)
 #else
@@ -174,7 +174,7 @@ namespace Tools
 #endif
     
     
-//#ifdef TOOLS_PROFILE
+//#ifdef TOOLS_ENABLE_PROFILER
 //    #define ptic(tag) ptic_(tag)
 //    #define ptoc(tag) ptoc_(tag)
 //#else
