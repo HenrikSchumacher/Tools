@@ -119,7 +119,10 @@ namespace Tools
      inline int safe_free( T * restrict & ptr )
      {
          int wasallocated = (ptr != nullptr);
-         if( wasallocated ){ aligned_free(ptr); ptr = nullptr; }
+         if( wasallocated )
+         {
+             aligned_free(ptr); ptr = nullptr;
+         }
          return !wasallocated;
      }
     
@@ -176,7 +179,7 @@ namespace Tools
     template <typename S, typename T>
     inline void copy_cast_buffer( const S * const from, T * const to, const size_t n )
     {
-        if( std::is_same_v<T,S> )
+        if constexpr ( std::is_same_v<T,S> )
         {
             std::copy( &from[0], &from[n], &to[0] );
         }
