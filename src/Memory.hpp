@@ -207,23 +207,7 @@ namespace Tools
         std::fill( &a[0], &a[n], static_cast<T>(init) );
     }
     
-    
-    enum class Access
-    {
-        Read  = 0,
-        Write = 1
-    };
-    
-    enum class Locality
-    {
-        None     = 0,
-        Low      = 1,
-        Moderate = 2,
-        High     = 3
-    };
-    
-    
-    template<size_t length, Access readwrite, Locality locality, typename T>
+    template<size_t length, int readwrite, int locality, typename T>
     inline void prefetch_range( const T * restrict const begin )
     {
         constexpr size_t PREFETCH_SIZE = length * sizeof(T);
