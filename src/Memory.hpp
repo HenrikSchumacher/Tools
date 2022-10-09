@@ -27,7 +27,7 @@
 #endif
 
 #ifndef force_inline
-    #define __attribute__((always_inline))
+    #define force_inline __attribute__((always_inline))
 #endif
 
 namespace Tools
