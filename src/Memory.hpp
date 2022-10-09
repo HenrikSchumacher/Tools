@@ -16,9 +16,9 @@
 
 //#define SAFE_ALLOCATE_WARNINGS
 
-#define ALIGNMENT 64
+#define ALIGNMENT 8
 
-#define ALIGNED __attribute__(( aligned(64)))
+#define ALIGNED __attribute__((aligned(8)))
 
 #define OBJECT_ALIGNMENT 2 * CACHE_LINE_WIDTH
 

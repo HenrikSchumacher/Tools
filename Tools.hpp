@@ -103,7 +103,7 @@
     #define IsInt(I)        class = typename std::enable_if_t<std::is_integral_v<I>>
     #define IsPositive(x)   class = typename std::enable_if_t<x>0>
         
-    #define ASSERT_ARITHMETIC(T) static_assert( std::is_arithmetic_v<T>, "Template parameter " #T " must be integral type." );
+    #define ASSERT_ARITHMETIC(T) static_assert( std::is_arithmetic_v<T>, "Template parameter " #T " must be arithmetic type." );
         
     #define ASSERT_INT(I) static_assert( std::is_signed_v<I> && std::is_integral_v<I>, "Template parameter " #I " must be integral type." );
         
