@@ -212,7 +212,7 @@ namespace Tools
     {
         Read  = 0,
         Write = 1
-    }
+    };
     
     enum class Locality
     {
