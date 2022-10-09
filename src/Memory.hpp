@@ -22,8 +22,13 @@
 
 #define OBJECT_ALIGNMENT 2 * CACHE_LINE_WIDTH
 
+#ifndef PREFETCH_STRIDE
+    #define PREFETCH_STRIDE (4*CACHE_LINE_WIDTH)
+#endif
+
 namespace Tools
 {
+    
     inline bool is_aligned( const void * restrict const pointer, const size_t byte_count )
     {
         return (uintptr_t)(pointer) % byte_count == 0;
@@ -202,6 +207,19 @@ namespace Tools
         std::fill( &a[0], &a[n], static_cast<T>(init) );
     }
     
+    
+    
+    template<typename T>
+    inline void prefetch_range( const T * restrict const begin, const size_t len)
+    {
+        const char *       ptr;
+        const char * const end = ((const char*)begin) + len * sizeof(T);
+    
+        for( ptr = (const char*)begin; ptr < end; ptr += PREFETCH_STRIDE )
+        {
+            prefetch(ptr);
+        }
+    }
     
     
 //    // These don't seem to improve anything.
