@@ -223,7 +223,7 @@ namespace Tools
     };
     
     
-    template<typename T, size_t length, Access readwrite, Locality locality>
+    template<size_t length, Access readwrite, Locality locality, typename T>
     inline void prefetch_range( const T * restrict const begin )
     {
         constexpr size_t PREFETCH_SIZE = length * sizeof(T);
