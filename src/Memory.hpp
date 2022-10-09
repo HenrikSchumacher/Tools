@@ -26,6 +26,10 @@
     #define PREFETCH_STRIDE (4*CACHE_LINE_WIDTH)
 #endif
 
+#ifndef force_inline
+    #define __attribute__((always_inline))
+#endif
+
 namespace Tools
 {
     
