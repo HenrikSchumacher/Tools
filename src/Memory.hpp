@@ -208,16 +208,17 @@ namespace Tools
     }
     
     
-    
-    template<typename T>
-    inline void prefetch_range( const T * restrict const begin, const size_t len)
+    template<typename T, size_t length, int readwrite, int locality>
+    inline void prefetch_range( const T * restrict const begin )
     {
-        const char *       ptr;
-        const char * const end = ((const char*)begin) + len * sizeof(T);
+        constexpr size_t PREFETCH_SIZE = length * sizeof(T);
+        
+        const char * ptr = ((const char*)begin);
     
-        for( ptr = (const char*)begin; ptr < end; ptr += PREFETCH_STRIDE )
+        #pragma unroll
+        for( size_t offset = 0; offset < PREFETCH_SIZE; offset += PREFETCH_STRIDE )
         {
-            prefetch(ptr);
+            prefetch( &ptr[offset], readwrite, locality );
         }
     }
     
