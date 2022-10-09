@@ -220,7 +220,7 @@ namespace Tools
         Low      = 1,
         Moderate = 2,
         High     = 3
-    }
+    };
     
     
     template<typename T, size_t length, Access readwrite, Locality locality>
