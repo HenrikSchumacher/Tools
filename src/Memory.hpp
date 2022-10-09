@@ -208,7 +208,22 @@ namespace Tools
     }
     
     
-    template<typename T, size_t length, int readwrite, int locality>
+    enum class Access
+    {
+        Read  = 0,
+        Write = 1
+    }
+    
+    enum class Locality
+    {
+        None     = 0,
+        Low      = 1,
+        Moderate = 2,
+        High     = 3
+    }
+    
+    
+    template<typename T, size_t length, Access readwrite, Locality locality>
     inline void prefetch_range( const T * restrict const begin )
     {
         constexpr size_t PREFETCH_SIZE = length * sizeof(T);
