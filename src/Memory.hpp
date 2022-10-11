@@ -228,11 +228,11 @@ namespace Tools
     template<int readwrite, int locality, typename T>
     inline void prefetch_range( const T * restrict const begin, const size_t length )
     {
-        constexpr size_t PREFETCH_SIZE = length * sizeof(T);
+        const size_t prefetch_size = length * sizeof(T);
         
         const char * ptr = ((const char*)begin);
     
-        for( size_t offset = 0; offset < PREFETCH_SIZE; offset += PREFETCH_STRIDE )
+        for( size_t offset = 0; offset < prefetch_size; offset += PREFETCH_STRIDE )
         {
             prefetch( &ptr[offset], readwrite, locality );
         }
