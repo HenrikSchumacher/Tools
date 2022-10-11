@@ -225,6 +225,19 @@ namespace Tools
         }
     }
     
+    template<int readwrite, int locality, typename T>
+    inline void prefetch_range( const T * restrict const begin, const size_t length )
+    {
+        constexpr size_t PREFETCH_SIZE = length * sizeof(T);
+        
+        const char * ptr = ((const char*)begin);
+    
+        for( size_t offset = 0; offset < PREFETCH_SIZE; offset += PREFETCH_STRIDE )
+        {
+            prefetch( &ptr[offset], readwrite, locality );
+        }
+    }
+    
     
 //    // These don't seem to improve anything.
 //    template<int n, typename T>
