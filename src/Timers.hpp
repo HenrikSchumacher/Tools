@@ -19,7 +19,7 @@ namespace Tools
         std::chrono::time_point<std::chrono::steady_clock> stop_time;
     }
     
-#ifdef LTEMPLATE_H
+#if defined(LTEMPLATE_H) || defined(MATHEMATICA)
     inline void print( const std::string & s )
     {
         #pragma omp critical(cout)
