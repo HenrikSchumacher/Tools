@@ -174,12 +174,14 @@ namespace Tools
 #endif
     
     
-//#ifdef TOOLS_ENABLE_PROFILER
-//    #define ptic(tag) ptic_(tag)
-//    #define ptoc(tag) ptoc_(tag)
-//#else
-//    #define ptic(tag) mma::print(tag)
-//    #define ptoc(tag) mma::print(tag)
-//#endif
+#define pdump(x)                                                                \
+{                                                                               \
+    _Pragma("omp critical(profiler)")                                           \
+    {                                                                           \
+        Profiler::log << std::string(#x) << std::string(" = ");                 \
+        Profiler::log << x;                                                     \
+        Profiler::log << "\n" << std::endl;                                     \
+    }                                                                           \
+}
 
 }

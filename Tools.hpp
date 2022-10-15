@@ -47,6 +47,7 @@
     #include <omp.h>
         
     #include "src/TypeName.hpp"
+    #include "src/Print.hpp"
     #include "src/Timers.hpp"
     #include "src/Profiler.hpp"
     #include "src/Memory.hpp"
