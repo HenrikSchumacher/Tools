@@ -108,6 +108,17 @@
     #define ASSERT_INT(I) static_assert( std::is_signed_v<I> && std::is_integral_v<I>, "Template parameter " #I " must be integral type." );
         
     #define ASSERT_FLOAT(type) static_assert( std::is_floating_point_v<type>, "Template parameter " #type " must be floating point type." );
-    
 
 #endif
+
+// constexpr version of conditional ?-operator
+#define COND( condition, case1, case2 ) [&]{                \
+            if constexpr ( condition )                      \
+            {                                               \
+                return case1;                               \
+            }                                               \
+            else                                            \
+            {                                               \
+                return case2;                               \
+            }                                               \
+        }()

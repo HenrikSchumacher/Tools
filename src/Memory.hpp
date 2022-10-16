@@ -43,7 +43,7 @@ namespace Tools
         return (uintptr_t)(pointer) % ALIGNMENT == 0;
     }
     
-    inline void * aligned_malloc(const size_t size, const size_t alignment)
+    force_inline void * aligned_malloc(const size_t size, const size_t alignment)
     {
         const size_t padded_size = ( (size - 1) / alignment + 1 ) * alignment;
 
@@ -71,7 +71,7 @@ namespace Tools
         }
     }
 
-    inline void aligned_free(void * ptr)
+    force_inline void aligned_free(void * ptr)
     {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
         _aligned_free( ptr );
@@ -81,7 +81,7 @@ namespace Tools
     }
     
     template <typename T>
-    int safe_free( T * & ptr )
+    force_inline int safe_free( T * & ptr )
     {
         int wasallocated = (ptr != nullptr);
         if( wasallocated )
@@ -94,7 +94,7 @@ namespace Tools
     }
     
     template <typename T>
-    int safe_alloc(T * & ptr, size_t size)
+    force_inline int safe_alloc(T * & ptr, size_t size)
     {
         int wasallocated = (ptr != nullptr);
         if( wasallocated )
@@ -110,7 +110,7 @@ namespace Tools
     }
     
     template <typename T>
-    int safe_alloc( T * & ptr, size_t size, T init)
+    force_inline int safe_alloc( T * & ptr, size_t size, T init)
     {
         int wasallocated = safe_alloc(ptr, size);
         
@@ -124,35 +124,35 @@ namespace Tools
     
     // overload functions for restrict qualifier
     
-     template <typename T>
-     inline int safe_free( T * restrict & ptr )
-     {
-         int wasallocated = (ptr != nullptr);
-         if( wasallocated )
-         {
-             aligned_free(ptr); ptr = nullptr;
-         }
-         return !wasallocated;
-     }
-    
-     template <typename T>
-     int safe_alloc(T * restrict & ptr, size_t size)
-     {
-         int wasallocated = (ptr != nullptr);
-         if( wasallocated )
-         {
- #ifdef SAFE_ALLOCATE_WARNINGS
-             wprint("safe_alloc: Pointer was not NULL. Calling safe_free to prevent memory leak.");
- #endif
-             safe_free(ptr);
-         }
-         ptr = static_cast<T *>( aligned_malloc( size * sizeof(T), ALIGNMENT ) );
-         
-         return wasallocated;
-     }
+    template <typename T>
+    force_inline int safe_free( T * restrict & ptr )
+    {
+        int wasallocated = (ptr != nullptr);
+        if( wasallocated )
+        {
+            aligned_free(ptr); ptr = nullptr;
+        }
+        return !wasallocated;
+    }
     
     template <typename T>
-    inline int safe_alloc( T * restrict & ptr, size_t size, T init)
+    force_inline int safe_alloc(T * restrict & ptr, size_t size)
+    {
+        int wasallocated = (ptr != nullptr);
+        if( wasallocated )
+        {
+#ifdef SAFE_ALLOCATE_WARNINGS
+            wprint("safe_alloc: Pointer was not NULL. Calling safe_free to prevent memory leak.");
+#endif
+            safe_free(ptr);
+        }
+        ptr = static_cast<T *>( aligned_malloc( size * sizeof(T), ALIGNMENT ) );
+        
+        return wasallocated;
+    }
+    
+    template <typename T>
+    force_inline int safe_alloc( T * restrict & ptr, size_t size, T init)
     {
         int wasallocated = safe_alloc(ptr, size);
         
@@ -163,14 +163,14 @@ namespace Tools
 #endif
     
     template <typename T>
-    inline void copy_buffer( const T * const from, T * const to, const size_t n )
+    force_inline void copy_buffer( const T * const from, T * const to, const size_t n )
     {
 //        std::memcpy( &to[0], &from[0], n );
         std::copy( &from[0], &from[n], &to[0] );
     }
     
     template <typename T>
-    inline void move_buffer( const T * const from, T * const to, const size_t n )
+    force_inline void move_buffer( const T * const from, T * const to, const size_t n )
     {
 //        std::memmove( &to[0], &from[0], n );
         std::copy( &from[0], &from[n], &to[0] );
@@ -186,7 +186,7 @@ namespace Tools
     };
     
     template <typename S, typename T>
-    inline void copy_cast_buffer( const S * const from, T * const to, const size_t n )
+    force_inline void copy_cast_buffer( const S * const from, T * const to, const size_t n )
     {
         if constexpr ( std::is_same_v<T,S> )
         {
@@ -199,20 +199,20 @@ namespace Tools
     }
     
     template <typename T>
-    inline void zerofy_buffer( T * const a, const size_t n )
+    force_inline void zerofy_buffer( T * const a, const size_t n )
     {
 //        std::memset( a, 0, n * sizeof(T) );
         std::fill( &a[0], &a[n], static_cast<T>(0) );
     }
     
     template <typename T, typename S>
-    inline void fill_buffer( T * const a, const size_t n, const S init )
+    force_inline void fill_buffer( T * const a, const size_t n, const S init )
     {
         std::fill( &a[0], &a[n], static_cast<T>(init) );
     }
     
     template<size_t length, int readwrite, int locality, typename T>
-    inline void prefetch_range( const T * restrict const begin )
+    force_inline void prefetch_range( const T * restrict const begin )
     {
         constexpr size_t PREFETCH_SIZE = length * sizeof(T);
         
@@ -226,7 +226,7 @@ namespace Tools
     }
     
     template<int readwrite, int locality, typename T>
-    inline void prefetch_range( const T * restrict const begin, const size_t length )
+    force_inline void prefetch_range( const T * restrict const begin, const size_t length )
     {
         const size_t prefetch_size = length * sizeof(T);
         
