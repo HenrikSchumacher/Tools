@@ -49,19 +49,7 @@ namespace Tools
         {
             list.reserve(n);
         }
-        
-        
-//        I FindPosition( const T & X ) const
-//        {
-//            //Find first position whose element is not smaller than X.
-//
-//            I i = 0;
-//            while( i < Size() && X < list[i] )
-//            {
-//                ++i;
-//            }
-//            return i;
-//        }
+
 
         I FindPosition( const T & X ) const
         {
@@ -73,73 +61,8 @@ namespace Tools
                     std::lower_bound(list.begin(), list.end(), X)
                 )
             );
-            
-//            I i = 0;
-//            const I n = list.size();
-//
-//            while( i < n && list[i] < X )
-//            {
-//                ++i;
-//            }
-//
-//            return i;
         }
-//        I FindPosition( const T & X ) const
-//        {
-//            //Finds largest position whose element is not smaller than X.
-//
-//            if( Size() == 0 )
-//            {
-//                print("a");
-//                return 0;
-//            }
-//
-//            if( X <= Min() )
-//            {
-//                print("b");
-//                return 0;
-//            }
-//
-//            if( X > Max() )
-//            {
-//                print("c");
-//                return Size();
-//            }
-//
-//            if( X == Max() )
-//            {
-//                print("d");
-//                return Size()-1;
-//            }
-//
-//            I a = 0;
-//            I b = Size()-1;
-//
-//            //list[a] <= X < list[b]
-//
-//            // binary search
-//            I c;
-//            I delta = b - a;
-//            while( delta > 0 )
-//            {
-//                c = b - delta/2;
-//                if( list[c] > X )
-//                {
-//                    b = c;
-//                }
-//                else
-//                {
-//                    a = c;
-//                }
-//            }
-//            // list[a] <= X < list[b];
-//            print("e");
-//            print("X = "+Tools::ToString(X));
-//            print("a = "+Tools::ToString(a)+", list[a] = "+Tools::ToString(list[a]));
-//            print("b = "+Tools::ToString(b)+", list[b] = "+Tools::ToString(list[b]));
-//            return a;
-//        }
-        
+
         
         I Find( const T & X ) const
         {
@@ -155,12 +78,7 @@ namespace Tools
         
         bool Insert( const T & X )
         {
-//            tic("Insert");
             I i = FindPosition(X);
-            
-//            print("X    = " + Tools::ToString(X));
-//            print("i    = " + Tools::ToString(i));
-//            print("list = " + ToString());
             
             if( i == Size() )
             {
@@ -171,13 +89,10 @@ namespace Tools
             if( list[i] != X )
             {
                 list.insert( list.begin()+i, X );
-//                print("list = " + ToString());
-//                toc("Insert");
                 return true;
             }
             else
             {
-//                toc("Insert");
                 return false;
             }
             

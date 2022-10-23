@@ -122,3 +122,13 @@
                 return case2;                               \
             }                                               \
         }()
+
+
+namespace Tools
+{
+    template <class Enum>
+    auto to_underlying(Enum e)
+    {
+        return static_cast<std::underlying_type_t<Enum>>(e);
+    }
+}
