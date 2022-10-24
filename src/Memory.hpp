@@ -188,15 +188,6 @@ namespace Tools
         }
     }
     
-    template <size_t n, typename T>
-    force_inline void add_to_buffer( const T * restrict const from, T * restrict const to )
-    {
-        for( size_t i = 0; i < n; ++i )
-        {
-            to[i] += from[i];
-        }
-    }
-    
     
     template <typename T>
     force_inline void scale_buffer( const T beta, T * restrict const a, const size_t n )
