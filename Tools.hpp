@@ -109,26 +109,29 @@
         
     #define ASSERT_FLOAT(type) static_assert( std::is_floating_point_v<type>, "Template parameter " #type " must be floating point type." );
 
+
+    // constexpr version of conditional ?-operator
+    #define COND( condition, case1, case2 ) [&]{                \
+                if constexpr ( condition )                      \
+                {                                               \
+                    return case1;                               \
+                }                                               \
+                else                                            \
+                {                                               \
+                    return case2;                               \
+                }                                               \
+            }()
+
+
+    namespace Tools
+    {
+        template <class Enum>
+        auto to_underlying(Enum e)
+        {
+            return static_cast<std::underlying_type_t<Enum>>(e);
+        }
+    }
+
 #endif
 
-// constexpr version of conditional ?-operator
-#define COND( condition, case1, case2 ) [&]{                \
-            if constexpr ( condition )                      \
-            {                                               \
-                return case1;                               \
-            }                                               \
-            else                                            \
-            {                                               \
-                return case2;                               \
-            }                                               \
-        }()
 
-
-namespace Tools
-{
-    template <class Enum>
-    auto to_underlying(Enum e)
-    {
-        return static_cast<std::underlying_type_t<Enum>>(e);
-    }
-}

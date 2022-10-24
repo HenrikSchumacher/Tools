@@ -169,6 +169,16 @@ namespace Tools
         std::copy( &from[0], &from[n], &to[0] );
     }
     
+    
+    template <typename T>
+    force_inline void add_to_buffer( const T * restrict const from, T * restrict const to, const size_t n )
+    {
+        for( size_t i = 0; i < n; ++i )
+        {
+            to[i] += from[i];
+        }
+    }
+    
     template <typename T>
     force_inline void move_buffer( const T * const from, T * const to, const size_t n )
     {
