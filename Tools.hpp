@@ -111,7 +111,7 @@
 
 
     // constexpr version of conditional ?-operator
-    #define COND( condition, case1, case2 ) [&]{                \
+    #define COND( condition, case1, case2 ) ([&]{               \
                 if constexpr ( condition )                      \
                 {                                               \
                     return case1;                               \
@@ -120,7 +120,7 @@
                 {                                               \
                     return case2;                               \
                 }                                               \
-            }()
+            }())
 
 
     namespace Tools
