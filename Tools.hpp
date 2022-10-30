@@ -105,7 +105,11 @@
         
     #define ASSERT_ARITHMETIC(T) static_assert( std::is_arithmetic_v<T>, "Template parameter " #T " must be arithmetic type." );
         
-    #define ASSERT_INT(I) static_assert( std::is_signed_v<I> && std::is_integral_v<I>, "Template parameter " #I " must be integral type." );
+    #define ASSERT_INT(I) static_assert( std::is_integral_v<I>, "Template parameter " #I " must be an integral type." );
+
+    #define ASSERT_SIGNED_INT(I) static_assert( std::is_signed_v<I> && std::is_integral_v<I>, "Template parameter " #I " must be a signed integral type." );
+
+    #define ASSERT_UINT(I) static_assert( std::is_unsigned_v<I> && std::is_integral_v<I>, "Template parameter " #I " must be a unsigned integral type." );
         
     #define ASSERT_FLOAT(type) static_assert( std::is_floating_point_v<type>, "Template parameter " #type " must be floating point type." );
 
