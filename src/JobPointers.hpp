@@ -22,7 +22,8 @@ namespace Tools
             BalanceWorkLoad( job_count );
         }
         
-        JobPointers( const Int job_count, const Int * restrict costs, const Int thread_count, bool accumulate = true )
+        template<typename T>
+        JobPointers( const Int job_count, const T * restrict costs, const Int thread_count, bool accumulate = true )
         :   JobPointers(thread_count)
         {
             if( accumulate )
@@ -80,7 +81,8 @@ namespace Tools
             }
         }
         
-        void BalanceWorkLoad_Accumulated( const Int job_count, const Int * restrict const costs )
+        template<typename T>
+        void BalanceWorkLoad_Accumulated( const Int job_count, const T * restrict const costs )
         {
             const Int thread_count = ThreadCount();
             
@@ -98,7 +100,7 @@ namespace Tools
     //        DUMP(costs_);
             
             
-            Int * restrict acc_costs = nullptr;
+            T * restrict acc_costs = nullptr;
             safe_alloc( acc_costs, job_count + 1 );
             acc_costs[0] = static_cast<Int>(0);
             parallel_accumulate( &costs[0], &acc_costs[1], job_count, thread_count );
@@ -108,7 +110,8 @@ namespace Tools
             ptoc("BalanceWorkLoad");
         }
         
-        void BalanceWorkLoad( const Int job_count, const Int * restrict const acc_costs )
+        template<typename T>
+        void BalanceWorkLoad( const Int job_count, const T * restrict const acc_costs )
         {
             const Int thread_count = ThreadCount();
             
