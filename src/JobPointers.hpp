@@ -141,7 +141,7 @@ namespace Tools
             {
     //            std::cout << "\n #### thread = " << thread << std::endl;
                 // each thread (other than the last one) is required to have at least this accumulated cost
-                Int target = std::min( total_cost, static_cast<Int>(per_thread_cost * (thread + 1)) );
+                T target = std::min( total_cost, static_cast<Int>(per_thread_cost * (thread + 1)) );
                 Int pos;
                 // find an index a such that b_row_acc_costs[ a ] < target;
                 // taking naive_chunk_size * thread as initial guess, because that might be nearly correct for costs that are evenly distributed over the block rows
