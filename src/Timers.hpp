@@ -31,7 +31,6 @@ namespace Tools
         return sout.str();
     }
     
-    
     namespace Timers
     {
         std::vector<std::chrono::time_point<std::chrono::steady_clock>> time_stack;
@@ -62,7 +61,7 @@ namespace Tools
     inline void valprint( const std::string & s, const T & value)
     {
         using namespace std;
-        print( s + " = " + to_string(value) );
+        print( s + " = " + ToString(value) );
     }
 
     template<typename T>
