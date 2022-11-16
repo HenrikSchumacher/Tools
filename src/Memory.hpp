@@ -33,14 +33,9 @@
 namespace Tools
 {
     
-    inline bool is_aligned( const void * restrict const pointer, const size_t byte_count )
+    inline bool is_aligned( const void * restrict const pointer, const size_t byte_count = ALIGNMENT )
     {
-        return (uintptr_t)(pointer) % byte_count == 0;
-    }
-    
-    inline bool is_aligned( const void * restrict const pointer )
-    {
-        return (uintptr_t)(pointer) % ALIGNMENT == 0;
+        return reinterpret_cast<std::uintptr_t>(pointer) % byte_count == 0;
     }
     
     force_inline void * aligned_malloc(const size_t size, const size_t alignment)
@@ -162,20 +157,12 @@ namespace Tools
     }
 #endif
     
-    
     template <typename T>
     force_inline void copy_buffer( const T * const from, T * const to, const size_t n )
     {
 //        std::memcpy( &to[0], &from[0], n );
         std::copy( &from[0], &from[n], &to[0] );
     }
-    
-    template <typename T>
-    force_inline void copy_buffer( const T * const from_begin, const T * const from_end, T * const to_begin )
-    {
-        std::copy( from_begin, from_end, to_begin );
-    }
-    
     
     
     template <typename T>
@@ -222,13 +209,6 @@ namespace Tools
         std::copy( &from[0], &from[n], &to[0] );
     }
     
-    template <typename T>
-    force_inline void move_buffer( const T * const from_begin, const T * const from_end, T * const to_begin )
-    {
-        std::copy( from_begin, from_end, to_begin );
-    }
-    
-    
     template<typename From, typename To>
     struct static_caster
     {
@@ -237,7 +217,6 @@ namespace Tools
             return static_cast<To>(p);
         }
     };
-    
     
     template <typename S, typename T>
     force_inline void copy_cast_buffer( const S * const from, T * const to, const size_t n )
@@ -252,20 +231,6 @@ namespace Tools
         }
     }
     
-    template <typename S, typename T>
-    force_inline void copy_cast_buffer( const S * const from_begin, const S * const from_end, T * const to_begin )
-    {
-        if constexpr ( std::is_same_v<T,S> )
-        {
-            std::copy( from_begin, from_end, to_begin );
-        }
-        else
-        {
-            std::transform( from_begin, from_end, to_begin, static_caster<S,T>() );
-        }
-    }
-    
-    
     template <typename T>
     force_inline void zerofy_buffer( T * const a, const size_t n )
     {
@@ -273,25 +238,11 @@ namespace Tools
         std::fill( &a[0], &a[n], static_cast<T>(0) );
     }
     
-    template <typename T>
-    force_inline void zerofy_buffer( T * const a_begin, T * const a_end )
-    {
-        std::fill( a_begin, a_end, static_cast<T>(0) );
-    }
-    
-    
     template <typename T, typename S>
     force_inline void fill_buffer( T * const a, const size_t n, const S init )
     {
         std::fill( &a[0], &a[n], static_cast<T>(init) );
     }
-    
-    template <typename T, typename S>
-    force_inline void fill_buffer( T * const a_begin, T * const a_end, const S init )
-    {
-        std::fill( a_begin, a_end, static_cast<T>(init) );
-    }
-    
     
     template<size_t length, int readwrite, int locality, typename T>
     force_inline void prefetch_range( const T * restrict const begin )
