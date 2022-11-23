@@ -61,6 +61,15 @@ namespace Tools
             return ptr;
         }
     }
+
+    force_inline void aligned_free(void * ptr)
+    {
+        #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+            _aligned_free( ptr );
+        #else
+            free( ptr );
+        #endif
+    }
     
     template <typename T>
     force_inline int safe_free( T * & ptr )
@@ -109,11 +118,11 @@ namespace Tools
     
     force_inline void aligned_free(void * restrict ptr)
     {
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+        #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
         _aligned_free( ptr );
-#else
+        #else
         free( ptr );
-#endif
+        #endif
     }
     
     template <typename T>
