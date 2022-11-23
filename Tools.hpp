@@ -46,6 +46,39 @@
         
     #include <omp.h>
         
+
+
+// Define loop unrolling depending on the compiler
+#if defined(__ICC) || defined(__ICL)
+  #define LOOP_UNROLL(n)      _Pragma(STRINGIFY2(unroll (n)))
+#elif defined(__clang__)
+  #define LOOP_UNROLL(n)      _Pragma(STRINGIFY2(clang loop unroll(n)))
+#elif defined(__GNUC__) && !defined(__clang__)
+  #define LOOP_UNROLL(n)      _Pragma(STRINGIFY2(GCC unroll (n)))
+#elif defined(_MSC_BUILD)
+  #pragma message ("Microsoft Visual C++ (MSVC) detected: Loop unrolling not supported!")
+  #define LOOP_UNROLL(n)
+#else
+  #warning "Unknown compiler: Loop unrolling not supported!"
+  #define LOOP_UNROLL(n)
+#endif
+
+// Define loop unrolling depending on the compiler
+#if defined(__ICC) || defined(__ICL)
+  #define LOOP_UNROLL_FULL      _Pragma(STRINGIFY2(unroll))
+#elif defined(__clang__)
+  #define LOOP_UNROLL_FULL      _Pragma(STRINGIFY2(clang loop unroll(enable)))
+#elif defined(__GNUC__) && !defined(__clang__)
+  #define LOOP_UNROLL_FULL      _Pragma(STRINGIFY2(GCC unroll ))
+#elif defined(_MSC_BUILD)
+  #pragma message ("Microsoft Visual C++ (MSVC) detected: Loop unrolling not supported!")
+  #define LOOP_UNROLL_FULL
+#else
+  #warning "Unknown compiler: Loop unrolling not supported!"
+  #define LOOP_UNROLL_FULL
+#endif
+
+
     #include "src/TypeName.hpp"
     #include "src/Timers.hpp"
     #include "src/Profiler.hpp"
@@ -58,39 +91,6 @@
     #define _USE_MATH_DEFINES
     #include <cmath>
     #include "src/MyMath/MyMath.hpp"
-        
-
-
-    // Define loop unrolling depending on the compiler
-    #if defined(__ICC) || defined(__ICL)
-      #define LOOP_UNROLL(n)      _Pragma(STRINGIFY2(unroll (n)))
-    #elif defined(__clang__)
-      #define LOOP_UNROLL(n)      _Pragma(STRINGIFY2(clang loop unroll(n)))
-    #elif defined(__GNUC__) && !defined(__clang__)
-      #define LOOP_UNROLL(n)      _Pragma(STRINGIFY2(GCC unroll (n)))
-    #elif defined(_MSC_BUILD)
-      #pragma message ("Microsoft Visual C++ (MSVC) detected: Loop unrolling not supported!")
-      #define LOOP_UNROLL(n)
-    #else
-      #warning "Unknown compiler: Loop unrolling not supported!"
-      #define LOOP_UNROLL(n)
-    #endif
-
-    // Define loop unrolling depending on the compiler
-    #if defined(__ICC) || defined(__ICL)
-      #define LOOP_UNROLL_FULL      _Pragma(STRINGIFY2(unroll))
-    #elif defined(__clang__)
-      #define LOOP_UNROLL_FULL      _Pragma(STRINGIFY2(clang loop unroll(enable)))
-    #elif defined(__GNUC__) && !defined(__clang__)
-      #define LOOP_UNROLL_FULL      _Pragma(STRINGIFY2(GCC unroll ))
-    #elif defined(_MSC_BUILD)
-      #pragma message ("Microsoft Visual C++ (MSVC) detected: Loop unrolling not supported!")
-      #define LOOP_UNROLL_FULL
-    #else
-      #warning "Unknown compiler: Loop unrolling not supported!"
-      #define LOOP_UNROLL_FULL
-    #endif
-
 
 
         //https://stackoverflow.com/a/43587319/8248900
