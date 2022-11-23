@@ -47,6 +47,9 @@
     #include <omp.h>
         
 
+#ifndef force_inline
+    #define force_inline inline __attribute__((always_inline))
+#endif
 
 // Define loop unrolling depending on the compiler
 #if defined(__ICC) || defined(__ICL)

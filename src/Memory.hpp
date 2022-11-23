@@ -26,10 +26,6 @@
     #define PREFETCH_STRIDE (4*CACHE_LINE_WIDTH)
 #endif
 
-#ifndef force_inline
-    #define force_inline __attribute__((always_inline))
-#endif
-
 namespace Tools
 {
     
@@ -119,6 +115,15 @@ namespace Tools
 // do this *only* for gcc
     
     // overload functions for restrict qualifier
+    
+    force_inline void aligned_free(void * restrict ptr)
+    {
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+        _aligned_free( ptr );
+#else
+        free( ptr );
+#endif
+    }
     
     template <typename T>
     force_inline int safe_free( T * restrict & ptr )
