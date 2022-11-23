@@ -251,7 +251,7 @@ namespace Tools
         
         const char * ptr = ((const char*)begin);
     
-        #pragma omp unroll full
+        LOOP_UNROLL_FULL
         for( size_t offset = 0; offset < PREFETCH_SIZE; offset += PREFETCH_STRIDE )
         {
             prefetch( &ptr[offset], readwrite, locality );
