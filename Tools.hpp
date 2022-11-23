@@ -55,7 +55,7 @@
 #if defined(__ICC) || defined(__ICL)
   #define LOOP_UNROLL(n)      _Pragma(STRINGIFY2(unroll (n)))
 #elif defined(__clang__)
-  #define LOOP_UNROLL(n)      _Pragma(STRINGIFY2(clang loop unroll(n)))
+  #define LOOP_UNROLL(n)      _Pragma(STRINGIFY2(clang loop unroll_count(n)))
 #elif defined(__GNUC__) && !defined(__clang__)
   #define LOOP_UNROLL(n)      _Pragma(STRINGIFY2(GCC unroll (n)))
 #elif defined(_MSC_BUILD)
