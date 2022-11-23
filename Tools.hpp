@@ -24,6 +24,7 @@
     #include <numeric>
     #include <filesystem>
     #include <utility>
+    #include <cassert>
         
     #define STRINGIFY(a) #a
     #define STRINGIFY2(a) STRINGIFY(a)
