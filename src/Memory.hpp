@@ -88,21 +88,6 @@ namespace Tools
         return !wasallocated;
     }
     
-#if defined(__GNUC__) && !defined(__clang__)
-    template <typename T>
-    force_inline int safe_free( T * restrict & ptr )
-    {
-        int wasallocated = (ptr != nullptr);
-        if( wasallocated )
-        {
-            aligned_free(ptr);
-            ptr = nullptr;
-            
-        }
-        return !wasallocated;
-    }
-#endif
-    
     template <typename T>
     force_inline int safe_alloc(T * & ptr, size_t size)
     {
@@ -119,6 +104,7 @@ namespace Tools
         return wasallocated;
     }
     
+    
     template <typename T>
     force_inline int safe_alloc( T * & ptr, size_t size, T init)
     {
@@ -129,7 +115,7 @@ namespace Tools
         return wasallocated;
     }
 
-#if defined(__MINGW64__) || defined(__MINGW32__)
+#if defined(__MINGW64__) || defined(__MINGW32__) || ( defined(__GNUC__) && !defined(__clang__) )
 // do this *only* for gcc
     
     // overload functions for restrict qualifier
