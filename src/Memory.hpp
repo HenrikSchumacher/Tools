@@ -246,7 +246,7 @@ namespace Tools
     {
         constexpr size_t PREFETCH_SIZE = length * sizeof(T);
         
-        const char * ptr = ((const char*)begin);
+        const char * ptr = static_cast<const char*>(begin);
     
         LOOP_UNROLL_FULL
         for( size_t offset = 0; offset < PREFETCH_SIZE; offset += PREFETCH_STRIDE )
@@ -260,7 +260,7 @@ namespace Tools
     {
         const size_t prefetch_size = length * sizeof(T);
         
-        const char * ptr = ((const char*)begin);
+        const char * ptr = static_cast<const char*>(begin);
     
         for( size_t offset = 0; offset < prefetch_size; offset += PREFETCH_STRIDE )
         {
