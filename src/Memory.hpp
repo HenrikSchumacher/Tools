@@ -111,7 +111,7 @@ namespace Tools
         return wasallocated;
     }
 
-#if defined(__MINGW64__) || defined(__MINGW32__)  || ( defined(__GNUC__) && !defined(__clang__) )
+#if defined(__MINGW64__) || defined(__MINGW32__)  || ( defined(__GNUC__) && (!defined(__clang__)) && (!defined(__APPLE__)) )
 // do this *only* for gcc
     
     // overload functions for restrict qualifier
