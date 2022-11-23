@@ -129,9 +129,9 @@ namespace Tools
 
             const Int naive_chunk_size = (job_count + thread_count - 1) / thread_count;
             
-            const Int total_cost = acc_costs[job_count];
+            const T total_cost = acc_costs[job_count];
             
-            const Int per_thread_cost = (total_cost + thread_count - 1) / thread_count;
+            const T per_thread_cost = (total_cost + thread_count - 1) / thread_count;
             
 
             // binary search for best work load distribution
@@ -141,7 +141,7 @@ namespace Tools
             {
     //            std::cout << "\n #### thread = " << thread << std::endl;
                 // each thread (other than the last one) is required to have at least this accumulated cost
-                T target = std::min( total_cost, static_cast<Int>(per_thread_cost * (thread + 1)) );
+                T target = std::min( total_cost, static_cast<T>(per_thread_cost * (thread + 1)) );
                 Int pos;
                 // find an index a such that b_row_acc_costs[ a ] < target;
                 // taking naive_chunk_size * thread as initial guess, because that might be nearly correct for costs that are evenly distributed over the block rows
