@@ -6,9 +6,11 @@
 
 #define MEMORY_PADDING 1
 
-#if !defined(restrict)
-    #define restrict __restrict
-#endif
+#define restrict
+
+//#if !defined(restrict)
+//    #define restrict __restrict
+//#endif
 
 #if !defined(prefetch)
     #define prefetch __builtin_prefetch
@@ -38,14 +40,7 @@ namespace Tools
     {
         const size_t padded_size = ( (size - 1) / alignment + 1 ) * alignment;
 
-//            print("---allocation--------------");
-//            valprint("size       ",size);
-//            valprint("alignment  ",alignment);
-//            valprint("padded_size",padded_size);
-//            print("---------------------------");
-        
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
-   //define something for Windows (32-bit and 64-bit, this part is common)
         void * ptr = _aligned_malloc(padded_size, alignment);
 #else
         void * ptr = std::aligned_alloc(alignment, padded_size);
@@ -99,21 +94,8 @@ namespace Tools
 
         return wasallocated;
     }
-    
-    
-    template <typename T>
-    force_inline int safe_alloc( T * & ptr, size_t size, T init)
-    {
-        int wasallocated = safe_alloc(ptr, size);
-        
-        fill_buffer(ptr, size, init);
-        
-        return wasallocated;
-    }
 
 #if defined(__MINGW64__) || defined(__MINGW32__)  || ( defined(__GNUC__) && (!defined(__clang__)) && (!defined(__APPLE__)) )
-// do this *only* for gcc
-    
     // overload functions for restrict qualifier
     
     template <typename T>
@@ -142,22 +124,12 @@ namespace Tools
         
         return wasallocated;
     }
-    
-    template <typename T>
-    force_inline int safe_alloc( T * restrict & ptr, size_t size, T init)
-    {
-        int wasallocated = safe_alloc(ptr, size);
-        
-        fill_buffer(ptr, size, init);
-        
-        return wasallocated;
-    }
+
 #endif
     
     template <typename T>
     force_inline void copy_buffer( const T * const from, T * const to, const size_t n )
     {
-//        std::memcpy( &to[0], &from[0], n );
         std::copy( &from[0], &from[n], &to[0] );
     }
     
@@ -199,13 +171,6 @@ namespace Tools
         }
     }
     
-    template <typename T>
-    force_inline void move_buffer( const T * const from, T * const to, const size_t n )
-    {
-//        std::memmove( &to[0], &from[0], n );
-        std::copy( &from[0], &from[n], &to[0] );
-    }
-    
     template<typename From, typename To>
     struct static_caster
     {
@@ -231,7 +196,6 @@ namespace Tools
     template <typename T>
     force_inline void zerofy_buffer( T * const a, const size_t n )
     {
-//        std::memset( a, 0, n * sizeof(T) );
         std::fill( &a[0], &a[n], static_cast<T>(0) );
     }
     
@@ -267,39 +231,5 @@ namespace Tools
             prefetch( &ptr[offset], readwrite, locality );
         }
     }
-    
-    
-//    // These don't seem to improve anything.
-//    template<int n, typename T>
-//    inline void copy_buffer( const T * restrict const from, T * restrict const to)
-//    {
-//        // With the hope that this can be vectorized.
-//        for( long long i = 0; i < n; ++i )
-//        {
-//            to[i] = from[i];
-//        }
-//    }
-//
-//    template<int n, typename T>
-//    inline void zerofy_buffer( T * restrict const a )
-//    {
-//        // With the hope that this can be vectorized.
-//        for( long long i = 0; i < n; ++i )
-//        {
-//            a[i] = static_cast<T>(0);
-//        }
-//    }
-//
-//    template<int n, typename T>
-//    inline void fill_buffer( T * restrict const a, const T init_ )
-//    {
-//        const T init = static_cast<T>(init_);
-//
-//        // With the hope that this can be vectorized.
-//        for( long long i = 0; i < n; ++i )
-//        {
-//            a[i] = init;
-//        }
-//    }
     
 } // namespace Tools
