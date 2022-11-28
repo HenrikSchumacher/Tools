@@ -1,7 +1,7 @@
 
 namespace Tools
 {
-    template<typename T, typename I>
+    template<typename T, typename Int>
     class SortedList
     {
         std::vector<T> list;
@@ -35,7 +35,7 @@ namespace Tools
         
         ~SortedList() = default;
         
-        explicit SortedList( const I n )
+        explicit SortedList( const Int n )
         {
             Reserve(n);
         }
@@ -51,11 +51,11 @@ namespace Tools
         }
 
 
-        I FindPosition( const T & X ) const
+        Int FindPosition( const T & X ) const
         {
             //Finds first position whose element is not smaller than X.
 
-            return static_cast<I>(
+            return static_cast<Int>(
                 std::distance(
                     list.begin(),
                     std::lower_bound(list.begin(), list.end(), X)
@@ -64,21 +64,21 @@ namespace Tools
         }
 
         
-        I Find( const T & X ) const
+        Int Find( const T & X ) const
         {
             if( Size() == 0 )
             {
                 return -1;
             }
             
-            I i = FindPosition(X);
+            Int i = FindPosition(X);
 
             return (list[i] == X) ? i : -1;
         }
         
         bool Insert( const T & X )
         {
-            I i = FindPosition(X);
+            Int i = FindPosition(X);
             
             if( i == Size() )
             {
@@ -100,7 +100,7 @@ namespace Tools
         
         bool Drop( const T & X )
         {
-            I i = Find(X);
+            Int i = Find(X);
             if( i >= 0 )
             {
                 list.erase(list.begin()+i);
@@ -112,9 +112,9 @@ namespace Tools
             }
         }
         
-        I Size() const
+        Int Size() const
         {
-            return static_cast<I>(list.size());
+            return static_cast<Int>(list.size());
         }
         
         T Min() const
@@ -127,12 +127,12 @@ namespace Tools
             return list.back();
         }
         
-        const T & operator[]( const I i ) const
+        const T & operator[]( const Int i ) const
         {
             return list[i];
         }
         
-        friend bool IntersectingQ( const SortedList<T,I> & a, const SortedList<T,I> & b )
+        friend bool IntersectingQ( const SortedList<T,Int> & a, const SortedList<T,Int> & b )
         {
             if( (a.Max() < b.Min()) || (b.Max() < a.Min()) )
             {
@@ -141,10 +141,10 @@ namespace Tools
             else
             {
                 //https://www.geeksforgeeks.org/union-and-intersection-of-two-sorted-arrays-2/
-                I i = 0;
-                I j = 0;
-                const I m = a.Size();
-                const I n = b.Size();
+                Int i = 0;
+                Int j = 0;
+                const Int m = a.Size();
+                const Int n = b.Size();
                 
                 
                 while (i < m && j < n)
@@ -170,20 +170,20 @@ namespace Tools
         }
         
         friend void Intersection(
-            const SortedList<T,I> & a,
-            const SortedList<T,I> & b,
-                  SortedList<T,I> & c
+            const SortedList<T,Int> & a,
+            const SortedList<T,Int> & b,
+                  SortedList<T,Int> & c
         )
         {
             c.Clear();
             
             //https://www.geeksforgeeks.org/union-and-intersection-of-two-sorted-arrays-2/
 
-            const I m = a.Size();
-            const I n = b.Size();
+            const Int m = a.Size();
+            const Int n = b.Size();
             
-            I i = 0;
-            I j = 0;
+            Int i = 0;
+            Int j = 0;
             
             while (i < m && j < n)
             {
@@ -212,8 +212,8 @@ namespace Tools
         }
         
         friend bool operator==(
-            const SortedList<T,I> & a,
-            const SortedList<T,I> & b
+            const SortedList<T,Int> & a,
+            const SortedList<T,Int> & b
         )
         {
             if( a.Size() != b.Size() )
@@ -221,8 +221,8 @@ namespace Tools
                 return false;
             }
             
-            const I n = a.Size();
-            for( I i = 0; i < n; ++i )
+            const Int n = a.Size();
+            for( Int i = 0; i < n; ++i )
             {
                 if( a[i] != b[i] )
                 {
@@ -234,8 +234,8 @@ namespace Tools
         }
         
         friend bool operator!=(
-            const SortedList<T,I> & a,
-            const SortedList<T,I> & b
+            const SortedList<T,Int> & a,
+            const SortedList<T,Int> & b
         )
         {
             if( a.Size() != b.Size() )
@@ -243,8 +243,8 @@ namespace Tools
                 return true;
             }
             
-            const I n = a.Size();
-            for( I i = 0; i < n; ++i )
+            const Int n = a.Size();
+            for( Int i = 0; i < n; ++i )
             {
                 if( a[i] != b[i] )
                 {
@@ -255,7 +255,7 @@ namespace Tools
             return false;
         }
         
-        std::string ToString() const
+        std::string ToString( const Int p = 16) const
         {
             std::stringstream s;
             
@@ -264,11 +264,11 @@ namespace Tools
             s << "{ ";
             if( n > 0 )
             {
-                s<< Tools::ToString(list[0]);
+                s<< Tools::ToString(list[0],p);
 
                 for( std::size_t i = 1; i < n; ++i )
                 {
-                    s <<", " << Tools::ToString(list[i]);
+                    s <<", " << Tools::ToString(list[i],p);
                 }
             }
             s<< " }";

@@ -192,16 +192,14 @@ namespace Tools
         std::string ToString( const Int p = 16) const
         {
             std::stringstream sout;
-            sout.precision(p);
             sout << "{ ";
             if( Size() > 0 )
             {
-                sout << job_ptr[0];
+                sout << Tools::ToString(job_ptr[0],p);
             }
-            
             for( Int i = 1; i < Size(); ++i )
             {
-                sout << ", " << job_ptr[i];
+                sout << ", " << Tools::ToString(job_ptr[i],p);
             }
             sout << " }";
             return sout.str();

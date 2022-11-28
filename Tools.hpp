@@ -83,7 +83,8 @@
 
 
     #include "src/TypeName.hpp"
-    #include "src/Timers.hpp"
+    #include "src/ToString.hpp"
+    #include "src/Print.hpp"
     #include "src/Profiler.hpp"
     #include "src/Memory.hpp"
     #include "src/SortedList.hpp"
