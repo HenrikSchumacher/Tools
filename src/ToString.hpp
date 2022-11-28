@@ -16,7 +16,7 @@ namespace Tools
     {
         std::stringstream sout;
         sout.precision(p);
-        sout << real(z) << ((imag(z) < static_cast<T>(0)) ? " + " : " - ") << std::abs(imag(z)) << "I" ;
+        sout << real(z) << ((imag(z) < static_cast<T>(0)) ? " + " : " - ") << std::abs(imag(z)) << " I" ;
         return sout.str();
     }
     
