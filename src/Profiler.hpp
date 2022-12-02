@@ -153,14 +153,14 @@ namespace Tools
                 }
                 else
                 {
-                    eprint(std::string("Unmatched ptoc detected."));
-                    eprint(std::string("  Expected label =  ") + tag);
-                    eprint(std::string("  Visited label  =  ") + Profiler::tag_stack.back());
+                    eprint( "Unmatched ptoc detected. Stack empty. Label =  " + tag + ".");
+//                    eprint(std::string("  Expected label =  ") + tag);
+//                    eprint(std::string("  Visited label  =  ") + Profiler::tag_stack.back());
                 }
             }
             else
             {
-                eprint( "Unmatched ptoc detected. Stack empty. Label =  " + tag + " detected.");
+                eprint( "Unmatched ptoc detected. Stack empty. Label =  " + tag + ".");
             }
         }
     }
