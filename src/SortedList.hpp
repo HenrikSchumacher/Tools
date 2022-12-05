@@ -255,7 +255,7 @@ namespace Tools
             return false;
         }
         
-        std::string ToString( const Int p = 16) const
+        std::string ToString( const int p = 16) const
         {
             std::stringstream s;
             
