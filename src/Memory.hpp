@@ -242,13 +242,25 @@ namespace Tools
     }
     
     template <typename T>
-    force_inline void zerofy_buffer( T * const a, const size_t n )
+    force_inline void zerofy_buffer( T * restrict const a, const size_t n )
+    {
+        std::fill( &a[0], &a[n], static_cast<T>(0) );
+    }
+    
+    template <size_t n, typename T>
+    force_inline void zerofy_buffer( T * restrict const a )
     {
         std::fill( &a[0], &a[n], static_cast<T>(0) );
     }
     
     template <typename T, typename S>
-    force_inline void fill_buffer( T * const a, const size_t n, const S init )
+    force_inline void fill_buffer( T * restrict const a, const size_t n, const S init )
+    {
+        std::fill( &a[0], &a[n], static_cast<T>(init) );
+    }
+    
+    template <size_t n, typename T, typename S>
+    force_inline void fill_buffer( T * restrict const a, const S init )
     {
         std::fill( &a[0], &a[n], static_cast<T>(init) );
     }
