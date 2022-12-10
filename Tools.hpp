@@ -86,6 +86,7 @@
     #include "src/ToString.hpp"
     #include "src/Print.hpp"
     #include "src/Profiler.hpp"
+    #include "src/Complex.hpp"
     #include "src/Memory.hpp"
     #include "src/SortedList.hpp"
     #include "src/ParallelAlgorithms.hpp"

@@ -205,41 +205,35 @@ namespace Tools
     }
     
     
-    template <typename T>
-    force_inline void add_to_buffer( const T * restrict const from, T * restrict const to, const size_t n )
+    
+    template<size_t N, int readwrite, int locality, typename T>
+    force_inline void prefetch_buffer( const T * restrict const begin )
     {
-        for( size_t i = 0; i < n; ++i )
+        constexpr size_t PREFETCH_SIZE = N * sizeof(T);
+        
+        const unsigned char * ptr = reinterpret_cast<const unsigned char*>(begin);
+    
+        LOOP_UNROLL_FULL
+        for( size_t offset = 0; offset < PREFETCH_SIZE; offset += PREFETCH_STRIDE )
         {
-            to[i] += from[i];
+            prefetch( &ptr[offset], readwrite, locality );
         }
     }
     
-    template <size_t n, typename T>
-    force_inline void add_to_buffer( const T * restrict const from, T * restrict const to )
+    template<int readwrite, int locality, typename T>
+    force_inline void prefetch_buffer( const T * restrict const begin, const size_t n )
     {
-        for( size_t i = 0; i < n; ++i )
+        const size_t prefetch_size = n * sizeof(T);
+        
+        const unsigned char * ptr = reinterpret_cast<const unsigned char*>(begin);
+    
+        for( size_t offset = 0; offset < prefetch_size; offset += PREFETCH_STRIDE )
         {
-            to[i] += from[i];
+            prefetch( &ptr[offset], readwrite, locality );
         }
     }
     
-    template <typename T>
-    force_inline void scale_buffer( const T beta, T * restrict const a, const size_t n )
-    {
-        for( size_t i = 0; i < n; ++i )
-        {
-            a[i] *= beta;
-        }
-    }
     
-    template <size_t n, typename T>
-    force_inline void scale_buffer( const T beta, T * restrict const a )
-    {
-        for( size_t i = 0; i < n; ++i )
-        {
-            a[i] *= beta;
-        }
-    }
     
     template <typename T>
     force_inline void zerofy_buffer( T * restrict const a, const size_t n )
@@ -265,30 +259,127 @@ namespace Tools
         std::fill( &a[0], &a[n], static_cast<T>(init) );
     }
     
-    template<size_t N, int readwrite, int locality, typename T>
-    force_inline void prefetch_range( const T * restrict const begin )
-    {
-        constexpr size_t PREFETCH_SIZE = N * sizeof(T);
-        
-        const unsigned char * ptr = reinterpret_cast<const unsigned char*>(begin);
     
-        LOOP_UNROLL_FULL
-        for( size_t offset = 0; offset < PREFETCH_SIZE; offset += PREFETCH_STRIDE )
+    
+    template <typename S, typename T>
+    force_inline
+    std::enable_if_t<
+        std::is_same_v<T,S> || (ScalarTraits<T>::IsComplex && std::is_same_v<S,typename ScalarTraits<T>::Real>>),
+        void
+    >
+    add_to_buffer( const S * restrict const from, T * restrict const to, const size_t n )
+    {
+        for( size_t i = 0; i < n; ++i )
         {
-            prefetch( &ptr[offset], readwrite, locality );
+            to[i] += from[i];
         }
     }
     
-    template<int readwrite, int locality, typename T>
-    force_inline void prefetch_range( const T * restrict const begin, const size_t n )
+    template <size_t n, typename S, typename T>
+    force_inline
+    std::enable_if_t<
+        std::is_same_v<T,S> || (ScalarTraits<T>::IsComplex && std::is_same_v<S,typename ScalarTraits<T>::Real>),
+        void
+    >
+    add_to_buffer( const S * restrict const from, T * restrict const to )
     {
-        const size_t prefetch_size = n * sizeof(T);
-        
-        const unsigned char * ptr = reinterpret_cast<const unsigned char*>(begin);
-    
-        for( size_t offset = 0; offset < prefetch_size; offset += PREFETCH_STRIDE )
+        for( size_t i = 0; i < n; ++i )
         {
-            prefetch( &ptr[offset], readwrite, locality );
+            to[i] += from[i];
+        }
+    }
+    
+    
+    template <typename S, typename T>
+    force_inline
+    std::enable_if_t<
+        std::is_same_v<T,S> || (ScalarTraits<T>::IsComplex && std::is_same_v<S,typename ScalarTraits<T>::Real>>),
+        void
+    >
+    scale_buffer( const S beta, T * restrict const a, const size_t n )
+    {
+        for( size_t i = 0; i < n; ++i )
+        {
+            a[i] *= beta;
+        }
+    }
+    
+    template <size_t n, typename S, typename T>
+    force_inline
+    std::enable_if_t<
+        std::is_same_v<T,S> || (ScalarTraits<T>::IsComplex && std::is_same_v<S,typename ScalarTraits<T>::Real>>),
+        void
+    >
+    scale_buffer( const S beta, T * restrict const a )
+    {
+        for( size_t i = 0; i < n; ++i )
+        {
+            a[i] *= beta;
+        }
+    }
+    
+    
+    
+    template <typename S, typename T>
+    force_inline
+    std::enable_if_t<
+        std::is_same_v<T,S> || (ScalarTraits<T>::IsComplex && std::is_same_v<S,typename ScalarTraits<T>::Real>>),
+        void
+    >
+    scale_buffer( const S beta, T * restrict const a, const size_t n )
+    {
+        for( size_t i = 0; i < n; ++i )
+        {
+            a[i] *= beta;
+        }
+    }
+    
+    template <size_t n, typename S, typename T>
+    force_inline
+    std::enable_if_t<
+        std::is_same_v<T,S> || (ScalarTraits<T>::IsComplex && std::is_same_v<S,typename ScalarTraits<T>::Real>>),
+        void
+    >
+    scale_buffer( const S beta, T * restrict const a )
+    {
+        for( size_t i = 0; i < n; ++i )
+        {
+            a[i] *= beta;
+        }
+    }
+    
+    
+    
+    template <typename R, typename S, typename T>
+    force_inline
+    std::enable_if_t<
+        (std::is_same_v<T,R> || (ScalarTraits<T>::IsComplex && std::is_same_v<R,typename ScalarTraits<T>::Real>>))
+        &&
+        (std::is_same_v<T,S> || (ScalarTraits<T>::IsComplex && std::is_same_v<S,typename ScalarTraits<T>::Real>>))
+        ,
+        void
+    >
+    axpy_buffer( const R alpha, const S * restrict const x, T * restrict const y, const size_t n )
+    {
+        for( size_t i = 0; i < n; ++i )
+        {
+            y[i] += alpha * x[i];
+        }
+    }
+    
+    template <size_t n, typename R, typename S, typename T>
+    force_inline
+    std::enable_if_t<
+        (std::is_same_v<T,R> || (ScalarTraits<T>::IsComplex && std::is_same_v<R,typename ScalarTraits<T>::Real>>))
+        &&
+        (std::is_same_v<T,S> || (ScalarTraits<T>::IsComplex && std::is_same_v<S,typename ScalarTraits<T>::Real>>))
+        void
+    >
+    axpy_buffer( const R alpha, const S * restrict const x, T * restrict const y )
+    {
+        for( size_t i = 0; i < n; ++i )
+        {
+            y[i] += alpha * x[i];
         }
     }
     
