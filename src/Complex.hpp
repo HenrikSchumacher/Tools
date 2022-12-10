@@ -41,7 +41,7 @@ namespace Tools
     template <typename T>
     struct ScalarTraits
     {
-        using RealType = T;
+        using Real = T;
         
         static constexpr bool IsComplex = false;
     };
@@ -49,7 +49,7 @@ namespace Tools
     template <typename T>
     struct ScalarTraits<std::complex<T>>
     {
-        using RealType = T;
+        using Real = T;
         
         static constexpr bool IsComplex = true;
     };
