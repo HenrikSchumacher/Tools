@@ -15,6 +15,15 @@ namespace Tools
             return typeid(T).name();
         }
     };
+    
+    template <typename T>
+    struct TypeName<std::complex<T>>
+    {
+        static const std::string Get( void )
+        {
+            return "std::complex<"+TypeName<T>::Get()+">";
+        }
+    };
 
     template <>
     struct TypeName<int32_t>
