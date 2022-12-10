@@ -264,7 +264,7 @@ namespace Tools
     template <typename S, typename T>
     force_inline
     std::enable_if_t<
-        std::is_same_v<T,S> || (ScalarTraits<T>::IsComplex && std::is_same_v<S,typename ScalarTraits<T>::Real>>),
+        std::is_same_v<T,S> || (ScalarTraits<T>::IsComplex && std::is_same_v<S,typename ScalarTraits<T>::Real>),
         void
     >
     add_to_buffer( const S * restrict const from, T * restrict const to, const size_t n )
@@ -293,7 +293,7 @@ namespace Tools
     template <typename S, typename T>
     force_inline
     std::enable_if_t<
-        std::is_same_v<T,S> || (ScalarTraits<T>::IsComplex && std::is_same_v<S,typename ScalarTraits<T>::Real>>),
+        std::is_same_v<T,S> || (ScalarTraits<T>::IsComplex && std::is_same_v<S,typename ScalarTraits<T>::Real>),
         void
     >
     scale_buffer( const S beta, T * restrict const a, const size_t n )
@@ -307,37 +307,7 @@ namespace Tools
     template <size_t n, typename S, typename T>
     force_inline
     std::enable_if_t<
-        std::is_same_v<T,S> || (ScalarTraits<T>::IsComplex && std::is_same_v<S,typename ScalarTraits<T>::Real>>),
-        void
-    >
-    scale_buffer( const S beta, T * restrict const a )
-    {
-        for( size_t i = 0; i < n; ++i )
-        {
-            a[i] *= beta;
-        }
-    }
-    
-    
-    
-    template <typename S, typename T>
-    force_inline
-    std::enable_if_t<
-        std::is_same_v<T,S> || (ScalarTraits<T>::IsComplex && std::is_same_v<S,typename ScalarTraits<T>::Real>>),
-        void
-    >
-    scale_buffer( const S beta, T * restrict const a, const size_t n )
-    {
-        for( size_t i = 0; i < n; ++i )
-        {
-            a[i] *= beta;
-        }
-    }
-    
-    template <size_t n, typename S, typename T>
-    force_inline
-    std::enable_if_t<
-        std::is_same_v<T,S> || (ScalarTraits<T>::IsComplex && std::is_same_v<S,typename ScalarTraits<T>::Real>>),
+        std::is_same_v<T,S> || (ScalarTraits<T>::IsComplex && std::is_same_v<S,typename ScalarTraits<T>::Real>),
         void
     >
     scale_buffer( const S beta, T * restrict const a )
@@ -353,9 +323,9 @@ namespace Tools
     template <typename R, typename S, typename T>
     force_inline
     std::enable_if_t<
-        (std::is_same_v<T,R> || (ScalarTraits<T>::IsComplex && std::is_same_v<R,typename ScalarTraits<T>::Real>>))
+        (std::is_same_v<T,R> || (ScalarTraits<T>::IsComplex && std::is_same_v<R,typename ScalarTraits<T>::Real>))
         &&
-        (std::is_same_v<T,S> || (ScalarTraits<T>::IsComplex && std::is_same_v<S,typename ScalarTraits<T>::Real>>))
+        (std::is_same_v<T,S> || (ScalarTraits<T>::IsComplex && std::is_same_v<S,typename ScalarTraits<T>::Real>))
         ,
         void
     >
@@ -370,9 +340,10 @@ namespace Tools
     template <size_t n, typename R, typename S, typename T>
     force_inline
     std::enable_if_t<
-        (std::is_same_v<T,R> || (ScalarTraits<T>::IsComplex && std::is_same_v<R,typename ScalarTraits<T>::Real>>))
+        (std::is_same_v<T,R> || (ScalarTraits<T>::IsComplex && std::is_same_v<R,typename ScalarTraits<T>::Real>))
         &&
-        (std::is_same_v<T,S> || (ScalarTraits<T>::IsComplex && std::is_same_v<S,typename ScalarTraits<T>::Real>>))
+        (std::is_same_v<T,S> || (ScalarTraits<T>::IsComplex && std::is_same_v<S,typename ScalarTraits<T>::Real>))
+        ,
         void
     >
     axpy_buffer( const R alpha, const S * restrict const x, T * restrict const y )
