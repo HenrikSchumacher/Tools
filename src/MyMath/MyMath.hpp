@@ -314,6 +314,35 @@ namespace MyMath
         
     }
 
+    
+    
+    
+
+    namespace Detail
+    {
+        template<typename Scalar>
+        Scalar constexpr sqrtNewtonRaphson( const Scalar x, const Scalar curr, const  Scalar prev )
+        {
+            return curr == prev
+                ? curr
+                : sqrtNewtonRaphson(x, 0.5 * (curr + x / curr), curr);
+        }
+    }
+
+    /*
+    * Constexpr version of the square root
+    * Return value:
+    *   - For a finite and non-negative value of "x", returns an approximation for the square root of "x"
+    *   - Otherwise, returns NaN
+    * See https://stackoverflow.com/a/34134071/8248900.
+    */
+    template<typename Scalar>
+    Scalar constexpr sqrt( const Scalar x)
+    {
+        return (x >= static_cast<Scalar>(0)) && (x < std::numeric_limits<Scalar>::infinity())
+            ? Detail::sqrtNewtonRaphson(x, x, static_cast<Scalar>(0))
+            : std::numeric_limits<Scalar>::quiet_NaN();
+    }
 }
 
  
