@@ -88,6 +88,9 @@
     #include "src/Profiler.hpp"
     #include "src/Complex.hpp"
     #include "src/Memory.hpp"
+
+    #include "src/BLAS_1.hpp"
+
     #include "src/SortedList.hpp"
     #include "src/ParallelAlgorithms.hpp"
     #include "src/JobPointers.hpp"

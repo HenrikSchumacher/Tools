@@ -75,7 +75,6 @@ namespace Tools
             const I i_begin = step*(thread  ) + (corr*(thread  ))/thread_count + 1;
             const I i_end   = step*(thread+1) + (corr*(thread+1))/thread_count + 1;
             
-            #pragma omp simd
             for( I i = i_begin; i < i_end; ++i )
             {
                 b[i] = f(b[i], correction);
@@ -146,7 +145,6 @@ namespace Tools
             const I i_begin = step*(thread  ) + (corr*(thread  ))/thread_count;
             const I i_end   = step*(thread+1) + (corr*(thread+1))/thread_count;
             
-            #pragma omp simd
             for( I i = i_begin; i < i_end; ++i )
             {
                 a[i] += correction;
@@ -215,7 +213,6 @@ namespace Tools
             const I i_begin = step*(thread  ) + (corr*(thread  ))/thread_count;
             const I i_end   = step*(thread+1) + (corr*(thread+1))/thread_count;
             
-            #pragma omp simd
             for( I i = i_begin; i < i_end; ++i )
             {
                 b[i] += correction;
