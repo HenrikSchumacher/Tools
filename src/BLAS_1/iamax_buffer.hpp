@@ -9,14 +9,14 @@ namespace Tools
         const size_t n
     )
     {
-        using R = ScalarTraits<S>::Real;
+        using R = typename ScalarTraits<S>::Real;
         
         R max = 0;
         size_t pos = 0;
         
         for( size_t i = 0; i < n; ++i )
         {
-            R abs_z = std::abs_squared(z[i]);
+            R abs_z = abs_squared(z[i]);
             if( abs_z > max )
             {
                 pos = i;
@@ -31,14 +31,14 @@ namespace Tools
         const S * restrict const z
     )
     {
-        using R = ScalarTraits<S>::Real;
+        using R = typename ScalarTraits<S>::Real;
         
         R max = 0;
         size_t pos = 0;
         
         for( size_t i = 0; i < n; ++i )
         {
-            R abs_z = std::abs_squared(z[i]);
+            R abs_z = abs_squared(z[i]);
             if( abs_z > max )
             {
                 pos = i;

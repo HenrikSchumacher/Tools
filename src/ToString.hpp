@@ -33,7 +33,26 @@ namespace Tools
         
         for( size_t i = 1; i < a.size(); ++i )
         {
-            sout << ", " << ToString(a[i]);
+            sout << ", " << a[i];
+        }
+        sout << " }";
+        return sout.str();
+    }
+    
+    template<typename T>
+    std::string ToString( const T * const a, const size_t n, const int p = 16)
+    {
+        std::stringstream sout;
+        sout.precision(p);
+        sout << "{ ";
+        if( n > 0 )
+        {
+            sout << a[0];
+        }
+        
+        for( size_t i = 1; i < n; ++i )
+        {
+            sout << ", " << a[i];
         }
         sout << " }";
         return sout.str();
