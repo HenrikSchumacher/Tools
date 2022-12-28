@@ -2,9 +2,16 @@
 
 namespace Tools
 {
+    enum class ScalarFlag : char
+    {
+        Generic = 2,
+        Plus    = 1,
+        Minus   = -1,
+        Zero    = 0
+    };
     
     template<
-        int alpha_flag, int beta_flag,
+        ScalarFlag alpha_flag, ScalarFlag beta_flag,
         typename R_0, typename S_0,
         typename R_1, typename S_1
     >
@@ -42,16 +49,23 @@ namespace Tools
         
         // For all other values of alpha_flag and beta_flag, it assumes generic of alpha and beta (and hence performs the actual computation).
         
-        if constexpr ( alpha_flag == 1 )
+        if constexpr ( alpha_flag == ScalarFlag::Plus )
         {
             // alpha == 1;
-            if constexpr ( beta_flag == 0 )
+            if constexpr ( beta_flag == ScalarFlag::Zero )
             {
                 copy_buffer(x,y,n);
             }
-            else if constexpr ( beta_flag == 1 )
+            else if constexpr ( beta_flag == ScalarFlag::Plus )
             {
                 add_to_buffer(x,y,n);
+            }
+            else if constexpr ( beta_flag == ScalarFlag::Minus )
+            {
+                for( size_t k = 0; k < n; ++k )
+                {
+                    y[k] = static_cast<S_1>(x[k]) - y[k];
+                }
             }
             else
             {
@@ -61,17 +75,53 @@ namespace Tools
                 }
             }
         }
-        else if constexpr ( alpha_flag == 0 )
+        else if constexpr ( alpha_flag == ScalarFlag::Minus )
         {
-            if constexpr ( beta_flag == 0 )
+            // alpha == -1;
+            if constexpr ( beta_flag == ScalarFlag::Zero )
+            {
+                copy_buffer(x,y,n);
+            }
+            else if constexpr ( beta_flag == ScalarFlag::Plus )
+            {
+                for( size_t k = 0; k < n; ++k )
+                {
+                    y[k] -= - static_cast<S_1>(x[k]);
+                }
+            }
+            else if constexpr ( beta_flag == ScalarFlag::Minus )
+            {
+                for( size_t k = 0; k < n; ++k )
+                {
+                    y[k] = -y[k] - static_cast<S_1>(x[k]);
+                }
+            }
+            else if constexpr ( beta_flag == ScalarFlag::Generic )
+            {
+                for( size_t k = 0; k < n; ++k )
+                {
+                    y[k] = beta * y[k] - static_cast<S_1>(x[k]);
+                }
+            }
+        }
+        else if constexpr ( alpha_flag == ScalarFlag::Zero )
+        {
+            if constexpr ( beta_flag == ScalarFlag::Zero )
             {
                 zerofy_buffer(y,n);
             }
-            else if constexpr ( beta_flag == 1 )
+            else if constexpr ( beta_flag == ScalarFlag::Plus )
             {
                 // do nothing;
             }
-            else
+            else if constexpr ( beta_flag == ScalarFlag::Minus )
+            {
+                for( size_t k = 0; k < n; ++k )
+                {
+                    y[k] = - y[k];
+                }
+            }
+            else if constexpr ( beta_flag == ScalarFlag::Generic )
             {
                 scale_buffer(beta,y,n);
             }
@@ -79,21 +129,28 @@ namespace Tools
         else
         {
             // alpha arbitrary;
-            if constexpr ( beta_flag == 0 )
+            if constexpr ( beta_flag == ScalarFlag::Zero )
             {
                 for( size_t k = 0; k < n; ++k )
                 {
                     y[k] = static_cast<S_1>(alpha * x[k]);
                 }
             }
-            else if constexpr ( beta_flag == 1 )
+            else if constexpr ( beta_flag == ScalarFlag::Plus )
             {
                 for( size_t k = 0; k < n; ++k )
                 {
                     y[k] += static_cast<S_1>(alpha * x[k]);
                 }
             }
-            else
+            else if constexpr ( beta_flag == ScalarFlag::Minus )
+            {
+                for( size_t k = 0; k < n; ++k )
+                {
+                    y[k] = static_cast<S_1>(alpha * x[k]) - y[k];
+                }
+            }
+            else if constexpr ( beta_flag == ScalarFlag::Generic )
             {
                 // general alpha and general beta
                 for( size_t k = 0; k < n; ++k )
@@ -106,7 +163,7 @@ namespace Tools
 
     template<
         size_t n,
-        int alpha_flag, int beta_flag,
+        ScalarFlag alpha_flag, ScalarFlag beta_flag,
         typename R_0, typename S_0, typename R_1, typename S_1
     >
     force_inline
@@ -134,26 +191,37 @@ namespace Tools
     {
         // This routine computes y[i] = alpha * x[i] + beta * y[i].
         // Depending on the values of alpha_flag and beta_flag, it takes several short cuts:
-        // If alpha_flag == 0, then it assumes alpha = 0.
-        // If alpha_flag == 1, then it assumes alpha = 1.
+        // If alpha_flag == ScalarFlag::Zero,  then it assumes alpha = 0.
+        // If alpha_flag == ScalarFlag::Plus,  then it assumes alpha = 1.
+        // If alpha_flag == ScalarFlag::Minus, then it assumes alpha = -1.
+        // If alpha_flag == ScalarFlag::Generic, then it assumes generic values for alpha.
         
-        // If beta_flag == 0, then it assumes beta = 0.
-        // If beta_flag == 1, then it assumes beta = 1.
+        // If beta_flag == ScalarFlag::Zero,  then it assumes beta = 0.
+        // If beta_flag == ScalarFlag::Plus,  then it assumes beta = 1.
+        // If beta_flag == ScalarFlag::Minus, then it assumes beta = -1.
+        // If beta_flag == ScalarFlag::Generic, then it assumes generic values for beta.
         
         // For all other values of alpha_flag and beta_flag, it assumes generic of alpha and beta (and hence performs the actual computation).
         
-        if constexpr ( alpha_flag == 1 )
+        if constexpr ( alpha_flag == ScalarFlag::Plus )
         {
             // alpha == 1;
-            if constexpr ( beta_flag == 0 )
+            if constexpr ( beta_flag == ScalarFlag::Zero )
             {
                 copy_buffer(x,y,n);
             }
-            else if constexpr ( beta_flag == 1 )
+            else if constexpr ( beta_flag == ScalarFlag::Plus )
             {
                 add_to_buffer(x,y,n);
             }
-            else
+            else if constexpr ( beta_flag == ScalarFlag::Minus )
+            {
+                for( size_t k = 0; k < n; ++k )
+                {
+                    y[k] = static_cast<S_1>(x[k]) - y[k];
+                }
+            }
+            else if constexpr ( beta_flag == ScalarFlag::Generic )
             {
                 for( size_t k = 0; k < n; ++k )
                 {
@@ -161,17 +229,53 @@ namespace Tools
                 }
             }
         }
-        else if constexpr ( alpha_flag == 0 )
+        else if constexpr ( alpha_flag == ScalarFlag::Minus )
         {
-            if constexpr ( beta_flag == 0 )
+            // alpha == -1;
+            if constexpr ( beta_flag == ScalarFlag::Zero )
+            {
+                copy_buffer(x,y,n);
+            }
+            else if constexpr ( beta_flag == ScalarFlag::Plus )
+            {
+                for( size_t k = 0; k < n; ++k )
+                {
+                    y[k] -= - static_cast<S_1>(x[k]);
+                }
+            }
+            else if constexpr ( beta_flag == ScalarFlag::Minus )
+            {
+                for( size_t k = 0; k < n; ++k )
+                {
+                    y[k] = -y[k] - static_cast<S_1>(x[k]);
+                }
+            }
+            else if constexpr ( beta_flag == ScalarFlag::Generic )
+            {
+                for( size_t k = 0; k < n; ++k )
+                {
+                    y[k] = beta * y[k] - static_cast<S_1>(x[k]);
+                }
+            }
+        }
+        else if constexpr ( alpha_flag == ScalarFlag::Zero )
+        {
+            if constexpr ( beta_flag == ScalarFlag::Zero )
             {
                 zerofy_buffer(y,n);
             }
-            else if constexpr ( beta_flag == 1 )
+            else if constexpr ( beta_flag == ScalarFlag::Plus )
             {
                 // do nothing;
             }
-            else
+            else if constexpr ( beta_flag == ScalarFlag::Minus )
+            {
+                for( size_t k = 0; k < n; ++k )
+                {
+                    y[k] = - y[k];
+                }
+            }
+            else if constexpr ( beta_flag == ScalarFlag::Generic )
             {
                 scale_buffer(beta,y,n);
             }
@@ -179,21 +283,28 @@ namespace Tools
         else
         {
             // alpha arbitrary;
-            if constexpr ( beta_flag == 0 )
+            if constexpr ( beta_flag == ScalarFlag::Zero )
             {
                 for( size_t k = 0; k < n; ++k )
                 {
                     y[k] = static_cast<S_1>(alpha * x[k]);
                 }
             }
-            else if constexpr ( beta_flag == 1 )
+            else if constexpr ( beta_flag == ScalarFlag::Plus )
             {
                 for( size_t k = 0; k < n; ++k )
                 {
                     y[k] += static_cast<S_1>(alpha * x[k]);
                 }
             }
-            else
+            else if constexpr ( beta_flag == ScalarFlag::Minus )
+            {
+                for( size_t k = 0; k < n; ++k )
+                {
+                    y[k] = static_cast<S_1>(alpha * x[k]) - y[k];
+                }
+            }
+            else if constexpr ( beta_flag == ScalarFlag::Generic )
             {
                 // general alpha and general beta
                 for( size_t k = 0; k < n; ++k )
