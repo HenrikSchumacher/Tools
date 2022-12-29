@@ -35,7 +35,7 @@ namespace Tools
         const R_0                  alpha,
         const S_0 * restrict const x,
         const R_1                  beta,
-              S_0 * restrict const y,
+              S_1 * restrict const y,
         const size_t               n
     )
     {
@@ -186,7 +186,7 @@ namespace Tools
         const R_0                  alpha,
         const S_0 * restrict const x,
         const R_1                  beta,
-              S_0 * restrict const y
+              S_1 * restrict const y
     )
     {
         // This routine computes y[i] = alpha * x[i] + beta * y[i].

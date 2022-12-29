@@ -95,9 +95,7 @@ namespace Tools
             
             ptic("BalanceWorkLoad");
             
-    //        DUMP(job_count);
     //        auto costs_ = Tensor1<I,I> (costs,job_count+1);
-    //        DUMP(costs_);
             
             
             T * restrict acc_costs = nullptr;
