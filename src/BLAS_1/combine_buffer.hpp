@@ -160,6 +160,237 @@ namespace Tools
             }
         }
     }
+    
+    
+    template<
+        ScalarFlag alpha_flag, ScalarFlag beta_flag,
+        typename R_0, typename S_0,
+        typename R_1, typename S_1
+    >
+    force_inline
+    std::enable_if_t<
+        (
+            std::is_same_v<R_0,S_0>
+            ||
+            (ScalarTraits<S_0>::IsComplex && std::is_same_v<R_0,typename ScalarTraits<S_0>::Real>)
+        )
+        &&
+        (
+            std::is_same_v<R_1,S_1>
+            ||
+            (ScalarTraits<S_1>::IsComplex && std::is_same_v<R_1,typename ScalarTraits<S_1>::Real>)
+        )
+        ,
+        void
+    >
+    combine_buffers(
+        const R_0                  alpha,
+        const S_0 * restrict const x,
+        const R_1                  beta,
+              S_1 * restrict const y,
+        const size_t               n,
+        const size_t               thread_count
+    )
+    {
+        // This routine computes y[i] = alpha * x[i] + beta * y[i].
+        // Depending on the values of alpha_flag and beta_flag, it takes several short cuts:
+        // If alpha_flag == 0, then it assumes alpha = 0.
+        // If alpha_flag == 1, then it assumes alpha = 1.
+        
+        // If beta_flag == 0, then it assumes beta = 0.
+        // If beta_flag == 1, then it assumes beta = 1.
+        
+        // For all other values of alpha_flag and beta_flag, it assumes generic of alpha and beta (and hence performs the actual computation).
+        
+        
+        if( thread_count <= 1 )
+        {
+            combine_buffers<alpha_flag,beta_flag>(alpha,x,beta,y,n);
+        }
+        else
+        {
+            if constexpr ( alpha_flag == ScalarFlag::Plus )
+            {
+                // alpha == 1;
+                if constexpr ( beta_flag == ScalarFlag::Zero )
+                {
+                    copy_buffer(x,y,n,thread_count);
+                }
+                else if constexpr ( beta_flag == ScalarFlag::Plus )
+                {
+                    add_to_buffer(x,y,n,thread_count);
+                }
+                else if constexpr ( beta_flag == ScalarFlag::Minus )
+                {
+                    #pragma omp parallel for num_threads( thread_count )
+                    for( size_t thread = 0; thread < thread_count; ++thread )
+                    {
+                        const size_t k_begin = JobPointer(n,thread_count,thread  );
+                        const size_t k_end   = JobPointer(n,thread_count,thread+1);
+                        
+                        for( size_t k = k_begin; k < k_end; ++k )
+                        {
+                            y[k] = static_cast<S_1>(x[k]) - y[k];
+                        }
+                    }
+                }
+                else
+                {
+                    #pragma omp parallel for num_threads( thread_count )
+                    for( size_t thread = 0; thread < thread_count; ++thread )
+                    {
+                        const size_t k_begin = JobPointer(n,thread_count,thread  );
+                        const size_t k_end   = JobPointer(n,thread_count,thread+1);
+                        
+                        for( size_t k = k_begin; k < k_end; ++k )
+                        {
+                            y[k] = static_cast<S_1>(x[k]) + beta * y[k];
+                        }
+                    }
+                }
+            }
+            else if constexpr ( alpha_flag == ScalarFlag::Minus )
+            {
+                // alpha == -1;
+                if constexpr ( beta_flag == ScalarFlag::Zero )
+                {
+                    copy_buffer(x,y,n,thread_count);
+                }
+                else if constexpr ( beta_flag == ScalarFlag::Plus )
+                {
+                    #pragma omp parallel for num_threads( thread_count )
+                    for( size_t thread = 0; thread < thread_count; ++thread )
+                    {
+                        const size_t k_begin = JobPointer(n,thread_count,thread  );
+                        const size_t k_end   = JobPointer(n,thread_count,thread+1);
+                        
+                        for( size_t k = k_begin; k < k_end; ++k )
+                        {
+                            y[k] -= - static_cast<S_1>(x[k]);
+                        }
+                    }
+                }
+                else if constexpr ( beta_flag == ScalarFlag::Minus )
+                {
+                    #pragma omp parallel for num_threads( thread_count )
+                    for( size_t thread = 0; thread < thread_count; ++thread )
+                    {
+                        const size_t k_begin = JobPointer(n,thread_count,thread  );
+                        const size_t k_end   = JobPointer(n,thread_count,thread+1);
+                        
+                        for( size_t k = k_begin; k < k_end; ++k )
+                        {
+                            y[k] = -y[k] - static_cast<S_1>(x[k]);
+                        }
+                    }
+                }
+                else if constexpr ( beta_flag == ScalarFlag::Generic )
+                {
+                    #pragma omp parallel for num_threads( thread_count )
+                    for( size_t thread = 0; thread < thread_count; ++thread )
+                    {
+                        const size_t k_begin = JobPointer(n,thread_count,thread  );
+                        const size_t k_end   = JobPointer(n,thread_count,thread+1);
+                        
+                        for( size_t k = k_begin; k < k_end; ++k )
+                        {
+                            y[k] = beta * y[k] - static_cast<S_1>(x[k]);
+                        }
+                    }
+                }
+            }
+            else if constexpr ( alpha_flag == ScalarFlag::Zero )
+            {
+                if constexpr ( beta_flag == ScalarFlag::Zero )
+                {
+                    zerofy_buffer(y,n,thread_count);
+                }
+                else if constexpr ( beta_flag == ScalarFlag::Plus )
+                {
+                    // do nothing;
+                }
+                else if constexpr ( beta_flag == ScalarFlag::Minus )
+                {
+                    #pragma omp parallel for num_threads( thread_count )
+                    for( size_t thread = 0; thread < thread_count; ++thread )
+                    {
+                        const size_t k_begin = JobPointer(n,thread_count,thread  );
+                        const size_t k_end   = JobPointer(n,thread_count,thread+1);
+                        
+                        for( size_t k = k_begin; k < k_end; ++k )
+                        {
+                            y[k] = - y[k];
+                        }
+                    }
+                }
+                else if constexpr ( beta_flag == ScalarFlag::Generic )
+                {
+                    scale_buffer(beta,y,n,thread_count);
+                }
+            }
+            else
+            {
+                // alpha arbitrary;
+                if constexpr ( beta_flag == ScalarFlag::Zero )
+                {
+                    #pragma omp parallel for num_threads( thread_count )
+                    for( size_t thread = 0; thread < thread_count; ++thread )
+                    {
+                        const size_t k_begin = JobPointer(n,thread_count,thread  );
+                        const size_t k_end   = JobPointer(n,thread_count,thread+1);
+                        
+                        for( size_t k = k_begin; k < k_end; ++k )
+                        {
+                            y[k] = static_cast<S_1>(alpha * x[k]);
+                        }
+                    }
+                }
+                else if constexpr ( beta_flag == ScalarFlag::Plus )
+                {
+                    #pragma omp parallel for num_threads( thread_count )
+                    for( size_t thread = 0; thread < thread_count; ++thread )
+                    {
+                        const size_t k_begin = JobPointer(n,thread_count,thread  );
+                        const size_t k_end   = JobPointer(n,thread_count,thread+1);
+                        
+                        for( size_t k = k_begin; k < k_end; ++k )
+                        {
+                            y[k] += static_cast<S_1>(alpha * x[k]);
+                        }
+                    }
+                }
+                else if constexpr ( beta_flag == ScalarFlag::Minus )
+                {
+                    #pragma omp parallel for num_threads( thread_count )
+                    for( size_t thread = 0; thread < thread_count; ++thread )
+                    {
+                        const size_t k_begin = JobPointer(n,thread_count,thread  );
+                        const size_t k_end   = JobPointer(n,thread_count,thread+1);
+                        
+                        for( size_t k = k_begin; k < k_end; ++k )
+                        {
+                            y[k] = static_cast<S_1>(alpha * x[k]) - y[k];
+                        }
+                    }
+                }
+                else if constexpr ( beta_flag == ScalarFlag::Generic )
+                {
+                    // general alpha and general beta
+                    #pragma omp parallel for num_threads( thread_count )
+                    for( size_t thread = 0; thread < thread_count; ++thread )
+                    {
+                        const size_t k_begin = JobPointer(n,thread_count,thread  );
+                        const size_t k_end   = JobPointer(n,thread_count,thread+1);
+                        
+                        for( size_t k = k_begin; k < k_end; ++k )
+                        {
+                            y[k] = static_cast<S_1>(alpha * x[k]) + (beta * y[k]);
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     template<
         size_t n,

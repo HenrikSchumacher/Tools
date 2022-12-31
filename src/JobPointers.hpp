@@ -77,7 +77,7 @@ namespace Tools
             
             for( Int k = 0; k < thread_count+1; ++k )
             {
-                job_ptr[k] = job_count/thread_count*k + job_count%thread_count*k/thread_count;
+                job_ptr[k] = JobPointer( job_count, thread_count, k );
             }
         }
         
