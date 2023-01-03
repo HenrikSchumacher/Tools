@@ -4,8 +4,8 @@ namespace Tools
 {
     namespace Profiler
     {
-        std::ofstream prof ( "./Tools_Profile.tsv" );
-        std::ofstream log ( "./Tools_Log.txt" );
+        std::ofstream prof ("./Tools_Profile.tsv");
+        std::ofstream log  ("./Tools_Log.txt");
 
         std::chrono::time_point<std::chrono::steady_clock> init_time = std::chrono::steady_clock::now();
         std::vector<std::chrono::time_point<std::chrono::steady_clock>> time_stack;
