@@ -72,7 +72,25 @@ namespace Tools
             Profiler::log << s << "\n" << std::endl;
         }
     }
+
+    template<typename T>
+    inline void logvalprint( const std::string & s, const T & value)
+    {
+        using namespace std;
+        logprint( s + " = " + ToString(value) );
+    }
+
+    template<typename T>
+    inline void logvalprint( const std::string & s, const T & value, const int p)
+    {
+        logprint( s + " = " + ToString(value, p) );
+    }
     
+    inline void logvalprint( const std::string & s, const std::string & value)
+    {
+        using namespace std;
+        logprint( s + " = " + value );
+    }
     
 #define DUMP(x)                                                                 \
 {                                                                               \
