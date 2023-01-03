@@ -31,13 +31,7 @@ namespace Tools
         ,
         void
     >
-    combine_buffers(
-        const R_0                  alpha,
-        const S_0 * restrict const x,
-        const R_1                  beta,
-              S_1 * restrict const y,
-        const size_t               n
-    )
+    combine_buffers( const R_0 alpha, ptr<S_0> x, const R_1 beta, mut<S_1> y, const size_t n )
     {
         // This routine computes y[i] = alpha * x[i] + beta * y[i].
         // Depending on the values of alpha_flag and beta_flag, it takes several short cuts:
@@ -183,13 +177,8 @@ namespace Tools
         ,
         void
     >
-    combine_buffers(
-        const R_0                  alpha,
-        const S_0 * restrict const x,
-        const R_1                  beta,
-              S_1 * restrict const y,
-        const size_t               n,
-        const size_t               thread_count
+    combine_buffers( const R_0 alpha, ptr<S_0> x, const R_1 beta, mut<S_1> y, const size_t n,
+        const size_t thread_count
     )
     {
         // This routine computes y[i] = alpha * x[i] + beta * y[i].
@@ -413,12 +402,7 @@ namespace Tools
         ,
         void
     >
-    combine_buffers(
-        const R_0                  alpha,
-        const S_0 * restrict const x,
-        const R_1                  beta,
-              S_1 * restrict const y
-    )
+    combine_buffers( const R_0 alpha, ptr<S_0> x, const R_1 beta, mut<S_1> y )
     {
         // This routine computes y[i] = alpha * x[i] + beta * y[i].
         // Depending on the values of alpha_flag and beta_flag, it takes several short cuts:

@@ -1,5 +1,6 @@
 namespace MyMath
 {
+    using namespace Tools;
     
     template<typename Real, typename T>
     std::enable_if_t<!std::is_integral_v<T>,Real> inline pow( const Real base, const T exponent )
@@ -103,7 +104,7 @@ namespace MyMath
     }
     
     template<int AmbDim, typename Real>
-    inline Real AngleBetweenUnitVectors( const Real * const restrict x, const Real * const restrict y )
+    inline Real AngleBetweenUnitVectors( ptr<Real> x, ptr<Real> y )
     {
         Real a = static_cast<Real>(0);
         Real b = static_cast<Real>(0);
@@ -118,7 +119,7 @@ namespace MyMath
     }
     
     template<int AmbDim, typename Real>
-    inline Real Angle( const Real * const restrict x, const Real * const restrict y )
+    inline Real Angle( ptr<Real> x, ptr<Real> y )
     {
         Real a2 = static_cast<Real>(0);
         Real b2 = static_cast<Real>(0);
@@ -153,7 +154,7 @@ namespace MyMath
     
     template<typename Real>
     void RealCubicSolve(
-        const Real A, const Real B, const Real C, const Real D, Real * restrict t_out
+        const Real A, const Real B, const Real C, const Real D, mut<Real> t_out
     )
     {
         constexpr Real zero  = 0;

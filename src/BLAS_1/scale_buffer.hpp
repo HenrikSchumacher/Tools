@@ -12,11 +12,7 @@ namespace Tools
         ,
         void
     >
-    scale_buffer(
-        const R                  beta,
-              S * restrict const y,
-        const size_t n
-    )
+    scale_buffer( const R beta, mut<S> y, const size_t n )
     {
         for( size_t i = 0; i < n; ++i )
         {
@@ -33,12 +29,7 @@ namespace Tools
         ,
         void
     >
-    scale_buffer(
-        const R                  beta,
-              S * restrict const y,
-        const size_t n,
-        const size_t thread_count
-    )
+    scale_buffer( const R beta, mut<S> y, const size_t n, const size_t thread_count )
     {
         if( thread_count <= 1 )
         {
@@ -69,10 +60,7 @@ namespace Tools
         ,
         void
     >
-    scale_buffer(
-        const R                  beta,
-              S * restrict const y
-    )
+    scale_buffer( const R beta, mut<S> y )
     {
         for( size_t i = 0; i < n; ++i )
         {

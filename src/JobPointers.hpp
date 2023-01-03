@@ -23,7 +23,7 @@ namespace Tools
         }
         
         template<typename T>
-        JobPointers( const Int job_count, const T * restrict costs, const Int thread_count, bool accumulate = true )
+        JobPointers( const Int job_count, ptr<T> costs, const Int thread_count, bool accumulate = true )
         :   JobPointers(thread_count)
         {
             if( accumulate )
@@ -82,7 +82,7 @@ namespace Tools
         }
         
         template<typename T>
-        void BalanceWorkLoad_Accumulated( const Int job_count, const T * restrict const costs )
+        void BalanceWorkLoad_Accumulated( const Int job_count, ptr<T> costs )
         {
             const Int thread_count = ThreadCount();
             
@@ -109,7 +109,7 @@ namespace Tools
         }
         
         template<typename T>
-        void BalanceWorkLoad( const Int job_count, const T * restrict const acc_costs )
+        void BalanceWorkLoad( const Int job_count, ptr<T> acc_costs )
         {
             const Int thread_count = ThreadCount();
             

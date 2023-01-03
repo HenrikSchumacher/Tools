@@ -7,8 +7,8 @@ namespace Tools
     
     template<typename T, typename I, typename F>
     inline void parallel_prefix_scan(
-        const T * restrict const a,
-              T * restrict const b,
+        ptr<T>  a,
+        mut<T>  b,
         const I n,
         const F & f,
         const I thread_count
@@ -25,7 +25,7 @@ namespace Tools
         
         T * S_buffer = nullptr;
         safe_alloc(S_buffer,thread_count+1);
-        T * restrict const S = S_buffer;
+        mut<T> S = S_buffer;
         S[0] = static_cast<T>(0);
         
         const I step = n / thread_count;
@@ -88,15 +88,11 @@ namespace Tools
 
     
     template<typename T, typename I>
-    inline void parallel_accumulate(
-        T * restrict const a,
-        const I n,
-        const I thread_count
-    )
+    inline void parallel_accumulate( mut<T> a, const I n, const I thread_count )
     {
         T * S_buffer = nullptr;
         safe_alloc(S_buffer,thread_count+1);
-        T * restrict const S = S_buffer;
+        mut<T> S = S_buffer;
         S[0] = static_cast<T>(0);
         
         const I step = n / thread_count;
@@ -155,16 +151,11 @@ namespace Tools
     }
     
     template<typename T, typename I>
-    inline void parallel_accumulate(
-        const T * restrict const a,
-              T * restrict const b,
-        const I n,
-        const I thread_count
-    )
+    inline void parallel_accumulate( ptr<T> a, mut<T> b, const I n, const I thread_count )
     {
         T * S_buffer = nullptr;
         safe_alloc(S_buffer,thread_count+1);
-        T * restrict const S = S_buffer;
+        mut<T> S = S_buffer;
         S[0] = static_cast<T>(0);
         
         const I step = n / thread_count;

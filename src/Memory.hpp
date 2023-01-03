@@ -28,6 +28,18 @@
 
 namespace Tools
 {
+//    // immutable, unaliased pointer to immutable type
+//    template<typename T> using ptr = const T * restrict const;
+//
+//    // immutable, unaliased pointer to mutable type
+//    template<typename T> using mut =       T * restrict const;
+    
+    // immutable, unaliased pointer to immutable type
+    template<typename T> using ptr = const T * restrict const;
+    
+    // immutable, unaliased pointer to mutable type
+    template<typename T> using mut =       T * restrict const;
+    
     // Computes k-tj job pointer for job_count equallize sized jobs distributed on thread_count threads.
     template<typename Int>
     force_inline Int JobPointer( const Int job_count, const Int thread_count, const Int k )
@@ -36,51 +48,51 @@ namespace Tools
     }
     
     
-    inline bool is_aligned( const void * restrict const pointer, const size_t byte_count = ALIGNMENT )
+    inline bool is_aligned( const void * const pointer, const size_t byte_count = ALIGNMENT )
     {
         return reinterpret_cast<std::uintptr_t>(pointer) % byte_count == 0;
     }
     
-    force_inline void * aligned_malloc(const size_t size, const size_t alignment)
+    force_inline void * aligned_malloc( const size_t size, const size_t alignment )
     {
         const size_t padded_size = ( (size - 1) / alignment + 1 ) * alignment;
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
-        void * ptr = _aligned_malloc(padded_size, alignment);
+        void * ptr_ = _aligned_malloc(padded_size, alignment);
 #else
-        void * ptr = std::aligned_alloc(alignment, padded_size);
+        void * ptr_ = std::aligned_alloc(alignment, padded_size);
 #endif
         
-        if( ptr == nullptr )
+        if( ptr_ == nullptr )
         {
             eprint("aligned_malloc: failed to allocate memory.");
             return nullptr;
         }
         else
         {
-            return ptr;
+            return ptr_;
         }
     }
 
-    force_inline void aligned_free(void * ptr)
+    force_inline void aligned_free( void * ptr_ )
     {
         #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
-            _aligned_free( ptr );
+            _aligned_free( ptr_ );
         #else
-            free( ptr );
+            free( ptr_ );
         #endif
     }
     
     
     
     template <typename T>
-    force_inline int safe_free( T * & ptr )
+    force_inline int safe_free( T * & ptr_ )
     {
-        int wasallocated = (ptr != nullptr);
+        int wasallocated = (ptr_ != nullptr);
         if( wasallocated )
         {
-            aligned_free(ptr);
-            ptr = nullptr;
+            aligned_free(ptr_);
+            ptr_ = nullptr;
             
         }
         return !wasallocated;
@@ -89,12 +101,12 @@ namespace Tools
 #if defined(restrict) && (restrict ==  __restrict__)
     // overload function for restrict qualifier
     template <typename T>
-    force_inline int safe_free( T * restrict & ptr )
+    force_inline int safe_free( T * restrict & ptr_ )
     {
-        int wasallocated = (ptr != nullptr);
+        int wasallocated = (ptr_ != nullptr);
         if( wasallocated )
         {
-            aligned_free(ptr); ptr = nullptr;
+            aligned_free(ptr_); ptr_ = nullptr;
         }
         return !wasallocated;
     }
@@ -102,19 +114,19 @@ namespace Tools
     
     
     template <typename T>
-    force_inline int safe_alloc( T * & ptr, const size_t n )
+    force_inline int safe_alloc( T * & ptr_, const size_t n )
     {
-        int wasallocated = (ptr != nullptr);
+        int wasallocated = (ptr_ != nullptr);
         
         if( wasallocated != 0 )
         {
 #ifdef SAFE_ALLOCATE_WARNINGS
             wprint("safe_alloc: Pointer was not NULL. Calling safe_free to prevent memory leak.");
 #endif
-            safe_free(ptr);
+            safe_free(ptr_);
         }
         
-        ptr = static_cast<T *>( aligned_malloc( n * sizeof(T), ALIGNMENT ) );
+        ptr_ = static_cast<T *>( aligned_malloc( n * sizeof(T), ALIGNMENT ) );
 
         return wasallocated;
     }
@@ -122,19 +134,19 @@ namespace Tools
 #if defined(restrict) && (restrict ==  __restrict__)
     // overload function for restrict qualifier
     template <typename T>
-    force_inline int safe_alloc( T * restrict & ptr, const size_t n )
+    force_inline int safe_alloc( T * restrict & ptr_, const size_t n )
     {
-        int wasallocated = (ptr != nullptr);
+        int wasallocated = (ptr_ != nullptr);
         
         if( wasallocated != 0 )
         {
 #ifdef SAFE_ALLOCATE_WARNINGS
             wprint("safe_alloc: Pointer was not NULL. Calling safe_free to prevent memory leak.");
 #endif
-            safe_free(ptr);
+            safe_free(ptr_);
         }
         
-        ptr = static_cast<T *>( aligned_malloc( n * sizeof(T), ALIGNMENT ) );
+        ptr_ = static_cast<T *>( aligned_malloc( n * sizeof(T), ALIGNMENT ) );
         
         return wasallocated;
     }
@@ -155,11 +167,7 @@ namespace Tools
     // We add this fixed-size version anyways so that we do not have to rely on this somewhat unexpected compiler optimization.
     
     template<typename S, typename T>
-    force_inline void copy_buffer(
-        const S * restrict const from,
-              T * restrict const to,
-        const size_t n
-    )
+    force_inline void copy_buffer( ptr<S> from, mut<T> to, const size_t n )
     {
         if constexpr ( std::is_same_v<T,S> )
         {
@@ -172,12 +180,7 @@ namespace Tools
     }
     
     template<typename S, typename T>
-    force_inline void copy_buffer(
-        const S * restrict const from,
-              T * restrict const to,
-        const size_t n,
-        const size_t thread_count
-    )
+    force_inline void copy_buffer( ptr<S> from, mut<T> to, const size_t n, const size_t thread_count )
     {
         if( thread_count == 1 )
         {
@@ -212,10 +215,7 @@ namespace Tools
     
     // See also my above remarks on copy_buffer.
     template<size_t n, typename S, typename T>
-    force_inline void copy_buffer(
-        const S * restrict const from,
-              T * restrict const to
-    )
+    force_inline void copy_buffer( ptr<S> from, mut<S> to )
     {
         if constexpr ( std::is_same_v<T,S> )
         {
@@ -245,48 +245,48 @@ namespace Tools
     
     
     template<int readwrite, int locality, typename T>
-    force_inline void prefetch_buffer( const T * restrict const begin, const size_t n )
+    force_inline void prefetch_buffer( ptr<T> begin, const size_t n )
     {
         const size_t prefetch_size = n * sizeof(T);
         
-        const unsigned char * ptr = reinterpret_cast<const unsigned char*>(begin);
+        const unsigned char * ptr_ = reinterpret_cast<const unsigned char*>(begin);
     
         for( size_t offset = 0; offset < prefetch_size; offset += PREFETCH_STRIDE )
         {
-            prefetch( &ptr[offset], readwrite, locality );
+            prefetch( &ptr_[offset], readwrite, locality );
         }
     }
     
     template<size_t N, int readwrite, int locality, typename T>
-    force_inline void prefetch_buffer( const T * restrict const begin )
+    force_inline void prefetch_buffer( ptr<T> begin )
     {
         constexpr size_t PREFETCH_SIZE = N * sizeof(T);
         
-        const unsigned char * ptr = reinterpret_cast<const unsigned char*>(begin);
+        const unsigned char * ptr_ = reinterpret_cast<const unsigned char*>(begin);
     
         LOOP_UNROLL_FULL
         for( size_t offset = 0; offset < PREFETCH_SIZE; offset += PREFETCH_STRIDE )
         {
-            prefetch( &ptr[offset], readwrite, locality );
+            prefetch( &ptr_[offset], readwrite, locality );
         }
     }
     
     
     template <size_t n, typename T>
-    force_inline void fill_buffer( T * restrict const a, const T init )
+    force_inline void fill_buffer( mut<T> a, const T init )
     {
         std::fill( &a[0], &a[n], init );
     }
     
     template <typename T>
-    force_inline void fill_buffer( T * restrict const a, const size_t n, const T init )
+    force_inline void fill_buffer( mut<T> a, const size_t n, const T init )
     {
         std::fill( &a[0], &a[n], init );
     }
     
     template <typename T>
     force_inline void fill_buffer(
-        T * restrict const a,
+        mut<T> a,
         const size_t n,
         const T init,
         const size_t thread_count
@@ -311,19 +311,19 @@ namespace Tools
     }
 
     template <size_t n, typename T>
-    force_inline void zerofy_buffer( T * restrict const a )
+    force_inline void zerofy_buffer( mut<T> a )
     {
         std::fill( &a[0], &a[n], static_cast<T>(0) );
     }
     
     template <typename T>
-    force_inline void zerofy_buffer( T * restrict const a, const size_t n )
+    force_inline void zerofy_buffer( mut<T> a, const size_t n )
     {
         std::fill( &a[0], &a[n], static_cast<T>(0) );
     }
     
     template <typename T>
-    force_inline void zerofy_buffer( T * restrict const a, const size_t n, const size_t thread_count )
+    force_inline void zerofy_buffer( mut<T> a, const size_t n, const size_t thread_count )
     {
         if( thread_count <= 1 )
         {
