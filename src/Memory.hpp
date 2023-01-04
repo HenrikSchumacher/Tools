@@ -215,7 +215,7 @@ namespace Tools
     
     // See also my above remarks on copy_buffer.
     template<size_t n, typename S, typename T>
-    force_inline void copy_buffer( ptr<S> from, mut<S> to )
+    force_inline void copy_buffer( ptr<S> from, mut<T> to )
     {
         if constexpr ( std::is_same_v<T,S> )
         {
