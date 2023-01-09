@@ -14,3 +14,6 @@
 #include "BLAS_1/norm_2.hpp"
 #include "BLAS_1/norm_max.hpp"
 
+
+#include "BLAS_1/iota_buffer.hpp"
+#include "BLAS_1/minmax_buffer.hpp"

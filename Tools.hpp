@@ -105,44 +105,44 @@
         
     #define __ADD_CLONE_CODE_FOR_BASE_CLASS__(BASE)                                 \
     public:                                                                         \
-    std::unique_ptr<BASE> Clone () const                                        \
-    {                                                                           \
-    return std::unique_ptr<BASE>(CloneImplementation());                    \
-    }                                                                           \
+        std::unique_ptr<BASE> Clone () const                                        \
+        {                                                                           \
+            return std::unique_ptr<BASE>(CloneImplementation());                    \
+        }                                                                           \
     private:                                                                        \
-    virtual BASE * CloneImplementation() const = 0;
+        virtual BASE * CloneImplementation() const = 0;
         
     #define __ADD_CLONE_CODE_FOR_ABSTRACT_CLASS__(CLASS)                            \
     public:                                                                         \
-    std::unique_ptr<CLASS> Clone () const                                       \
-    {                                                                           \
-    return std::unique_ptr<CLASS>(CloneImplementation());                   \
-    }                                                                           \
+        std::unique_ptr<CLASS> Clone () const                                       \
+        {                                                                           \
+            return std::unique_ptr<CLASS>(CloneImplementation());                   \
+        }                                                                           \
     private:                                                                        \
-    virtual CLASS * CloneImplementation() const override = 0;
+        virtual CLASS * CloneImplementation() const override = 0;
         
         
     #define __ADD_CLONE_CODE__(DERIVED)                                             \
     public:                                                                         \
-    std::unique_ptr<DERIVED> Clone () const                                     \
-    {                                                                           \
-    return std::unique_ptr<DERIVED>(CloneImplementation());                 \
-    }                                                                           \
-    \
+        std::unique_ptr<DERIVED> Clone () const                                     \
+        {                                                                           \
+            return std::unique_ptr<DERIVED>(CloneImplementation());                 \
+        }                                                                           \
+                                                                                    \
     private:                                                                        \
-    virtual DERIVED * CloneImplementation() const override                      \
-    {                                                                           \
-    return new DERIVED(*this);                                              \
-    }
+        virtual DERIVED * CloneImplementation() const override                      \
+        {                                                                           \
+            return new DERIVED(*this);                                              \
+        }
         
         
         
         
-    #define IsArithmetic(T) class = typename std::enable_if_t<std::is_arithmetic_v<T>>
-    #define IsFloat(T)      class = typename std::enable_if_t<std::is_floating_point_v<T>>
+    #define IS_ARITHMETIC(T) class = typename std::enable_if_t<std::is_arithmetic_v<T>>
+    #define IS_FLOAT(T)      class = typename std::enable_if_t<std::is_floating_point_v<T>>
         //#define IsInt(I)        class = typename std::enable_if_t<std::is_signed_v<I> && std::is_integral_v<I>>
-    #define IsInt(I)        class = typename std::enable_if_t<std::is_integral_v<I>>
-    #define IsPositive(x)   class = typename std::enable_if_t<x>0>
+    #define IS_INT(I)        class = typename std::enable_if_t<std::is_integral_v<I>>
+    #define IS_POSITIVER(x)   class = typename std::enable_if_t<x>0>
         
     #define ASSERT_ARITHMETIC(T) static_assert( std::is_arithmetic_v<T>, "Template parameter " #T " must be arithmetic type." );
         
