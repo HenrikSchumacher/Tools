@@ -79,6 +79,33 @@ namespace Tools
             return std::string("Real128");
         }
     };
+    
+    template <>
+    struct TypeName<std::complex<float>>
+    {
+        static const std::string Get( void )
+        {
+            return std::string("Complex32");
+        }
+    };
+    
+    template <>
+    struct TypeName<std::complex<double>>
+    {
+        static const std::string Get( void )
+        {
+            return std::string("Complex64");
+        }
+    };
+    
+    template <>
+    struct TypeName<std::complex<long double>>
+    {
+        static const std::string Get( void )
+        {
+            return std::string("Complex128");
+        }
+    };
 
     
 
