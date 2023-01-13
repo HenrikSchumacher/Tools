@@ -7,8 +7,8 @@ namespace Tools
         std::ofstream prof ("./Tools_Profile.tsv");
         std::ofstream log  ("./Tools_Log.txt");
 
-        std::chrono::time_point<std::chrono::steady_clock> init_time = std::chrono::steady_clock::now();
-        std::vector<std::chrono::time_point<std::chrono::steady_clock>> time_stack;
+        Time init_time = Clock::now();
+        std::vector<Time> time_stack;
         std::vector<std::string> tag_stack(1,"root");
         std::vector<int> parent_stack (1, -0);
         std::vector<int> id_stack (1,0);
@@ -49,7 +49,7 @@ namespace Tools
                 std::cout << "Log will be written to " << log_filename << "." << std::endl;
                 Profiler::log << std::setprecision(16);
         //        Profiler::prof << "ID" << "\t" << "Tag" << "\t" << "From" << "\t" << "Tic" << "\t" << "Toc" << "\t" << "Duration" << "\t" << "Depth" << "\n";
-                Profiler::init_time = std::chrono::steady_clock::now();
+                Profiler::init_time = Clock::now();
                 Profiler::time_stack.clear();
                 Profiler::parent_stack.push_back(0.);
                 Profiler::tag_stack.clear();
@@ -118,12 +118,12 @@ namespace Tools
     {
         #pragma omp critical(profiler)
         {
-            Profiler::time_stack.push_back(std::chrono::steady_clock::now());
+            Profiler::time_stack.push_back(Clock::now());
             Profiler::parent_stack.push_back(Profiler::id_stack.back());
             Profiler::tag_stack.push_back(tag);
             Profiler::id_stack.push_back(++Profiler::id_counter);
             
-            double start_time = std::chrono::duration<double>( Profiler::time_stack.back()- Profiler::init_time ).count();
+            float start_time = Duration( Profiler::init_time, Profiler::time_stack.back() );
             
             for( size_t i = 0; i < Profiler::time_stack.size(); ++i )
             {
@@ -143,8 +143,8 @@ namespace Tools
             {
                 if( tag == Profiler::tag_stack.back() )
                 {
-                    double start_time = std::chrono::duration<double>( Profiler::time_stack.back()      - Profiler::init_time ).count();
-                    double stop_time  = std::chrono::duration<double>( std::chrono::steady_clock::now() - Profiler::init_time ).count();
+                    float start_time = Duration( Profiler::init_time, Profiler::time_stack.back() );
+                    float stop_time  = Duration( Profiler::init_time, Clock::now() );
                     
                     Profiler::prof
                         << Profiler::id_stack.back() <<  "\t"
