@@ -86,7 +86,7 @@
     #include "src/ToString.hpp"
     #include "src/Print.hpp"
     #include "src/Profiler.hpp"
-    #include "src/Complex.hpp"
+    #include "src/Scalar.hpp"
     #include "src/Memory.hpp"
 
     #include "src/BLAS_1.hpp"

@@ -114,7 +114,7 @@ namespace Tools
             {
                 for( size_t k = 0; k < n; ++k )
                 {
-                    y[k] = alpha * x[k]);
+                    y[k] = alpha * x[k];
                 }
             }
             else if constexpr ( beta_flag == ScalarFlag::Plus )
@@ -359,7 +359,7 @@ namespace Tools
         ScalarFlag alpha_flag, ScalarFlag beta_flag,
         typename R_0, typename S_0, typename R_1, typename S_1
     >
-    force_inline void combine_buffers( const R_0 alpha, ptr<S_0> x, const R_1 beta, mut<S_1> y )
+    force_inline void combine_buffers( const R_0 alpha_, ptr<S_0> x, const R_1 beta_, mut<S_1> y )
     {
         // This routine computes y[i] = alpha * x[i] + beta * y[i].
         // Depending on the values of alpha_flag and beta_flag, it takes several short cuts:
