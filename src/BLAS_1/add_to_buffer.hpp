@@ -4,32 +4,16 @@ namespace Tools
 {
     
     template <typename R, typename S>
-    force_inline
-    std::enable_if_t<
-        std::is_same_v<R,S>
-        ||
-        (ScalarTraits<S>::IsComplex && std::is_same_v<R,typename ScalarTraits<S>::Real>)
-        ,
-        void
-    >
-    add_to_buffer( ptr<R> from, mut<S> to, const size_t n )
+    force_inline void add_to_buffer( ptr<R> from, mut<S> to, const size_t n )
     {
         for( size_t i = 0; i < n; ++i )
         {
-            to[i] += from[i];
+            to[i] += scalar_cast<S>(from[i]);
         }
     }
     
     template <typename R, typename S>
-    force_inline
-    std::enable_if_t<
-        std::is_same_v<R,S>
-        ||
-        (ScalarTraits<S>::IsComplex && std::is_same_v<R,typename ScalarTraits<S>::Real>)
-        ,
-        void
-    >
-    add_to_buffer( ptr<R> from, mut<S> to, const size_t n, const size_t thread_count )
+    force_inline void add_to_buffer( ptr<R> from, mut<S> to, const size_t n, const size_t thread_count )
     {
         if( thread_count <= 1 )
         {
@@ -45,26 +29,18 @@ namespace Tools
                 
                 for( size_t i = i_begin; i < i_end; ++i )
                 {
-                    to[i] += from[i];
+                    to[i] += scalar_cast<S>(from[i]);
                 }
             }
         }
     }
     
     template <size_t n, typename R, typename S>
-    force_inline
-    std::enable_if_t<
-        std::is_same_v<R,S>
-        ||
-        (ScalarTraits<S>::IsComplex && std::is_same_v<R,typename ScalarTraits<S>::Real>)
-        ,
-        void
-    >
-    add_to_buffer( ptr<R> from, mut<S> to )
+    force_inline void add_to_buffer( ptr<R> from, mut<S> to )
     {
         for( size_t i = 0; i < n; ++i )
         {
-            to[i] += from[i];
+            to[i] += scalar_cast<S>(from[i]);
         }
     }
     

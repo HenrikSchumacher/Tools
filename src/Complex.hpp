@@ -54,6 +54,33 @@ namespace Tools
         static constexpr bool IsComplex = true;
     };
     
+    template <typename S, typename T>
+    struct ScalarsCombinable
+    {
+        static constexpr bool Value() = ScalarTraits<T>::IsComplex || !ScalarTraits<S>::IsComplex;
+    };
+    
+    template <typename S, typename T>
+    struct ScalarCast
+    {
+        using Type = COND(
+            ScalarTraits<T>::IsComplex,
+            COND
+            (
+                ScalarTraits<S>,
+                T,
+                typename ScalarTraits<T>::Real
+            ),
+            std::enable_if_t<!ScalarTraits<S>::IsComplex,T>
+        );
+    };
+    
+    
+    template<typename S, typename T>
+    constexpr force_inline ScalarCast<S,T>::Type scalar_cast( S x )
+    {
+        return static_cast<ScalarCast<S,T>::Type>(x);
+    }
+    
+    
 }
-
- 

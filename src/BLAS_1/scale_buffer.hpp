@@ -4,16 +4,11 @@ namespace Tools
 {
     
     template <typename R, typename S>
-    force_inline
-    std::enable_if_t<
-        std::is_same_v<R,S>
-        ||
-        (ScalarTraits<S>::IsComplex && std::is_same_v<R,typename ScalarTraits<S>::Real>)
-        ,
-        void
-    >
-    scale_buffer( const R beta, mut<S> y, const size_t n )
+    force_inline void scale_buffer( const R beta_, mut<S> y, const size_t n )
     {
+        
+        ScalarCast<R,S>::Type beta = scalar_cast<S>(beta_);
+        
         for( size_t i = 0; i < n; ++i )
         {
             y[i] *= beta;
@@ -21,23 +16,17 @@ namespace Tools
     }
     
     template <typename R, typename S>
-    force_inline
-    std::enable_if_t<
-        std::is_same_v<R,S>
-        ||
-        (ScalarTraits<S>::IsComplex && std::is_same_v<R,typename ScalarTraits<S>::Real>)
-        ,
-        void
-    >
-    scale_buffer( const R beta, mut<S> y, const size_t n, const size_t thread_count )
+    force_inline void scale_buffer( const R beta_, mut<S> y, const size_t n, const size_t thread_count )
     {
         if( thread_count <= 1 )
         {
-            scale_buffer( beta, y, n );
+            scale_buffer( beta_, y, n );
         }
         else
         {
-            #pragma omp parallel for num_threads( thread_count )
+            ScalarCast<R,S>::Type beta = scalar_cast<S>(beta_);
+            
+#pragma omp parallel for num_threads( thread_count )
             for( size_t thread = 0; thread < thread_count; ++thread )
             {
                 const size_t i_begin = JobPointer(n,thread_count,thread  );
@@ -45,26 +34,20 @@ namespace Tools
                 
                 for( size_t i = i_begin; i < i_end; ++i )
                 {
-                    y[i] *= beta;
+                    y[i] *= scalar_cast<S>(beta);
                 }
             }
         }
     }
 
     template <size_t n, typename R, typename S>
-    force_inline
-    std::enable_if_t<
-        std::is_same_v<R,S>
-        ||
-        (ScalarTraits<S>::IsComplex && std::is_same_v<R,typename ScalarTraits<S>::Real>)
-        ,
-        void
-    >
-    scale_buffer( const R beta, mut<S> y )
+    force_inline void scale_buffer( const R beta_, mut<S> y )
     {
+        ScalarCast<R,S>::Type beta = scalar_cast<S>(beta_);
+        
         for( size_t i = 0; i < n; ++i )
         {
-            y[i] *= beta;
+            y[i] *= scalar_cast<S>(beta);
         }
     }
 
