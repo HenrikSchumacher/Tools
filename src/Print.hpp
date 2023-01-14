@@ -7,7 +7,7 @@ namespace Tools
     
     float Duration( const Time & start_time, const Time & stop_time )
     {
-        return std::chrono::duration<float>(stop_time - start_time).count()
+        return std::chrono::duration<float>(stop_time - start_time).count();
     }
     
     namespace Timer
