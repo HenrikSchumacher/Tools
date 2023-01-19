@@ -5,7 +5,7 @@ namespace Tools
     using Clock = std::chrono::steady_clock;
     using Time  = std::chrono::time_point<Clock>;
     
-    float Duration( const Time & start_time, const Time & stop_time )
+    force_inline float Duration( const Time & start_time, const Time & stop_time )
     {
         return std::chrono::duration<float>(stop_time - start_time).count();
     }
