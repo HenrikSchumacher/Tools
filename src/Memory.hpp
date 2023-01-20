@@ -1,10 +1,10 @@
 #pragma once
 
 // length of cache line measured in bytes
-#define CACHE_LINE_WIDTH 64
+static constexpr size_t CACHE_LINE_WIDTH = 64;
 //TODO: Replace the hard-coded constant by __cpp_lib_hardware_interference_size as soon as this C++17 feature is supported by all compilers.
 
-#define MEMORY_PADDING 1
+static constexpr size_t MEMORY_PADDING = 1;
 
 #if !defined(restrict)
     #define restrict __restrict__
@@ -16,11 +16,11 @@
 
 //#define SAFE_ALLOCATE_WARNINGS
 
-#define ALIGNMENT 8
+static constexpr size_t MEMORY_PADDING = 8;
 
 #define ALIGNED __attribute__((aligned(8)))
 
-#define OBJECT_ALIGNMENT 2 * CACHE_LINE_WIDTH
+static constexpr size_t OBJECT_ALIGNMENT = 2 * CACHE_LINE_WIDTH;
 
 #ifndef PREFETCH_STRIDE
     #define PREFETCH_STRIDE (4*CACHE_LINE_WIDTH)
