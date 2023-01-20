@@ -16,7 +16,7 @@ static constexpr size_t MEMORY_PADDING = 1;
 
 //#define SAFE_ALLOCATE_WARNINGS
 
-static constexpr size_t MEMORY_PADDING = 8;
+static constexpr size_t ALIGNMENT = 8;
 
 #define ALIGNED __attribute__((aligned(8)))
 
