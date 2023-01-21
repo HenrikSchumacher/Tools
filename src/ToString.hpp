@@ -38,35 +38,35 @@ namespace Tools
         
         int prec = 16;
         
-        std::string operator()( const * restrict const a, const size_t n ) const
+        std::string operator()( const T * const a, const size_t n ) const
         {
             std::stringstream sout;
-         
+
             sout.precision(prec);
-            
+
             sout << header;
-            
+
             sout << vector_prefix;
             {
                 if( n > 0 )
                 {
                     sout << a[0];
                 }
-                
+
                 for( size_t i = 1; i < n; ++i )
                 {
                     sout << sep << a[i];
                 }
             }
             sout << vector_suffix;
-            
+
             sout << footer;
-            
+
             return sout.str();
         }
         
-    } // Array1DToString
-    
+    }; // Array1DToString
+
     template<typename T>
     struct Array2DToString
     {
@@ -92,55 +92,51 @@ namespace Tools
         
         std::string footer = "";
         
-        Array1DToString row_converter;
+        Array1DToString<T> row_converter;
         
-        std::string operator()( const * restrict const a, const size_t rows, const size_t cols ) const
+        std::string operator()( const T * const a, const size_t rows, const size_t cols ) const
         {
             std::stringstream sout;
-            
+
             sout << header;
-            
+
             sout << matrix_prefix;
             {
                 sout << row_prefix;
-                
+
                 if( rows > 0 )
                 {
                     // write first row
                     sout << row_converter( a, cols );
-                    
+
                     // write remaining rows
-                    
+
                     for( size_t i = 1; i < rows; ++i )
                     {
                         sout << row_suffix << row_sep << row_prefix;
-                        
+
                         sout << row_converter( &a[cols*i], cols );
                     }
                 }
-                
+
                 sout << row_suffix;
             }
-            
+
             sout << matrix_suffix;
-            
+
             sout << footer;
-            
+
             return sout.str();
         }
         
-    } // Array2DToString
+    }; // Array2DToString
 
     
     
     template<typename T>
-    std::string ToString( const * restrict const a, const size_t n, const int p = 16)
+    std::string ToString( const T * const a, const size_t n, const int p = 16)
     {
-        Array1DToString<T> s ();
-        
-        s.prec = p;
-        
-        return s(a, n);
+        return Array1DToString<T>(p)(a, n);
     }
     
     
