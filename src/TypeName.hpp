@@ -25,6 +25,16 @@ namespace Tools
         }
     };
 
+    
+    template <>
+    struct TypeName<int16_t>
+    {
+        static const std::string Get( void )
+        {
+            return std::string("Int16");
+        }
+    };
+    
     template <>
     struct TypeName<int32_t>
     {
@@ -40,6 +50,34 @@ namespace Tools
         static const std::string Get( void )
         {
             return std::string("Int64");
+        }
+    };
+
+    
+    template <>
+    struct TypeName<uint16_t>
+    {
+        static const std::string Get( void )
+        {
+            return std::string("UInt16");
+        }
+    };
+    
+    template <>
+    struct TypeName<uint32_t>
+    {
+        static const std::string Get( void )
+        {
+            return std::string("UInt32");
+        }
+    };
+    
+    template <>
+    struct TypeName<uint64_t>
+    {
+        static const std::string Get( void )
+        {
+            return std::string("UInt64");
         }
     };
 
