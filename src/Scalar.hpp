@@ -1,3 +1,5 @@
+#include <complex>
+
 namespace Tools
 {
     using Real32  = float;

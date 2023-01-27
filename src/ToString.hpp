@@ -16,7 +16,7 @@ namespace Tools
     {
         std::stringstream sout;
         sout.precision(p);
-        sout << real(z) << ((imag(z) < static_cast<T>(0)) ? " + " : " - ") << std::abs(imag(z)) << " I" ;
+        sout << real(z) << ((imag(z) >= static_cast<T>(0)) ? " + " : " - ") << std::abs(imag(z)) << " I" ;
         return sout.str();
     }
     
@@ -24,6 +24,11 @@ namespace Tools
     struct Array1DToString
     {
         Array1DToString() = default;
+        
+        Array1DToString( int prec_ )
+        :   prec( prec_ )
+        {}
+        
         ~Array1DToString() = default;
         
         std::string header = "";

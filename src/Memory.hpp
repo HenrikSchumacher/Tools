@@ -47,6 +47,17 @@ namespace Tools
         return job_count/thread_count*k + job_count%thread_count*k/thread_count;
     }
     
+    template<typename Int>
+    force_inline Int DivideRoundUp( const Int n, const Int b )
+    {
+        return ( (n + b - 1 ) / b );
+    }
+
+    template<typename Int>
+    force_inline Int RoundUpTo( const Int n, const Int b )
+    {
+        return DivideRoundUp(n,b) * b;
+    }
     
     inline bool is_aligned( const void * const pointer, const size_t byte_count = ALIGNMENT )
     {
