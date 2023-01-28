@@ -12,143 +12,119 @@ namespace Tools
     }
 
     template <typename T>
+    std::ostream & operator<<( std::ostream & sout, const std::complex<T> & z )
+    {
+        sout << real(z) << ((imag(z) >= static_cast<T>(0)) ? " + " : " - ") << std::abs(imag(z)) << " I" ;
+        
+        return sout;
+    }
+    
+    template <typename T>
     std::string ToString(const std::complex<T> & z, const int p = 16)
     {
         std::stringstream sout;
         sout.precision(p);
-        sout << real(z) << ((imag(z) >= static_cast<T>(0)) ? " + " : " - ") << std::abs(imag(z)) << " I" ;
+        sout << z;
         return sout.str();
     }
     
-    template<typename T>
-    struct Array1DToString
+    
+    template<typename Scalar, typename Int, class Stream_T>
+    Stream_T & ArrayToStream(
+        const Scalar * const a,
+        const Int * const dims,
+        const Int * const lds,
+        Int rank,
+        Stream_T & s,
+        std::string line_prefix
+    )
     {
-        Array1DToString() = default;
-        
-        Array1DToString( int prec_ )
-        :   prec( prec_ )
-        {}
-        
-        ~Array1DToString() = default;
-        
-        std::string header = "";
-        
-        std::string vector_prefix = "{ ";
-        
-            std::string sep = ", ";
-        
-        std::string vector_suffix = "\n}";
-        
-        std::string footer = "";
-        
-        int prec = 16;
-        
-        std::string operator()( const T * const a, const size_t n ) const
+        if( rank == 0 )
         {
-            std::stringstream sout;
-
-            sout.precision(prec);
-
-            sout << header;
-
-            sout << vector_prefix;
+            s << a[0];
+        }
+        else if( rank == 1 )
+        {
+            s << line_prefix << "{ ";
+            
+            if( dims[0] > 0 )
             {
-                if( n > 0 )
-                {
-                    sout << a[0];
-                }
-
-                for( size_t i = 1; i < n; ++i )
-                {
-                    sout << sep << a[i];
-                }
+                s << a[0];
             }
-            sout << vector_suffix;
-
-            sout << footer;
-
-            return sout.str();
+            
+            for( Int i = 1; i < dims[0]; ++i )
+            {
+                s << ", " << a[i];
+            }
+            
+            s << " }";
+        }
+        else
+        {
+            std::string new_line_prefix = line_prefix+"\t";
+            
+            s << line_prefix << "{" << std::endl;
+            if( dims[0] > 0 )
+            {
+                ArrayToStream( a, &dims[1], &lds[1], rank-1, s, new_line_prefix );
+            }
+            
+            for( Int i = 1; i < dims[0]; ++i )
+            {
+                s << ","  << std::endl;
+                ArrayToStream( &a[lds[0]*i], &dims[1], &lds[1], rank-1, s, new_line_prefix );
+            }
+            
+            s << std::endl;
+            
+            s << line_prefix << "}";
         }
         
-    }; // Array1DToString
-
-    template<typename T>
-    struct Array2DToString
-    {
-        Array2DToString() = default;
-        
-        explicit Array2DToString( int prec )
-        :   row_converter( prec )
-        {}
-        
-        ~Array2DToString() = default;
-        
-        std::string header = "";
-        
-        std::string matrix_prefix = "{\n";
-        
-            std::string row_prefix = "\t";
-        
-            std::string row_suffix = "";
-        
-            std::string row_sep = ",\n";
-        
-        std::string matrix_suffix = "\n}";
-        
-        std::string footer = "";
-        
-        Array1DToString<T> row_converter;
-        
-        std::string operator()( const T * const a, const size_t rows, const size_t cols ) const
-        {
-            std::stringstream sout;
-
-            sout << header;
-
-            sout << matrix_prefix;
-            {
-                sout << row_prefix;
-
-                if( rows > 0 )
-                {
-                    // write first row
-                    sout << row_converter( a, cols );
-
-                    // write remaining rows
-
-                    for( size_t i = 1; i < rows; ++i )
-                    {
-                        sout << row_suffix << row_sep << row_prefix;
-
-                        sout << row_converter( &a[cols*i], cols );
-                    }
-                }
-
-                sout << row_suffix;
-            }
-
-            sout << matrix_suffix;
-
-            sout << footer;
-
-            return sout.str();
-        }
-        
-    }; // Array2DToString
-
-    
-    
-    template<typename T>
-    std::string ToString( const T * const a, const size_t n, const int p = 16)
-    {
-        return Array1DToString<T>(p)(a, n);
+        return s;
     }
     
     
-    template<typename T>
-    std::string ToString( const std::vector<T> & a, const int p = 16)
+    template<typename Scalar, typename Int, class Stream_T>
+    Stream_T & ArrayToStream(
+        const Scalar * const a,
+        const Int * const dims,
+        Int rank,
+        Stream_T & s,
+        std::string line_prefix = std::string("")
+    )
     {
-        return ToString( a.data(), a.size(), p );
+        if( rank >= 0 )
+        {
+            std::vector<Int> lds (rank);
+
+            if( rank >= 1 )
+            {
+                lds[rank-1] = 1;
+                
+                for( size_t i = rank-1; i --> 0;  )
+                {
+                    lds[i] = lds[i+1] * dims[i+1];
+                }
+            }
+            ArrayToStream( a, dims, lds.data(), rank, s, line_prefix );
+        }
+        return s;
     }
+    
+    template<typename Scalar, typename Int>
+    std::string ArrayToString(
+        const Scalar * const a,
+        const Int * const dims,
+        Int rank,
+        Int prec = 16
+    )
+    {
+        std::stringstream s;
+        
+        s << std::setprecision(prec);
+        
+        return ArrayToStream( a, dims, rank, s, std::string("") ).str();
+    }
+
     
 } // namespace Tools

@@ -67,7 +67,7 @@ namespace Tools
             {
                 for( size_t k = 0; k < n; ++k )
                 {
-                    y[k] -= - scalar_cast<S_1>(x[k]);
+                    y[k] -= scalar_cast<S_1>(x[k]);
                 }
             }
             else if constexpr ( beta_flag == ScalarFlag::Minus )
@@ -228,7 +228,7 @@ namespace Tools
                         
                         for( size_t k = k_begin; k < k_end; ++k )
                         {
-                            y[k] -= - scalar_cast<S_1>(x[k]);
+                            y[k] -= scalar_cast<S_1>(x[k]);
                         }
                     }
                 }
@@ -415,7 +415,7 @@ namespace Tools
             {
                 for( size_t k = 0; k < n; ++k )
                 {
-                    y[k] -= - scalar_cast<S_1>(x[k]);
+                    y[k] -= scalar_cast<S_1>(x[k]);
                 }
             }
             else if constexpr ( beta_flag == ScalarFlag::Minus )
