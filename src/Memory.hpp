@@ -48,13 +48,13 @@ namespace Tools
     }
     
     template<typename Int>
-    force_inline Int DivideRoundUp( const Int n, const Int b )
+    force_inline constexpr Int DivideRoundUp( const Int n, const Int b )
     {
         return ( (n + b - 1 ) / b );
     }
 
     template<typename Int>
-    force_inline Int RoundUpTo( const Int n, const Int b )
+    force_inline constexpr Int RoundUpTo( const Int n, const Int b )
     {
         return DivideRoundUp(n,b) * b;
     }
