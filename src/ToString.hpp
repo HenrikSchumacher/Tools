@@ -111,19 +111,19 @@ namespace Tools
         return s;
     }
     
-    template<typename Scalar, typename Int>
+    template<typename Scalar, typename Int, typename Int2, typename Int3>
     std::string ArrayToString(
         const Scalar * const a,
-        const Int * const dims,
-        Int rank,
-        Int prec = 16
+        const Int    * const dims,
+        Int2 rank,
+        Int3 prec = 16
     )
     {
         std::stringstream s;
         
         s << std::setprecision(prec);
         
-        return ArrayToStream( a, dims, rank, s, std::string("") ).str();
+        return ArrayToStream<Scalar,Int>( a, dims, rank, s, std::string("") ).str();
     }
 
     
