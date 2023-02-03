@@ -58,7 +58,7 @@ namespace Tools
         
         Int ThreadCount() const
         {
-            return (job_ptr.size() <= 1 ? 1 : job_ptr.size()-1);
+            return ( job_ptr.size() <= static_cast<std::size_t>(1) ? static_cast<Int>(1) : static_cast<Int>(job_ptr.size()-1) );
         }
         
         Int JobCount() const
