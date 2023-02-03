@@ -36,12 +36,12 @@ namespace Tools
             }
         }
         
-        const Int & operator[]( const size_t i ) const
+        const Int & operator[]( const std::size_t i ) const
         {
             return job_ptr[i];
         }
         
-        const Int & operator()( const size_t i ) const
+        const Int & operator()( const std::size_t i ) const
         {
             return job_ptr[i];
         }
@@ -58,7 +58,7 @@ namespace Tools
         
         Int ThreadCount() const
         {
-            return static_cast<Int>(job_ptr.size()-1);
+            return (job_ptr.size() <= 1 ? 1 : job_ptr.size()-1);
         }
         
         Int JobCount() const

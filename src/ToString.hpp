@@ -39,7 +39,7 @@ namespace Tools
         std::string line_prefix
     )
     {
-        if( rank == 0 )
+        if( rank <= 0 )
         {
             s << a[0];
         }
@@ -101,7 +101,7 @@ namespace Tools
             {
                 lds[rank-1] = 1;
                 
-                for( size_t i = rank-1; i --> 0;  )
+                for( std::size_t i = rank-1; i --> 0;  )
                 {
                     lds[i] = lds[i+1] * dims[i+1];
                 }

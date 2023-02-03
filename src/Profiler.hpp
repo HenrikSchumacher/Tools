@@ -125,7 +125,7 @@ namespace Tools
             
             float start_time = Duration( Profiler::init_time, Profiler::time_stack.back() );
             
-            for( size_t i = 0; i < Profiler::time_stack.size(); ++i )
+            for( std::size_t i = 0; i < Profiler::time_stack.size(); ++i )
             {
                 Profiler::log << "  ";
             }
@@ -156,7 +156,7 @@ namespace Tools
                         << Profiler::tag_stack.size()-1
                         << std::endl;
                     
-                    for( size_t i = 0; i < Profiler::time_stack.size(); ++i )
+                    for( std::size_t i = 0; i < Profiler::time_stack.size(); ++i )
                     {
                         Profiler::log << "  ";
                     }

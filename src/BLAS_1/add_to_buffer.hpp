@@ -4,16 +4,16 @@ namespace Tools
 {
     
     template <typename R, typename S>
-    force_inline void add_to_buffer( ptr<R> from, mut<S> to, const size_t n )
+    force_inline void add_to_buffer( ptr<R> from, mut<S> to, const std::size_t n )
     {
-        for( size_t i = 0; i < n; ++i )
+        for( std::size_t i = 0; i < n; ++i )
         {
             to[i] += scalar_cast<S>(from[i]);
         }
     }
     
     template <typename R, typename S>
-    force_inline void add_to_buffer( ptr<R> from, mut<S> to, const size_t n, const size_t thread_count )
+    force_inline void add_to_buffer( ptr<R> from, mut<S> to, const std::size_t n, const std::size_t thread_count )
     {
         if( thread_count <= 1 )
         {
@@ -22,12 +22,12 @@ namespace Tools
         else
         {
             #pragma omp parallel for num_threads( thread_count )
-            for( size_t thread = 0; thread < thread_count; ++thread )
+            for( std::size_t thread = 0; thread < thread_count; ++thread )
             {
-                const size_t i_begin = JobPointer(n,thread_count,thread  );
-                const size_t i_end   = JobPointer(n,thread_count,thread+1);
+                const std::size_t i_begin = JobPointer(n,thread_count,thread  );
+                const std::size_t i_end   = JobPointer(n,thread_count,thread+1);
                 
-                for( size_t i = i_begin; i < i_end; ++i )
+                for( std::size_t i = i_begin; i < i_end; ++i )
                 {
                     to[i] += scalar_cast<S>(from[i]);
                 }
@@ -35,10 +35,10 @@ namespace Tools
         }
     }
     
-    template <size_t n, typename R, typename S>
+    template <std::size_t n, typename R, typename S>
     force_inline void add_to_buffer( ptr<R> from, mut<S> to )
     {
-        for( size_t i = 0; i < n; ++i )
+        for( std::size_t i = 0; i < n; ++i )
         {
             to[i] += scalar_cast<S>(from[i]);
         }

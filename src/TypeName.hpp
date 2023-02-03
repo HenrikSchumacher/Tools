@@ -82,7 +82,7 @@ namespace Tools
     };
 
     template <>
-    struct TypeName<size_t>
+    struct TypeName<std::size_t>
     {
         static const std::string Get( void )
         {

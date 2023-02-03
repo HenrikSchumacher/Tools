@@ -4,6 +4,8 @@ namespace Tools
     template<typename T, typename Int>
     class SortedList
     {
+        ASSERT_SIGNED_INT(Int)
+        
         std::vector<T> list;
         
     public:
