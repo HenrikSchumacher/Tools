@@ -266,11 +266,11 @@ namespace Tools
             s << "{ ";
             if( n > 0 )
             {
-                s<< Tools::ToString(list[0],p);
+                s<< ToString(list[0],p);
 
                 for( std::size_t i = 1; i < n; ++i )
                 {
-                    s <<", " << Tools::ToString(list[i],p);
+                    s <<", " << ToString(list[i],p);
                 }
             }
             s<< " }";

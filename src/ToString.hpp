@@ -28,9 +28,9 @@ namespace Tools
         return sout.str();
     }
     
-    template<typename Scalar, typename Int, class Stream_T>
+    template<typename Scal, typename Int, class Stream_T>
     Stream_T & ArrayToStream(
-        const Scalar * const a,
+        const Scal * const a,
         const Int * const dims,
         const Int * const lds,
         Int rank,
@@ -83,9 +83,9 @@ namespace Tools
     }
     
     
-    template<typename Scalar, typename Int, class Stream_T>
+    template<typename Scal, typename Int, class Stream_T>
     Stream_T & ArrayToStream(
-        const Scalar * const a,
+        const Scal * const a,
         const Int    * const dims,
         Int rank,
         Stream_T & s,
@@ -110,10 +110,10 @@ namespace Tools
         return s;
     }
     
-    template<typename Scalar, typename Int, typename Int2, typename Int3>
+    template<typename Scal, typename Int, typename Int2, typename Int3>
     std::string ArrayToString(
-        const Scalar * const a,
-        const Int    * const dims,
+        const Scal * const a,
+        const Int  * const dims,
         Int2 rank,
         Int3 prec = 16
     )
@@ -122,7 +122,7 @@ namespace Tools
         
         s << std::setprecision(prec);
         
-        (void)ArrayToStream<Scalar,Int>( a, dims, rank, s, std::string("") ).str();
+        (void)ArrayToStream<Scal,Int>( a, dims, rank, s, std::string("") ).str();
 
         return s.str();
     }

@@ -110,6 +110,8 @@
     #include "src/TypeName.hpp"
     #include "src/Memory.hpp"
 
+    #include "src/Scalars/combine_scalars.hpp"
+
     #include "src/BLAS_1.hpp"
 
     #include "src/SortedList.hpp"

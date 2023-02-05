@@ -215,11 +215,11 @@ namespace Tools
             sout << "{ ";
             if( Size() > 0 )
             {
-                sout << Tools::ToString(job_ptr[0],p);
+                sout << ToString(job_ptr[0],p);
             }
             for( Int i = 1; i < Size(); ++i )
             {
-                sout << ", " << Tools::ToString(job_ptr[i],p);
+                sout << ", " << ToString(job_ptr[i],p);
             }
             sout << " }";
             return sout.str();
