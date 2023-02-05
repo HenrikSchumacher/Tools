@@ -6,7 +6,7 @@ namespace Tools
     template <typename S>
     force_inline std::size_t iamax_buffer( ptr<S> z, const std::size_t n )
     {
-        using R = typename ScalarTraits<S>::Real;
+        using R = typename Scalar::Real<S>;
         
         R max = 0;
         std::size_t pos = 0;
@@ -26,7 +26,7 @@ namespace Tools
     template <std::size_t n, typename S>
     force_inline std::size_t iamax_buffer( ptr<S> z )
     {
-        using R = typename ScalarTraits<S>::Real;
+        using R = typename Scalar::Real<S>;
         
         R max = 0;
         std::size_t pos = 0;

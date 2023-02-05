@@ -7,145 +7,35 @@ namespace Tools
     // Taken from https://stackoverflow.com/a/4485051/8248900
     
     // default implementation
-    template <typename T>
-    struct TypeName
-    {
-        static const std::string Get( void )
-        {
-            return typeid(T).name();
-        }
-    };
+    template<typename T>
+    inline constexpr const char * TypeName = typeid(T).name();
     
-    template <typename T>
-    struct TypeName<std::complex<T>>
-    {
-        static const std::string Get( void )
-        {
-            return "std::complex<"+TypeName<T>::Get()+">";
-        }
-    };
-
+    template<> inline constexpr const char * TypeName<Int16> = "I16";
     
-    template <>
-    struct TypeName<int16_t>
-    {
-        static const std::string Get( void )
-        {
-            return std::string("Int16");
-        }
-    };
+    template<> inline constexpr const char * TypeName<Int32> = "I32";
     
-    template <>
-    struct TypeName<int32_t>
-    {
-        static const std::string Get( void )
-        {
-            return std::string("Int32");
-        }
-    };
+    template<> inline constexpr const char * TypeName<Int64> = "I64";
     
-    template <>
-    struct TypeName<int64_t>
-    {
-        static const std::string Get( void )
-        {
-            return std::string("Int64");
-        }
-    };
-
+    template<> inline constexpr const char * TypeName<UInt16> = "U16";
     
-    template <>
-    struct TypeName<uint16_t>
-    {
-        static const std::string Get( void )
-        {
-            return std::string("UInt16");
-        }
-    };
+    template<> inline constexpr const char * TypeName<UInt32> = "U32";
     
-    template <>
-    struct TypeName<uint32_t>
-    {
-        static const std::string Get( void )
-        {
-            return std::string("UInt32");
-        }
-    };
+    template<> inline constexpr const char * TypeName<UInt64> = "U64";
     
-    template <>
-    struct TypeName<uint64_t>
-    {
-        static const std::string Get( void )
-        {
-            return std::string("UInt64");
-        }
-    };
-
-    template <>
-    struct TypeName<std::size_t>
-    {
-        static const std::string Get( void )
-        {
-            return std::string("size_t");
-        }
-    };
-    
-    
-    template <>
-    struct TypeName<float>
-    {
-        static const std::string Get( void )
-        {
-            return std::string("Real32");
-        }
-    };
-    
-    template <>
-    struct TypeName<double>
-    {
-        static const std::string Get( void )
-        {
-            return std::string("Real64");
-        }
-    };
-    
-    template <>
-    struct TypeName<long double>
-    {
-        static const std::string Get( void )
-        {
-            return std::string("Real128");
-        }
-    };
-    
-    template <>
-    struct TypeName<std::complex<float>>
-    {
-        static const std::string Get( void )
-        {
-            return std::string("Complex32");
-        }
-    };
-    
-    template <>
-    struct TypeName<std::complex<double>>
-    {
-        static const std::string Get( void )
-        {
-            return std::string("Complex64");
-        }
-    };
-    
-    template <>
-    struct TypeName<std::complex<long double>>
-    {
-        static const std::string Get( void )
-        {
-            return std::string("Complex128");
-        }
-    };
-
+    template<> inline constexpr const char * TypeName<std::size_t> = "size_t";
     
 
     
-} // namespace Tools
+    template<> inline constexpr const char * TypeName<Real32>  = "R32";
+    
+    template<> inline constexpr const char * TypeName<Real64>  = "R64";
+    
+    template<> inline constexpr const char * TypeName<Real128> = "R128";
+
+    
+    template<> inline constexpr const char * TypeName<Complex32>  = "C32";
+    
+    template<> inline constexpr const char * TypeName<Complex64>  = "C64";
+    
+    template<> inline constexpr const char * TypeName<Complex128> = "C16";
+    } // namespace Tools

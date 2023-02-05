@@ -4,9 +4,9 @@ namespace Tools
 {
     
     template <typename S>
-    force_inline typename ScalarTraits<S>::Real norm_2( ptr<S> z, const std::size_t n )
+    force_inline typename Scalar::Real<S> norm_2( ptr<S> z, const std::size_t n )
     {
-        typename ScalarTraits<S>::Real norm_squared = 0;
+        typename Scalar::Real<S> norm_squared = 0;
         
         for( std::size_t i = 0; i < n; ++i )
         {
@@ -16,9 +16,9 @@ namespace Tools
     }
 
     template <std::size_t n, typename S>
-    force_inline typename ScalarTraits<S>::Real norm_2( ptr<S> z )
+    force_inline typename Scalar::Real<S> norm_2( ptr<S> z )
     {
-        typename ScalarTraits<S>::Real norm_squared = 0;
+        typename Scalar::Real<S> norm_squared = 0;
         
         for( std::size_t i = 0; i < n; ++i )
         {

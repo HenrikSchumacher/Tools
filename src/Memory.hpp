@@ -54,10 +54,10 @@ namespace Tools
     }
     
     // Computes k-tj job pointer for job_count equallize sized jobs distributed on thread_count threads.
-    template<typename Int>
-    force_inline Int JobPointer( const Int job_count, const Int thread_count, const Int k )
+    template<typename Int, typename Int1, typename Int2>
+    force_inline Int JobPointer( const Int job_count, const Int1 thread_count, const Int2 k )
     {
-        return job_count/thread_count*k + job_count%thread_count*k/thread_count;
+        return job_count/static_cast<Int>(thread_count)*static_cast<Int>(k) + job_count%static_cast<Int>(thread_count)*static_cast<Int>(k)/static_cast<Int>(thread_count);
     }
     
     inline bool is_aligned( const void * const pointer, const std::size_t byte_count = ALIGNMENT )

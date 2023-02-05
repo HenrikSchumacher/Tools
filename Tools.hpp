@@ -37,12 +37,17 @@
     #define CONCAT3(id1, id2, id3) CONCATT3(id1, id2, id3)
         
         
-    #define OMP_PLACES cores
+//    #define OMP_PLACES cores
+    #define OMP_PLACES threads
+
     #define OMP_WAIT_POLICY = active
+//    #define OMP_WAIT_POLICY = passive
+
     #define OMP_DYNAMIC = false
-        //#define OMP_PROC_BIND = true
-    #define OMP_PROC_BIND spread // workers are spread across the available places to maximize the space inbetween two neighbouring threads
-                                 //#define OMP_PROC_BIND close // worker threads are close to the master in contiguous partitions, e. g. if the master is occupying hardware thread 0, worker 1 will be placed on hw thread 1, worker 2 on hw thread 2 and so on
+
+    #define OMP_PROC_BIND = true
+//    #define OMP_PROC_BIND spread // workers are spread across the available places to maximize the space inbetween two neighbouring threads
+//    //#define OMP_PROC_BIND close // worker threads are close to the master in contiguous partitions, e. g. if the master is occupying hardware thread 0, worker 1 will be placed on hw thread 1, worker 2 on hw thread 2 and so on
         
     #include <omp.h>
         
@@ -98,11 +103,11 @@
 
 #define ASSERT_FLOAT(type) static_assert( std::is_floating_point_v<type>, "Template parameter " #type " must be floating point type." );
 
-    #include "src/TypeName.hpp"
     #include "src/ToString.hpp"
     #include "src/Print.hpp"
     #include "src/Profiler.hpp"
     #include "src/Scalars.hpp"
+    #include "src/TypeName.hpp"
     #include "src/Memory.hpp"
 
     #include "src/BLAS_1.hpp"
@@ -170,12 +175,13 @@
 
 
     namespace Tools
-    {
-        template <class Enum>
-        auto to_underlying(Enum e)
+    {        
+        template <typename E>
+        constexpr typename std::underlying_type<E>::type to_underlying(E e) noexcept
         {
-            return static_cast<std::underlying_type_t<Enum>>(e);
+            return static_cast<typename std::underlying_type<E>::type>(e);
         }
+
     }
 
 #endif
