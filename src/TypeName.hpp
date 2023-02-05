@@ -8,7 +8,7 @@ namespace Tools
     
     // default implementation
     template<typename T>
-    inline constexpr const char * TypeName = typeid(T).name();
+    inline constexpr const char * TypeName = "UnknownType";
     
     template<> inline constexpr const char * TypeName<Int16> = "I16";
     
