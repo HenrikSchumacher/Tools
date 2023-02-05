@@ -12,19 +12,22 @@ namespace Tools
         
         ~JobPointers() = default;
         
-        explicit JobPointers( const Int thread_count )
-        :   job_ptr ( std::vector<Int>(thread_count+1, static_cast<Int>(0) ) )
-        {}
+//        explicit JobPointers( const Int thread_count )
+//        :   job_ptr ( std::vector<Int>(thread_count+1, static_cast<Int>(0) ) )
+//        {
+//
+//        }
         
-        JobPointers( const Int job_count, const Int thread_count )
-        :   JobPointers(thread_count)
+        template<typename I>
+        JobPointers( const Int job_count, const I thread_count )
+        :   job_ptr ( std::vector<Int>(thread_count+1, static_cast<Int>(0) ) )
         {
             BalanceWorkLoad( job_count );
         }
         
-        template<typename T>
-        JobPointers( const Int job_count, ptr<T> costs, const Int thread_count, bool accumulate = true )
-        :   JobPointers(thread_count)
+        template<typename T, typename I>
+        JobPointers( const Int job_count, ptr<T> costs, const I thread_count, bool accumulate = true )
+        :   job_ptr ( std::vector<Int>(thread_count+1, static_cast<Int>(0) ) )
         {
             if( accumulate )
             {
@@ -36,12 +39,12 @@ namespace Tools
             }
         }
         
-        const Int & operator[]( const size_t i ) const
+        const Int & operator[]( const std::size_t i ) const
         {
             return job_ptr[i];
         }
         
-        const Int & operator()( const size_t i ) const
+        const Int & operator()( const std::size_t i ) const
         {
             return job_ptr[i];
         }
@@ -58,7 +61,11 @@ namespace Tools
         
         Int ThreadCount() const
         {
-            return static_cast<Int>(job_ptr.size()-1);
+            if( job_ptr.size() <= static_cast<std::size_t>(0) )
+            {
+                wprint("ThreadCount: empty JobPointers detected.");
+            }
+            return ( job_ptr.size() <= static_cast<std::size_t>(1) ? static_cast<Int>(1) : static_cast<Int>(job_ptr.size()-1) );
         }
         
         Int JobCount() const
@@ -69,6 +76,21 @@ namespace Tools
         const Int * data() const
         {
             return job_ptr.data();
+        }
+        
+        const std::vector<Int> & Vector() const
+        {
+            return job_ptr;
+        }
+        
+        auto Begin() const
+        {
+            return job_ptr.begin();
+        }
+        
+        auto End() const
+        {
+            return job_ptr.end();
         }
         
         void BalanceWorkLoad( const Int job_count )

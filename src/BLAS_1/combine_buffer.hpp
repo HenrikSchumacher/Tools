@@ -2,493 +2,194 @@
 
 namespace Tools
 {
-    enum class ScalarFlag : char
-    {
-        Generic = 2,
-        Plus    = 1,
-        Minus   = -1,
-        Zero    = 0
-    };
-    
     template<
-        ScalarFlag alpha_flag, ScalarFlag beta_flag,
+        Scalar::Flag alpha_flag, Scalar::Flag beta_flag,
         typename R_0, typename S_0,
         typename R_1, typename S_1
     >
-    force_inline void combine_buffers( const R_0 alpha_, ptr<S_0> x, const R_1 beta_, mut<S_1> y, const size_t n )
+    static force_inline constexpr void combine_buffers(
+        const R_0 & alpha, ptr<S_0> x,
+        const R_1 & beta,  mut<S_1> y,
+        const std::size_t n
+    )
     {
+        using namespace Scalar;
+        
         // This routine computes y[i] = alpha * x[i] + beta * y[i].
         // Depending on the values of alpha_flag and beta_flag, it takes several short cuts:
-        // If alpha_flag == 0, then it assumes alpha = 0.
-        // If alpha_flag == 1, then it assumes alpha = 1.
+        // If alpha_flag == Flag::Zero,  then it assumes alpha = 0.
+        // If alpha_flag == Flag::Plus,  then it assumes alpha = 1.
+        // If alpha_flag == Flag::Minus, then it assumes alpha = -1.
+        // If alpha_flag == Flag::Generic, then it assumes generic values for alpha.
         
-        // If beta_flag == 0, then it assumes beta = 0.
-        // If beta_flag == 1, then it assumes beta = 1.
+        // If beta_flag == Flag::Zero,  then it assumes beta = 0.
+        // If beta_flag == Flag::Plus,  then it assumes beta = 1.
+        // If beta_flag == Flag::Minus, then it assumes beta = -1.
+        // If beta_flag == Flag::Generic, then it assumes generic values for beta.
         
-        // For all other values of alpha_flag and beta_flag, it assumes generic of alpha and beta (and hence performs the actual computation).
+        static_assert( IsComplex<S_1> || (IsReal<R_0> && IsReal<S_0> && IsReal<R_1>),
+            "Fourth argument is real, but some of the other arguments are complex."
+        );
         
-        const typename ScalarCast<R_0,S_0>::Type alpha = scalar_cast<S_0>(alpha_);
-        const typename ScalarCast<R_1,S_1>::Type beta  = scalar_cast<S_0>(beta_ );
+        static_assert(
+            Prec<R_0> == Prec<S_1>,
+            "Precisions of first and fourth argument do not coincide."
+        );
         
-        if constexpr ( alpha_flag == ScalarFlag::Plus )
+        static_assert(
+            Prec<R_1> == Prec<S_1>,
+            "Precisions of third and fourth argument do not coincide."
+        );
+        
+        if constexpr ( (beta_flag == Flag::Zero) && (alpha_flag == Flag::Zero) )
         {
-            // alpha == 1;
-            if constexpr ( beta_flag == ScalarFlag::Zero )
-            {
-                copy_buffer(x,y,n);
-            }
-            else if constexpr ( beta_flag == ScalarFlag::Plus )
-            {
-                add_to_buffer(x,y,n);
-            }
-            else if constexpr ( beta_flag == ScalarFlag::Minus )
-            {
-                for( size_t k = 0; k < n; ++k )
-                {
-                    y[k] = scalar_cast<S_1>(x[k]) - y[k];
-                }
-            }
-            else
-            {
-                for( size_t k = 0; k < n; ++k )
-                {
-                    y[k] = scalar_cast<S_1>(x[k]) + beta * y[k];
-                }
-            }
+            zerofy_buffer(y,n);
         }
-        else if constexpr ( alpha_flag == ScalarFlag::Minus )
+        else if constexpr ( (beta_flag == Flag::Zero) && (alpha_flag == Flag::Plus) )
         {
-            // alpha == -1;
-            if constexpr ( beta_flag == ScalarFlag::Zero )
-            {
-                copy_buffer(x,y,n);
-            }
-            else if constexpr ( beta_flag == ScalarFlag::Plus )
-            {
-                for( size_t k = 0; k < n; ++k )
-                {
-                    y[k] -= scalar_cast<S_1>(x[k]);
-                }
-            }
-            else if constexpr ( beta_flag == ScalarFlag::Minus )
-            {
-                for( size_t k = 0; k < n; ++k )
-                {
-                    y[k] = -y[k] - scalar_cast<S_1>(x[k]);
-                }
-            }
-            else if constexpr ( beta_flag == ScalarFlag::Generic )
-            {
-                for( size_t k = 0; k < n; ++k )
-                {
-                    y[k] = beta * y[k] - scalar_cast<S_1>(x[k]);
-                }
-            }
-        }
-        else if constexpr ( alpha_flag == ScalarFlag::Zero )
-        {
-            if constexpr ( beta_flag == ScalarFlag::Zero )
-            {
-                zerofy_buffer(y,n);
-            }
-            else if constexpr ( beta_flag == ScalarFlag::Plus )
-            {
-                // do nothing;
-            }
-            else if constexpr ( beta_flag == ScalarFlag::Minus )
-            {
-                for( size_t k = 0; k < n; ++k )
-                {
-                    y[k] = - y[k];
-                }
-            }
-            else if constexpr ( beta_flag == ScalarFlag::Generic )
-            {
-                scale_buffer(beta,y,n);
-            }
+            copy_buffer(x,y,n);
         }
         else
         {
-            // alpha arbitrary;
-            if constexpr ( beta_flag == ScalarFlag::Zero )
+//            for( std::size_t k = 0; k < n; ++k )
+//            {
+//                y[k] = alpha * x[k] + beta * y[k];
+//            }
+            for( std::size_t k = 0; k < n; ++k )
             {
-                for( size_t k = 0; k < n; ++k )
-                {
-                    y[k] = alpha * x[k];
-                }
-            }
-            else if constexpr ( beta_flag == ScalarFlag::Plus )
-            {
-                for( size_t k = 0; k < n; ++k )
-                {
-                    y[k] += scalar_cast<S_1>(alpha * x[k]);
-                }
-            }
-            else if constexpr ( beta_flag == ScalarFlag::Minus )
-            {
-                for( size_t k = 0; k < n; ++k )
-                {
-                    y[k] = scalar_cast<S_1>(alpha * x[k]) - y[k];
-                }
-            }
-            else if constexpr ( beta_flag == ScalarFlag::Generic )
-            {
-                // general alpha and general beta
-                for( size_t k = 0; k < n; ++k )
-                {
-                    y[k] = scalar_cast<S_1>(alpha * x[k]) + (beta * y[k]);
-                }
+                combine_scalars<alpha_flag,beta_flag>(alpha, x[k], beta, y[k]);
             }
         }
     }
     
     
     template<
-        ScalarFlag alpha_flag, ScalarFlag beta_flag,
+        Scalar::Flag alpha_flag, Scalar::Flag beta_flag,
         typename R_0, typename S_0,
         typename R_1, typename S_1
     >
-    force_inline void combine_buffers( const R_0 alpha_, ptr<S_0> x, const R_1 beta_, mut<S_1> y, const size_t n,
-        const size_t thread_count
+    force_inline void combine_buffers(
+        const R_0 & alpha, ptr<S_0> x,
+        const R_1 & beta,  mut<S_1> y,
+        const std::size_t n,
+        const std::size_t thread_count
     )
     {
+        using namespace Scalar;
+        
         // This routine computes y[i] = alpha * x[i] + beta * y[i].
         // Depending on the values of alpha_flag and beta_flag, it takes several short cuts:
-        // If alpha_flag == 0, then it assumes alpha = 0.
-        // If alpha_flag == 1, then it assumes alpha = 1.
+        // If alpha_flag == Flag::Zero,  then it assumes alpha = 0.
+        // If alpha_flag == Flag::Plus,  then it assumes alpha = 1.
+        // If alpha_flag == Flag::Minus, then it assumes alpha = -1.
+        // If alpha_flag == Flag::Generic, then it assumes generic values for alpha.
         
-        // If beta_flag == 0, then it assumes beta = 0.
-        // If beta_flag == 1, then it assumes beta = 1.
+        // If beta_flag == Flag::Zero,  then it assumes beta = 0.
+        // If beta_flag == Flag::Plus,  then it assumes beta = 1.
+        // If beta_flag == Flag::Minus, then it assumes beta = -1.
+        // If beta_flag == Flag::Generic, then it assumes generic values for beta.
         
-        // For all other values of alpha_flag and beta_flag, it assumes generic of alpha and beta (and hence performs the actual computation).
+        static_assert( IsComplex<S_1> || (IsReal<R_0> && IsReal<S_0> && IsReal<R_1>),
+            "Fourth argument is real, but some of the other arguments are complex."
+        );
         
-        const typename ScalarCast<R_0,S_0>::Type alpha = scalar_cast<S_0>(alpha_);
-        const typename ScalarCast<R_1,S_1>::Type beta  = scalar_cast<S_0>(beta_ );
+        static_assert(
+            Prec<R_0> == Prec<S_1>,
+            "Precisions of first and fourth argument do not coincide."
+        );
         
-        if( thread_count <= 1 )
+        static_assert(
+            Prec<R_1> == Prec<S_1>,
+            "Precisions of third and fourth argument do not coincide."
+        );
+        
+        if constexpr ( (beta_flag == Flag::Zero) && (alpha_flag == Flag::Zero) )
         {
-            combine_buffers<alpha_flag,beta_flag>(alpha,x,beta,y,n);
+            zerofy_buffer(y,n,thread_count);
+        }
+        else if constexpr ( (beta_flag == Flag::Zero) && (alpha_flag == Flag::Plus) )
+        {
+            copy_buffer(x,y,n,thread_count);
         }
         else
         {
-            if constexpr ( alpha_flag == ScalarFlag::Plus )
+            if( thread_count > 1 )
             {
-                // alpha == 1;
-                if constexpr ( beta_flag == ScalarFlag::Zero )
+                #pragma omp parallel for num_threads( thread_count )
+                for( std::size_t thread = 0; thread < thread_count; ++thread )
                 {
-                    copy_buffer(x,y,n,thread_count);
-                }
-                else if constexpr ( beta_flag == ScalarFlag::Plus )
-                {
-                    add_to_buffer(x,y,n,thread_count);
-                }
-                else if constexpr ( beta_flag == ScalarFlag::Minus )
-                {
-                    #pragma omp parallel for num_threads( thread_count )
-                    for( size_t thread = 0; thread < thread_count; ++thread )
+                    const std::size_t k_begin = JobPointer(n,thread_count,thread  );
+                    const std::size_t k_end   = JobPointer(n,thread_count,thread+1);
+                    
+                    for( std::size_t k = k_begin; k < k_end; ++k )
                     {
-                        const size_t k_begin = JobPointer(n,thread_count,thread  );
-                        const size_t k_end   = JobPointer(n,thread_count,thread+1);
-                        
-                        for( size_t k = k_begin; k < k_end; ++k )
-                        {
-                            y[k] = scalar_cast<S_1>(x[k]) - y[k];
-                        }
+                        combine_scalars<alpha_flag,beta_flag>(alpha, x[k], beta, y[k]);
                     }
-                }
-                else
-                {
-                    #pragma omp parallel for num_threads( thread_count )
-                    for( size_t thread = 0; thread < thread_count; ++thread )
-                    {
-                        const size_t k_begin = JobPointer(n,thread_count,thread  );
-                        const size_t k_end   = JobPointer(n,thread_count,thread+1);
-                        
-                        for( size_t k = k_begin; k < k_end; ++k )
-                        {
-                            y[k] = scalar_cast<S_1>(x[k]) + beta * y[k];
-                        }
-                    }
-                }
-            }
-            else if constexpr ( alpha_flag == ScalarFlag::Minus )
-            {
-                // alpha == -1;
-                if constexpr ( beta_flag == ScalarFlag::Zero )
-                {
-                    copy_buffer(x,y,n,thread_count);
-                }
-                else if constexpr ( beta_flag == ScalarFlag::Plus )
-                {
-                    #pragma omp parallel for num_threads( thread_count )
-                    for( size_t thread = 0; thread < thread_count; ++thread )
-                    {
-                        const size_t k_begin = JobPointer(n,thread_count,thread  );
-                        const size_t k_end   = JobPointer(n,thread_count,thread+1);
-                        
-                        for( size_t k = k_begin; k < k_end; ++k )
-                        {
-                            y[k] -= scalar_cast<S_1>(x[k]);
-                        }
-                    }
-                }
-                else if constexpr ( beta_flag == ScalarFlag::Minus )
-                {
-                    #pragma omp parallel for num_threads( thread_count )
-                    for( size_t thread = 0; thread < thread_count; ++thread )
-                    {
-                        const size_t k_begin = JobPointer(n,thread_count,thread  );
-                        const size_t k_end   = JobPointer(n,thread_count,thread+1);
-                        
-                        for( size_t k = k_begin; k < k_end; ++k )
-                        {
-                            y[k] = -y[k] - scalar_cast<S_1>(x[k]);
-                        }
-                    }
-                }
-                else if constexpr ( beta_flag == ScalarFlag::Generic )
-                {
-                    #pragma omp parallel for num_threads( thread_count )
-                    for( size_t thread = 0; thread < thread_count; ++thread )
-                    {
-                        const size_t k_begin = JobPointer(n,thread_count,thread  );
-                        const size_t k_end   = JobPointer(n,thread_count,thread+1);
-                        
-                        for( size_t k = k_begin; k < k_end; ++k )
-                        {
-                            y[k] = beta * y[k] - scalar_cast<S_1>(x[k]);
-                        }
-                    }
-                }
-            }
-            else if constexpr ( alpha_flag == ScalarFlag::Zero )
-            {
-                if constexpr ( beta_flag == ScalarFlag::Zero )
-                {
-                    zerofy_buffer(y,n,thread_count);
-                }
-                else if constexpr ( beta_flag == ScalarFlag::Plus )
-                {
-                    // do nothing;
-                }
-                else if constexpr ( beta_flag == ScalarFlag::Minus )
-                {
-                    #pragma omp parallel for num_threads( thread_count )
-                    for( size_t thread = 0; thread < thread_count; ++thread )
-                    {
-                        const size_t k_begin = JobPointer(n,thread_count,thread  );
-                        const size_t k_end   = JobPointer(n,thread_count,thread+1);
-                        
-                        for( size_t k = k_begin; k < k_end; ++k )
-                        {
-                            y[k] = - y[k];
-                        }
-                    }
-                }
-                else if constexpr ( beta_flag == ScalarFlag::Generic )
-                {
-                    scale_buffer(beta,y,n,thread_count);
                 }
             }
             else
             {
-                // alpha arbitrary;
-                if constexpr ( beta_flag == ScalarFlag::Zero )
+                for( std::size_t k = 0; k < n; ++k )
                 {
-                    #pragma omp parallel for num_threads( thread_count )
-                    for( size_t thread = 0; thread < thread_count; ++thread )
-                    {
-                        const size_t k_begin = JobPointer(n,thread_count,thread  );
-                        const size_t k_end   = JobPointer(n,thread_count,thread+1);
-                        
-                        for( size_t k = k_begin; k < k_end; ++k )
-                        {
-                            y[k] = scalar_cast<S_1>(alpha * x[k]);
-                        }
-                    }
-                }
-                else if constexpr ( beta_flag == ScalarFlag::Plus )
-                {
-                    #pragma omp parallel for num_threads( thread_count )
-                    for( size_t thread = 0; thread < thread_count; ++thread )
-                    {
-                        const size_t k_begin = JobPointer(n,thread_count,thread  );
-                        const size_t k_end   = JobPointer(n,thread_count,thread+1);
-                        
-                        for( size_t k = k_begin; k < k_end; ++k )
-                        {
-                            y[k] += scalar_cast<S_1>(alpha * x[k]);
-                        }
-                    }
-                }
-                else if constexpr ( beta_flag == ScalarFlag::Minus )
-                {
-                    #pragma omp parallel for num_threads( thread_count )
-                    for( size_t thread = 0; thread < thread_count; ++thread )
-                    {
-                        const size_t k_begin = JobPointer(n,thread_count,thread  );
-                        const size_t k_end   = JobPointer(n,thread_count,thread+1);
-                        
-                        for( size_t k = k_begin; k < k_end; ++k )
-                        {
-                            y[k] = scalar_cast<S_1>(alpha * x[k]) - y[k];
-                        }
-                    }
-                }
-                else if constexpr ( beta_flag == ScalarFlag::Generic )
-                {
-                    // general alpha and general beta
-                    #pragma omp parallel for num_threads( thread_count )
-                    for( size_t thread = 0; thread < thread_count; ++thread )
-                    {
-                        const size_t k_begin = JobPointer(n,thread_count,thread  );
-                        const size_t k_end   = JobPointer(n,thread_count,thread+1);
-                        
-                        for( size_t k = k_begin; k < k_end; ++k )
-                        {
-                            y[k] = scalar_cast<S_1>(alpha * x[k]) + (beta * y[k]);
-                        }
-                    }
+                    combine_scalars<alpha_flag,beta_flag>(alpha, x[k], beta, y[k]);
                 }
             }
         }
     }
 
     template<
-        size_t n,
-        ScalarFlag alpha_flag, ScalarFlag beta_flag,
+        std::size_t n,
+        Scalar::Flag alpha_flag, Scalar::Flag beta_flag,
         typename R_0, typename S_0, typename R_1, typename S_1
     >
-    force_inline void combine_buffers( const R_0 alpha_, ptr<S_0> x, const R_1 beta_, mut<S_1> y )
+    constexpr force_inline void combine_buffers(
+        const R_0 & alpha, ptr<S_0> x,
+        const R_1 & beta,  mut<S_1> y
+    )
     {
+        using namespace Scalar;
+        
         // This routine computes y[i] = alpha * x[i] + beta * y[i].
         // Depending on the values of alpha_flag and beta_flag, it takes several short cuts:
-        // If alpha_flag == ScalarFlag::Zero,  then it assumes alpha = 0.
-        // If alpha_flag == ScalarFlag::Plus,  then it assumes alpha = 1.
-        // If alpha_flag == ScalarFlag::Minus, then it assumes alpha = -1.
-        // If alpha_flag == ScalarFlag::Generic, then it assumes generic values for alpha.
+        // If alpha_flag == Flag::Zero,  then it assumes alpha = 0.
+        // If alpha_flag == Flag::Plus,  then it assumes alpha = 1.
+        // If alpha_flag == Flag::Minus, then it assumes alpha = -1.
+        // If alpha_flag == Flag::Generic, then it assumes generic values for alpha.
         
-        // If beta_flag == ScalarFlag::Zero,  then it assumes beta = 0.
-        // If beta_flag == ScalarFlag::Plus,  then it assumes beta = 1.
-        // If beta_flag == ScalarFlag::Minus, then it assumes beta = -1.
-        // If beta_flag == ScalarFlag::Generic, then it assumes generic values for beta.
+        // If beta_flag == Flag::Zero,  then it assumes beta = 0.
+        // If beta_flag == Flag::Plus,  then it assumes beta = 1.
+        // If beta_flag == Flag::Minus, then it assumes beta = -1.
+        // If beta_flag == Flag::Generic, then it assumes generic values for beta.
+
+        static_assert( IsComplex<S_1> || (IsReal<R_0> && IsReal<S_0> && IsReal<R_1>),
+            "Fourth argument is real, but some of the other arguments are complex."
+        );
         
-        // For all other values of alpha_flag and beta_flag, it assumes generic of alpha and beta (and hence performs the actual computation).
+        static_assert(
+            Prec<R_0> == Prec<S_1>,
+            "Precisions of first and fourth argument do not coincide."
+        );
         
-        const typename ScalarCast<R_0,S_0>::Type alpha = scalar_cast<S_0>(alpha_);
-        const typename ScalarCast<R_1,S_1>::Type beta  = scalar_cast<S_0>(beta_ );
+        static_assert(
+            Prec<R_1> == Prec<S_1>,
+            "Precisions of third and fourth argument do not coincide."
+        );
         
-        if constexpr ( alpha_flag == ScalarFlag::Plus )
+        if constexpr ( (beta_flag == Flag::Zero) && (alpha_flag == Flag::Zero) )
         {
-            // alpha == 1;
-            if constexpr ( beta_flag == ScalarFlag::Zero )
-            {
-                copy_buffer(x,y,n);
-            }
-            else if constexpr ( beta_flag == ScalarFlag::Plus )
-            {
-                add_to_buffer(x,y,n);
-            }
-            else if constexpr ( beta_flag == ScalarFlag::Minus )
-            {
-                for( size_t k = 0; k < n; ++k )
-                {
-                    y[k] = scalar_cast<S_1>(x[k]) - y[k];
-                }
-            }
-            else if constexpr ( beta_flag == ScalarFlag::Generic )
-            {
-                for( size_t k = 0; k < n; ++k )
-                {
-                    y[k] = scalar_cast<S_1>(x[k]) + beta * y[k];
-                }
-            }
+            zerofy_buffer<n>(y);
         }
-        else if constexpr ( alpha_flag == ScalarFlag::Minus )
+        else if constexpr ( (beta_flag == Flag::Zero) && (alpha_flag == Flag::Plus) )
         {
-            // alpha == -1;
-            if constexpr ( beta_flag == ScalarFlag::Zero )
-            {
-                copy_buffer(x,y,n);
-            }
-            else if constexpr ( beta_flag == ScalarFlag::Plus )
-            {
-                for( size_t k = 0; k < n; ++k )
-                {
-                    y[k] -= scalar_cast<S_1>(x[k]);
-                }
-            }
-            else if constexpr ( beta_flag == ScalarFlag::Minus )
-            {
-                for( size_t k = 0; k < n; ++k )
-                {
-                    y[k] = -y[k] - scalar_cast<S_1>(x[k]);
-                }
-            }
-            else if constexpr ( beta_flag == ScalarFlag::Generic )
-            {
-                for( size_t k = 0; k < n; ++k )
-                {
-                    y[k] = beta * y[k] - scalar_cast<S_1>(x[k]);
-                }
-            }
-        }
-        else if constexpr ( alpha_flag == ScalarFlag::Zero )
-        {
-            if constexpr ( beta_flag == ScalarFlag::Zero )
-            {
-                zerofy_buffer(y,n);
-            }
-            else if constexpr ( beta_flag == ScalarFlag::Plus )
-            {
-                // do nothing;
-            }
-            else if constexpr ( beta_flag == ScalarFlag::Minus )
-            {
-                for( size_t k = 0; k < n; ++k )
-                {
-                    y[k] = - y[k];
-                }
-            }
-            else if constexpr ( beta_flag == ScalarFlag::Generic )
-            {
-                scale_buffer(beta,y,n);
-            }
+            copy_buffer<n>(x,y);
         }
         else
         {
-            // alpha arbitrary;
-            if constexpr ( beta_flag == ScalarFlag::Zero )
+            for( std::size_t k = 0; k < n; ++k )
             {
-                for( size_t k = 0; k < n; ++k )
-                {
-                    y[k] = scalar_cast<S_1>(alpha * x[k]);
-                }
-            }
-            else if constexpr ( beta_flag == ScalarFlag::Plus )
-            {
-                for( size_t k = 0; k < n; ++k )
-                {
-                    y[k] += scalar_cast<S_1>(alpha * x[k]);
-                }
-            }
-            else if constexpr ( beta_flag == ScalarFlag::Minus )
-            {
-                for( size_t k = 0; k < n; ++k )
-                {
-                    y[k] = scalar_cast<S_1>(alpha * x[k]) - y[k];
-                }
-            }
-            else if constexpr ( beta_flag == ScalarFlag::Generic )
-            {
-                // general alpha and general beta
-                for( size_t k = 0; k < n; ++k )
-                {
-                    y[k] = scalar_cast<S_1>(alpha * x[k]) + (beta * y[k]);
-                }
+                combine_scalars<alpha_flag,beta_flag>(alpha, x[k], beta, y[k]);
             }
         }
     }
 
 } // namespace Tools
-

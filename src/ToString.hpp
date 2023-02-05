@@ -28,7 +28,6 @@ namespace Tools
         return sout.str();
     }
     
-    
     template<typename Scalar, typename Int, class Stream_T>
     Stream_T & ArrayToStream(
         const Scalar * const a,
@@ -39,7 +38,7 @@ namespace Tools
         std::string line_prefix
     )
     {
-        if( rank == 0 )
+        if( rank <= 0 )
         {
             s << a[0];
         }
@@ -87,7 +86,7 @@ namespace Tools
     template<typename Scalar, typename Int, class Stream_T>
     Stream_T & ArrayToStream(
         const Scalar * const a,
-        const Int * const dims,
+        const Int    * const dims,
         Int rank,
         Stream_T & s,
         std::string line_prefix = std::string("")
@@ -101,7 +100,7 @@ namespace Tools
             {
                 lds[rank-1] = 1;
                 
-                for( size_t i = rank-1; i --> 0;  )
+                for( std::size_t i = rank-1; i --> 0;  )
                 {
                     lds[i] = lds[i+1] * dims[i+1];
                 }
@@ -123,8 +122,15 @@ namespace Tools
         
         s << std::setprecision(prec);
         
-        return ArrayToStream<Scalar,Int>( a, dims, rank, s, std::string("") ).str();
-    }
+        (void)ArrayToStream<Scalar,Int>( a, dims, rank, s, std::string("") ).str();
 
+        return s.str();
+    }
     
+    template<typename T>
+    std::string ToString( const std::vector<T> & v )
+    {
+        const size_t dims [0] = v.size();
+        return ArrayToString(v.data(), dims, 1);
+    }
 } // namespace Tools
