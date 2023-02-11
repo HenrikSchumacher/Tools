@@ -45,8 +45,8 @@ namespace Tools
                 {
                     Profiler::log.open(log_filename.c_str());
                 }
-                
-                std::cout << "Log will be written to " << log_filename << "." << std::endl;
+
+                std::cout << "Log     will be written to " << log_filename << "." << std::endl;
                 Profiler::log << std::setprecision(16);
         //        Profiler::prof << "ID" << "\t" << "Tag" << "\t" << "From" << "\t" << "Tic" << "\t" << "Toc" << "\t" << "Duration" << "\t" << "Depth" << "\n";
                 Profiler::init_time = Clock::now();
