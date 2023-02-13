@@ -157,18 +157,20 @@ namespace MyMath
         const Real A, const Real B, const Real C, const Real D, mut<Real> t_out
     )
     {
+        static_assert( Scalar::IsReal<Real>, "Input parameters must be real floating point types.");
+        
         constexpr Real zero  = 0;
         constexpr Real one   = 1;
         constexpr Real two   = 2;
         constexpr Real three = 3;
         
-        constexpr Real factor = static_cast<Real>(1)/static_cast<Real>(27);
-        constexpr Real third  = static_cast<Real>(1)/static_cast<Real>(3);
-        constexpr Real half   = static_cast<Real>(1)/static_cast<Real>(2);
+        constexpr Real factor = Scalar::One<Real>/static_cast<Real>(27);
+        constexpr Real third  = Scalar::One<Real>/static_cast<Real>(3);
+        constexpr Real half   = Scalar::One<Real>/static_cast<Real>(2);
 
         
-        constexpr Real Pi_third = static_cast<Real>(M_PI) * third;
-        constexpr Real Pi_sixth = static_cast<Real>(M_PI) * third * half;
+        constexpr Real Pi_third = Scalar::Pi<Real> * third;
+        constexpr Real Pi_sixth = Scalar::Pi<Real> * third * half;
         
         constexpr Real sqrt_three          = 1.7320508075688772;
         constexpr Real two_over_sqrt_three = 1.1547005383792517;
@@ -259,9 +261,9 @@ namespace MyMath
                     const Real r1 = -q * half + sqrt_disc;
                     const Real r2 = -q * half - sqrt_disc;
                     
-                    x[0] = ((r1>=zero) ? one : -one) * std::pow( std::abs(r1), third)
+                    x[0] = ((r1>=zero) ? one : -one) * std::pow( std::abs(r1), third )
                          +
-                           ((r2>=zero) ? one : -one) * std::pow( std::abs(r2), third)
+                           ((r2>=zero) ? one : -one) * std::pow( std::abs(r2), third )
                          -
                          a * third;
                     x[1] = infty;
@@ -322,7 +324,7 @@ namespace MyMath
     namespace Detail
     {
         template<typename Scalar>
-        Scalar constexpr sqrtNewtonRaphson( const Scalar x, const Scalar curr, const  Scalar prev )
+        Scalar constexpr sqrtNewtonRaphson( const Scalar x, const Scalar curr, const Scalar prev )
         {
             return curr == prev
                 ? curr
