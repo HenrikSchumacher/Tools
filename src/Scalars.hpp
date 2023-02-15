@@ -150,8 +150,11 @@ namespace Tools
             T>>>;
         
         
-        template<typename T> inline constexpr const Scalar::Real<T>    One  {1};
         template<typename T> inline constexpr const Scalar::Real<T>    Zero {0};
+        template<typename T> inline constexpr const Scalar::Real<T>    One  {1};
+        template<typename T> inline constexpr const Scalar::Real<T>    Two  {2};
+        template<typename T> inline constexpr const Scalar::Real<T>    Half = One<T>/Two<T>;
+        
         template<typename T> inline constexpr const Scalar::Complex<T> I {0,1};
         
         template<typename T> inline constexpr const Scalar::Real<T> Pi = 3.141592653589793238462643383279502884197;
@@ -161,7 +164,12 @@ namespace Tools
         template<typename T> inline constexpr const Scalar::Real<T> Infty = std::numeric_limits<Scalar::Real<T>>::max();
         template<typename T> inline constexpr const Scalar::Real<T> Min   = std::numeric_limits<Scalar::Real<T>>::lowest();
 //
-        
+  
+//        template<typename R, typename S, typename T>
+//        force_inline constexpr R Fraction( const S & a, const T & b )
+//        {
+//            return scalar_cast<R>(a)/scalar_cast<R>(b);
+//        }
         
 //        template<> inline constexpr const bool IsComplex<Complex32 > = true;
 //        template<> inline constexpr const bool IsComplex<Complex64 > = true;
