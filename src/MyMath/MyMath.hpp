@@ -346,6 +346,17 @@ namespace MyMath
             ? Detail::sqrtNewtonRaphson(x, x, static_cast<Scalar>(0))
             : std::numeric_limits<Scalar>::quiet_NaN();
     }
+    
+    
+    
+    
+    
+    template<typename T>
+    force_inline bool Equal3( const T & a, const T & b, const T & c )
+    {
+        return (a == b) && (b == c);
+    }
+    
 }
 
  
