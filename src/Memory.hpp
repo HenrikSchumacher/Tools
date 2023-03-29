@@ -133,7 +133,8 @@ namespace Tools
         return !wasallocated;
     }
     
-#if defined(restrict) && (restrict ==  __restrict__)
+#ifdef restrict
+#if restrict ==  __restrict__
     // overload function for restrict qualifier
     template <typename T>
     force_inline int safe_free( T * restrict & ptr_ )
@@ -145,6 +146,7 @@ namespace Tools
         }
         return !wasallocated;
     }
+#endif
 #endif
     
     
@@ -166,7 +168,8 @@ namespace Tools
         return wasallocated;
     }
     
-#if defined(restrict) && (restrict ==  __restrict__)
+#ifdef restrict
+#if restrict ==  __restrict__
     // overload function for restrict qualifier
     template <typename T>
     force_inline int safe_alloc( T * restrict & ptr_, const std::size_t n )
@@ -175,9 +178,9 @@ namespace Tools
         
         if( wasallocated != 0 )
         {
-#ifdef SAFE_ALLOCATE_WARNINGS
+        #ifdef SAFE_ALLOCATE_WARNINGS
             wprint("safe_alloc: Pointer was not NULL. Calling safe_free to prevent memory leak.");
-#endif
+        #endif
             safe_free(ptr_);
         }
         
@@ -185,6 +188,7 @@ namespace Tools
         
         return wasallocated;
     }
+#endif
 #endif
     
     
