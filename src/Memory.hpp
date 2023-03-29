@@ -7,10 +7,17 @@ static constexpr std::size_t CACHE_LINE_WIDTH = 64;
 static constexpr std::size_t MEMORY_PADDING = 1;
 
 #if !defined(restrict)
-    #if defined(__GNUC__) || defined(__clang__)
+    #if defined(__GNUC__)
         #define restrict __restrict__
+        #define COMPILER_IS_NAZI_ABOUT_RESTRICT 1
+    #elif defined(__clang__)
+        #define restrict __restrict__
+        #define COMPILER_IS_NAZI_ABOUT_RESTRICT 0
     #elif defined(_MSC_VER)
         #define restrict __restrict
+        #define COMPILER_IS_NAZI_ABOUT_RESTRICT 0
+    #else
+        #define COMPILER_IS_NAZI_ABOUT_RESTRICT 0
     #endif
 #endif
 
@@ -133,8 +140,7 @@ namespace Tools
         return !wasallocated;
     }
     
-#ifdef restrict
-#if restrict ==  __restrict__
+#if COMPILER_IS_NAZI_ABOUT_RESTRICT
     // overload function for restrict qualifier
     template <typename T>
     force_inline int safe_free( T * restrict & ptr_ )
@@ -146,7 +152,6 @@ namespace Tools
         }
         return !wasallocated;
     }
-#endif
 #endif
     
     
@@ -168,8 +173,7 @@ namespace Tools
         return wasallocated;
     }
     
-#ifdef restrict
-#if restrict ==  __restrict__
+#if COMPILER_IS_NAZI_ABOUT_RESTRICT
     // overload function for restrict qualifier
     template <typename T>
     force_inline int safe_alloc( T * restrict & ptr_, const std::size_t n )
@@ -188,7 +192,6 @@ namespace Tools
         
         return wasallocated;
     }
-#endif
 #endif
     
     
