@@ -3,7 +3,7 @@ namespace MyMath
     using namespace Tools;
     
     template<typename Real, typename T>
-    typename std::enable_if<!std::is_integral_v<T>,Real>::type
+    typename std::enable_if_t<!std::is_integral_v<T>,Real>
     inline pow( const Real base, const T exponent )
     {
         // Warning: Use only for positive base! This is basically pow with certain checks and cases deactivated
@@ -11,7 +11,7 @@ namespace MyMath
     } // pow
     
     template<typename Real, typename Int>
-    typename std::enable_if<std::is_integral_v<Int>,Real>::type
+    typename std::enable_if_t<std::is_integral_v<Int>,Real>
     inline pow( const Real base, const Int exponent)
     {
         if( exponent >= 0)

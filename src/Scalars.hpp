@@ -196,12 +196,12 @@ namespace Tools
     // scalar_cast<T>(x) cast x to the precision of T, but preserves Real/Complex
     template<typename T, typename S>
     constexpr force_inline
-    typename std::enable_if<
+    typename std::enable_if_t<
         Scalar::IsScalar<T>
         &&
         Scalar::IsReal<S>,
         typename Scalar::Real<T>
-    >::type
+    >
     scalar_cast( S x )
     {
         return static_cast<typename Scalar::Real<T>>(x);
@@ -209,12 +209,12 @@ namespace Tools
 
     template<typename T, typename S>
     constexpr force_inline
-    typename std::enable_if<
+    typename std::enable_if_t<
         Scalar::IsScalar<T>
         &&
         Scalar::IsComplex<S>,
         typename Scalar::Complex<T>
-    >::type
+    >
     scalar_cast( S x )
     {
         return static_cast<typename Scalar::Complex<T>>(x);
