@@ -328,7 +328,7 @@ namespace MyMath
         {
             return curr == prev
                 ? curr
-                : sqrtNewtonRaphson(x, 0.5 * (curr + x / curr), curr);
+                : sqrtNewtonRaphson(x, static_cast<Scalar>(0.5) * (curr + x / curr), curr);
         }
     }
 
