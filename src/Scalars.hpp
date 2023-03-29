@@ -222,72 +222,72 @@ namespace Tools
     
     
     
-    // lo_prec_cast<S,T>(x) casts x to the lower precision of S and T, but preserves Real/Complex
-    template<typename S, typename T, typename R>
-    constexpr force_inline
-    std::enable_if_t<
-        Scalar::IsScalar<S> && Scalar::IsScalar<T>
-        &&
-        Scalar::IsReal<R>
-        &&
-        std::less_equal(Scalar::Prec<S>,Scalar::Prec<T>),
-        typename Scalar::Real<S>
-    >
-    lo_prec_cast( R x )
-    {
-        return static_cast<typename Scalar::Real<S>>(x);
-    }
-    
-    // lo_prec_cast<S,T>(x) casts x to the lower precision of S and T
-    template<typename S, typename T, typename R>
-    constexpr force_inline
-    std::enable_if_t<
-        Scalar::IsScalar<S> && Scalar::IsScalar<T>
-        &&
-        Scalar::IsReal<R>
-        &&
-        std::greater(Scalar::Prec<S>, Scalar::Prec<T>),
-        typename Scalar::Real<T>
-    >
-    lo_prec_cast( R x )
-    {
-        return static_cast<typename Scalar::Real<T>>(x);
-    }
-    
-    
-    
-    // hi_prec_cast<S,T>(x) casts x to the higher precision of S and T, but preserves Real/Complex
-    template<typename S, typename T, typename R>
-    constexpr force_inline
-    std::enable_if_t<
-        Scalar::IsScalar<S> && Scalar::IsScalar<T>
-        &&
-        Scalar::IsReal<R>
-        &&
-        std::greater_equal(Scalar::Prec<S>,Scalar::Prec<T>),
-        typename Scalar::Real<S>
-    >
-    hi_prec_cast( R x )
-    {
-        return static_cast<typename Scalar::Real<S>>(x);
-    }
-    
-    // lo_prec_cast<S,T>(x) casts x to the lower precision of S and T
-    template<typename S, typename T, typename R>
-    constexpr force_inline
-    std::enable_if_t<
-        Scalar::IsScalar<S> && Scalar::IsScalar<T>
-        &&
-        Scalar::IsReal<R>
-        &&
-        std::less(Scalar::Prec<S>, Scalar::Prec<T>),
-        typename Scalar::Real<T>
-    >
-    hi_prec_cast( R x )
-    {
-        return static_cast<typename Scalar::Real<T>>(x);
-        
-    }
+//    // lo_prec_cast<S,T>(x) casts x to the lower precision of S and T, but preserves Real/Complex
+//    template<typename S, typename T, typename R>
+//    constexpr force_inline
+//    std::enable_if_t<
+//        Scalar::IsScalar<S> && Scalar::IsScalar<T>
+//        &&
+//        Scalar::IsReal<R>
+//        &&
+//        std::less_equal(Scalar::Prec<S>,Scalar::Prec<T>),
+//        typename Scalar::Real<S>
+//    >
+//    lo_prec_cast( R x )
+//    {
+//        return static_cast<typename Scalar::Real<S>>(x);
+//    }
+//    
+//    // lo_prec_cast<S,T>(x) casts x to the lower precision of S and T
+//    template<typename S, typename T, typename R>
+//    constexpr force_inline
+//    std::enable_if_t<
+//        Scalar::IsScalar<S> && Scalar::IsScalar<T>
+//        &&
+//        Scalar::IsReal<R>
+//        &&
+//        std::greater(Scalar::Prec<S>, Scalar::Prec<T>),
+//        typename Scalar::Real<T>
+//    >
+//    lo_prec_cast( R x )
+//    {
+//        return static_cast<typename Scalar::Real<T>>(x);
+//    }
+//    
+//    
+//    
+//    // hi_prec_cast<S,T>(x) casts x to the higher precision of S and T, but preserves Real/Complex
+//    template<typename S, typename T, typename R>
+//    constexpr force_inline
+//    std::enable_if_t<
+//        Scalar::IsScalar<S> && Scalar::IsScalar<T>
+//        &&
+//        Scalar::IsReal<R>
+//        &&
+//        std::greater_equal(Scalar::Prec<S>,Scalar::Prec<T>),
+//        typename Scalar::Real<S>
+//    >
+//    hi_prec_cast( R x )
+//    {
+//        return static_cast<typename Scalar::Real<S>>(x);
+//    }
+//    
+//    // lo_prec_cast<S,T>(x) casts x to the lower precision of S and T
+//    template<typename S, typename T, typename R>
+//    constexpr force_inline
+//    std::enable_if_t<
+//        Scalar::IsScalar<S> && Scalar::IsScalar<T>
+//        &&
+//        Scalar::IsReal<R>
+//        &&
+//        std::less(Scalar::Prec<S>, Scalar::Prec<T>),
+//        typename Scalar::Real<T>
+//    >
+//    hi_prec_cast( R x )
+//    {
+//        return static_cast<typename Scalar::Real<T>>(x);
+//        
+//    }
     
 #define ASSERT_REAL(R) static_assert( Scalar::IsReal<R>, "Template parameter " #R " must be an integral type." );
     
