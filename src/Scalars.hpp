@@ -196,12 +196,12 @@ namespace Tools
     // scalar_cast<T>(x) cast x to the precision of T, but preserves Real/Complex
     template<typename T, typename S>
     constexpr force_inline
-    std::enable_if_t<
+    typename std::enable_if<
         Scalar::IsScalar<T>
         &&
         Scalar::IsReal<S>,
         typename Scalar::Real<T>
-    >
+    >::type
     scalar_cast( S x )
     {
         return static_cast<typename Scalar::Real<T>>(x);
@@ -209,12 +209,12 @@ namespace Tools
 
     template<typename T, typename S>
     constexpr force_inline
-    std::enable_if_t<
+    typename std::enable_if<
         Scalar::IsScalar<T>
         &&
         Scalar::IsComplex<S>,
         typename Scalar::Complex<T>
-    >
+    >::type
     scalar_cast( S x )
     {
         return static_cast<typename Scalar::Complex<T>>(x);
@@ -237,7 +237,7 @@ namespace Tools
 //    {
 //        return static_cast<typename Scalar::Real<S>>(x);
 //    }
-//    
+//
 //    // lo_prec_cast<S,T>(x) casts x to the lower precision of S and T
 //    template<typename S, typename T, typename R>
 //    constexpr force_inline
@@ -253,9 +253,9 @@ namespace Tools
 //    {
 //        return static_cast<typename Scalar::Real<T>>(x);
 //    }
-//    
-//    
-//    
+//
+//
+//
 //    // hi_prec_cast<S,T>(x) casts x to the higher precision of S and T, but preserves Real/Complex
 //    template<typename S, typename T, typename R>
 //    constexpr force_inline
@@ -271,7 +271,7 @@ namespace Tools
 //    {
 //        return static_cast<typename Scalar::Real<S>>(x);
 //    }
-//    
+//
 //    // lo_prec_cast<S,T>(x) casts x to the lower precision of S and T
 //    template<typename S, typename T, typename R>
 //    constexpr force_inline
@@ -286,7 +286,7 @@ namespace Tools
 //    hi_prec_cast( R x )
 //    {
 //        return static_cast<typename Scalar::Real<T>>(x);
-//        
+//
 //    }
     
 #define ASSERT_REAL(R) static_assert( Scalar::IsReal<R>, "Template parameter " #R " must be an integral type." );
