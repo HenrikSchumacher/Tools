@@ -130,7 +130,7 @@ namespace Tools
     template<typename T>
     std::string ToString( const std::vector<T> & v )
     {
-        const size_t dims [0] = v.size();
-        return ArrayToString(v.data(), dims, 1);
+        const size_t dim = v.size();
+        return ArrayToString(v.data(), &dims, 1);
     }
 } // namespace Tools
