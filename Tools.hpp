@@ -52,7 +52,7 @@
     #include <omp.h>
         
 
-#ifndef force_inline
+#if defined(__GNUC__) || defined(__clang__) // force_inline
     #define force_inline inline __attribute__((always_inline))
 #endif
 

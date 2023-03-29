@@ -7,11 +7,17 @@ static constexpr std::size_t CACHE_LINE_WIDTH = 64;
 static constexpr std::size_t MEMORY_PADDING = 1;
 
 #if !defined(restrict)
-    #define restrict __restrict__
+    #if defined(__GNUC__) || defined(__clang__)
+        #define restrict __restrict__
+    #elseif defined(_MSC_VER)
+        #define restrict __restrict
+    #endif
 #endif
 
 #if !defined(prefetch)
-    #define prefetch __builtin_prefetch
+    #if defined(__GNUC__) || defined(__clang__)
+        #define prefetch __builtin_prefetch
+    #endif
 #endif
 
 //#define SAFE_ALLOCATE_WARNINGS
@@ -53,7 +59,7 @@ namespace Tools
         return DivideRoundUp(n,b) * b;
     }
     
-    // Computes k-tj job pointer for job_count equallize sized jobs distributed on thread_count threads.
+    // Computes k-th job pointer for job_count equally sized jobs distributed on thread_count threads.
     template<typename Int, typename Int1, typename Int2>
     force_inline Int JobPointer( const Int job_count, const Int1 thread_count, const Int2 k )
     {
