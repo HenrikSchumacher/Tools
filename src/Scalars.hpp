@@ -150,18 +150,40 @@ namespace Tools
             T>>>;
         
         
-        template<typename T> inline constexpr const Scalar::Real<T>    One  {1};
-        template<typename T> inline constexpr const Scalar::Real<T>    Zero {0};
+        template<typename T> inline constexpr const Scalar::Real<T> Zero  {0};
+        template<typename T> inline constexpr const Scalar::Real<T> One   {1};
+        template<typename T> inline constexpr const Scalar::Real<T> Two   {2};
+        template<typename T> inline constexpr const Scalar::Real<T> Three {3};
+        template<typename T> inline constexpr const Scalar::Real<T> Four  {4};
+        template<typename T> inline constexpr const Scalar::Real<T> Half    = One<T>/Two<T>;
+        template<typename T> inline constexpr const Scalar::Real<T> Third   = One<T>/Three<T>;
+        template<typename T> inline constexpr const Scalar::Real<T> Quarter = One<T>/Four<T>;
+        
+        
         template<typename T> inline constexpr const Scalar::Complex<T> I {0,1};
         
         template<typename T> inline constexpr const Scalar::Real<T> Pi = 3.141592653589793238462643383279502884197;
+        
+        template<typename T> inline constexpr const Scalar::Real<T> TwoPi = Scalar::Two<T> * Scalar::Pi<T>;
         
         template<typename T> inline constexpr const Scalar::Real<T> eps   = std::numeric_limits<Scalar::Real<T>>::epsilon();
         template<typename T> inline constexpr const Scalar::Real<T> Max   = std::numeric_limits<Scalar::Real<T>>::max();
         template<typename T> inline constexpr const Scalar::Real<T> Infty = std::numeric_limits<Scalar::Real<T>>::max();
         template<typename T> inline constexpr const Scalar::Real<T> Min   = std::numeric_limits<Scalar::Real<T>>::lowest();
-//
         
+        
+        
+        template<typename R, typename S>
+        inline constexpr const R Inv( const S & a )
+        {
+            return One<R> / static_cast<R>(a);
+        }
+  
+        template<typename R, typename S, typename T>
+        inline constexpr R Frac( const S & a, const T & b )
+        {
+            return static_cast<R>(a) / static_cast<R>(b);
+        }
         
 //        template<> inline constexpr const bool IsComplex<Complex32 > = true;
 //        template<> inline constexpr const bool IsComplex<Complex64 > = true;
@@ -266,4 +288,8 @@ namespace Tools
         return static_cast<typename Scalar::Real<T>>(x);
         
     }
+    
+#define ASSERT_REAL(R) static_assert( Scalar::IsReal<R>, "Template parameter " #R " must be an integral type." );
+    
+#define ASSERT_COMPLEX(C) static_assert( Scalar::IsComplex<C>, "Template parameter " #C " must be an integral type." );
 }

@@ -46,17 +46,32 @@ namespace Tools
     // immutable, unaliased pointer to mutable type
     template<typename T> using mut =       T * restrict const;
     
+
     
     template<typename Int>
-    force_inline constexpr Int DivideRoundUp( const Int n, const Int b )
+    force_inline constexpr Int CeilDivide( const Int n, const Int b )
     {
         return ( (n + b - Int(1) ) / b );
     }
 
+
     template<typename Int>
     force_inline constexpr Int RoundUpTo( const Int n, const Int b )
     {
-        return DivideRoundUp(n,b) * b;
+        return CeilDivide(n,b) * b;
+    }
+    
+    
+    template<typename Int>
+    force_inline constexpr Int FloorDivide( const Int n, const Int b )
+    {
+        return n / b;
+    }
+    
+    template<typename Int>
+    force_inline constexpr Int RoundDownTo( const Int n, const Int b )
+    {
+        return FloorDivide(n,b) * b;
     }
     
     // Computes k-th job pointer for job_count equally sized jobs distributed on thread_count threads.
