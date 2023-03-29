@@ -31,7 +31,11 @@ static constexpr std::size_t MEMORY_PADDING = 1;
 
 static constexpr std::size_t ALIGNMENT = 8;
 
-#define ALIGNED __attribute__((aligned(ALIGNMENT)))
+#if defined(__GNUC__) || defined(__clang__)
+    #define ALIGNED __attribute__((aligned(ALIGNMENT)))
+#else
+    #define ALIGNED
+#endif
 
 static constexpr std::size_t OBJECT_ALIGNMENT = 2 * CACHE_LINE_WIDTH;
 
