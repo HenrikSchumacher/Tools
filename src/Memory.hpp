@@ -9,7 +9,7 @@ static constexpr std::size_t MEMORY_PADDING = 1;
 #if !defined(restrict)
     #if defined(__GNUC__) || defined(__clang__)
         #define restrict __restrict__
-    #elseif defined(_MSC_VER)
+    #elif defined(_MSC_VER)
         #define restrict __restrict
     #endif
 #endif
