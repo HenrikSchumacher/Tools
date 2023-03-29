@@ -55,6 +55,8 @@
 
 #if defined(__GNUC__) || defined(__clang__) // force_inline
     #define force_inline inline __attribute__((always_inline))
+#else
+    #define force_inline inline
 #endif
 
 // Define loop unrolling depending on the compiler
