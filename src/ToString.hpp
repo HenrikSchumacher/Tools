@@ -62,7 +62,7 @@ namespace Tools
         {
             std::string new_line_prefix = line_prefix+"\t";
             
-            s << line_prefix << "{" << std::endl;
+            s << line_prefix << "{" << "\n";
             if( dims[0] > 0 )
             {
                 ArrayToStream( a, &dims[1], &lds[1], rank-1, s, new_line_prefix );
@@ -70,11 +70,11 @@ namespace Tools
             
             for( Int i = 1; i < dims[0]; ++i )
             {
-                s << ","  << std::endl;
+                s << ","  << "\n";
                 ArrayToStream( &a[lds[0]*i], &dims[1], &lds[1], rank-1, s, new_line_prefix );
             }
             
-            s << std::endl;
+            s << "\n";
             
             s << line_prefix << "}";
         }

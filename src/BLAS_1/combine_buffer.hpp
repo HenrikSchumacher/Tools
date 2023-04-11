@@ -31,6 +31,9 @@ namespace Tools
             "Fourth argument is real, but some of the other arguments are complex."
         );
         
+        
+        // We refrain from automagically casting `alpha` and `beta` to the right precision because this is better done once before any loop that calls `combine_buffers`. Hence we prefer a compile error here.
+        
         static_assert(
             Prec<R_0> == Prec<S_1>,
             "Precisions of first and fourth argument do not coincide."
@@ -55,6 +58,7 @@ namespace Tools
 //            {
 //                y[k] = alpha * x[k] + beta * y[k];
 //            }
+            
             for( std::size_t k = 0; k < n; ++k )
             {
                 combine_scalars<alpha_flag,beta_flag>(alpha, x[k], beta, y[k]);
@@ -93,6 +97,8 @@ namespace Tools
             "Fourth argument is real, but some of the other arguments are complex."
         );
         
+        // We refrain from automagically casting `alpha` and `beta` to the right precision because this is better done once before any loop that calls `combine_buffers`. Hence we prefer a compile error here.
+        
         static_assert(
             Prec<R_0> == Prec<S_1>,
             "Precisions of first and fourth argument do not coincide."
@@ -123,7 +129,7 @@ namespace Tools
                     
                     for( std::size_t k = k_begin; k < k_end; ++k )
                     {
-                        combine_scalars<alpha_flag,beta_flag>(alpha, x[k], beta, y[k]);
+                        combine_scalars<alpha_flag,beta_flag>( alpha, x[k], beta, y[k] );
                     }
                 }
             }
@@ -131,7 +137,7 @@ namespace Tools
             {
                 for( std::size_t k = 0; k < n; ++k )
                 {
-                    combine_scalars<alpha_flag,beta_flag>(alpha, x[k], beta, y[k]);
+                    combine_scalars<alpha_flag,beta_flag>( alpha, x[k], beta, y[k] );
                 }
             }
         }
@@ -164,6 +170,8 @@ namespace Tools
         static_assert( IsComplex<S_1> || (IsReal<R_0> && IsReal<S_0> && IsReal<R_1>),
             "Fourth argument is real, but some of the other arguments are complex."
         );
+        
+        // We refrain from automagically casting `alpha` and `beta` to the right precision because this is better done once before any loop that calls `combine_buffers`. Hence we prefer a compile error here.
         
         static_assert(
             Prec<R_0> == Prec<S_1>,

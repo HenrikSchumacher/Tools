@@ -16,6 +16,8 @@ namespace Tools
             "Fourth argument is real, but some of the other arguments are complex."
         );
         
+        // We refrain from automagically casting `alpha` and `beta` to the right precision because this is better done once before any loop that calls `combine_scalars`. Hence we prefer a compile error here.
+        
         static_assert(
             Scalar::Prec<R_0> == Scalar::Prec<S_1>,
             "Precisions of first and fourth argument do not coincide."

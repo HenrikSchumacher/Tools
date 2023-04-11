@@ -159,7 +159,6 @@ namespace Tools
             //  TODO: There is quite a lot false sharing in this loop... so better not parallelize it.
             for( Int thread = 0; thread < thread_count - 1; ++thread)
             {
-    //            std::cout << "\n #### thread = " << thread << std::endl;
                 // each thread (other than the last one) is required to have at least this accumulated cost
                 T target = std::min( total_cost, static_cast<T>(per_thread_cost * (thread + 1)) );
                 Int pos;
