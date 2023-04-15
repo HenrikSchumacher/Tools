@@ -110,6 +110,8 @@
 
 #define ASSERT_FLOAT(type) static_assert( std::is_floating_point_v<type>, "Template parameter " #type " must be floating point type." );
 
+    #include <complex>
+
     #include "src/ToString.hpp"
     #include "src/Print.hpp"
     #include "src/Profiler.hpp"

@@ -289,7 +289,7 @@ namespace Tools
 //
 //    }
     
-#define ASSERT_REAL(R) static_assert( Scalar::IsReal<R>, "Template parameter " #R " must be an integral type." );
+#define ASSERT_REAL(R) static_assert( Scalar::IsReal<R>, "Template parameter " #R " must be a real-valued type." );
     
-#define ASSERT_COMPLEX(C) static_assert( Scalar::IsComplex<C>, "Template parameter " #C " must be an integral type." );
+#define ASSERT_COMPLEX(C) static_assert( Scalar::IsComplex<C>, "Template parameter " #C " must be a complex-valued type." );
 }
