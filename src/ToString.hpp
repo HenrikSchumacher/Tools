@@ -131,6 +131,6 @@ namespace Tools
     std::string ToString( const std::vector<T> & v )
     {
         const size_t dim = v.size();
-        return ArrayToString(v.data(), &dim, 1);
+        return ArrayToString( &v[0], &dim, 1);
     }
 } // namespace Tools
