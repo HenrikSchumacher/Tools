@@ -49,9 +49,20 @@
     #define OMP_PROC_BIND = true
 //    #define OMP_PROC_BIND spread // workers are spread across the available places to maximize the space inbetween two neighbouring threads
 //    //#define OMP_PROC_BIND close // worker threads are close to the master in contiguous partitions, e. g. if the master is occupying hardware thread 0, worker 1 will be placed on hw thread 1, worker 2 on hw thread 2 and so on
-        
+
+#ifndef TOOLS_DEACTIVATE_OPENMP
     #include <omp.h>
-        
+#else
+    static constexpr size_t omp_get_num_threads()
+    {
+        return 0;
+    }
+
+    static constexpr size_t omp_get_thread_num()
+    {
+        return 0;
+    }
+#endif
 
 #if defined(__GNUC__) || defined(__clang__) // force_inline
     #define force_inline inline __attribute__((always_inline))
