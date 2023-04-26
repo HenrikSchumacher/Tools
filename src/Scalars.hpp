@@ -56,6 +56,9 @@ namespace Tools
     using Complex64  = std::complex<Real64>;
     using Complex128 = std::complex<Real128>;
     
+    using std::conj;
+    using std::real;
+    using std::imag;
     
     template<typename T>
     force_inline T constexpr conj( const T & x )
@@ -78,14 +81,33 @@ namespace Tools
     template<typename T>
     force_inline T constexpr abs_squared( const T & x )
     {
-        return  x * x;
+        return x * x;
     }
+    
+    
+//    template<typename T>
+//    force_inline std::complex<T> conj( const std::complex<T> & z )
+//    {
+//        return std::conj(z);
+//    }
+//
+//    template<typename T>
+//    force_inline T constexpr real( const std::complex<T> & z )
+//    {
+//        return std::real(z);
+//    }
+//
+//    template<typename T>
+//    force_inline constexpr T imag( const std::complex<T> & z )
+//    {
+//        return std::imag(z);
+//    }
     
     template<typename T>
     force_inline T constexpr abs_squared( const std::complex<T> & z )
     {
-        const T x = real(z);
-        const T y = imag(z);
+        const T x = std::real(z);
+        const T y = std::imag(z);
         return  x * x + y * y;
     }
 
