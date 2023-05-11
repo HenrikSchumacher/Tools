@@ -97,9 +97,10 @@
 #elif defined(__clang__)
   #define LOOP_UNROLL_FULL      _Pragma(STRINGIFY2(clang loop unroll(enable)))
 #elif defined(__GNUC__) && !defined(__clang__)
-  #define LOOP_UNROLL_FULL      _Pragma(STRINGIFY2(GCC unroll (16)))
+//  #define LOOP_UNROLL_FULL      _Pragma(STRINGIFY2(GCC unroll (16)))
+  #define LOOP_UNROLL_FULL
 #elif defined(_MSC_BUILD)
-  #pragma message ("Microsoft Visual C++ (MSVC) detected: Loop unrolling not supported!")
+//  #pragma message ("Microsoft Visual C++ (MSVC) detected: Loop unrolling not supported!")
   #define LOOP_UNROLL_FULL
 #else
   #warning "Unknown compiler: Loop unrolling not supported!"
