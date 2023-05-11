@@ -62,6 +62,8 @@
     {
         return 0;
     }
+
+    void omp_set_num_threads( const size_t thread_count) {};
 #endif
 
 #if defined(__GNUC__) || defined(__clang__) // force_inline
