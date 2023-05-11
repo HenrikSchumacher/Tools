@@ -14,7 +14,7 @@ namespace Tools
     template <typename T>
     std::ostream & operator<<( std::ostream & sout, const std::complex<T> & z )
     {
-        sout << real(z) << ((imag(z) >= static_cast<T>(0)) ? " + " : " - ") << std::abs(imag(z)) << " I" ;
+        sout << std::real(z) << ((std::imag(z) >= static_cast<T>(0)) ? " + " : " - ") << std::abs(std::imag(z)) << " I" ;
         
         return sout;
     }

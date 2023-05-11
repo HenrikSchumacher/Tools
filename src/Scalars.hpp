@@ -60,59 +60,61 @@ namespace Tools
     using std::real;
     using std::imag;
     
-    template<typename T>
-    force_inline T constexpr conj( const T & x )
-    {
-        return x;
-    }
-    
-    template<typename T>
-    force_inline T constexpr real( const T & x )
-    {
-        return x;
-    }
-    
-    template<typename T>
-    force_inline constexpr T imag( const T & x )
-    {
-        return static_cast<T>(0);
-    }
-    
-    template<typename T>
-    force_inline T constexpr abs_squared( const T & x )
-    {
-        return x * x;
-    }
-    
-    
-//    template<typename T>
-//    force_inline std::complex<T> conj( const std::complex<T> & z )
-//    {
-//        return std::conj(z);
-//    }
-//
-//    template<typename T>
-//    force_inline T constexpr real( const std::complex<T> & z )
-//    {
-//        return std::real(z);
-//    }
-//
-//    template<typename T>
-//    force_inline constexpr T imag( const std::complex<T> & z )
-//    {
-//        return std::imag(z);
-//    }
-    
-    template<typename T>
-    force_inline T constexpr abs_squared( const std::complex<T> & z )
-    {
-        const T x = std::real(z);
-        const T y = std::imag(z);
-        return  x * x + y * y;
-    }
 
     namespace Scalar
     {
+        
+        template<typename T>
+        force_inline T constexpr Conj( const T & x )
+        {
+            return x;
+        }
+        
+        template<typename T>
+        force_inline T constexpr Re( const T & x )
+        {
+            return x;
+        }
+        
+        template<typename T>
+        force_inline constexpr T Im( const T & x )
+        {
+            return static_cast<T>(0);
+        }
+        
+        template<typename T>
+        force_inline T constexpr AbsSquared( const T & x )
+        {
+            return x * x;
+        }
+        
+        
+        template<typename T>
+        force_inline std::complex<T> Conj( const std::complex<T> & z )
+        {
+            return std::conj(z);
+        }
+    
+        template<typename T>
+        force_inline T constexpr Re( const std::complex<T> & z )
+        {
+            return std::real(z);
+        }
+    
+        template<typename T>
+        force_inline constexpr T Im( const std::complex<T> & z )
+        {
+            return std::imag(z);
+        }
+        
+        template<typename T>
+        force_inline T constexpr AbsSquared( const std::complex<T> & z )
+        {
+            const T x = std::real(z);
+            const T y = std::imag(z);
+            return  x * x + y * y;
+        }
+        
         template<typename T> inline constexpr const bool IsComplex = false;
         
         template<> inline constexpr const bool IsComplex<Real32 >    = false;

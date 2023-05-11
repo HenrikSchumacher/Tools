@@ -21,9 +21,10 @@ namespace Tools
     template<> inline constexpr const char * TypeName<UInt32> = "U32";
     
     template<> inline constexpr const char * TypeName<UInt64> = "U64";
+
     
     // Microsoft's C compiler defines std::size_t as an alias onto unsigned long long and throws an error here.
-#ifndef _MSC_VER
+#if !defined(_MSC_VER) && !defined(__GNUC__)
     template<> inline constexpr const char * TypeName<std::size_t> = "size_t";
 #endif
 
