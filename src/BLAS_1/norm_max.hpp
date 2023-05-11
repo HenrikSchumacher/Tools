@@ -22,7 +22,7 @@ namespace Tools
         
         for( std::size_t i = 0; i < n; ++i )
         {
-            max = std::max( max, abs_squared(z[i]));
+            max = std::max( max, Scalar::AbsSquared(z[i]));
         }
         return std::sqrt(max);
     }

@@ -13,7 +13,7 @@ namespace Tools
         
         for( std::size_t i = 0; i < n; ++i )
         {
-            R abs_z = abs_squared(z[i]);
+            R abs_z = Scalar::AbsSquared(z[i]);
             if( abs_z > max )
             {
                 pos = i;
@@ -33,7 +33,7 @@ namespace Tools
         
         for( std::size_t i = 0; i < n; ++i )
         {
-            R abs_z = abs_squared(z[i]);
+            R abs_z = Scalar::AbsSquared(z[i]);
             if( abs_z > max )
             {
                 pos = i;

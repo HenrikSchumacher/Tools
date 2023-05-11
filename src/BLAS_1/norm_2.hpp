@@ -10,7 +10,7 @@ namespace Tools
         
         for( std::size_t i = 0; i < n; ++i )
         {
-            norm_squared += abs_squared(z[i]);
+            norm_squared += Scalar::AbsSquared(z[i]);
         }
         return std::sqrt(norm_squared);
     }
@@ -22,7 +22,7 @@ namespace Tools
         
         for( std::size_t i = 0; i < n; ++i )
         {
-            norm_squared += abs_squared(z[i]);
+            norm_squared += Scalar::AbsSquared(z[i]);
         }
         return std::sqrt(norm_squared);
     }
