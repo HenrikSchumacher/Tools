@@ -2,6 +2,7 @@
 
 namespace Tools
 {
+    
     template <typename T>
     std::string ToString(const T & a_value, const int p = 16)
     {
