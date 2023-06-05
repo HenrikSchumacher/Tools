@@ -147,6 +147,8 @@
     #include "src/MyMath/MyMath.hpp"
 
 
+    #include "src/CachedObject.hpp"
+
         //https://stackoverflow.com/a/43587319/8248900
         
     #define __ADD_CLONE_CODE_FOR_BASE_CLASS__(BASE)                                 \
