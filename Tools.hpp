@@ -153,18 +153,18 @@
         
     #define __ADD_CLONE_CODE_FOR_BASE_CLASS__(BASE)                                 \
     public:                                                                         \
-        std::unique_ptr<BASE> Clone () const                                        \
+        std::shared_ptr<BASE> Clone () const                                        \
         {                                                                           \
-            return std::unique_ptr<BASE>(CloneImplementation());                    \
+            return std::shared_ptr<BASE>(CloneImplementation());                    \
         }                                                                           \
     private:                                                                        \
         virtual BASE * CloneImplementation() const = 0;
         
     #define __ADD_CLONE_CODE_FOR_ABSTRACT_CLASS__(CLASS)                            \
     public:                                                                         \
-        std::unique_ptr<CLASS> Clone () const                                       \
+        std::shared_ptr<CLASS> Clone () const                                       \
         {                                                                           \
-            return std::unique_ptr<CLASS>(CloneImplementation());                   \
+            return std::shared_ptr<CLASS>(CloneImplementation());                   \
         }                                                                           \
     private:                                                                        \
         virtual CLASS * CloneImplementation() const override = 0;
@@ -172,9 +172,9 @@
         
     #define __ADD_CLONE_CODE__(DERIVED)                                             \
     public:                                                                         \
-        std::unique_ptr<DERIVED> Clone () const                                     \
+        std::shared_ptr<DERIVED> Clone () const                                     \
         {                                                                           \
-            return std::unique_ptr<DERIVED>(CloneImplementation());                 \
+            return std::shared_ptr<DERIVED>(CloneImplementation());                 \
         }                                                                           \
                                                                                     \
     private:                                                                        \

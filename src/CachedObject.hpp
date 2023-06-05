@@ -67,8 +67,17 @@ namespace Tools
             return *thing;
         }
         
+//        // Caution! This function is destructive.
+//        void SetCache( const std::string & s, std::any & thing ) const
+//        {
+//            #pragma omp critical (cache)
+//            {
+//                cache[s] = std::move(thing);
+//            }
+//        }
+        
         // Caution! This function is destructive.
-        void SetCache( const std::string & s, std::any & thing ) const
+        void SetCache( const std::string & s, std::any && thing ) const
         {
             #pragma omp critical (cache)
             {
