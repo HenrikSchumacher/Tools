@@ -33,7 +33,7 @@ namespace Tools
     {
     public:
         
-        using Int = long long;
+        using Int = std::size_t;
         
         //        ThreadPool()
         //        {
@@ -63,7 +63,7 @@ namespace Tools
         {
             WaitForTasks();
             DestroyThreads();
-            valprint("std::thread::hardware_concurrency()",std::thread::hardware_concurrency());
+            dump(std::thread::hardware_concurrency());
             
             thread_count = (thread_count_ > static_cast<Int>(0))
             ?   thread_count_
@@ -72,7 +72,7 @@ namespace Tools
                          static_cast<Int>(std::thread::hardware_concurrency())
                 );
             
-            valprint("thread_count()",thread_count);
+            dump(thread_count);
             
             threads = std::vector<std::thread>       ( thread_count );
             
@@ -136,13 +136,13 @@ namespace Tools
         template<typename F, typename I>
         void BalancedMap( F && fun, const JobPointers<I> & job_ptr )
         {
-            const I thread_count_ = job_ptr.ThreadCount();
+            const Int thread_count_ = job_ptr.ThreadCount();
             
             RequireThreads( thread_count_ );
             
-            //            wprint("BalancedMap");
+//            print("BalancedMap");
             
-            for( I thread = 0; thread < thread_count_; ++thread )
+            for( Int thread = 0; thread < thread_count_; ++thread )
             {
                 futures[thread] = Submit(
                     std::forward<F>(fun),
@@ -150,7 +150,7 @@ namespace Tools
                 );
             }
             
-            for( I thread = 0; thread < thread_count_; ++thread )
+            for( Int thread = 0; thread < thread_count_; ++thread )
             {
                 futures[thread].get();
             }
@@ -159,13 +159,13 @@ namespace Tools
         template<typename F, typename I, typename T = std::invoke_result_t<std::decay_t<F>, I, I, I>>
         T BalancedSum( F && fun, const JobPointers<I> & job_ptr )
         {
-            const I thread_count_ = job_ptr.ThreadCount();
+            const Int thread_count_ = job_ptr.ThreadCount();
             
             RequireThreads( thread_count_ );
             
             std::vector<std::future<T>> futures_ (thread_count_);
             
-            for( I thread = 0; thread < thread_count_; ++thread )
+            for( Int thread = 0; thread < thread_count_; ++thread )
             {
                 futures_[thread] = Submit(
                     std::forward<F>(fun),
@@ -175,7 +175,7 @@ namespace Tools
             
             T sum = static_cast<T>(0);
             
-            for( I thread = 0; thread < thread_count_; ++thread )
+            for( Int thread = 0; thread < thread_count_; ++thread )
             {
                 sum += futures_[thread].get();
             }
@@ -187,7 +187,7 @@ namespace Tools
         template<typename F, typename I0, typename I1, typename I2, typename I = std::common_type_t<I0,I1,I2>>
         void Map( F && fun, const I0 begin, const I1 end, const I2 thread_count_ )
         {
-            print("Map");
+//            print("Map");
             Blocks<I> blks (begin, end, thread_count_ ? thread_count_ : static_cast<I>(thread_count) );
             
             RequireThreads( blks.BlockCount() );
@@ -218,9 +218,7 @@ namespace Tools
         template<typename F, typename I, typename T = std::invoke_result_t<std::decay_t<F>, I, I, I>>
         T Sum( F && fun, const I begin, const I end, const I thread_count_ = 0 )
         {
-            print("Sum");
-            
-            print("Sum");
+//            print("Sum");
             Blocks<Int> blks (begin, end, thread_count_ ? thread_count_ : thread_count );
             
             RequireThreads( blks.BlockCount() );
