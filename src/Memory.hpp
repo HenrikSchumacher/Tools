@@ -228,21 +228,8 @@ namespace Tools
     template<typename S, typename T>
     force_inline void copy_buffer( ptr<S> from, mut<T> to, const std::size_t n, const std::size_t thread_count )
     {
-        if( thread_count == 1 )
-        {
-            if constexpr ( std::is_same_v<T,S> )
-            {
-                std::copy( &from[0], &from[n], &to[0] );
-            }
-            else
-            {
-                std::transform( &from[0], &from[n], &to[0], static_caster<S,T>() );
-            }
-        }
-        else
-        {
-            #pragma omp parallel for num_threads( thread_count )
-            for( std::size_t thread = 0; thread < thread_count; ++thread )
+        ParallelDo(
+            [=]( const std::size_t thread )
             {
                 const std::size_t begin = JobPointer(n,thread_count,thread  );
                 const std::size_t end   = JobPointer(n,thread_count,thread+1);
@@ -255,8 +242,9 @@ namespace Tools
                 {
                     std::transform( &from[begin], &from[end], &to[begin], static_caster<S,T>() );
                 }
-            }
-        }
+            },
+            thread_count
+        );
     }
     
     // See also my above remarks on copy_buffer.
@@ -338,22 +326,16 @@ namespace Tools
         const std::size_t thread_count
     )
     {
-        
-        if( thread_count <= 1 )
-        {
-            std::fill( &a[0], &a[n], init );
-        }
-        else
-        {
-            #pragma omp parallel for num_threads( thread_count )
-            for( std::size_t thread = 0; thread < thread_count; ++thread )
+        ParallelDo(
+            [=]( const std::size_t thread )
             {
                 const std::size_t begin = JobPointer(n,thread_count,thread  );
                 const std::size_t end   = JobPointer(n,thread_count,thread+1);
                 
                 std::fill( &a[begin], &a[end], init );
-            }
-        }
+            },
+            thread_count
+        );
     }
 
     template <std::size_t n, typename T>
@@ -371,21 +353,16 @@ namespace Tools
     template <typename T>
     force_inline void zerofy_buffer( mut<T> a, const std::size_t n, const std::size_t thread_count )
     {
-        if( thread_count <= 1 )
-        {
-            std::fill( &a[0], &a[n], static_cast<T>(0) );
-        }
-        else
-        {
-            #pragma omp parallel for num_threads( thread_count )
-            for( std::size_t thread = 0; thread < thread_count; ++thread )
+        ParallelDo(
+            [=]( const std::size_t thread )
             {
                 const std::size_t begin = JobPointer(n,thread_count,thread  );
                 const std::size_t end   = JobPointer(n,thread_count,thread+1);
                 
                 std::fill( &a[begin], &a[end], static_cast<T>(0) );
-            }
-        }
+            },
+            thread_count
+        );
     }
     
 } // namespace Tools

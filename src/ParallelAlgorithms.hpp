@@ -35,26 +35,28 @@ namespace Tools
         b[0] = S[0] = a[0];
         // b[0] is already known. We have to work on the remaining array.
         
-        #pragma omp parallel for num_threads( thread_count )
-        for( I thread = 0; thread < thread_count; ++thread )
-        {
-            // now each thread does the scan on its chunk
-            const I i_begin = step*(thread  ) + (corr*(thread  ))/thread_count + 1;
-            const I i_end   = step*(thread+1) + (corr*(thread+1))/thread_count + 1;
-            
-            if( i_end > i_begin )
+        ParallelDo(
+            [=]( const I thread )
             {
-                T s_local  = a[i_begin];
-                b[i_begin] = s_local;
+                // now each thread does the scan on its chunk
+                const I i_begin = step*(thread  ) + (corr*(thread  ))/thread_count + 1;
+                const I i_end   = step*(thread+1) + (corr*(thread+1))/thread_count + 1;
                 
-                for( I i = i_begin+1; i < i_end; ++i )
+                if( i_end > i_begin )
                 {
-                    s_local = f(s_local, a[i]);
-                    b[i] = s_local;
+                    T s_local  = a[i_begin];
+                    b[i_begin] = s_local;
+                    
+                    for( I i = i_begin+1; i < i_end; ++i )
+                    {
+                        s_local = f(s_local, a[i]);
+                        b[i] = s_local;
+                    }
+                    S[thread+1] = s_local;
                 }
-                S[thread+1] = s_local;
-            }
-        }
+            },
+            thread_count
+        );
         
         // scan through the last results of each chuck
         {
@@ -66,20 +68,22 @@ namespace Tools
             }
         }
         
-        #pragma omp parallel for num_threads( thread_count )
-        for( I thread = 0; thread < thread_count; ++thread )
-        {
-            // now each thread corrects its result
-            const T correction = S[thread];
-            
-            const I i_begin = step*(thread  ) + (corr*(thread  ))/thread_count + 1;
-            const I i_end   = step*(thread+1) + (corr*(thread+1))/thread_count + 1;
-            
-            for( I i = i_begin; i < i_end; ++i )
+        ParallelDo(
+            [=]( const I thread )
             {
-                b[i] = f(b[i], correction);
-            }
-        }
+                // now each thread corrects its result
+                const T correction = S[thread];
+                
+                const I i_begin = step*(thread  ) + (corr*(thread  ))/thread_count + 1;
+                const I i_end   = step*(thread+1) + (corr*(thread+1))/thread_count + 1;
+                
+                for( I i = i_begin; i < i_end; ++i )
+                {
+                    b[i] = f(b[i], correction);
+                }
+            },
+            thread_count
+        );
         
         safe_free(S_buffer);
     }
@@ -98,29 +102,32 @@ namespace Tools
         const I step = n / thread_count;
         const I corr = n % thread_count;
         
-        #pragma omp parallel for num_threads( thread_count )
-        for( I thread = 0; thread < thread_count; ++thread )
-        {
-            // now each thread does the scan on its chunk
-            const I i_begin = step*(thread  ) + (corr*(thread  ))/thread_count;
-            const I i_end   = step*(thread+1) + (corr*(thread+1))/thread_count;
-            
-            if( i_end > i_begin )
+        
+        ParallelDo(
+            [=]( const I thread )
             {
-                T s_local = static_cast<T>(0);
+                // now each thread does the scan on its chunk
+                const I i_begin = step*(thread  ) + (corr*(thread  ))/thread_count;
+                const I i_end   = step*(thread+1) + (corr*(thread+1))/thread_count;
                 
-                for( I i = i_begin; i < i_end; ++i )
+                if( i_end > i_begin )
                 {
-                    s_local += a[i];
-                    a[i] = s_local;
+                    T s_local = static_cast<T>(0);
+                    
+                    for( I i = i_begin; i < i_end; ++i )
+                    {
+                        s_local += a[i];
+                        a[i] = s_local;
+                    }
+                    S[thread+1] = a[i_end-1];
                 }
-                S[thread+1] = a[i_end-1];
-            }
-            else
-            {
-                S[thread+1] = static_cast<T>(0);
-            }
-        }
+                else
+                {
+                    S[thread+1] = static_cast<T>(0);
+                }
+            },
+            thread_count
+        );
         
         // scan through the last results of each chunk
         {
@@ -132,20 +139,22 @@ namespace Tools
             }
         }
         
-        #pragma omp parallel for num_threads( thread_count )
-        for( I thread = 0; thread < thread_count; ++thread )
-        {
-            // now each thread corrects its result
-            const T correction = S[thread];
-            
-            const I i_begin = step*(thread  ) + (corr*(thread  ))/thread_count;
-            const I i_end   = step*(thread+1) + (corr*(thread+1))/thread_count;
-            
-            for( I i = i_begin; i < i_end; ++i )
+        ParallelDo(
+            [=]( const I thread )
             {
-                a[i] += correction;
-            }
-        }
+                // now each thread corrects its result
+                const T correction = S[thread];
+                
+                const I i_begin = step*(thread  ) + (corr*(thread  ))/thread_count;
+                const I i_end   = step*(thread+1) + (corr*(thread+1))/thread_count;
+                
+                for( I i = i_begin; i < i_end; ++i )
+                {
+                    a[i] += correction;
+                }
+            },
+            thread_count
+        );
         
         safe_free(S_buffer);
     }
@@ -161,29 +170,31 @@ namespace Tools
         const I step = n / thread_count;
         const I corr = n % thread_count;
         
-        #pragma omp parallel for num_threads( thread_count )
-        for( I thread = 0; thread < thread_count; ++thread )
-        {
-            // now each thread does the scan on its chunk
-            const I i_begin = step*(thread  ) + (corr*(thread  ))/thread_count;
-            const I i_end   = step*(thread+1) + (corr*(thread+1))/thread_count;
-            
-            if( i_end > i_begin )
+        ParallelDo(
+            [=]( const I thread )
             {
-                T s_local = static_cast<T>(0);
+                // now each thread does the scan on its chunk
+                const I i_begin = step*(thread  ) + (corr*(thread  ))/thread_count;
+                const I i_end   = step*(thread+1) + (corr*(thread+1))/thread_count;
                 
-                for( I i = i_begin; i < i_end; ++i )
+                if( i_end > i_begin )
                 {
-                    s_local += a[i];
-                    b[i] = s_local;
+                    T s_local = static_cast<T>(0);
+                    
+                    for( I i = i_begin; i < i_end; ++i )
+                    {
+                        s_local += a[i];
+                        b[i] = s_local;
+                    }
+                    S[thread+1] = b[i_end-1];
                 }
-                S[thread+1] = b[i_end-1];
-            }
-            else
-            {
-                S[thread+1] = static_cast<T>(0);
-            }
-        }
+                else
+                {
+                    S[thread+1] = static_cast<T>(0);
+                }
+            },
+            thread_count
+        );
         
         // scan through the last results of each chunk
         {
@@ -195,20 +206,22 @@ namespace Tools
             }
         }
         
-        #pragma omp parallel for num_threads( thread_count )
-        for( I thread = 0; thread < thread_count; ++thread )
-        {
-            // now each thread corrects its result
-            const T correction = S[thread];
-            
-            const I i_begin = step*(thread  ) + (corr*(thread  ))/thread_count;
-            const I i_end   = step*(thread+1) + (corr*(thread+1))/thread_count;
-            
-            for( I i = i_begin; i < i_end; ++i )
+        ParallelDo(
+            [=]( const I thread )
             {
-                b[i] += correction;
-            }
-        }
+                // now each thread corrects its result
+                const T correction = S[thread];
+                
+                const I i_begin = step*(thread  ) + (corr*(thread  ))/thread_count;
+                const I i_end   = step*(thread+1) + (corr*(thread+1))/thread_count;
+                
+                for( I i = i_begin; i < i_end; ++i )
+                {
+                    b[i] += correction;
+                }
+            },
+            thread_count
+        );
         
         safe_free(S_buffer);
     }

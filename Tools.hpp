@@ -137,13 +137,15 @@
     #include "src/TypeName.hpp"
     #include "src/Memory.hpp"
 
+    #include "src/ParallelAlgorithms.hpp"
+    #include "src/JobPointers.hpp"
+    #include "src/ParallelDo_Common.hpp"
+
     #include "src/Scalars/combine_scalars.hpp"
 
     #include "src/BLAS_1.hpp"
 
     #include "src/SortedList.hpp"
-    #include "src/ParallelAlgorithms.hpp"
-    #include "src/JobPointers.hpp"
     #include "src/BitFiddling.hpp"
         
     #define _USE_MATH_DEFINES

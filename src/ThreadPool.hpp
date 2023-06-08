@@ -88,18 +88,25 @@ namespace Tools
         template<typename F, typename I>
         void Do( F && fun, const I thread_count )
         {
-            RequireThreads( static_cast<Int>(thread_count) );
-            
-            std::vector<std::future<void>> futures ( thread_count );
-
-            for( I thread = 0; thread < thread_count; ++thread )
+            if( thread_count <= static_cast<I>(1) )
             {
-                futures[thread] = Submit( std::forward<F>(fun), thread );
+                std::invoke( fun, static_cast<I>(0) );
             }
-
-            for( I thread = 0; thread < thread_count; ++thread )
+            else
             {
-                futures[thread].get();
+                RequireThreads( static_cast<Int>(thread_count) );
+                
+                std::vector<std::future<void>> futures ( thread_count );
+                
+                for( I thread = 0; thread < thread_count; ++thread )
+                {
+                    futures[thread] = Submit( std::forward<F>(fun), thread );
+                }
+                
+                for( I thread = 0; thread < thread_count; ++thread )
+                {
+                    futures[thread].get();
+                }
             }
         }
         
@@ -109,22 +116,35 @@ namespace Tools
         >
         T DoReduce( F && fun, R && reducer, const T & init_value, const I thread_count )
         {
-            RequireThreads( static_cast<Int>(thread_count) );
-
-            std::vector<std::future<S>> futures ( thread_count );
             
-            for( I thread = 0; thread < thread_count; ++thread )
-            {
-                // Shall we make copies fo fun in case it has state?
-                // Or shall we rather std::forward it?
-                futures[thread] = Submit( fun, thread );
-            }
-
             T result (init_value);
-
-            for( I thread = 0; thread < thread_count; ++thread )
+            
+            if( thread_count <= static_cast<I>(1) )
             {
-                std::invoke( reducer, thread, futures[thread].get(), result );
+                std::invoke(
+                    reducer,
+                    static_cast<I>(0),
+                    std::invoke( fun, static_cast<I>(0) ),
+                    result
+                );
+            }
+            else
+            {
+                RequireThreads( static_cast<Int>(thread_count) );
+                
+                std::vector<std::future<S>> futures ( thread_count );
+                
+                for( I thread = 0; thread < thread_count; ++thread )
+                {
+                    // Shall we make copies fo fun in case it has state?
+                    // Or shall we rather std::forward it?
+                    futures[thread] = Submit( fun, thread );
+                }
+                
+                for( I thread = 0; thread < thread_count; ++thread )
+                {
+                    std::invoke( reducer, thread, futures[thread].get(), result );
+                }
             }
 
             return result;

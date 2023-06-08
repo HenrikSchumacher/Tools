@@ -30,21 +30,19 @@ namespace Tools
         {
             decltype( R(1) * S(1) ) sum = 0;
             
-            #pragma omp parallel for num_threads( thread_count ) reduction( + : sum)
-            for( std::size_t thread = 0; thread < thread_count; ++thread )
-            {
-                const std::size_t i_begin = JobPointer(n,thread_count,thread  );
-                const std::size_t i_end   = JobPointer(n,thread_count,thread+1);
-                
-                T local_sum = 0;
-                for( std::size_t i = i_begin; i < i_end; ++i )
+            return ParallelDoReduce(
+                [=]( const std::size_t i ) -> T
                 {
-                    local_sum += scalar_cast<T>(x[i]) * scalar_cast<T>(y[i]);
-                }
-                
-                sum += local_sum;
-            }
-            return sum;
+                    return scalar_cast<T>(x[i]) * scalar_cast<T>(y[i]);
+                },
+                []( const std::size_t thread, const T & value, T & result ) -> T
+                {
+                    result += value;
+                },
+                n,
+                static_cast<T>(0),
+                thread_count
+            );
         }
     }
 

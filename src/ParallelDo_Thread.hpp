@@ -10,7 +10,7 @@ namespace Tools
     template<typename F, typename Int>
     force_inline void ParallelDo( F && fun, const Int thread_count )
     {
-        if( thread_count <= 1 )
+        if( thread_count <= static_cast<Int>(1) )
         {
             std::invoke( fun, static_cast<Int>(0) );
         }
@@ -37,10 +37,11 @@ namespace Tools
     {
         T result (init);
         
-        if( thread_count <= 1 )
+        if( thread_count <= static_cast<Int>(1) )
         {
             std::invoke(
-                reducer,static_cast<Int>(0),
+                reducer,
+                static_cast<Int>(0),
                 std::invoke( fun, static_cast<Int>(0) ),
                 result
             );

@@ -7,10 +7,17 @@ namespace Tools
     template<typename F, typename Int>
     force_inline void ParallelDo( F && fun, const Int thread_count )
     {
-        #pragma omp parallel for num_threads( thread_count) schedule( static )
-        for( Int thread = 0; thread < thread_count; ++thread )
+        if( thread_count <= static_cast<Int>(1) )
         {
-            std::invoke( fun, thread );
+            std::invoke( fun, static_cast<Int>(0) );
+        }
+        else
+        {
+            #pragma omp parallel for num_threads( thread_count) schedule( static )
+            for( Int thread = 0; thread < thread_count; ++thread )
+            {
+                std::invoke( fun, thread );
+            }
         }
     }
     
@@ -21,14 +28,26 @@ namespace Tools
     {
         T result ( init );
         
-        #pragma omp parallel for num_threads( thread_count) schedule( static )
-        for( Int thread = 0; thread < thread_count; ++thread )
+        if( thread_count <= static_cast<Int>(1) )
         {
-            T local_result = std::invoke( fun, thread );
-            
-            #pragma omp critical ( ParallelDoReduce )
+            std::invoke(
+                reducer,
+                static_cast<Int>(0),
+                std::invoke( fun, static_cast<Int>(0) ),
+                result
+            );
+        }
+        else
+        {
+            #pragma omp parallel for num_threads( thread_count) schedule( static )
+            for( Int thread = 0; thread < thread_count; ++thread )
             {
-                std::invoke( reducer, thread, local_result, result );
+                T local_result = std::invoke( fun, thread );
+                
+                #pragma omp critical ( ParallelDoReduce )
+                {
+                    std::invoke( reducer, thread, local_result, result );
+                }
             }
         }
         
