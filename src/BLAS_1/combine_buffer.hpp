@@ -119,27 +119,14 @@ namespace Tools
         }
         else
         {
-            if( thread_count > 1 )
-            {
-                #pragma omp parallel for num_threads( thread_count )
-                for( std::size_t thread = 0; thread < thread_count; ++thread )
+            ParallelDo(
+                [=]( const std::size_t i )
                 {
-                    const std::size_t k_begin = JobPointer(n,thread_count,thread  );
-                    const std::size_t k_end   = JobPointer(n,thread_count,thread+1);
-                    
-                    for( std::size_t k = k_begin; k < k_end; ++k )
-                    {
-                        combine_scalars<alpha_flag,beta_flag>( alpha, x[k], beta, y[k] );
-                    }
-                }
-            }
-            else
-            {
-                for( std::size_t k = 0; k < n; ++k )
-                {
-                    combine_scalars<alpha_flag,beta_flag>( alpha, x[k], beta, y[k] );
-                }
-            }
+                    combine_scalars<alpha_flag,beta_flag>( alpha, x[i], beta, y[i] );
+                },
+                n,
+                thread_count
+            );
         }
     }
 

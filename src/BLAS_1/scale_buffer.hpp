@@ -26,17 +26,14 @@ namespace Tools
         {
             const auto beta = scalar_cast<S>(beta_);
             
-#pragma omp parallel for num_threads( thread_count )
-            for( std::size_t thread = 0; thread < thread_count; ++thread )
-            {
-                const std::size_t i_begin = JobPointer(n,thread_count,thread  );
-                const std::size_t i_end   = JobPointer(n,thread_count,thread+1);
-                
-                for( std::size_t i = i_begin; i < i_end; ++i )
+            ParallelDo(
+                [=]( const std::size_t i )
                 {
                     y[i] *= beta;
-                }
-            }
+                },
+                n,
+                thread_count
+            );
         }
     }
 
