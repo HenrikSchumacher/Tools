@@ -35,18 +35,7 @@ namespace Tools
         
         using Int = std::size_t;
         
-        //        ThreadPool()
-        //        {
-        //            thread_pool_print("ThreadPool() default constructor");
-        //            SetThreadCount(1);
-        //        }
-        
         ThreadPool() = default;
-        
-        explicit ThreadPool( const Int thread_count_ )
-        {
-            SetThreadCount(thread_count_);
-        }
         
         ~ThreadPool()
         {
@@ -56,27 +45,24 @@ namespace Tools
         
         Int ThreadCount() const
         {
-            return thread_count;
+            return static_cast<Int>(threads.size());
         }
         
         void SetThreadCount( const Int thread_count_ )
         {
             WaitForTasks();
             DestroyThreads();
-            dump(std::thread::hardware_concurrency());
+//            dump(std::thread::hardware_concurrency());
             
-            thread_count = (thread_count_ > static_cast<Int>(0))
-            ?   thread_count_
-            :   std::max(
-                         static_cast<Int>(1),
-                         static_cast<Int>(std::thread::hardware_concurrency())
-                );
+            Int thread_count = (thread_count_ > static_cast<Int>(0)) ? thread_count_ :  static_cast<Int>(1);
+//            :   std::max(
+//                         static_cast<Int>(1),
+//                         static_cast<Int>(std::thread::hardware_concurrency())
+//                );
             
             dump(thread_count);
             
             threads = std::vector<std::thread>       ( thread_count );
-            
-            futures = std::vector<std::future<void>> ( thread_count );
             
             running = true;
             for( Int thread = 0; thread < thread_count; ++thread )
@@ -85,178 +71,162 @@ namespace Tools
             }
         }
         
-        void RequireThreads( const Int thread_count_ )
+        void RequireThreads( const Int thread_count )
         {
-            //            thread_pool_valprint("thread_count_",thread_count_);
-            if( thread_count_ > thread_count )
+            if( thread_count > ThreadCount() )
             {
-                print("RequireThreads");
-                valprint("old number of threads",thread_count);
-                SetThreadCount( thread_count_ );
-                valprint("new number of threads",thread_count);
+//                print("RequireThreads");
+//                valprint("old number of threads",ThreadCount());
+                SetThreadCount( thread_count );
+//                valprint("new number of threads",ThreadCount());
             }
         }
         
-        template<typename F>
-        void Execute( F && fun, const Int thread_count_ )
+        
+        
+        // Executes the function `fun` of the form `[]( const Int thread ) -> void {...}` parallelized over `thread_count` threads.
+        template<typename F, typename I>
+        void Do( F && fun, const I thread_count )
         {
-            RequireThreads( thread_count_ );
+            RequireThreads( static_cast<Int>(thread_count) );
             
-            for( Int thread = 0; thread < thread_count_; ++thread )
+            std::vector<std::future<void>> futures ( thread_count );
+
+            for( I thread = 0; thread < thread_count; ++thread )
             {
                 futures[thread] = Submit( std::forward<F>(fun), thread );
             }
-            
-            for( Int thread = 0; thread < thread_count_; ++thread )
+
+            for( I thread = 0; thread < thread_count; ++thread )
             {
                 futures[thread].get();
             }
         }
         
-        template<typename F>
-        void QueuedExecute( F && fun, const Int job_count_, const Int thread_count_ )
+        // Executes the function `fun` of the form `[]( const Int thread ) -> void {...}` parallelized over `thread_count` threads.
+        // Afterwards, reduces with the function `reducer` of the form `[]( const Int thread, const S & value, T & result ) {...}` .
+        template<typename F, typename R, typename I, typename T, typename S = std::invoke_result_t<std::decay_t<F>, Int>
+        >
+        T DoReduce( F && fun, R && reducer, const T & init_value, const I thread_count )
         {
-            print("QueuedExecute");
+            RequireThreads( static_cast<Int>(thread_count) );
+
+            std::vector<std::future<S>> futures ( thread_count );
             
-            RequireThreads( thread_count_ );
-            
-            std::vector<std::future<void>> futures_ (job_count_);
-            
-            for( Int job = 0; job < job_count_; ++job )
+            for( I thread = 0; thread < thread_count; ++thread )
             {
-                futures_[job] = Submit( std::forward<F>(fun), job/thread_count_, job );
+                // Shall we make copies fo fun in case it has state?
+                // Or shall we rather std::forward it?
+                futures[thread] = Submit( fun, thread );
             }
-            
-            for( Int job = 0; job < job_count_; ++job )
+
+            T result (init_value);
+
+            for( I thread = 0; thread < thread_count; ++thread )
             {
-                futures_[job].get();
+                std::invoke( reducer, thread, futures[thread].get(), result );
             }
-        }
-        
-        template<typename F, typename I>
-        void BalancedMap( F && fun, const JobPointers<I> & job_ptr )
-        {
-            const Int thread_count_ = job_ptr.ThreadCount();
-            
-            RequireThreads( thread_count_ );
-            
-//            print("BalancedMap");
-            
-            for( Int thread = 0; thread < thread_count_; ++thread )
-            {
-                futures[thread] = Submit(
-                    std::forward<F>(fun),
-                    thread, job_ptr[thread], job_ptr[thread+1]
-                );
-            }
-            
-            for( Int thread = 0; thread < thread_count_; ++thread )
-            {
-                futures[thread].get();
-            }
-        }
-        
-        template<typename F, typename I, typename T = std::invoke_result_t<std::decay_t<F>, I, I, I>>
-        T BalancedSum( F && fun, const JobPointers<I> & job_ptr )
-        {
-            const Int thread_count_ = job_ptr.ThreadCount();
-            
-            RequireThreads( thread_count_ );
-            
-            std::vector<std::future<T>> futures_ (thread_count_);
-            
-            for( Int thread = 0; thread < thread_count_; ++thread )
-            {
-                futures_[thread] = Submit(
-                    std::forward<F>(fun),
-                    thread, job_ptr[thread], job_ptr[thread+1]
-                );
-            }
-            
-            T sum = static_cast<T>(0);
-            
-            for( Int thread = 0; thread < thread_count_; ++thread )
-            {
-                sum += futures_[thread].get();
-            }
-            
-            return sum;
+
+            return result;
         }
         
         
-        template<typename F, typename I0, typename I1, typename I2, typename I = std::common_type_t<I0,I1,I2>>
-        void Map( F && fun, const I0 begin, const I1 end, const I2 thread_count_ )
+        // Executes function `fun` of the form []( const I i ) -> void {} in parallel for argument i ranging from begin to end.
+        template<typename F, typename R, typename I>
+        void Map(
+            F && fun,
+            const I begin,
+            const I end,
+            const Int thread_count
+        )
         {
-//            print("Map");
-            Blocks<I> blks (begin, end, thread_count_ ? thread_count_ : static_cast<I>(thread_count) );
-            
-            RequireThreads( blks.BlockCount() );
-            
-            if( blks.TotalSize() > 0 )
-            {
-                for( I thread = 0; thread < blks.BlockCount(); ++thread )
+            return Do(
+               [fun,begin,end,thread_count]( const Int thread ) -> void
+               {
+                   const I i_begin = begin + JobPointer( end - begin, thread_count, thread   );
+                   const I i_end   = begin + JobPointer( end - begin, thread_count, thread+1 );
+
+                   for( I i = i_begin; i < i_end; ++i )
+                   {
+                       fun( i );
+                   }
+               },
+               thread_count
+            );
+        }
+        
+        // Same as above but with precomputed JobPointers.
+        template<typename F, typename R, typename I>
+        void Map( F && fun, const JobPointers<I> & job_ptr )
+        {
+            return Do(
+               [fun,&job_ptr]( const Int thread ) -> void
+               {
+                   const I i_begin = job_ptr[thread  ];
+                   const I i_end   = job_ptr[thread+1];
+
+                   for( I i = i_begin; i < i_end; ++i )
+                   {
+                       fun( i );
+                   }
+               },
+               job_ptr.ThreadCount()
+            );
+        }
+        
+        // Executes function `fun` of the form `[]( const I i ) -> void {}` in parallel for argument i ranging from begin to end.
+        // Then recursively runs reduction function `reducer` of the form `[]( cost Int thread, const S &, T & result ){...}`.
+        template<typename F, typename R, typename I, typename T>
+        T MapReduce(
+            F && fun,
+            R && reducer,
+            const T & init,
+            const I begin,
+            const I end,
+            const Int thread_count
+        )
+        {
+            return DoReduce(
+               [fun,begin,end,thread_count]( const Int thread ) -> void
+               {
+                   const I i_begin = begin + JobPointer( end - begin, thread_count, thread   );
+                   const I i_end   = begin + JobPointer( end - begin, thread_count, thread+1 );
+
+                   for( I i = i_begin; i < i_end; ++i )
+                   {
+                       fun( i );
+                   }
+               },
+               std::forward<R>(reducer),
+               init,
+               thread_count
+            );
+        }
+        
+        // Same as above but with precomputed JobPointers.
+        template<typename F, typename R, typename I, typename T>
+        T MapReduce( F && fun, R && reducer, const T & init, const JobPointers<I> & job_ptr
+        )
+        {
+            return DoReduce(
+                [fun,&job_ptr]( const Int thread ) -> void
                 {
-                    futures[thread] = Submit(
-                         std::forward<F>(fun),
-                         thread, blks.begin(thread), blks.end(thread)
-                     );
-                }
-            }
-            
-            for( I thread = 0; thread < blks.BlockCount(); ++thread )
-            {
-                futures[thread].get();
-            }
-        }
-        
-        template<typename F, typename I0, typename I1, typename I = std::common_type_t<I0,I1>>
-        void Map( F && fun, const I0 begin, const I1 end )
-        {
-            Map( std::forward<F>(fun), begin, end, thread_count );
-        }
-        
-        template<typename F, typename I, typename T = std::invoke_result_t<std::decay_t<F>, I, I, I>>
-        T Sum( F && fun, const I begin, const I end, const I thread_count_ = 0 )
-        {
-//            print("Sum");
-            Blocks<Int> blks (begin, end, thread_count_ ? thread_count_ : thread_count );
-            
-            RequireThreads( blks.BlockCount() );
-            
-            valprint("threads",blks.BlockCount());
-            std::vector<std::future<T>> futures_( blks.BlockCount() );
-            
-            for( I thread = 0; thread < blks.BlockCount(); ++thread )
-            {
-                futures_[thread] = Submit(
-                        std::forward<F>(fun),
-                        thread, blks.begin(thread), blks.end(thread)
-                );
-            }
-            
-            T sum = static_cast<T>(0);
-            
-            for( I thread = 0; thread < thread_count_; ++thread )
-            {
-                sum += futures_[thread].get();
-            }
-            
-            return sum;
+                    const I i_begin = job_ptr[thread  ];
+                    const I i_end   = job_ptr[thread+1];
+
+                    for( I i = i_begin; i < i_end; ++i )
+                    {
+                        fun( i );
+                    }
+                },
+                std::forward<R>(reducer),
+                init,
+                job_ptr.ThreadCount()
+            );
         }
         
         
         
-        template<typename I>
-        JobPointers<I> CreateJobPointers( const I job_count )
-        {
-            return JobPointers<I>( job_count, static_cast<I>(thread_count) );
-        }
-        
-        template<typename I>
-        JobPointers<I> CreateJobPointers( const I job_count, I const * const costs, bool accumulate = true )
-        {
-            return JobPointers<I>( job_count, costs, static_cast<I>(thread_count), accumulate );
-        }
         
     protected:
                              
@@ -293,10 +263,7 @@ namespace Tools
         template <typename F, typename... A, typename R = std::invoke_result_t<std::decay_t<F>, std::decay_t<A>...>>
         std::future<R> Submit(F&& task, A&&... args)
         {
-            std::function<R()> fun = std::bind(
-                std::forward<F>(task),
-                std::forward<A>(args)...
-            );
+            std::function<R()> fun = std::bind( std::forward<F>(task), std::forward<A>(args)... );
             
             std::shared_ptr<std::promise<R>> task_promise = std::make_shared<std::promise<R>>();
             
@@ -327,6 +294,7 @@ namespace Tools
                      }
                  }
             );
+            
             return task_promise->get_future();
         }
         
@@ -352,7 +320,8 @@ namespace Tools
         void CreateThreads()
         {
             running = true;
-            for( Int thread = 0; thread < thread_count; ++thread )
+            
+            for( Int thread = 0; thread < ThreadCount(); ++thread )
             {
                 threads[thread] = std::thread(&ThreadPool::Worker, this);
             }
@@ -365,7 +334,8 @@ namespace Tools
         {
             running = false;
             task_available_cv.notify_all();
-            for( Int thread = 0; thread < thread_count; ++thread )
+            
+            for( Int thread = 0; thread < ThreadCount(); ++thread )
             {
                 threads[thread].join();
             }
@@ -432,18 +402,10 @@ namespace Tools
         mutable std::mutex tasks_mutex = {};
         
         /**
-         * @brief The number of threads in the pool.
+         * @brief A vector storing the threads.
          */
-        Int thread_count = 0;
-        
-        /**
-         * @brief A smart pointer to manage the memory allocated for the threads.
-         */
-//        std::unique_ptr<std::thread[]> threads = nullptr;
         
         std::vector<std::thread> threads;
-        
-        std::vector<std::future<void>> futures;
         
         /**
          * @brief An atomic variable indicating that WaitForTasks() is active and expects to be notified whenever a task is done.

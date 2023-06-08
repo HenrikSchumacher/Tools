@@ -36,22 +36,33 @@
         
     #define CONCATT3(id1, id2, id3) id1##id2##id3
     #define CONCAT3(id1, id2, id3) CONCATT3(id1, id2, id3)
-        
-        
-//    #define OMP_PLACES cores
-    #define OMP_PLACES threads
+    
 
-    #define OMP_WAIT_POLICY = active
-//    #define OMP_WAIT_POLICY = passive
+#if defined(__GNUC__) || defined(__clang__) // force_inline
+    #define force_inline inline __attribute__((always_inline))
 
-    #define OMP_DYNAMIC = false
+    #define force_flattening __attribute__((flatten))
+#else
+    #define force_inline inline
 
-    #define OMP_PROC_BIND = true
-//    #define OMP_PROC_BIND spread // workers are spread across the available places to maximize the space inbetween two neighbouring threads
-//    //#define OMP_PROC_BIND close // worker threads are close to the master in contiguous partitions, e. g. if the master is occupying hardware thread 0, worker 1 will be placed on hw thread 1, worker 2 on hw thread 2 and so on
+    #define force_flattening
+#endif
 
 #ifndef TOOLS_DEACTIVATE_OPENMP
-    #include <omp.h>
+
+    #include "src/OpenMP.hpp"
+
+    #ifdef TOOLS_PARALLELDO_OPENMP
+
+        #include "src/ParallelDo_OpenMP.hpp"
+
+    #else
+
+        #include "src/ParallelDo_Thread.hpp"
+
+    #endif
+
+
 #else
     static constexpr size_t omp_get_num_threads()
     {
@@ -64,16 +75,9 @@
     }
 
     void omp_set_num_threads( const size_t thread_count) {};
-#endif
 
-#if defined(__GNUC__) || defined(__clang__) // force_inline
-    #define force_inline inline __attribute__((always_inline))
+    #include "src/ParallelDo_Thread.hpp"
 
-    #define force_flattening __attribute__((flatten))
-#else
-    #define force_inline inline
-
-    #define force_flattening
 #endif
 
 // Define loop unrolling depending on the compiler
