@@ -17,7 +17,9 @@ namespace Tools
     template<typename F, typename R, typename T, typename Int>
     force_inline T ParallelDoReduce( F && fun, R && reducer, const T & init, const Int thread_count )
     {
-        return thread_pool.DoReduce( std::forward<F>(fun), std::forward<R>(reducer), init, thread_count );
+        return thread_pool.DoReduce(
+            std::forward<F>(fun), std::forward<R>(reducer), init, thread_count
+        );
     }
     
 }

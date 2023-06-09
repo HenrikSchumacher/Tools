@@ -60,8 +60,6 @@ namespace Tools
 //                         static_cast<Int>(std::thread::hardware_concurrency())
 //                );
             
-            dump(thread_count);
-            
             threads = std::vector<std::thread>       ( thread_count );
             
             running = true;
@@ -151,101 +149,99 @@ namespace Tools
         }
         
         
-        // Executes function `fun` of the form []( const I i ) -> void {} in parallel for argument i ranging from begin to end.
-        template<typename F, typename R, typename I>
-        void Map(
-            F && fun,
-            const I begin,
-            const I end,
-            const Int thread_count
-        )
-        {
-            return Do(
-               [fun,begin,end,thread_count]( const Int thread ) -> void
-               {
-                   const I i_begin = begin + JobPointer( end - begin, thread_count, thread   );
-                   const I i_end   = begin + JobPointer( end - begin, thread_count, thread+1 );
-
-                   for( I i = i_begin; i < i_end; ++i )
-                   {
-                       fun( i );
-                   }
-               },
-               thread_count
-            );
-        }
+//        // Executes function `fun` of the form []( const I i ) -> void {} in parallel for argument i ranging from begin to end.
+//        template<typename F, typename R, typename I>
+//        void Map(
+//            F && fun,
+//            const I begin,
+//            const I end,
+//            const Int thread_count
+//        )
+//        {
+//            return Do(
+//               [fun,begin,end,thread_count]( const Int thread ) -> void
+//               {
+//                   const I i_begin = begin + JobPointer( end - begin, thread_count, thread   );
+//                   const I i_end   = begin + JobPointer( end - begin, thread_count, thread+1 );
+//
+//                   for( I i = i_begin; i < i_end; ++i )
+//                   {
+//                       fun( i );
+//                   }
+//               },
+//               thread_count
+//            );
+//        }
         
-        // Same as above but with precomputed JobPointers.
-        template<typename F, typename R, typename I>
-        void Map( F && fun, const JobPointers<I> & job_ptr )
-        {
-            return Do(
-               [fun,&job_ptr]( const Int thread ) -> void
-               {
-                   const I i_begin = job_ptr[thread  ];
-                   const I i_end   = job_ptr[thread+1];
-
-                   for( I i = i_begin; i < i_end; ++i )
-                   {
-                       fun( i );
-                   }
-               },
-               job_ptr.ThreadCount()
-            );
-        }
+//        // Same as above but with precomputed JobPointers.
+//        template<typename F, typename R, typename I>
+//        void Map( F && fun, const JobPointers<I> & job_ptr )
+//        {
+//            return Do(
+//               [fun,&job_ptr]( const Int thread ) -> void
+//               {
+//                   const I i_begin = job_ptr[thread  ];
+//                   const I i_end   = job_ptr[thread+1];
+//
+//                   for( I i = i_begin; i < i_end; ++i )
+//                   {
+//                       fun( i );
+//                   }
+//               },
+//               job_ptr.ThreadCount()
+//            );
+//        }
         
-        // Executes function `fun` of the form `[]( const I i ) -> void {}` in parallel for argument i ranging from begin to end.
-        // Then recursively runs reduction function `reducer` of the form `[]( cost Int thread, const S &, T & result ){...}`.
-        template<typename F, typename R, typename I, typename T>
-        T MapReduce(
-            F && fun,
-            R && reducer,
-            const T & init,
-            const I begin,
-            const I end,
-            const Int thread_count
-        )
-        {
-            return DoReduce(
-               [fun,begin,end,thread_count]( const Int thread ) -> void
-               {
-                   const I i_begin = begin + JobPointer( end - begin, thread_count, thread   );
-                   const I i_end   = begin + JobPointer( end - begin, thread_count, thread+1 );
-
-                   for( I i = i_begin; i < i_end; ++i )
-                   {
-                       fun( i );
-                   }
-               },
-               std::forward<R>(reducer),
-               init,
-               thread_count
-            );
-        }
-        
-        // Same as above but with precomputed JobPointers.
-        template<typename F, typename R, typename I, typename T>
-        T MapReduce( F && fun, R && reducer, const T & init, const JobPointers<I> & job_ptr
-        )
-        {
-            return DoReduce(
-                [fun,&job_ptr]( const Int thread ) -> void
-                {
-                    const I i_begin = job_ptr[thread  ];
-                    const I i_end   = job_ptr[thread+1];
-
-                    for( I i = i_begin; i < i_end; ++i )
-                    {
-                        fun( i );
-                    }
-                },
-                std::forward<R>(reducer),
-                init,
-                job_ptr.ThreadCount()
-            );
-        }
-        
-        
+//        // Executes function `fun` of the form `[]( const I i ) -> void {}` in parallel for argument i ranging from begin to end.
+//        // Then recursively runs reduction function `reducer` of the form `[]( cost Int thread, const S &, T & result ){...}`.
+//        template<typename F, typename R, typename I, typename T>
+//        T MapReduce(
+//            F && fun,
+//            R && reducer,
+//            const T & init,
+//            const I begin,
+//            const I end,
+//            const Int thread_count
+//        )
+//        {
+//            return DoReduce(
+//               [fun,begin,end,thread_count]( const Int thread ) -> void
+//               {
+//                   const I i_begin = begin + JobPointer( end - begin, thread_count, thread   );
+//                   const I i_end   = begin + JobPointer( end - begin, thread_count, thread+1 );
+//
+//                   for( I i = i_begin; i < i_end; ++i )
+//                   {
+//                       fun( i );
+//                   }
+//               },
+//               std::forward<R>(reducer),
+//               init,
+//               thread_count
+//            );
+//        }
+//        
+//        // Same as above but with precomputed JobPointers.
+//        template<typename F, typename R, typename I, typename T>
+//        T MapReduce( F && fun, R && reducer, const T & init, const JobPointers<I> & job_ptr
+//        )
+//        {
+//            return DoReduce(
+//                [fun,&job_ptr]( const Int thread ) -> void
+//                {
+//                    const I i_begin = job_ptr[thread  ];
+//                    const I i_end   = job_ptr[thread+1];
+//
+//                    for( I i = i_begin; i < i_end; ++i )
+//                    {
+//                        fun( i );
+//                    }
+//                },
+//                std::forward<R>(reducer),
+//                init,
+//                job_ptr.ThreadCount()
+//            );
+//        }
         
         
     protected:

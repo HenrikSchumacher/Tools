@@ -36,7 +36,6 @@
         
     #define CONCATT3(id1, id2, id3) id1##id2##id3
     #define CONCAT3(id1, id2, id3) CONCATT3(id1, id2, id3)
-    
 
 #if defined(__GNUC__) || defined(__clang__) // force_inline
     #define force_inline inline __attribute__((always_inline))
@@ -58,6 +57,7 @@
 
     #else
 
+//        #include "src/ParallelDo_ThreadPool.hpp"
         #include "src/ParallelDo_Thread.hpp"
 
     #endif
@@ -76,6 +76,7 @@
 
     void omp_set_num_threads( const size_t thread_count) {};
 
+//    #include "src/ParallelDo_ThreadPool.hpp"
     #include "src/ParallelDo_Thread.hpp"
 
 #endif
