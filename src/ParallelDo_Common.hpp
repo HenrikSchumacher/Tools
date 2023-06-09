@@ -2,6 +2,41 @@
 
 namespace Tools
 {
+    struct AndReducer
+    {
+        void operator()( const std::size_t thread, const bool value, bool & result )
+        {
+            result = result && value;
+        }
+    };
+    
+    struct OrReducer
+    {
+        void operator()( const std::size_t thread, const bool value, bool & result )
+        {
+            result = result || value;
+        }
+    };
+    
+    template<typename Scal_in, typename Scal_out>
+    struct AddReducer
+    {
+        void operator()( const std::size_t thread, const Scal_in value, Scal_out & result )
+        {
+            result += value;
+        }
+    };
+    
+    template<typename Scal_in, typename Scal_out>
+    struct TimesReducer
+    {
+        void operator()( const std::size_t thread, const Scal_in value, Scal_out & result )
+        {
+            result *= value;
+        }
+    };
+    
+    
     //ParallelDo
     
     
