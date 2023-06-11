@@ -64,4 +64,86 @@ namespace Tools
         return result;
     }
     
+    
+    // Executes the function `fun` of the form `[]( const Int thread, const Int i ) -> void {...}` parallelized over `thread_count` threads.
+    template<typename F, typename Int>
+    force_inline void ParallelDo_Dynamic( F && fun, const Int begin, const Int end, const Int inc, const Int thread_count )
+    {
+        if( end <= begin )
+        {
+            return;
+        }
+        
+        if( thread_count <= static_cast<Int>(1) )
+        {
+            for( Int i = begin; i < end; ++i )
+            {
+                std::invoke( fun, static_cast<Int>(0), i );
+            }
+        }
+        else
+        {
+            // Global index that is supposed to run from begin to end; shared by all threads.
+            Int iter = begin;
+            // A mutex to synchronize iter.
+            std::mutex iter_mutex;
+            
+            // A vector to hold the workers.
+            std::vector<std::future<void>> futures ( thread_count );
+            
+            // Lambda-function representing a single worker.
+            auto worker = [&,end]( const Int thread )
+            {
+                bool done = false;
+                
+                // This worker is supposed to repeatedly check whether `iter` has run out of bounds.
+                while( !done )
+                {
+                    Int i_begin = end;
+                    Int i_end   = end;
+                    
+                    {
+                        const std::lock_guard<std::mutex> lock_iter( iter_mutex );
+                    
+                        if( iter < end )
+                        {   
+                            // Iterator `iter` is not out of bound. Assign a new chunk to worker.
+                            i_begin = iter;
+                            
+                            iter = std::min( iter + inc, end );
+                            
+                            i_end   = iter;
+                        }
+                        else
+                        {
+                            // Nothing left to do. Stop here.
+                            done = true;
+                            
+//                            print( ToString(thread) + "done." );
+                            return;
+                        }
+                    }
+                    
+//                    print( ToString(thread) + "-> { " + ToString(i_begin) + ", " + ToString(i_end) + " }" );
+                    
+                    // Let the worker process its assigned chunk.
+                    for( Int i = i_begin; i < i_end; ++i )
+                    {
+                        fun( thread, i );
+                    }
+                }
+            };
+            
+            for( Int thread = 0; thread < thread_count; ++thread )
+            {
+                futures[thread] = std::async( worker, thread );
+            }
+            
+            for( auto & future : futures )
+            {
+                future.get();
+            }
+        }
+    }
+    
 }

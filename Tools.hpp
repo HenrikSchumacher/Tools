@@ -47,39 +47,7 @@
     #define force_flattening
 #endif
 
-#ifndef TOOLS_DEACTIVATE_OPENMP
 
-    #include "src/OpenMP.hpp"
-
-    #ifdef TOOLS_PARALLELDO_OPENMP
-
-        #include "src/ParallelDo_OpenMP.hpp"
-
-    #else
-
-//        #include "src/ParallelDo_ThreadPool.hpp"
-        #include "src/ParallelDo_Thread.hpp"
-
-    #endif
-
-
-#else
-    static constexpr size_t omp_get_num_threads()
-    {
-        return 0;
-    }
-
-    static constexpr size_t omp_get_thread_num()
-    {
-        return 0;
-    }
-
-    void omp_set_num_threads( const size_t thread_count) {};
-
-//    #include "src/ParallelDo_ThreadPool.hpp"
-    #include "src/ParallelDo_Thread.hpp"
-
-#endif
 
 // Define loop unrolling depending on the compiler
 #if defined(__ICC) || defined(__ICL)
@@ -136,6 +104,42 @@
     #include "src/Profiler.hpp"
     #include "src/Scalars.hpp"
     #include "src/TypeName.hpp"
+
+
+#ifndef TOOLS_DEACTIVATE_OPENMP
+
+    #include "src/OpenMP.hpp"
+
+    #ifdef TOOLS_PARALLELDO_OPENMP
+
+        #include "src/ParallelDo_OpenMP.hpp"
+
+    #else
+
+//        #include "src/ParallelDo_ThreadPool.hpp"
+        #include "src/ParallelDo_Thread.hpp"
+
+    #endif
+
+
+#else
+    static constexpr size_t omp_get_num_threads()
+    {
+        return 0;
+    }
+
+    static constexpr size_t omp_get_thread_num()
+    {
+        return 0;
+    }
+
+    void omp_set_num_threads( const size_t thread_count) {};
+
+//    #include "src/ParallelDo_ThreadPool.hpp"
+    #include "src/ParallelDo_Thread.hpp"
+
+#endif
+
     #include "src/Memory.hpp"
 
     #include "src/ParallelAlgorithms.hpp"

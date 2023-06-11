@@ -13,7 +13,7 @@ namespace Tools
         }
         else
         {
-            #pragma omp parallel for num_threads( thread_count) schedule( static )
+            #pragma omp parallel for num_threads( thread_count ) schedule( static )
             for( Int thread = 0; thread < thread_count; ++thread )
             {
                 std::invoke( fun, thread );
@@ -39,7 +39,7 @@ namespace Tools
         }
         else
         {
-            #pragma omp parallel for num_threads( thread_count) schedule( static )
+            #pragma omp parallel for num_threads( thread_count ) schedule( static )
             for( Int thread = 0; thread < thread_count; ++thread )
             {
                 T local_result = std::invoke( fun, thread );
@@ -54,4 +54,30 @@ namespace Tools
         return result;
     }
     
+    
+    // Executes the function `fun` of the form `[]( const Int thread, const Int i ) -> void {...}` parallelized over `thread_count` threads.
+    template<typename F, typename Int>
+    force_inline void ParallelDo_Dynamic( F && fun, const Int begin, const Int end, const Int inc, const Int thread_count )
+    {
+        if( end <= begin )
+        {
+            return;
+        }
+        
+        if( thread_count <= static_cast<Int>(1) )
+        {
+            for( Int i = begin; i < end; ++i )
+            {
+                std::invoke( fun, static_cast<Int>(0), i );
+            }
+        }
+        else
+        {
+            #pragma omp parallel for num_threads( thread_count ) schedule( dynamic, inc )
+            for( Int i = begin; i < end; ++i )
+            {
+                std::invoke( fun, omp_get_thread_num(), i );
+            }
+        }
+    }
 }
