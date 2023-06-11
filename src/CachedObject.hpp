@@ -22,7 +22,11 @@ namespace Tools
             
         mutable Container_T cache;
         
-        mutable Container_T persistent_cache;
+        mutable std::mutex cache_mutex;
+        
+        mutable Container_T p_cache;
+        
+        mutable std::mutex p_cache_mutex;
         
     public:
         
@@ -36,10 +40,9 @@ namespace Tools
             
             bool result = false;
             
-            #pragma omp critical (cache)
-            {
-                result = static_cast<bool>( cache.count(s) );
-            }
+            const std::lock_guard<std::mutex> cache_lock( cache_mutex );
+            
+            result = static_cast<bool>( cache.count(s) );
             
             return result;
         }
@@ -51,17 +54,16 @@ namespace Tools
             
             std::any * thing;
             
-            #pragma omp critical (cache)
+            const std::lock_guard<std::mutex> cache_lock( cache_mutex );
+            
+            try
             {
-                try
-                {
-                    thing = &cache.at(s);
-                }
-                catch( const std::out_of_range & e )
-                {
-                    eprint(this->ClassName()+"GetCache: Key \""+s+"\" not found!.");
-                    throw; //an internal catch block forwards the exception to its external level
-                }
+                thing = &cache.at(s);
+            }
+            catch( const std::out_of_range & e )
+            {
+                eprint(this->ClassName()+"GetCache: Key \""+s+"\" not found!.");
+                throw; //an internal catch block forwards the exception to its external level
             }
             
             return *thing;
@@ -70,24 +72,23 @@ namespace Tools
 //        // Caution! This function is destructive.
 //        void SetCache( const std::string & s, std::any & thing ) const
 //        {
-//            #pragma omp critical (cache)
-//            {
-//                cache[s] = std::move(thing);
-//            }
+//            const std::lock_guard<std::mutex> cache_lock( cache_mutex );
+//            cache[s] = std::move(thing);
 //        }
         
         // Caution! This function is destructive.
         void SetCache( const std::string & s, std::any && thing ) const
         {
-            #pragma omp critical (cache)
-            {
-                cache[s] = std::move(thing);
-            }
+            const std::lock_guard<std::mutex> cache_lock( cache_mutex );
+            
+            cache[s] = std::move(thing);
         }
         
         std::string CacheKeys() const
         {
             std::stringstream s;
+            
+            const std::lock_guard<std::mutex> cache_lock( cache_mutex );
             
             s << "{ \n";
             for( auto const & p : cache )
@@ -100,6 +101,8 @@ namespace Tools
         
         void ClearCache() const
         {
+            const std::lock_guard<std::mutex> cache_lock( cache_mutex );
+            
             cache = Container_T();
         }
         
@@ -114,10 +117,9 @@ namespace Tools
             
             bool result = false;
             
-            #pragma omp critical (cache)
-            {
-                result = static_cast<bool>( persistent_cache.count(s) );
-            }
+            const std::lock_guard<std::mutex> p_cache_lock( p_cache_mutex );
+            
+            result = static_cast<bool>( p_cache.count(s) );
             
             return result;
         }
@@ -129,17 +131,16 @@ namespace Tools
             
             std::any * thing;
             
-            #pragma omp critical (cache)
+            const std::lock_guard<std::mutex> p_cache_lock( p_cache_mutex );
+            
+            try
             {
-                try
-                {
-                    thing = &persistent_cache.at(s);
-                }
-                catch( const std::out_of_range & e )
-                {
-                    eprint(this->ClassName()+"GetPersistentCache: Key \""+s+"\" not found!.");
-                    throw; //an internal catch block forwards the exception to its external level
-                }
+                thing = &p_cache.at(s);
+            }
+            catch( const std::out_of_range & e )
+            {
+                eprint(this->ClassName()+"GetPersistentCache: Key \""+s+"\" not found!.");
+                throw; //an internal catch block forwards the exception to its external level
             }
             
             return *thing;
@@ -148,18 +149,19 @@ namespace Tools
         // Caution! This function is destructive.
         void SetPersistentCache( const std::string & s, std::any & thing ) const
         {
-            #pragma omp critical (cache)
-            {
-                persistent_cache[s] = std::move(thing);
-            }
+            const std::lock_guard<std::mutex> p_cache_lock( p_cache_mutex );
+            
+            p_cache[s] = std::move(thing);
         }
         
         std::string PersistentCacheKeys() const
         {
             std::stringstream s;
             
+            const std::lock_guard<std::mutex> p_cache_lock( p_cache_mutex );
+            
             s << "{ \n";
-            for( auto const & p : persistent_cache )
+            for( auto const & p : p_cache )
             {
                 s << "\t" << p.first << "\n";
             }
@@ -169,7 +171,9 @@ namespace Tools
         
         void ClearPersistentCache() const
         {
-            persistent_cache = Container_T();
+            const std::lock_guard<std::mutex> p_cache_lock( p_cache_mutex );
+            
+            p_cache = Container_T();
         }
         
         
@@ -179,9 +183,12 @@ namespace Tools
         
         void ClearAllCache() const
         {
+            const std::lock_guard<std::mutex>   cache_lock(   cache_mutex );
+            const std::lock_guard<std::mutex> p_cache_lock( p_cache_mutex );
+            
             cache = Container_T();
             
-            persistent_cache = Container_T();
+            p_cache = Container_T();
         }
         
         

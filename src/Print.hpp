@@ -2,6 +2,10 @@
 
 namespace Tools
 {
+    std::mutex cout_mutex;
+    std::mutex cerr_mutex;
+    std::mutex timer_mutex;
+    
     using Clock = std::chrono::steady_clock;
     using Time  = std::chrono::time_point<Clock>;
     
@@ -15,28 +19,24 @@ namespace Tools
         std::vector<Time> time_stack;
     }
 
+
+    inline void print( const std::string & s )
+    {
 #if defined(LTEMPLATE_H) || defined(MATHEMATICA)
-    inline void print( const std::string & s )
-    {
-        #pragma omp critical(cout)
-        {
-            mma::print( std::string( 2 * (Timer::time_stack.size()), ' ') + s );
-        }
-    }
+        const std::lock_guard<std::mutex> cout_lock( Profiler::cout_mutex );
+        const std::lock_guard<std::mutex> timer_lock( Profiler::timer_mutex );
+        
+        mma::print( std::string( 2 * (Timer::time_stack.size()), ' ') + s );
 #else
-    inline void print( const std::string & s )
-    {
-        #pragma omp critical(cout)
-        {
-            std::cout << s << std::endl;
-        }
-    }
+        const std::lock_guard<std::mutex> cout_lock( Tools::cout_mutex );
+        
+        std::cout << s << std::endl;
 #endif
+    }
     
     template<typename T>
     inline void valprint( const std::string & s, const T & value)
     {
-        using namespace std;
         print( s + " = " + ToString(value) );
     }
 
@@ -48,7 +48,6 @@ namespace Tools
     
     inline void valprint( const std::string & s, const std::string & value)
     {
-        using namespace std;
         print( s + " = " + value );
     }
     
@@ -56,31 +55,30 @@ namespace Tools
     
     inline void tic(const std::string & s)
     {
-        print(s + "...");
-        #pragma omp critical(timers)
-        {
-            Timer::time_stack.push_back(Clock::now());
-        }
+        const std::lock_guard<std::mutex> timer_lock( Tools::timer_mutex );
+        
+        Timer::time_stack.push_back(Clock::now());
     }
 
     inline float toc(const std::string & s)
     {
-        float duration = 0;
-        #pragma omp critical(timers)
+        float duration (0);
+        
+        const std::lock_guard<std::mutex> timer_lock( Tools::timer_mutex );
+        
+        if (!Timer::time_stack.empty())
         {
-            if (!Timer::time_stack.empty())
-            {
-                duration = Duration( Timer::time_stack.back(), Clock::now() );
-                Timer::time_stack.pop_back();
-                
-                print( std::to_string(duration) + " s.");
-                
-            }
-            else
-            {
-                print("Unmatched toc detected. Label =  " + s);
-            }
+            duration = Duration( Timer::time_stack.back(), Clock::now() );
+            Timer::time_stack.pop_back();
+            
+            print( std::to_string(duration) + " s.");
+            
         }
+        else
+        {
+            print("Unmatched toc detected. Label =  " + s);
+        }
+        
         return duration;
     }
 
