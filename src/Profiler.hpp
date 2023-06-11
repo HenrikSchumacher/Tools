@@ -101,7 +101,7 @@ namespace Tools
         
 #if defined(LTEMPLATE_H) || defined(MATHEMATICA)
 
-        print( msg )
+        print( msg );
 #endif
         const std::lock_guard<std::mutex> cerr_lock( Tools::cerr_mutex );
         std::cerr << msg << std::endl;

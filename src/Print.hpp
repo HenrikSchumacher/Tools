@@ -23,8 +23,8 @@ namespace Tools
     inline void print( const std::string & s )
     {
 #if defined(LTEMPLATE_H) || defined(MATHEMATICA)
-        const std::lock_guard<std::mutex> cout_lock( Profiler::cout_mutex );
-        const std::lock_guard<std::mutex> timer_lock( Profiler::timer_mutex );
+        const std::lock_guard<std::mutex>  cout_lock( Tools::cout_mutex  );
+        const std::lock_guard<std::mutex> timer_lock( Tools::timer_mutex );
         
         mma::print( std::string( 2 * (Timer::time_stack.size()), ' ') + s );
 #else
