@@ -24,7 +24,7 @@ namespace Tools
 
     
     // Microsoft's C compiler defines std::size_t as an alias onto unsigned long long and throws an error here.
-#if !defined(_MSC_VER) && !defined(__GNUC__)
+#if defined(__clang__) || (!defined(_MSC_VER) && !defined(__GNUC__))
     template<> inline constexpr const char * TypeName<std::size_t> = "size_t";
 #endif
 

@@ -325,12 +325,14 @@ namespace MyMath
 
     namespace Detail
     {
-        template<typename Scalar>
-        Scalar constexpr sqrtNewtonRaphson( const Scalar x, const Scalar curr, const Scalar prev )
+        template<typename Real>
+        Real constexpr sqrtNewtonRaphson( const Real x, const Real curr, const Real prev )
         {
+            ASSERT_REAL(Real)
+            
             return curr == prev
                 ? curr
-                : sqrtNewtonRaphson(x, static_cast<Scalar>(0.5) * (curr + x / curr), curr);
+                : sqrtNewtonRaphson(x, static_cast<Real>(0.5) * (curr + x / curr), curr);
         }
     }
 
@@ -341,12 +343,14 @@ namespace MyMath
     *   - Otherwise, returns NaN
     * See https://stackoverflow.com/a/34134071/8248900.
     */
-    template<typename Scalar>
-    Scalar constexpr sqrt( const Scalar x)
+    template<typename Real>
+    Real constexpr sqrt( const Real x)
     {
-        return (x >= static_cast<Scalar>(0)) && (x < std::numeric_limits<Scalar>::infinity())
-            ? Detail::sqrtNewtonRaphson(x, x, static_cast<Scalar>(0))
-            : std::numeric_limits<Scalar>::quiet_NaN();
+        ASSERT_REAL(Real)
+        
+        return (x >= Scalar::Zero<Real> ) && (x < std::numeric_limits<Real>::infinity())
+            ? Detail::sqrtNewtonRaphson(x, x, Scalar::Zero<Real> )
+            : std::numeric_limits<Real>::quiet_NaN();
     }
     
     
