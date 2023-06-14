@@ -185,6 +185,12 @@ namespace Tools
     #define ptoc(tag)
 #endif
     
+#ifndef NDEBUG
+    #define debug_print(s) logprint(s);
+#else
+    #define debug_print(s)
+#endif
+    
     
 #define pdump(x)                                                                \
 {                                                                               \

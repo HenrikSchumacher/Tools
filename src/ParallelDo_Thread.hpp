@@ -69,6 +69,9 @@ namespace Tools
     template<typename F, typename Int>
     force_inline void ParallelDo_Dynamic( F && fun, const Int begin, const Int end, const Int inc, const Int thread_count )
     {
+        ptic("ParallelDo_Dynamic (" + ToString(begin) + " , " + ToString(end) + " , " + ToString(inc) + " , " + ToString(thread_count) + " )");
+        
+        
         if( end <= begin )
         {
             return;
@@ -119,13 +122,14 @@ namespace Tools
                             // Nothing left to do. Stop here.
                             done = true;
                             
-//                            print( ToString(thread) + "done." );
+                            debug_print( "ParallelDo_Dynamic: " + ToString(thread) + "done." );
                             return;
                         }
                     }
                     
 //                    print( ToString(thread) + "-> { " + ToString(i_begin) + ", " + ToString(i_end) + " }" );
                     
+                    debug_print( "ParallelDo_Dynamic: thread " + ToString(thread) + " processes tasks [" + ToString(i_begin) + "," + ToString(i_end)  + "[." );
                     // Let the worker process its assigned chunk.
                     for( Int i = i_begin; i < i_end; ++i )
                     {
@@ -144,6 +148,8 @@ namespace Tools
                 future.get();
             }
         }
+        
+        ptoc("ParallelDo_Dynamic (" + ToString(begin) + " , " + ToString(end) + " , " + ToString(inc) + " , " + ToString(thread_count) + " )");
     }
     
 }

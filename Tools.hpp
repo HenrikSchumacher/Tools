@@ -106,11 +106,11 @@
     #include "src/TypeName.hpp"
 
 
-#ifndef TOOLS_DEACTIVATE_OPENMP
+#ifdef TOOLS_ENABLE_OPENMP
 
     #include "src/OpenMP.hpp"
 
-    #ifdef TOOLS_PARALLELDO_OPENMP
+    #ifdef TOOLS_PARALLELDO_USE_OPENMP
 
         #include "src/ParallelDo_OpenMP.hpp"
 

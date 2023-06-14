@@ -6,9 +6,6 @@
 
 // TODO: Thread affinity
 // See https://eli.thegreenplace.net/2016/c11-threads-affinity-and-hyperthreading/
-
-
-// TODO: Use std::this_thread::get_id()
  
 #include <atomic>             // std::atomic
 #include <condition_variable> // std::condition_variable
