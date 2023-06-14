@@ -106,7 +106,7 @@
     #include "src/TypeName.hpp"
 
 
-#ifndef TOOLS_DEACTIVATE_OPENMP
+#ifdef TOOLS_ENABLE_OPENMP
 
     #include "src/OpenMP.hpp"
 
