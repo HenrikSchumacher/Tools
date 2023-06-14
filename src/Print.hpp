@@ -58,6 +58,8 @@ namespace Tools
         const std::lock_guard<std::mutex> timer_lock( Tools::timer_mutex );
         
         Timer::time_stack.push_back(Clock::now());
+        
+        print( s + "..." );
     }
 
     inline float toc(const std::string & s)
