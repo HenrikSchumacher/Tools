@@ -4,7 +4,7 @@ namespace Tools
 {
     struct AndReducer
     {
-        void operator()( const std::size_t thread, const bool value, bool & result )
+        void operator()( const Size_T thread, const bool value, bool & result )
         {
             result = result && value;
         }
@@ -12,7 +12,7 @@ namespace Tools
     
     struct OrReducer
     {
-        void operator()( const std::size_t thread, const bool value, bool & result )
+        void operator()( const Size_T thread, const bool value, bool & result )
         {
             result = result || value;
         }
@@ -21,7 +21,7 @@ namespace Tools
     template<typename Scal_in, typename Scal_out>
     struct AddReducer
     {
-        void operator()( const std::size_t thread, const Scal_in value, Scal_out & result )
+        void operator()( const Size_T thread, const Scal_in value, Scal_out & result )
         {
             result += value;
         }
@@ -30,7 +30,7 @@ namespace Tools
     template<typename Scal_in, typename Scal_out>
     struct TimesReducer
     {
-        void operator()( const std::size_t thread, const Scal_in value, Scal_out & result )
+        void operator()( const Size_T thread, const Scal_in value, Scal_out & result )
         {
             result *= value;
         }

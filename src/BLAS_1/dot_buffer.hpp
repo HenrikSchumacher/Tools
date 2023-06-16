@@ -5,11 +5,11 @@ namespace Tools
     
     template <typename R, typename S>
     force_inline
-    decltype( R(1)*S(1) ) dot_buffers( ptr<R> x, ptr<S> y, const std::size_t n )
+    decltype( R(1)*S(1) ) dot_buffers( ptr<R> x, ptr<S> y, const Size_T n )
     {
         using T = decltype( R(1)*S(1) );
         T sum = 0;
-        for( std::size_t i = 0; i < n; ++i )
+        for( Size_T i = 0; i < n; ++i )
         {
             sum += scalar_cast<T>(x[i]) * scalar_cast<T>(y[i]);
         }
@@ -18,7 +18,7 @@ namespace Tools
     
     template <typename R, typename S>
     force_inline
-    decltype( R(1)*S(1) ) dot_buffers( ptr<R> x, ptr<S> y, const std::size_t n, const std::size_t thread_count )
+    decltype( R(1)*S(1) ) dot_buffers( ptr<R> x, ptr<S> y, const Size_T n, const Size_T thread_count )
     {
         using T = decltype( R(1)*S(1) );
         
@@ -31,11 +31,11 @@ namespace Tools
             decltype( R(1) * S(1) ) sum = 0;
             
             return ParallelDoReduce(
-                [=]( const std::size_t i ) -> T
+                [=]( const Size_T i ) -> T
                 {
                     return scalar_cast<T>(x[i]) * scalar_cast<T>(y[i]);
                 },
-                []( const std::size_t thread, const T & value, T & result ) -> T
+                []( const Size_T thread, const T & value, T & result ) -> T
                 {
                     result += value;
                 },
@@ -46,13 +46,13 @@ namespace Tools
         }
     }
 
-    template <std::size_t n, typename R, typename S>
+    template <Size_T n, typename R, typename S>
     force_inline
     decltype( R(1)*S(1) ) dot_buffers( ptr<R> x, ptr<S> y )
     {
         using T = decltype( R(1)*S(1) );
         T sum = 0;
-        for( std::size_t i = 0; i < n; ++i )
+        for( Size_T i = 0; i < n; ++i )
         {
             sum += scalar_cast<T>(x[i]) * scalar_cast<T>(y[i]);
         }

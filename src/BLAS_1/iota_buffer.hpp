@@ -4,19 +4,19 @@ namespace Tools
 {
     
     template <typename T>
-    force_inline void iota_buffer( mut<T> a, const std::size_t n )
+    force_inline void iota_buffer( mut<T> a, const Size_T n )
     {
-        for( std::size_t i = 0; i < n; ++i )
+        for( Size_T i = 0; i < n; ++i )
         {
             a[i] = static_cast<T>(i);
         }
     }
     
     template <typename T>
-    force_inline void iota_buffer( mut<T> a, const std::size_t n, const std::size_t thread_count )
+    force_inline void iota_buffer( mut<T> a, const Size_T n, const Size_T thread_count )
     {
         ParallelDo(
-            [=]( const std::size_t i )
+            [=]( const Size_T i )
             {
                 a[i] = static_cast<T>(i);
             },
@@ -25,10 +25,10 @@ namespace Tools
         );
     }
     
-    template <std::size_t n, typename T>
+    template <Size_T n, typename T>
     force_inline void iota_buffer( mut<T> a )
     {
-        for( std::size_t i = 0; i < n; ++i )
+        for( Size_T i = 0; i < n; ++i )
         {
             a[i] = static_cast<T>(i);
         }

@@ -37,9 +37,7 @@ namespace Tools
                 return "G";
             }
         }
-    }
-
-    
+    }    
     using Int16  = int16_t;
     using Int32  = int32_t;
     using Int64  = int64_t;

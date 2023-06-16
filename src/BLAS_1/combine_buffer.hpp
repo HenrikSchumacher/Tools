@@ -10,7 +10,7 @@ namespace Tools
     static force_inline constexpr void combine_buffers(
         const R_0 & alpha, ptr<S_0> x,
         const R_1 & beta,  mut<S_1> y,
-        const std::size_t n
+        const Size_T n
     )
     {
         using namespace Scalar;
@@ -54,12 +54,12 @@ namespace Tools
         }
         else
         {
-//            for( std::size_t k = 0; k < n; ++k )
+//            for( Size_T k = 0; k < n; ++k )
 //            {
 //                y[k] = alpha * x[k] + beta * y[k];
 //            }
             
-            for( std::size_t k = 0; k < n; ++k )
+            for( Size_T k = 0; k < n; ++k )
             {
                 combine_scalars<alpha_flag,beta_flag>(alpha, x[k], beta, y[k]);
             }
@@ -75,8 +75,8 @@ namespace Tools
     force_inline void combine_buffers(
         const R_0 & alpha, ptr<S_0> x,
         const R_1 & beta,  mut<S_1> y,
-        const std::size_t n,
-        const std::size_t thread_count
+        const Size_T n,
+        const Size_T thread_count
     )
     {
         using namespace Scalar;
@@ -120,7 +120,7 @@ namespace Tools
         else
         {
             ParallelDo(
-                [=]( const std::size_t i )
+                [=]( const Size_T i )
                 {
                     combine_scalars<alpha_flag,beta_flag>( alpha, x[i], beta, y[i] );
                 },
@@ -131,7 +131,7 @@ namespace Tools
     }
 
     template<
-        std::size_t n,
+        Size_T n,
         Scalar::Flag alpha_flag, Scalar::Flag beta_flag,
         typename R_0, typename S_0, typename R_1, typename S_1
     >
@@ -180,7 +180,7 @@ namespace Tools
         }
         else
         {
-            for( std::size_t k = 0; k < n; ++k )
+            for( Size_T k = 0; k < n; ++k )
             {
                 combine_scalars<alpha_flag,beta_flag>(alpha, x[k], beta, y[k]);
             }

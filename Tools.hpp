@@ -97,8 +97,13 @@
 
 #define ASSERT_FLOAT(type) static_assert( std::is_floating_point_v<type>, "Template parameter " #type " must be floating point type." );
 
-    #include <complex>
 
+namespace Tools
+{
+    using Size_T = std::size_t;
+}
+
+    #include <complex>
     #include "src/ToString.hpp"
     #include "src/Print.hpp"
     #include "src/Profiler.hpp"
@@ -123,17 +128,18 @@
 
 
 #else
-    static constexpr size_t omp_get_num_threads()
+
+    static constexpr Tools::Size_T omp_get_num_threads()
     {
         return 0;
     }
 
-    static constexpr size_t omp_get_thread_num()
+    static constexpr Tools::Size_T omp_get_thread_num()
     {
         return 0;
     }
 
-    void omp_set_num_threads( const size_t thread_count) {};
+    void omp_set_num_threads( const Tools::Size_T thread_count) {};
 
 //    #include "src/ParallelDo_ThreadPool.hpp"
     #include "src/ParallelDo_Thread.hpp"
@@ -213,7 +219,8 @@
 
 
     namespace Tools
-    {        
+    {
+        
         template <typename E>
         constexpr typename std::underlying_type<E>::type to_underlying(E e) noexcept
         {

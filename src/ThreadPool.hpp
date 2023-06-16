@@ -30,7 +30,7 @@ namespace Tools
     {
     public:
         
-        using Int = std::size_t;
+        using Int = Size_T;
         
         ThreadPool() = default;
         

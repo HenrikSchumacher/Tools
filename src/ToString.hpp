@@ -101,7 +101,7 @@ namespace Tools
             {
                 lds[rank-1] = 1;
                 
-                for( std::size_t i = rank-1; i --> 0;  )
+                for( Size_T i = rank-1; i --> 0;  )
                 {
                     lds[i] = lds[i+1] * dims[i+1];
                 }
@@ -111,12 +111,12 @@ namespace Tools
         return s;
     }
     
-    template<typename Scal, typename Int, typename Int2, typename Int3>
+    template<typename Scal, typename Int, typename Int2>
     std::string ArrayToString(
         const Scal * const a,
         const Int  * const dims,
         Int2 rank,
-        Int3 prec = 16
+        int prec = 16
     )
     {
         std::stringstream s;
@@ -131,7 +131,7 @@ namespace Tools
     template<typename T>
     std::string ToString( const std::vector<T> & v )
     {
-        const size_t dim = v.size();
+        const Size_T dim = v.size();
         return ArrayToString( &v[0], &dim, 1);
     }
 } // namespace Tools

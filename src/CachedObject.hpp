@@ -18,6 +18,32 @@ namespace Tools
         
         ~CachedObject() = default;
         
+        CachedObject(const CachedObject & rhs)
+        :     cache( rhs.cache )
+        ,   p_cache( rhs.p_cache )
+        {}
+        
+        CachedObject( CachedObject && rhs)
+        :   cache( rhs.cache )
+        ,   p_cache( rhs.p_cache )
+        {}
+        
+        const CachedObject & operator=( const CachedObject & rhs)
+        {
+            cache   = rhs.cache;
+            p_cache = rhs.p_cache;
+            
+            return *this;
+        };
+
+        const CachedObject & operator=( CachedObject && rhs)
+        {
+            cache   = std::move(rhs.cache);
+            p_cache = std::move(rhs.p_cache);
+            
+            return *this;
+        };
+        
     protected:
             
         mutable Container_T cache;
@@ -147,7 +173,7 @@ namespace Tools
         }
         
         // Caution! This function is destructive.
-        void SetPersistentCache( const std::string & s, std::any & thing ) const
+        void SetPersistentCache( const std::string & s, std::any && thing ) const
         {
             const std::lock_guard<std::mutex> p_cache_lock( p_cache_mutex );
             

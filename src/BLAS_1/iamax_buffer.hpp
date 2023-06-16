@@ -4,14 +4,14 @@ namespace Tools
 {
     
     template <typename S>
-    force_inline std::size_t iamax_buffer( ptr<S> z, const std::size_t n )
+    force_inline Size_T iamax_buffer( ptr<S> z, const Size_T n )
     {
         using R = typename Scalar::Real<S>;
         
         R max = 0;
-        std::size_t pos = 0;
+        Size_T pos = 0;
         
-        for( std::size_t i = 0; i < n; ++i )
+        for( Size_T i = 0; i < n; ++i )
         {
             R abs_z = Scalar::AbsSquared(z[i]);
             if( abs_z > max )
@@ -23,15 +23,15 @@ namespace Tools
         return pos;
     }
 
-    template <std::size_t n, typename S>
-    force_inline std::size_t iamax_buffer( ptr<S> z )
+    template <Size_T n, typename S>
+    force_inline Size_T iamax_buffer( ptr<S> z )
     {
         using R = typename Scalar::Real<S>;
         
         R max = 0;
-        std::size_t pos = 0;
+        Size_T pos = 0;
         
-        for( std::size_t i = 0; i < n; ++i )
+        for( Size_T i = 0; i < n; ++i )
         {
             R abs_z = Scalar::AbsSquared(z[i]);
             if( abs_z > max )
@@ -45,11 +45,11 @@ namespace Tools
 
 
     template <typename S>
-    force_inline std::size_t imax_buffer( ptr<S> x, const std::size_t n )
+    force_inline Size_T imax_buffer( ptr<S> x, const Size_T n )
     {
         S max = std::numeric_limits<S>::lowest();
-        std::size_t pos = 0;
-        for( std::size_t i = 0; i < n; ++i )
+        Size_T pos = 0;
+        for( Size_T i = 0; i < n; ++i )
         {
             if( x[i] > max )
             {
@@ -60,12 +60,12 @@ namespace Tools
         return pos;
     }
 
-    template <std::size_t n, typename S>
-    force_inline std::size_t imax_buffer( ptr<S> x )
+    template <Size_T n, typename S>
+    force_inline Size_T imax_buffer( ptr<S> x )
     {
         S max = std::numeric_limits<S>::lowest();
-        std::size_t pos = 0;
-        for( std::size_t i = 0; i < n; ++i )
+        Size_T pos = 0;
+        for( Size_T i = 0; i < n; ++i )
         {
             if( x[i] > max )
             {
@@ -78,11 +78,11 @@ namespace Tools
 
     
     template <typename S>
-    force_inline std::size_t imin_buffer( ptr<S> x, const std::size_t n )
+    force_inline Size_T imin_buffer( ptr<S> x, const Size_T n )
     {
         S min = std::numeric_limits<S>::max();
-        std::size_t pos = 0;
-        for( std::size_t i = 0; i < n; ++i )
+        Size_T pos = 0;
+        for( Size_T i = 0; i < n; ++i )
         {
             if( x[i] < min )
             {
@@ -93,12 +93,12 @@ namespace Tools
         return pos;
     }
 
-    template <std::size_t n, typename S>
-    force_inline std::size_t imin_buffer( ptr<S> x )
+    template <Size_T n, typename S>
+    force_inline Size_T imin_buffer( ptr<S> x )
     {
         S min = std::numeric_limits<S>::max();
-        std::size_t pos = 0;
-        for( std::size_t i = 0; i < n; ++i )
+        Size_T pos = 0;
+        for( Size_T i = 0; i < n; ++i )
         {
             if( x[i] < min )
             {

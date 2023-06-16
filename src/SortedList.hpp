@@ -47,7 +47,7 @@ namespace Tools
             list.clear();
         }
         
-        void Reserve( const std::size_t n )
+        void Reserve( const Size_T n )
         {
             list.reserve(n);
         }
@@ -261,14 +261,14 @@ namespace Tools
         {
             std::stringstream s;
             
-            const std::size_t n = list.size();
+            const Size_T n = list.size();
             
             s << "{ ";
             if( n > 0 )
             {
                 s<< Tools::ToString(list[0],p);
 
-                for( std::size_t i = 1; i < n; ++i )
+                for( Size_T i = 1; i < n; ++i )
                 {
                     s <<", " << Tools::ToString(list[i],p);
                 }

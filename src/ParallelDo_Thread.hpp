@@ -69,13 +69,14 @@ namespace Tools
     template<typename F, typename Int>
     force_inline void ParallelDo_Dynamic( F && fun, const Int begin, const Int end, const Int inc, const Int thread_count )
     {
-        ptic("ParallelDo_Dynamic (" + ToString(begin) + " , " + ToString(end) + " , " + ToString(inc) + " , " + ToString(thread_count) + " )");
         
         
         if( end <= begin )
         {
             return;
         }
+        
+//        ptic("ParallelDo_Dynamic (" + ToString(begin) + " , " + ToString(end) + " , " + ToString(inc) + " , " + ToString(thread_count) + " )");
         
         if( thread_count <= static_cast<Int>(1) )
         {
@@ -123,6 +124,9 @@ namespace Tools
                             done = true;
                             
                             debug_print( "ParallelDo_Dynamic: " + ToString(thread) + "done." );
+                            
+//                            ptoc("ParallelDo_Dynamic (" + ToString(begin) + " , " + ToString(end) + " , " + ToString(inc) + " , " + ToString(thread_count) + " )");
+                            
                             return;
                         }
                     }
@@ -149,7 +153,7 @@ namespace Tools
             }
         }
         
-        ptoc("ParallelDo_Dynamic (" + ToString(begin) + " , " + ToString(end) + " , " + ToString(inc) + " , " + ToString(thread_count) + " )");
+//        ptoc("ParallelDo_Dynamic (" + ToString(begin) + " , " + ToString(end) + " , " + ToString(inc) + " , " + ToString(thread_count) + " )");
     }
     
 }
