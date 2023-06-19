@@ -103,15 +103,41 @@ namespace Tools
         );
     }
     
+//    template<typename F, typename R, typename T, typename Int>
+//    force_inline void ParallelDo(
+//        F && fun, R && reducer, const T & init, const Int n, const Int thread_count
+//    )
+//    {
+//        ParallelDoReduce(
+//            [&fun,&reducer,n,thread_count,&init]( const Int thread )
+//            {
+//                T result (init);
+//
+//                const Int i_begin = JobPointer( n, thread_count, thread     );
+//                const Int i_end   = JobPointer( n, thread_count, thread + 1 );
+//
+//                for( Int i = i_begin; i < i_end; ++i )
+//                {
+//                    std::invoke( reducer, thread, fun(i), result );
+//                }
+//
+//                return result;
+//            },
+//            std::forward<R>(reducer),
+//            init,
+//            thread_count
+//        );
+//    }
+    
     
     //ParallelDoReduce
     
     template<typename F, typename R, typename T, typename Int>
-    force_inline void ParallelDoReduce(
+    force_inline T ParallelDoReduce(
         F && fun, R && reducer, const T & init, const JobPointers<Int> & job_ptr
     )
     {
-        ParallelDoReduce(
+        return ParallelDoReduce(
             [&fun,&reducer,&job_ptr,&init]( const Int thread )
             {
                 T result (init);
@@ -133,11 +159,11 @@ namespace Tools
     }
     
     template<typename F, typename R, typename T, typename Int>
-    force_inline void ParallelDoReducer(
+    force_inline T ParallelDoReduce(
         F && fun, R && reducer, const T & init, const Int begin, const Int end, const Int thread_count
     )
     {
-        ParallelDoReduce(
+        return ParallelDoReduce(
             [&fun,&reducer,begin,end,thread_count,&init]( const Int thread )
             {
                 T result (init);
@@ -158,30 +184,6 @@ namespace Tools
         );
     }
     
-    template<typename F, typename R, typename T, typename Int>
-    force_inline void ParallelDo(
-        F && fun, R && reducer, const T & init, const Int n, const Int thread_count
-    )
-    {
-        ParallelDoReduce(
-            [&fun,&reducer,n,thread_count,&init]( const Int thread )
-            {
-                T result (init);
 
-                const Int i_begin = JobPointer( n, thread_count, thread     );
-                const Int i_end   = JobPointer( n, thread_count, thread + 1 );
-
-                for( Int i = i_begin; i < i_end; ++i )
-                {
-                    std::invoke( reducer, thread, fun(i), result );
-                }
-
-                return result;
-            },
-            std::forward<R>(reducer),
-            init,
-            thread_count
-        );
-    }
 
 }
