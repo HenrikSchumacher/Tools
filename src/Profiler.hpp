@@ -30,14 +30,14 @@ namespace Tools
             Profiler::prof.close();
             if( append )
             {
-                Profiler::prof.open(profile_filename.c_str(), std::ios_base::app);
+                Profiler::prof.open(profile_filename.string(), std::ios_base::app);
             }
             else
             {
-                Profiler::prof.open(profile_filename.c_str());
+                Profiler::prof.open(profile_filename.string());
             }
             
-            print( std::string("Profile will be written to ") + profile_filename.c_str() + ".");
+            print( std::string("Profile will be written to ") + profile_filename.string() + ".");
             
             const std::lock_guard<std::mutex> log_lock( log_mutex );
             Profiler::log << std::setprecision(16);
@@ -48,14 +48,14 @@ namespace Tools
 
             if( append )
             {
-                Profiler::log.open(log_filename.c_str(), std::ios_base::app);
+                Profiler::log.open(log_filename.string(), std::ios_base::app);
             }
             else
             {
-                Profiler::log.open(log_filename.c_str());
+                Profiler::log.open(log_filename.string());
             }
 
-            print( std::string("Log     will be written to ") + log_filename.c_str() + "." );
+            print( std::string("Log     will be written to ") + log_filename.string() + "." );
             Profiler::log << std::setprecision(16);
     //        Profiler::prof << "ID" << "\t" << "Tag" << "\t" << "From" << "\t" << "Tic" << "\t" << "Toc" << "\t" << "Duration" << "\t" << "Depth" << "\n";
             Profiler::init_time = Clock::now();
