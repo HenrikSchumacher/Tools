@@ -239,11 +239,11 @@ namespace Tools
         template<typename T> inline constexpr const Scalar::Real<T> Min   = std::numeric_limits<Scalar::Real<T>>::lowest();
         
         
-        
+        // First converts to Real<R> and then compute the reciprocal.
         template<typename R, typename S>
         inline constexpr const R Inv( const S & a )
         {
-            return One<R> / static_cast<R>(a);
+            return One<R> / scalar_cast<R>(a);
         }
   
         template<typename R, typename S, typename T>
