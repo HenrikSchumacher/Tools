@@ -65,13 +65,13 @@ namespace Tools
     {
         
         template<typename T>
-        force_inline T constexpr Conj( const T & x )
+        force_inline constexpr T Conj( const T & x )
         {
             return x;
         }
         
         template<typename T>
-        force_inline T constexpr Re( const T & x )
+        force_inline constexpr T Re( const T & x )
         {
             return x;
         }
@@ -83,20 +83,20 @@ namespace Tools
         }
         
         template<typename T>
-        force_inline T constexpr AbsSquared( const T & x )
+        force_inline constexpr T AbsSquared( const T & x )
         {
             return x * x;
         }
         
         
         template<typename T>
-        force_inline std::complex<T> Conj( const std::complex<T> & z )
+        force_inline constexpr std::complex<T> Conj( const std::complex<T> & z )
         {
             return std::conj(z);
         }
         
         template<typename T>
-        force_inline T constexpr Re( const std::complex<T> & z )
+        force_inline constexpr T Re( const std::complex<T> & z )
         {
             return std::real(z);
         }
@@ -108,80 +108,80 @@ namespace Tools
         }
         
         template<typename T>
-        force_inline T constexpr AbsSquared( const std::complex<T> & z )
+        force_inline constexpr T AbsSquared( const std::complex<T> & z )
         {
             const T x = std::real(z);
             const T y = std::imag(z);
             return  x * x + y * y;
         }
         
-        template<typename T> inline constexpr const bool IsComplex = false;
+        template<typename T> constexpr bool IsComplex = false;
         
-        template<> inline constexpr const bool IsComplex<Real32 >    = false;
-        template<> inline constexpr const bool IsComplex<Real64 >    = false;
-        template<> inline constexpr const bool IsComplex<Real128>    = false;
-        template<> inline constexpr const bool IsComplex<Complex32 > = true;
-        template<> inline constexpr const bool IsComplex<Complex64 > = true;
-        template<> inline constexpr const bool IsComplex<Complex128> = true;
+        template<> constexpr bool IsComplex<Real32 >    = false;
+        template<> constexpr bool IsComplex<Real64 >    = false;
+        template<> constexpr bool IsComplex<Real128>    = false;
+        template<> constexpr bool IsComplex<Complex32 > = true;
+        template<> constexpr bool IsComplex<Complex64 > = true;
+        template<> constexpr bool IsComplex<Complex128> = true;
         
-        template<typename T> inline constexpr const bool IsReal = false;
+        template<typename T> constexpr bool IsReal = false;
         
-        template<> inline constexpr const bool IsReal<Real32 >       = true;
-        template<> inline constexpr const bool IsReal<Real64 >       = true;
-        template<> inline constexpr const bool IsReal<Real128>       = true;
-        template<> inline constexpr const bool IsReal<Complex32 >    = false;
-        template<> inline constexpr const bool IsReal<Complex64 >    = false;
-        template<> inline constexpr const bool IsReal<Complex128>    = false;
+        template<> constexpr bool IsReal<Real32 >       = true;
+        template<> constexpr bool IsReal<Real64 >       = true;
+        template<> constexpr bool IsReal<Real128>       = true;
+        template<> constexpr bool IsReal<Complex32 >    = false;
+        template<> constexpr bool IsReal<Complex64 >    = false;
+        template<> constexpr bool IsReal<Complex128>    = false;
         
-//        template<> inline constexpr const bool IsReal<Int16>         = true;
-//        template<> inline constexpr const bool IsReal<Int32>         = true;
-//        template<> inline constexpr const bool IsReal<Int64>         = true;
-//        template<> inline constexpr const bool IsReal<UInt16>        = true;
-//        template<> inline constexpr const bool IsReal<UInt32>        = true;
-//        template<> inline constexpr const bool IsReal<UInt64>        = true;
+//        template<> constexpr bool IsReal<Int16>         = true;
+//        template<> constexpr bool IsReal<Int32>         = true;
+//        template<> constexpr bool IsReal<Int64>         = true;
+//        template<> constexpr bool IsReal<UInt16>        = true;
+//        template<> constexpr bool IsReal<UInt32>        = true;
+//        template<> constexpr bool IsReal<UInt64>        = true;
         
-        template<typename T> inline constexpr const bool IsScalar = false;
+        template<typename T> constexpr bool IsScalar = false;
         
-        template<> inline constexpr const bool IsScalar<Real32 >     = true;
-        template<> inline constexpr const bool IsScalar<Real64 >     = true;
-        template<> inline constexpr const bool IsScalar<Real128>     = true;
-        template<> inline constexpr const bool IsScalar<Complex32 >  = true;
-        template<> inline constexpr const bool IsScalar<Complex64 >  = true;
-        template<> inline constexpr const bool IsScalar<Complex128>  = true;
+        template<> constexpr bool IsScalar<Real32 >     = true;
+        template<> constexpr bool IsScalar<Real64 >     = true;
+        template<> constexpr bool IsScalar<Real128>     = true;
+        template<> constexpr bool IsScalar<Complex32 >  = true;
+        template<> constexpr bool IsScalar<Complex64 >  = true;
+        template<> constexpr bool IsScalar<Complex128>  = true;
         
-//        template<> inline constexpr const bool IsScalar<Int16>       = true;
-//        template<> inline constexpr const bool IsScalar<Int32>       = true;
-//        template<> inline constexpr const bool IsScalar<Int64>       = true;
-//        template<> inline constexpr const bool IsScalar<UInt16>      = true;
-//        template<> inline constexpr const bool IsScalar<UInt32>      = true;
-//        template<> inline constexpr const bool IsScalar<UInt64>      = true;
+//        template<> constexpr bool IsScalar<Int16>       = true;
+//        template<> constexpr bool IsScalar<Int32>       = true;
+//        template<> constexpr bool IsScalar<Int64>       = true;
+//        template<> constexpr bool IsScalar<UInt16>      = true;
+//        template<> constexpr bool IsScalar<UInt32>      = true;
+//        template<> constexpr bool IsScalar<UInt64>      = true;
         
-        template<typename T> inline constexpr const bool IsFloat = false;
+        template<typename T> constexpr bool IsFloat = false;
         
-        template<> inline constexpr const bool IsFloat<Real32 >     = true;
-        template<> inline constexpr const bool IsFloat<Real64 >     = true;
-        template<> inline constexpr const bool IsFloat<Real128>     = true;
-        template<> inline constexpr const bool IsFloat<Complex32 >  = true;
-        template<> inline constexpr const bool IsFloat<Complex64 >  = true;
-        template<> inline constexpr const bool IsFloat<Complex128>  = true;
+        template<> constexpr bool IsFloat<Real32 >     = true;
+        template<> constexpr bool IsFloat<Real64 >     = true;
+        template<> constexpr bool IsFloat<Real128>     = true;
+        template<> constexpr bool IsFloat<Complex32 >  = true;
+        template<> constexpr bool IsFloat<Complex64 >  = true;
+        template<> constexpr bool IsFloat<Complex128>  = true;
         
-        template<typename T> inline constexpr const int Prec     = 0;
+        template<typename T> constexpr int Prec     = 0;
         
-        template<> inline constexpr const uint Prec<Real32 >     = 32u;
-        template<> inline constexpr const uint Prec<Real64 >     = 64u;
-        template<> inline constexpr const uint Prec<Real128>     = 128u;
-        template<> inline constexpr const uint Prec<Complex32 >  = 32u;
-        template<> inline constexpr const uint Prec<Complex64 >  = 64u;
-        template<> inline constexpr const uint Prec<Complex128>  = 128u;
+        template<> constexpr uint Prec<Real32 >     = 32u;
+        template<> constexpr uint Prec<Real64 >     = 64u;
+        template<> constexpr uint Prec<Real128>     = 128u;
+        template<> constexpr uint Prec<Complex32 >  = 32u;
+        template<> constexpr uint Prec<Complex64 >  = 64u;
+        template<> constexpr uint Prec<Complex128>  = 128u;
         
-//        template<> inline constexpr const uint Prec<Int8  >      =  8u;
-//        template<> inline constexpr const uint Prec<Int16 >      = 16u;
-//        template<> inline constexpr const uint Prec<Int32 >      = 32u;
-//        template<> inline constexpr const uint Prec<Int64 >      = 64u;
-//        template<> inline constexpr const uint Prec<UInt8 >      =  8u;
-//        template<> inline constexpr const uint Prec<UInt16>      = 16u;
-//        template<> inline constexpr const uint Prec<UInt32>      = 32u;
-//        template<> inline constexpr const uint Prec<UInt64>      = 64u;
+//        template<> constexpr uint Prec<Int8  >      =  8u;
+//        template<> constexpr uint Prec<Int16 >      = 16u;
+//        template<> constexpr uint Prec<Int32 >      = 32u;
+//        template<> constexpr uint Prec<Int64 >      = 64u;
+//        template<> constexpr uint Prec<UInt8 >      =  8u;
+//        template<> constexpr uint Prec<UInt16>      = 16u;
+//        template<> constexpr uint Prec<UInt32>      = 32u;
+//        template<> constexpr uint Prec<UInt64>      = 64u;
         
   
         template<typename T>
@@ -217,44 +217,31 @@ namespace Tools
 //            T>;
         
         
-        template<typename T> inline constexpr const Scalar::Real<T> Zero  {0};
-        template<typename T> inline constexpr const Scalar::Real<T> One   {1};
-        template<typename T> inline constexpr const Scalar::Real<T> Two   {2};
-        template<typename T> inline constexpr const Scalar::Real<T> Three {3};
-        template<typename T> inline constexpr const Scalar::Real<T> Four  {4};
-        template<typename T> inline constexpr const Scalar::Real<T> Half    = One<T>/Two<T>;
-        template<typename T> inline constexpr const Scalar::Real<T> Third   = One<T>/Three<T>;
-        template<typename T> inline constexpr const Scalar::Real<T> Quarter = One<T>/Four<T>;
+        template<typename T> constexpr Scalar::Real<T> Zero  {0};
+        template<typename T> constexpr Scalar::Real<T> One   {1};
+        template<typename T> constexpr Scalar::Real<T> Two   {2};
+        template<typename T> constexpr Scalar::Real<T> Three {3};
+        template<typename T> constexpr Scalar::Real<T> Four  {4};
+        template<typename T> constexpr Scalar::Real<T> Half    = One<T>/Two<T>;
+        template<typename T> constexpr Scalar::Real<T> Third   = One<T>/Three<T>;
+        template<typename T> constexpr Scalar::Real<T> Quarter = One<T>/Four<T>;
         
         
-        template<typename T> inline constexpr const Scalar::Complex<T> I {0,1};
+        template<typename T> constexpr Scalar::Complex<T> I {0,1};
         
-        template<typename T> inline constexpr const Scalar::Real<T> Pi = 3.141592653589793238462643383279502884197;
+        template<typename T> constexpr Scalar::Real<T> Pi = 3.141592653589793238462643383279502884197;
         
-        template<typename T> inline constexpr const Scalar::Real<T> TwoPi = Scalar::Two<T> * Scalar::Pi<T>;
+        template<typename T> constexpr Scalar::Real<T> TwoPi = Scalar::Two<T> * Scalar::Pi<T>;
         
-        template<typename T> inline constexpr const Scalar::Real<T> eps   = std::numeric_limits<Scalar::Real<T>>::epsilon();
-        template<typename T> inline constexpr const Scalar::Real<T> Max   = std::numeric_limits<Scalar::Real<T>>::max();
-        template<typename T> inline constexpr const Scalar::Real<T> Infty = std::numeric_limits<Scalar::Real<T>>::max();
-        template<typename T> inline constexpr const Scalar::Real<T> Min   = std::numeric_limits<Scalar::Real<T>>::lowest();
+        template<typename T> constexpr Scalar::Real<T> eps   = std::numeric_limits<Scalar::Real<T>>::epsilon();
+        template<typename T> constexpr Scalar::Real<T> Max   = std::numeric_limits<Scalar::Real<T>>::max();
+        template<typename T> constexpr Scalar::Real<T> Infty = std::numeric_limits<Scalar::Real<T>>::max();
+        template<typename T> constexpr Scalar::Real<T> Min   = std::numeric_limits<Scalar::Real<T>>::lowest();
+
         
-        
-        // First converts to Real<R> and then compute the reciprocal.
-        template<typename R, typename S>
-        inline constexpr const R Inv( const S & a )
-        {
-            return One<R> / scalar_cast<R>(a);
-        }
-  
-        template<typename R, typename S, typename T>
-        inline constexpr R Frac( const S & a, const T & b )
-        {
-            return static_cast<R>(a) / static_cast<R>(b);
-        }
-        
-//        template<> inline constexpr const bool IsComplex<Complex32 > = true;
-//        template<> inline constexpr const bool IsComplex<Complex64 > = true;
-//        template<> inline constexpr const bool IsComplex<Complex128> = true;
+//        template<> constexpr bool IsComplex<Complex32 > = true;
+//        template<> constexpr bool IsComplex<Complex64 > = true;
+//        template<> constexpr bool IsComplex<Complex128> = true;
      
 
         
@@ -262,7 +249,7 @@ namespace Tools
     
     // scalar_cast<T>(x) cast x to the precision of T, but preserves Real/Complex
     template<typename T, typename S>
-    constexpr force_inline
+    force_inline constexpr
     typename std::enable_if_t<
         Scalar::IsScalar<T>
         &&
@@ -275,19 +262,35 @@ namespace Tools
     }
 
     template<typename T, typename S>
-    constexpr force_inline
+    force_inline constexpr
     typename std::enable_if_t<
         Scalar::IsScalar<T>
         &&
         Scalar::IsComplex<S>,
         typename Scalar::Complex<T>
     >
-    scalar_cast( S x )
+    scalar_cast( const S & x )
     {
         return static_cast<typename Scalar::Complex<T>>(x);
     }
     
-    
+namespace Scalar
+{
+    // First converts to Real<R> and then compute the reciprocal.
+    template<typename S, typename R = S>
+    force_inline constexpr
+    R Inv( const S & a )
+    {
+        return One<R> / scalar_cast<R>(a);
+    }
+
+    template<typename S, typename T, typename R = decltype( S(1)*T(1) )>
+    force_inline constexpr 
+    R Frac( const S & a, const T & b )
+    {
+        return scalar_cast<R>(a) / scalar_cast<R>(b);
+    }
+}
     
 //    // lo_prec_cast<S,T>(x) casts x to the lower precision of S and T, but preserves Real/Complex
 //    template<typename S, typename T, typename R>
