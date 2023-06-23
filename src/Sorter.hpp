@@ -10,23 +10,15 @@ namespace Tools
             std::sort( a, a+n );
         }
     };
-
+    
     template<typename T>
     force_inline void Sort2( T & a, T & b)
     {
-        const T c = std::min(a,b);
-        b = std::max(a,b);
-        a = c;
+        const std::pair<T,T> p = std::minmax(a,b);
+
+        a = p.first;
+        b = p.second;
     }
-    
-//    template<typename T>
-//    force_inline void Sort2( T & a, T & b)
-//    {
-//        auto p = std::minmax(a,b);
-//
-//        a = p.first;
-//        b = p.second;
-//    }
     
 
     
