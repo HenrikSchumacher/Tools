@@ -175,4 +175,57 @@ namespace Tools
             
         }
     };
+    
+    template<typename T>
+    void Sort( mut<T> begin, mut<T> end )
+    {
+        // Use std::sort for long inputs, but we use sorting networks for small list lengths.
+        switch( std::distance( begin, end ) )
+        {
+            case 1:
+            {
+                break;
+            }
+            case 2:
+            {
+                Sorter<2,T>()( begin );
+                break;
+            }
+            case 3:
+            {
+                Sorter<3,T>()( begin );
+                break;
+            }
+            case 4:
+            {
+                Sorter<4,T>()( begin );
+                break;
+            }
+            case 5:
+            {
+                Sorter<5,T>()( begin );
+                break;
+            }
+            case 6:
+            {
+                Sorter<6,T>()( begin );
+                break;
+            }
+            case 7:
+            {
+                Sorter<7,T>()( begin );
+                break;
+            }
+            case 8:
+            {
+                Sorter<8,T>()( begin );
+                break;
+            }
+            default:
+            {
+                std::sort( begin, end );
+                break;
+            }
+        }
+    }
 }
