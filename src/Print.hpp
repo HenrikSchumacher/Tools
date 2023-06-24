@@ -22,14 +22,13 @@ namespace Tools
 
     inline void print( const std::string & s )
     {
-#if defined(LTEMPLATE_H) || defined(MATHEMATICA)
         const std::lock_guard<std::mutex>  cout_lock( Tools::cout_mutex  );
+        
+#if defined(LTEMPLATE_H) || defined(MATHEMATICA)
         const std::lock_guard<std::mutex> timer_lock( Tools::timer_mutex );
         
         mma::print( std::string( 2 * (Timer::time_stack.size()), ' ') + s );
 #else
-        const std::lock_guard<std::mutex> cout_lock( Tools::cout_mutex );
-        
         std::cout << s << std::endl;
 #endif
     }
@@ -55,9 +54,11 @@ namespace Tools
     
     inline void tic(const std::string & s)
     {
-        const std::lock_guard<std::mutex> timer_lock( Tools::timer_mutex );
-        
-        Timer::time_stack.push_back(Clock::now());
+        {
+            const std::lock_guard<std::mutex> timer_lock( Tools::timer_mutex );
+            
+            Timer::time_stack.push_back(Clock::now());
+        }
         
         print( s + "..." );
     }
@@ -65,13 +66,15 @@ namespace Tools
     inline float toc(const std::string & s)
     {
         float duration (0);
-        
-        const std::lock_guard<std::mutex> timer_lock( Tools::timer_mutex );
+    
         
         if (!Timer::time_stack.empty())
         {
-            duration = Duration( Timer::time_stack.back(), Clock::now() );
-            Timer::time_stack.pop_back();
+            {
+                const std::lock_guard<std::mutex> timer_lock( Tools::timer_mutex );
+                duration = Duration( Timer::time_stack.back(), Clock::now() );
+                Timer::time_stack.pop_back();
+            }
             
             print( std::to_string(duration) + " s.");
             
