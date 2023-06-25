@@ -407,7 +407,7 @@ namespace Tools
         /**
          * @brief An atomic variable to keep track of the total number of unfinished tasks - either still in the queue, or running in a thread.
          */
-        std::atomic<size_t> tasks_total = 0;
+        std::atomic<Size_T> tasks_total = 0;
         
         /**
          * @brief A mutex to synchronize access to the task queue by different threads.
