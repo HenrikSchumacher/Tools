@@ -123,7 +123,7 @@ namespace Tools
                             // Nothing left to do. Stop here.
                             done = true;
                             
-                            debug_print( "ParallelDo_Dynamic: " + ToString(thread) + "done." );
+                            debug_print( "ParallelDo_Dynamic: " + ToString(thread) + " done." );
                             
 //                            ptoc("ParallelDo_Dynamic (" + ToString(begin) + " , " + ToString(end) + " , " + ToString(inc) + " , " + ToString(thread_count) + " )");
                             

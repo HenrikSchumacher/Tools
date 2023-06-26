@@ -115,55 +115,55 @@ namespace Tools
             return  x * x + y * y;
         }
         
-        template<typename T> constexpr bool IsComplex = false;
+        template<typename T> constexpr bool ComplexQ = false;
         
-        template<> constexpr bool IsComplex<Real32 >    = false;
-        template<> constexpr bool IsComplex<Real64 >    = false;
-        template<> constexpr bool IsComplex<Real128>    = false;
-        template<> constexpr bool IsComplex<Complex32 > = true;
-        template<> constexpr bool IsComplex<Complex64 > = true;
-        template<> constexpr bool IsComplex<Complex128> = true;
+        template<> constexpr bool ComplexQ<Real32 >    = false;
+        template<> constexpr bool ComplexQ<Real64 >    = false;
+        template<> constexpr bool ComplexQ<Real128>    = false;
+        template<> constexpr bool ComplexQ<Complex32 > = true;
+        template<> constexpr bool ComplexQ<Complex64 > = true;
+        template<> constexpr bool ComplexQ<Complex128> = true;
         
-        template<typename T> constexpr bool IsReal = false;
+        template<typename T> constexpr bool RealQ = false;
         
-        template<> constexpr bool IsReal<Real32 >       = true;
-        template<> constexpr bool IsReal<Real64 >       = true;
-        template<> constexpr bool IsReal<Real128>       = true;
-        template<> constexpr bool IsReal<Complex32 >    = false;
-        template<> constexpr bool IsReal<Complex64 >    = false;
-        template<> constexpr bool IsReal<Complex128>    = false;
+        template<> constexpr bool RealQ<Real32 >       = true;
+        template<> constexpr bool RealQ<Real64 >       = true;
+        template<> constexpr bool RealQ<Real128>       = true;
+        template<> constexpr bool RealQ<Complex32 >    = false;
+        template<> constexpr bool RealQ<Complex64 >    = false;
+        template<> constexpr bool RealQ<Complex128>    = false;
         
-//        template<> constexpr bool IsReal<Int16>         = true;
-//        template<> constexpr bool IsReal<Int32>         = true;
-//        template<> constexpr bool IsReal<Int64>         = true;
-//        template<> constexpr bool IsReal<UInt16>        = true;
-//        template<> constexpr bool IsReal<UInt32>        = true;
-//        template<> constexpr bool IsReal<UInt64>        = true;
+//        template<> constexpr bool RealQ<Int16>         = true;
+//        template<> constexpr bool RealQ<Int32>         = true;
+//        template<> constexpr bool RealQ<Int64>         = true;
+//        template<> constexpr bool RealQ<UInt16>        = true;
+//        template<> constexpr bool RealQ<UInt32>        = true;
+//        template<> constexpr bool RealQ<UInt64>        = true;
         
-        template<typename T> constexpr bool IsScalar = false;
+        template<typename T> constexpr bool ScalarQ = false;
         
-        template<> constexpr bool IsScalar<Real32 >     = true;
-        template<> constexpr bool IsScalar<Real64 >     = true;
-        template<> constexpr bool IsScalar<Real128>     = true;
-        template<> constexpr bool IsScalar<Complex32 >  = true;
-        template<> constexpr bool IsScalar<Complex64 >  = true;
-        template<> constexpr bool IsScalar<Complex128>  = true;
+        template<> constexpr bool ScalarQ<Real32 >     = true;
+        template<> constexpr bool ScalarQ<Real64 >     = true;
+        template<> constexpr bool ScalarQ<Real128>     = true;
+        template<> constexpr bool ScalarQ<Complex32 >  = true;
+        template<> constexpr bool ScalarQ<Complex64 >  = true;
+        template<> constexpr bool ScalarQ<Complex128>  = true;
         
-//        template<> constexpr bool IsScalar<Int16>       = true;
-//        template<> constexpr bool IsScalar<Int32>       = true;
-//        template<> constexpr bool IsScalar<Int64>       = true;
-//        template<> constexpr bool IsScalar<UInt16>      = true;
-//        template<> constexpr bool IsScalar<UInt32>      = true;
-//        template<> constexpr bool IsScalar<UInt64>      = true;
+//        template<> constexpr bool ScalarQ<Int16>       = true;
+//        template<> constexpr bool ScalarQ<Int32>       = true;
+//        template<> constexpr bool ScalarQ<Int64>       = true;
+//        template<> constexpr bool ScalarQ<UInt16>      = true;
+//        template<> constexpr bool ScalarQ<UInt32>      = true;
+//        template<> constexpr bool ScalarQ<UInt64>      = true;
         
-        template<typename T> constexpr bool IsFloat = false;
+        template<typename T> constexpr bool FloatQ = false;
         
-        template<> constexpr bool IsFloat<Real32 >     = true;
-        template<> constexpr bool IsFloat<Real64 >     = true;
-        template<> constexpr bool IsFloat<Real128>     = true;
-        template<> constexpr bool IsFloat<Complex32 >  = true;
-        template<> constexpr bool IsFloat<Complex64 >  = true;
-        template<> constexpr bool IsFloat<Complex128>  = true;
+        template<> constexpr bool FloatQ<Real32 >     = true;
+        template<> constexpr bool FloatQ<Real64 >     = true;
+        template<> constexpr bool FloatQ<Real128>     = true;
+        template<> constexpr bool FloatQ<Complex32 >  = true;
+        template<> constexpr bool FloatQ<Complex64 >  = true;
+        template<> constexpr bool FloatQ<Complex128>  = true;
         
         template<typename T> constexpr int Prec     = 0;
         
@@ -200,7 +200,7 @@ namespace Tools
         
 //        template<typename T>
 //        using Real =
-//            std::conditional_t< IsFloat<T>,
+//            std::conditional_t< FloatQ<T>,
 //                std::conditional_t<Prec<T> ==  32u,  Real32,
 //                std::conditional_t<Prec<T> ==  64u,  Real64,
 //                std::conditional_t<Prec<T> == 128u, Real128,
@@ -209,7 +209,7 @@ namespace Tools
 //
 //        template<typename T>
 //        using Complex =
-//            std::conditional_t< IsFloat<T>,
+//            std::conditional_t< FloatQ<T>,
 //                std::conditional_t<Prec<T> ==  32u,  Complex32,
 //                std::conditional_t<Prec<T> ==  64u,  Complex64,
 //                std::conditional_t<Prec<T> == 128u, Complex128,
@@ -239,9 +239,9 @@ namespace Tools
         template<typename T> constexpr Scalar::Real<T> Min   = std::numeric_limits<Scalar::Real<T>>::lowest();
 
         
-//        template<> constexpr bool IsComplex<Complex32 > = true;
-//        template<> constexpr bool IsComplex<Complex64 > = true;
-//        template<> constexpr bool IsComplex<Complex128> = true;
+//        template<> constexpr bool ComplexQ<Complex32 > = true;
+//        template<> constexpr bool ComplexQ<Complex64 > = true;
+//        template<> constexpr bool ComplexQ<Complex128> = true;
      
 
         
@@ -251,9 +251,9 @@ namespace Tools
     template<typename T, typename S>
     force_inline constexpr
     typename std::enable_if_t<
-        Scalar::IsScalar<T>
+        Scalar::ScalarQ<T>
         &&
-        Scalar::IsReal<S>,
+        Scalar::RealQ<S>,
         typename Scalar::Real<T>
     >
     scalar_cast( S x )
@@ -264,9 +264,9 @@ namespace Tools
     template<typename T, typename S>
     force_inline constexpr
     typename std::enable_if_t<
-        Scalar::IsScalar<T>
+        Scalar::ScalarQ<T>
         &&
-        Scalar::IsComplex<S>,
+        Scalar::ComplexQ<S>,
         typename Scalar::Complex<T>
     >
     scalar_cast( const S & x )
@@ -296,9 +296,9 @@ namespace Scalar
 //    template<typename S, typename T, typename R>
 //    constexpr force_inline
 //    std::enable_if_t<
-//        Scalar::IsScalar<S> && Scalar::IsScalar<T>
+//        Scalar::ScalarQ<S> && Scalar::ScalarQ<T>
 //        &&
-//        Scalar::IsReal<R>
+//        Scalar::RealQ<R>
 //        &&
 //        std::less_equal(Scalar::Prec<S>,Scalar::Prec<T>),
 //        typename Scalar::Real<S>
@@ -312,9 +312,9 @@ namespace Scalar
 //    template<typename S, typename T, typename R>
 //    constexpr force_inline
 //    std::enable_if_t<
-//        Scalar::IsScalar<S> && Scalar::IsScalar<T>
+//        Scalar::ScalarQ<S> && Scalar::ScalarQ<T>
 //        &&
-//        Scalar::IsReal<R>
+//        Scalar::RealQ<R>
 //        &&
 //        std::greater(Scalar::Prec<S>, Scalar::Prec<T>),
 //        typename Scalar::Real<T>
@@ -330,9 +330,9 @@ namespace Scalar
 //    template<typename S, typename T, typename R>
 //    constexpr force_inline
 //    std::enable_if_t<
-//        Scalar::IsScalar<S> && Scalar::IsScalar<T>
+//        Scalar::ScalarQ<S> && Scalar::ScalarQ<T>
 //        &&
-//        Scalar::IsReal<R>
+//        Scalar::RealQ<R>
 //        &&
 //        std::greater_equal(Scalar::Prec<S>,Scalar::Prec<T>),
 //        typename Scalar::Real<S>
@@ -346,9 +346,9 @@ namespace Scalar
 //    template<typename S, typename T, typename R>
 //    constexpr force_inline
 //    std::enable_if_t<
-//        Scalar::IsScalar<S> && Scalar::IsScalar<T>
+//        Scalar::ScalarQ<S> && Scalar::ScalarQ<T>
 //        &&
-//        Scalar::IsReal<R>
+//        Scalar::RealQ<R>
 //        &&
 //        std::less(Scalar::Prec<S>, Scalar::Prec<T>),
 //        typename Scalar::Real<T>
@@ -359,7 +359,7 @@ namespace Scalar
 //
 //    }
     
-#define ASSERT_REAL(R) static_assert( Scalar::IsReal<R>, "Template parameter " #R " must be a real-valued type." );
+#define ASSERT_REAL(R) static_assert( Scalar::RealQ<R>, "Template parameter " #R " must be a real-valued type." );
     
-#define ASSERT_COMPLEX(C) static_assert( Scalar::IsComplex<C>, "Template parameter " #C " must be a complex-valued type." );
+#define ASSERT_COMPLEX(C) static_assert( Scalar::ComplexQ<C>, "Template parameter " #C " must be a complex-valued type." );
 }

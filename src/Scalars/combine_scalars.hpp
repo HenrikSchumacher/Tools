@@ -12,7 +12,7 @@ namespace Tools
         const R_1 & beta,        S_1 & y
     )
     {
-        static_assert( Scalar::IsComplex<S_1> || (Scalar::IsReal<R_0> && Scalar::IsReal<S_0> && Scalar::IsReal<R_1>),
+        static_assert( Scalar::ComplexQ<S_1> || (Scalar::RealQ<R_0> && Scalar::RealQ<S_0> && Scalar::RealQ<R_1>),
             "Fourth argument is real, but some of the other arguments are complex."
         );
         

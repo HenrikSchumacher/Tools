@@ -27,7 +27,7 @@ namespace Tools
         // If beta_flag == Flag::Minus, then it assumes beta = -1.
         // If beta_flag == Flag::Generic, then it assumes generic values for beta.
         
-        static_assert( IsComplex<S_1> || (IsReal<R_0> && IsReal<S_0> && IsReal<R_1>),
+        static_assert( ComplexQ<S_1> || (RealQ<R_0> && RealQ<S_0> && RealQ<R_1>),
             "Fourth argument is real, but some of the other arguments are complex."
         );
         
@@ -93,7 +93,7 @@ namespace Tools
         // If beta_flag == Flag::Minus, then it assumes beta = -1.
         // If beta_flag == Flag::Generic, then it assumes generic values for beta.
         
-        static_assert( IsComplex<S_1> || (IsReal<R_0> && IsReal<S_0> && IsReal<R_1>),
+        static_assert( ComplexQ<S_1> || (RealQ<R_0> && RealQ<S_0> && RealQ<R_1>),
             "Fourth argument is real, but some of the other arguments are complex."
         );
         
@@ -154,7 +154,7 @@ namespace Tools
         // If beta_flag == Flag::Minus, then it assumes beta = -1.
         // If beta_flag == Flag::Generic, then it assumes generic values for beta.
 
-        static_assert( IsComplex<S_1> || (IsReal<R_0> && IsReal<S_0> && IsReal<R_1>),
+        static_assert( ComplexQ<S_1> || (RealQ<R_0> && RealQ<S_0> && RealQ<R_1>),
             "Fourth argument is real, but some of the other arguments are complex."
         );
         

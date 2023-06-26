@@ -170,7 +170,7 @@ namespace Tools
         const Real A, const Real B, const Real C, const Real D, mut<Real> t_out
     )
     {
-        static_assert( Scalar::IsReal<Real>, "Input parameters must be real floating point types.");
+        static_assert( Scalar::RealQ<Real>, "Input parameters must be real floating point types.");
         
         constexpr Real zero  = 0;
         constexpr Real one   = 1;
