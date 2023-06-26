@@ -85,6 +85,7 @@
 
 #define IS_ARITHMETIC(T) class = typename std::enable_if_t<std::is_arithmetic_v<T>>
 #define IS_FLOAT(T)      class = typename std::enable_if_t<std::is_floating_point_v<T>>
+#define IS_INT(T)        class = typename std::enable_if_t<std::is_integral_v<T>>
 
 #define IS_POSITIVE(x)  class = typename std::enable_if_t<x>0>
 
