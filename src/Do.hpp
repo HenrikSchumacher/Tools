@@ -92,7 +92,7 @@ namespace Tools
         }
         else
         {
-            if( N != int_cast<Size_T>(n) )
+            if( N != static_cast<Size_T>(n) )
             {
                 wprint("Do: Input n does not coincide with template parameter N.");
             }
@@ -106,9 +106,9 @@ namespace Tools
             }
             else
             {
-                if( thread_count_ > zero )
+                if( thread_count_ > one )
                 {
-                    wprint("Do: Parallelization deactivated, but thread_count > 0.");
+                    wprint("Do: Parallelization deactivated, but thread_count > 1.");
                 }
             }
         }
