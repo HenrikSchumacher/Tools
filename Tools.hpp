@@ -3,12 +3,13 @@
 
     #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
         //define something for Windows (32-bit and 64-bit, this part is common)
-    #include <io.h>
-    #include <stdlib.h>
+        #include <io.h>
+        #include <stdlib.h>
     #else
-    #include <unistd.h>
+        #include <unistd.h>
     #endif
-        
+    
+
     #include <deque>
     #include <vector>
     #include <array>
@@ -27,7 +28,17 @@
     #include <iomanip>
     #include <mutex>
     #include <functional>
-    
+   
+
+    // In case somebody got the idea to ruin all other people's code.
+    #ifdef True
+        #undef True
+    #endif
+
+    #ifdef False
+        #undef False
+    #endif
+
         
     #define STRINGIFY(a) #a
     #define STRINGIFY2(a) STRINGIFY(a)
