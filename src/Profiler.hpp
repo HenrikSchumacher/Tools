@@ -24,6 +24,7 @@ namespace Tools
         inline void Clear(const std::string & dir, const bool append = false)
         {
             const std::lock_guard<std::mutex> prof_lock( prof_mutex );
+            const std::lock_guard<std::mutex> log_lock( log_mutex );
             
             std::filesystem::path profile_filename = dir;
             profile_filename /= "Tools_Profile.tsv";
@@ -39,7 +40,7 @@ namespace Tools
             
             print( std::string("Profile will be written to ") + profile_filename.string() + ".");
             
-            const std::lock_guard<std::mutex> log_lock( log_mutex );
+            
             Profiler::log << std::setprecision(16);
             
             std::filesystem::path log_filename = dir;
