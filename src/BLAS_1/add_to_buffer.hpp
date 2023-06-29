@@ -2,36 +2,23 @@
 
 namespace Tools
 {
-    
-    template <typename R, typename S>
-    force_inline void add_to_buffer( ptr<R> from, mut<S> to, const Size_T n )
+    template <
+        Size_T N = VarSize, Parallel_T parQ = Sequential,
+        typename R, typename S
+    >
+    force_inline void add_to_buffer(
+        ptr<R> x, mut<S> y,
+        const Size_T n = N, const Size_T thread_count = 1
+    )
     {
-        for( Size_T i = 0; i < n; ++i )
-        {
-            to[i] += scalar_cast<S>(from[i]);
-        }
-    }
-    
-    template <typename R, typename S>
-    force_inline void add_to_buffer( ptr<R> from, mut<S> to, const Size_T n, const Size_T thread_count )
-    {
-        ParallelDo(
+        check_sequential<parQ>( "add_to_buffer", thread_count );
+        
+        Do<N,parQ>(
             [=]( const Size_T i )
             {
-                to[i] += scalar_cast<S>(from[i]);
+                y[i] += scalar_cast<S>(x[i]);
             },
-            n,
-            thread_count
+            n, thread_count
         );
-    }
-    
-    template <Size_T n, typename R, typename S>
-    force_inline void add_to_buffer( ptr<R> from, mut<S> to )
-    {
-        for( Size_T i = 0; i < n; ++i )
-        {
-            to[i] += scalar_cast<S>(from[i]);
-        }
-    }
-    
+    }    
 } // namespace Tools

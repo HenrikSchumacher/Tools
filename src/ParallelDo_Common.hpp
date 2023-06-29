@@ -70,8 +70,8 @@ namespace Tools
         ParallelDo(
             [&fun,begin,end,thread_count]( const Int thread )
             {
-                const Int i_begin = begin + JobPointer( end - begin , thread_count, thread     );
-                const Int i_end   = begin + JobPointer( end - begin , thread_count, thread + 1 );
+                const Int i_begin = begin + JobPointer( end - begin, thread_count, thread     );
+                const Int i_end   = begin + JobPointer( end - begin, thread_count, thread + 1 );
 
                 for( Int i = i_begin; i < i_end; ++i )
                 {
