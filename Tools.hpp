@@ -110,9 +110,12 @@ namespace Tools
     #include "src/ToString.hpp"
     #include "src/Print.hpp"
     #include "src/Profiler.hpp"
-    #include "src/Scalars.hpp"
-    #include "src/TypeName.hpp"
+    #include "src/Memory.hpp"
 
+    #include "src/Scalars.hpp"
+    #include "src/Scalars/combine_scalars.hpp"
+    #include "src/TypeName.hpp"
+    
 
 #ifdef TOOLS_ENABLE_OPENMP
 
@@ -149,13 +152,10 @@ namespace Tools
 
 #endif
 
-    #include "src/Memory.hpp"
-
     #include "src/ParallelAlgorithms.hpp"
     #include "src/JobPointers.hpp"
     #include "src/ParallelDo_Common.hpp"
-
-    #include "src/Scalars/combine_scalars.hpp"
+    #include "src/Do.hpp"
 
     #include "src/BLAS_1.hpp"
 

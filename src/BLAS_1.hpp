@@ -3,6 +3,12 @@
 // Basically does what BLAS 1 does, but not strictly following the syntax.
 
 
+#include "BLAS_1/copy_buffer.hpp"
+#include "BLAS_1/move_buffer.hpp"
+#include "BLAS_1/zerofy_buffer.hpp"
+#include "BLAS_1/fill_buffer.hpp"
+
+
 #include "BLAS_1/add_to_buffer.hpp"
 #include "BLAS_1/zip_buffers.hpp"
 #include "BLAS_1/scale_buffer.hpp"
@@ -19,3 +25,6 @@
 
 #include "BLAS_1/iota_buffer.hpp"
 #include "BLAS_1/minmax_buffer.hpp"
+
+#include "BLAS_1/scatter_read_combine.hpp"
+#include "BLAS_1/combine_scatter_write.hpp"

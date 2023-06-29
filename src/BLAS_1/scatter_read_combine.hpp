@@ -3,25 +3,21 @@
 namespace Tools
 {
     
-    
-    
     template<
         Scalar::Flag alpha_flag, Scalar::Flag beta_flag,
         Size_T N = VarSize, Parallel_T parQ = Sequential,
-        typename R_0, typename S_0, typename R_1, typename S_1
+        typename R_0, typename S_0, typename Int, typename R_1, typename S_1
     >
-    force_inline void combine_buffers(
-        const R_0 & alpha, ptr<S_0> x,
-        const R_1 & beta,  mut<S_1> y,
-        const Size_T n = N,
-        const Size_T thread_count = 1
+    constexpr force_inline void scatter_read_combine(
+        const R_0 & alpha, ptr<S_0> x, ptr<Int> idx,
+        const R_1 & beta,  mut<S_1> y,                Size_T n = N, Size_T thread_count = 1
     )
     {
-        check_sequential<parQ>( "combine_buffers", thread_count );
+        check_sequential<parQ>( "scatter_read_combine", thread_count );
         
         using namespace Scalar;
         
-        // This routine computes y[i] = alpha * x[i] + beta * y[i].
+        // This routine computes y[k] = alpha * x[idx[k]] + beta * y[k].
         // Depending on the values of alpha_flag and beta_flag, it takes several short cuts:
         // If alpha_flag == Flag::Zero,  then it assumes alpha = 0.
         // If alpha_flag == Flag::Plus,  then it assumes alpha = 1.
@@ -32,7 +28,7 @@ namespace Tools
         // If beta_flag == Flag::Plus,  then it assumes beta = 1.
         // If beta_flag == Flag::Minus, then it assumes beta = -1.
         // If beta_flag == Flag::Generic, then it assumes generic values for beta.
-        
+
         static_assert( ComplexQ<S_1> || (RealQ<R_0> && RealQ<S_0> && RealQ<R_1>),
             "Fourth argument is real, but some of the other arguments are complex."
         );
@@ -51,18 +47,14 @@ namespace Tools
         
         if constexpr ( (beta_flag == Flag::Zero) && (alpha_flag == Flag::Zero) )
         {
-            zerofy_buffer<N,parQ>(y,n,thread_count);
-        }
-        else if constexpr ( (beta_flag == Flag::Zero) && (alpha_flag == Flag::Plus) )
-        {
-            copy_buffer<N,parQ>(x,y,n,thread_count);
+            zerofy_buffer<N,parQ>( y, n, thread_count );
         }
         else
-        {
-            Do<N,parQ,Static>(
-                [=]( const Size_T i )
+        {            
+            Do<N,parQ>(
+                [=]( const Size_T k )
                 {
-                    combine_scalars<alpha_flag,beta_flag>( alpha, x[i], beta, y[i] );
+                    combine_scalars<alpha_flag,beta_flag>( alpha, x[idx[k]], beta, y[k] );
                 },
                 n, thread_count
             );
@@ -70,3 +62,4 @@ namespace Tools
     }
 
 } // namespace Tools
+

@@ -3,49 +3,26 @@
 namespace Tools
 {
     
-    template <typename R, typename S>
-    force_inline void scale_buffer( const R beta_, mut<S> y, const Size_T n )
+    template <
+        Size_T N = VarSize, Parallel_T parQ = Sequential,
+        typename R, typename S
+    >
+    force_inline void scale_buffer(
+        const R beta_, mut<S> y, const Size_T n = N, const Size_T thread_count = 1
+    )
     {
+        check_sequential<parQ>( "scale_buffer", thread_count );
         
         const auto beta = scalar_cast<S>(beta_);
         
-        for( Size_T i = 0; i < n; ++i )
-        {
-            y[i] *= beta;
-        }
-    }
-    
-    template <typename R, typename S>
-    force_inline void scale_buffer( const R beta_, mut<S> y, const Size_T n, const Size_T thread_count )
-    {
-        if( thread_count <= 1 )
-        {
-            scale_buffer( beta_, y, n );
-        }
-        else
-        {
-            const auto beta = scalar_cast<S>(beta_);
-            
-            ParallelDo(
-                [=]( const Size_T i )
-                {
-                    y[i] *= beta;
-                },
-                n,
-                thread_count
-            );
-        }
-    }
-
-    template <Size_T n, typename R, typename S>
-    force_inline void scale_buffer( const R beta_, mut<S> y )
-    {
-        const auto beta = scalar_cast<S>(beta_);
+        Do<VarSize,Parallel>(
+            [=]( const Size_T i )
+            {
+                y[i] *= beta;
+            },
+            n, thread_count
+        );
         
-        for( Size_T i = 0; i < n; ++i )
-        {
-            y[i] *= beta;
-        }
     }
 
     

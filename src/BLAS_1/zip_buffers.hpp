@@ -60,42 +60,24 @@ namespace Tools
         
     }
     
-    
-    template <typename F, typename T_a, typename T_b, typename T_c>
+    template <
+        Size_T N = VarSize, Parallel_T parQ = Sequential,
+        typename F, typename T_a, typename T_b, typename T_c
+    >
     force_inline void zip_buffers(
-        F & zip, ptr<T_a> a, ptr<T_b> b, mut<T_c> c, const Size_T n
+        F & zip, ptr<T_a> a, ptr<T_b> b, mut<T_c> c,
+        const Size_T n = N, const Size_T thread_count = 1
     )
     {
-        for( Size_T i = 0; i < n; ++i )
-        {
-            zip( a[i], b[i], c[i] );
-        }
-    }
-    
-    template <typename F, typename T_a, typename T_b, typename T_c>
-    force_inline void zip_buffers(
-        F & zip, ptr<T_a> a, ptr<T_b> b, mut<T_c> c, const Size_T n, const Size_T thread_count
-    )
-    {
-        ParallelDo(
+        check_sequential<parQ>( "zip_buffers", thread_count );
+        
+        Do<N,parQ>(
             [=]( const Size_T i )
             {
                 zip( a[i], b[i], c[i] );
             },
-            n,
-            thread_count
+            n, thread_count
         );
-    }
-    
-    template <Size_T n, typename F, typename T_a, typename T_b, typename T_c>
-    force_inline void zip_buffers(
-        F & zip, ptr<T_a> a, ptr<T_b> b, mut<T_c> c
-    )
-    {
-        for( Size_T i = 0; i < n; ++i )
-        {
-            zip( a[i], b[i], c[i] );
-        }
     }
     
 } // namespace Tools

@@ -3,35 +3,24 @@
 namespace Tools
 {
     
-    template <typename T>
-    force_inline void iota_buffer( mut<T> a, const Size_T n )
+    template <
+        Size_T N = VarSize, Parallel_T parQ = Sequential,
+        typename T
+    >
+    force_inline void iota_buffer(
+        mut<T> a,
+        const Size_T n = N, const Size_T thread_count = 1
+    )
     {
-        for( Size_T i = 0; i < n; ++i )
-        {
-            a[i] = static_cast<T>(i);
-        }
-    }
-    
-    template <typename T>
-    force_inline void iota_buffer( mut<T> a, const Size_T n, const Size_T thread_count )
-    {
-        ParallelDo(
+        check_sequential<parQ>( "iota_buffer", thread_count );
+        
+        Do<N,parQ>(
             [=]( const Size_T i )
             {
                 a[i] = static_cast<T>(i);
             },
-            n,
-            thread_count
+            n, thread_count
         );
-    }
-    
-    template <Size_T n, typename T>
-    force_inline void iota_buffer( mut<T> a )
-    {
-        for( Size_T i = 0; i < n; ++i )
-        {
-            a[i] = static_cast<T>(i);
-        }
     }
     
 } // namespace Tools
