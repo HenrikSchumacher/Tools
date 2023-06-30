@@ -21,6 +21,8 @@ namespace Tools
     template<> constexpr const char * TypeName<UInt32> = "U32";
     
     template<> constexpr const char * TypeName<UInt64> = "U64";
+    
+    template<> constexpr const char * TypeName<long> = "long";
 
     
     // Microsoft's C compiler defines std::size_t as an alias onto unsigned long long and throws an error here.

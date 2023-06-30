@@ -115,8 +115,10 @@ namespace Tools
         logprint( std::string("WARNING: ") + s );
     }
     
-    inline void ptic_(const std::string & tag)
+    
+    inline void ptic(const std::string & tag)
     {
+#ifdef TOOLS_ENABLE_PROFILER
         const std::lock_guard<std::mutex> prof_lock( Profiler::prof_mutex );
         
         Profiler::time_stack.push_back(Clock::now());
@@ -132,10 +134,12 @@ namespace Tools
             << std::string( 2 * (Profiler::time_stack.size()), ' ' )
             << Profiler::tag_stack.back() << "\t started at \t" << start_time << "\n"
             << std::endl;
+#endif
     }
     
-    inline void ptoc_(const std::string & tag)
+    inline void ptoc(const std::string & tag)
     {
+#ifdef TOOLS_ENABLE_PROFILER
         const std::lock_guard<std::mutex> prof_lock( Profiler::prof_mutex );
         if( !Profiler::tag_stack.empty() )
         {
@@ -176,29 +180,44 @@ namespace Tools
         {
             eprint( "Unmatched ptoc detected. Stack empty. Label =  " + tag + ".");
         }
+#endif
     }
     
-#ifdef TOOLS_ENABLE_PROFILER
-    #define ptic(tag) ptic_(tag)
-    #define ptoc(tag) ptoc_(tag)
-#else
-    #define ptic(tag)
-    #define ptoc(tag)
-#endif
-    
+    inline void debug_tic(const std::string & tag)
+    {
 #ifdef TOOLS_DEBUG
-    #define debug_print(s) logprint(s);
-#else
-    #define debug_print(s)
+        ptic(tag);
 #endif
+    }
+    
+    inline void debug_toc(const std::string & tag)
+    {
+#ifdef TOOLS_DEBUG
+        ptoc(tag);
+#endif
+    }
+
+    inline void debug_print( std:: string s)
+    {
+#ifdef TOOLS_DEBUG
+        logprint(s);
+#endif
+    }
+    
+    inline void debug_assert( bool condition, std:: string s )
+    {
+#ifdef TOOLS_DEBUG
+        if( ! condition )
+        {
+            eprint(s);
+        }
+#endif
+    }
+
     
     
-#define pdump(x)                                                                \
-{                                                                               \
-    const std::lock_guard<std::mutex> lock( Profiler::log_mutex );              \
-    Profiler::log << std::string(#x) << std::string(" = ");                     \
-    Profiler::log << x;                                                         \
-    Profiler::log << "\n" << std::endl;                                         \
-}
+#define logdump(x) logvalprint( std::string(#x), x );
+    
+#define pdump(x) logvalprint( std::string(#x), x );
 
 } // namespace Tools

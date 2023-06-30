@@ -8,7 +8,6 @@
 
 namespace Tools
 {
-
     static constexpr Size_T VarSize = 0;
 
 
@@ -84,9 +83,9 @@ namespace Tools
 #ifdef TOOLS_DEBUG
         if constexpr ( N == VarSize )
         {
-            if( n == zero )
+            if( n == VarSize )
             {
-                wprint("Do: Input length n is 0 although variable size inputs are specified.");
+                wprint("Do: Input length n = 0 although N = VarSize.");
                 return;
             }
         }
