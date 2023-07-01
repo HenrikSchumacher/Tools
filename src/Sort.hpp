@@ -15,7 +15,7 @@ namespace Tools
     };
 
     template<typename T, typename C>
-    force_inline void CompSwap( T & a, T & b, C comp = C()  )
+    force_inline void CompSwap( T & restrict a, T & restrict b, C comp = C()  )
     {
         const std::pair<T,T> p = std::minmax(a,b,comp);
 

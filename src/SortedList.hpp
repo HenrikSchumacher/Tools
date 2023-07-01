@@ -53,7 +53,7 @@ namespace Tools
         }
 
 
-        Int FindPosition( const T & X ) const
+        Int FindPosition( const T & restrict X ) const
         {
             //Finds first position whose element is not smaller than X.
 
@@ -66,7 +66,7 @@ namespace Tools
         }
 
         
-        Int Find( const T & X ) const
+        Int Find( const T & restrict X ) const
         {
             if( Size() == 0 )
             {
@@ -78,7 +78,7 @@ namespace Tools
             return (list[i] == X) ? i : -1;
         }
         
-        bool Insert( const T & X )
+        bool Insert( const T & restrict X )
         {
             Int i = FindPosition(X);
             
@@ -100,7 +100,7 @@ namespace Tools
             
         }
         
-        bool Drop( const T & X )
+        bool Drop( const T & restrict X )
         {
             Int i = Find(X);
             if( i >= 0 )
@@ -134,7 +134,10 @@ namespace Tools
             return list[i];
         }
         
-        friend bool IntersectingQ( const SortedList<T,Int> & a, const SortedList<T,Int> & b )
+        friend bool IntersectingQ(
+            const SortedList<T,Int> & restrict a,
+            const SortedList<T,Int> & restrict b
+        )
         {
             if( (a.Max() < b.Min()) || (b.Max() < a.Min()) )
             {
@@ -172,9 +175,9 @@ namespace Tools
         }
         
         friend void Intersection(
-            const SortedList<T,Int> & a,
-            const SortedList<T,Int> & b,
-                  SortedList<T,Int> & c
+            const SortedList<T,Int> & restrict a,
+            const SortedList<T,Int> & restrict b,
+                  SortedList<T,Int> & restrict c
         )
         {
             c.Clear();
@@ -214,8 +217,8 @@ namespace Tools
         }
         
         friend bool operator==(
-            const SortedList<T,Int> & a,
-            const SortedList<T,Int> & b
+            const SortedList<T,Int> & restrict a,
+            const SortedList<T,Int> & restrict b
         )
         {
             if( a.Size() != b.Size() )
@@ -236,8 +239,8 @@ namespace Tools
         }
         
         friend bool operator!=(
-            const SortedList<T,Int> & a,
-            const SortedList<T,Int> & b
+            const SortedList<T,Int> & restrict a,
+            const SortedList<T,Int> & restrict b
         )
         {
             if( a.Size() != b.Size() )
