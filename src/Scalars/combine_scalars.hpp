@@ -4,6 +4,7 @@ namespace Tools
 {
     template<
         Scalar::Flag alpha_flag, Scalar::Flag beta_flag,
+        Tensors::Op opx = Tensors::Op::Id, Tensors::Op opy = Tensors::Op::Id,
         typename R_0, typename S_0,
         typename R_1, typename S_1
     >
@@ -12,6 +13,29 @@ namespace Tools
         const R_1 & beta,        S_1 & y
     )
     {
+        using Op = Tensors::Op;
+        
+        // Computes y = alpha * opx( x ) + beta * opy( y ).
+        
+        
+        static_assert( (opx == Op::Id) || (opx == Op::Conj),
+            "combine_scalars: Only the values Op::Id and Op::Conj are allowed for opx."
+        );
+        
+        static_assert( (opy == Op::Id) || (opy == Op::Conj),
+            "combine_scalars: Only the values Op::Id and Op::Conj are allowed for opy."
+        );
+        
+        constexpr auto ox = COND( opx == Op::Conj,
+                []( const S_0 & z ){ return Scalar::Conj<S_0>(z); },
+                []( const S_0 & z ){ return z; }
+        );
+        
+        constexpr auto oy = COND( opy == Op::Conj,
+                []( const S_1 & z ){ return Scalar::Conj<S_1>(z); },
+                []( const S_1 & z ){ return z; }
+        );
+        
         static_assert( Scalar::ComplexQ<S_1> || (Scalar::RealQ<R_0> && Scalar::RealQ<S_0> && Scalar::RealQ<R_1>),
             "Fourth argument is real, but some of the other arguments are complex."
         );
@@ -36,22 +60,22 @@ namespace Tools
                 {
                     case Scalar::Flag::Generic:
                     {
-                        y = (alpha * scalar_cast<S_1>(x)) + (beta * y);
+                        y = (alpha * scalar_cast<S_1>( ox(x) )) + (beta * oy(y) );
                         break;
                     }
                     case Scalar::Flag::Plus:
                     {
-                        y += alpha * scalar_cast<S_1>(x);
+                        y = alpha * scalar_cast<S_1>( ox(x) ) + oy(y);
                         break;
                     }
                     case Scalar::Flag::Zero:
                     {
-                        y = alpha * scalar_cast<S_1>(x);
+                        y = alpha * scalar_cast<S_1>( ox(x) );
                         break;
                     }
                     case Scalar::Flag::Minus:
                     {
-                        y = (alpha * scalar_cast<S_1>(x)) - y;
+                        y = (alpha * scalar_cast<S_1>( ox(x) )) - oy(y);
                         break;
                     }
                 }
@@ -63,22 +87,22 @@ namespace Tools
                 {
                     case Scalar::Flag::Generic:
                     {
-                        y = scalar_cast<S_1>(x) + (beta * y);
+                        y = scalar_cast<S_1>( ox(x) ) + (beta * oy(y));
                         break;
                     }
                     case Scalar::Flag::Plus:
                     {
-                        y += scalar_cast<S_1>(x);
+                        y = scalar_cast<S_1>( ox(x) ) + oy(y);
                         break;
                     }
                     case Scalar::Flag::Zero:
                     {
-                        y = scalar_cast<S_1>(x);
+                        y = scalar_cast<S_1>( ox(x) );
                         break;
                     }
                     case Scalar::Flag::Minus:
                     {
-                        y = scalar_cast<S_1>(x) - y;
+                        y = scalar_cast<S_1>( ox(x) ) - oy(y);
                         break;
                     }
                 }
@@ -90,12 +114,12 @@ namespace Tools
                 {
                     case Scalar::Flag::Generic:
                     {
-                        y *= beta;
+                        y = beta * oy(y);
                         break;
                     }
                     case Scalar::Flag::Plus:
                     {
-                        // Do nothing.
+                        y = oy(y);
                         break;
                     }
                     case Scalar::Flag::Zero:
@@ -105,7 +129,7 @@ namespace Tools
                     }
                     case Scalar::Flag::Minus:
                     {
-                        y = -y;
+                        y = -oy(y);
                         break;
                     }
                 }
@@ -117,22 +141,22 @@ namespace Tools
                 {
                     case Scalar::Flag::Generic:
                     {
-                        y = scalar_cast<S_1>(-x) + (beta * y);
+                        y = (beta * oy(y)) - scalar_cast<S_1>( ox(x) );
                         break;
                     }
                     case Scalar::Flag::Plus:
                     {
-                        y -= scalar_cast<S_1>(x);
+                        y = oy(y) - scalar_cast<S_1>( ox(x) );
                         break;
                     }
                     case Scalar::Flag::Zero:
                     {
-                        y = scalar_cast<S_1>(-x);
+                        y = scalar_cast<S_1>( - ox(x) );
                         break;
                     }
                     case Scalar::Flag::Minus:
                     {
-                        y = -(scalar_cast<S_1>(x) + y);
+                        y = -( scalar_cast<S_1>(ox(x)) + oy(y) );
                         break;
                     }
                 }
