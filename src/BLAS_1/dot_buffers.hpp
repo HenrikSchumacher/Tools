@@ -13,8 +13,10 @@ namespace Tools
     )
     {
         // Computes inner product <opx(x), opx(y)> of two vectors x and y.
-        
+
         using Op = Tensors::Op;
+        
+        check_sequential<parQ>( "combine_scatter_write", thread_count );
         
         static_assert( (opx == Op::Id) || (opx == Op::Conj),
             "dot_buffers: Only the values Op::Id and Op::Conj are allowed for opx."
