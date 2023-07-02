@@ -7,6 +7,7 @@ namespace Tools
     
     template<
         Scalar::Flag alpha_flag, Scalar::Flag beta_flag,
+        Tensors::Op opx = Tensors::Op::Id, Tensors::Op opy = Tensors::Op::Id,
         Size_T N = VarSize, Parallel_T parQ = Sequential,
         typename R_0, typename S_0, typename R_1, typename S_1
     >
@@ -17,9 +18,19 @@ namespace Tools
         const Size_T thread_count = 1
     )
     {
-        check_sequential<parQ>( "combine_buffers", thread_count );
         
         using namespace Scalar;
+        using Op = Tensors::Op;
+        
+        check_sequential<parQ>( "combine_buffers", thread_count );
+        
+        static_assert( (opx == Op::Id) || (opx == Op::Conj),
+            "combine_buffers: Only the values Op::Id and Op::Conj are allowed for opx."
+        );
+        
+        static_assert( (opy == Op::Id) || (opy == Op::Conj),
+            "combine_buffers: Only the values Op::Id and Op::Conj are allowed for opy."
+        );
         
         // This routine computes y[i] = alpha * x[i] + beta * y[i].
         // Depending on the values of alpha_flag and beta_flag, it takes several short cuts:
@@ -53,7 +64,10 @@ namespace Tools
         {
             zerofy_buffer<N,parQ>(y,n,thread_count);
         }
-        else if constexpr ( (beta_flag == Flag::Zero) && (alpha_flag == Flag::Plus) )
+        else if constexpr (
+            (beta_flag == Flag::Zero) && (alpha_flag == Flag::Plus)
+            && ( opx == Op::Id ) && (opy == Op::Id )
+        )
         {
             copy_buffer<N,parQ>(x,y,n,thread_count);
         }
@@ -62,7 +76,7 @@ namespace Tools
             Do<N,parQ,Static>(
                 [=]( const Size_T i )
                 {
-                    combine_scalars<alpha_flag,beta_flag>( alpha, x[i], beta, y[i] );
+                    combine_scalars<alpha_flag,beta_flag,opx,opy>( alpha, x[i], beta, y[i] );
                 },
                 n, thread_count
             );
