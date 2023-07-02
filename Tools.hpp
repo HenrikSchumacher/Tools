@@ -39,6 +39,25 @@
         #undef False
     #endif
 
+
+
+
+
+
+
+
+    // constexpr version of conditional ?-operator
+    #define COND( condition, case1, case2 ) ([&]{           \
+            if constexpr ( condition )                      \
+            {                                               \
+                return case1;                               \
+            }                                               \
+            else                                            \
+            {                                               \
+                return case2;                               \
+            }                                               \
+        }())
+
         
     #define STRINGIFY(a) #a
     #define STRINGIFY2(a) STRINGIFY(a)
@@ -124,6 +143,7 @@ namespace Tools
     #include "src/Memory.hpp"
 
     #include "src/Scalars.hpp"
+    #include "src/BLAS_Enums.hpp"
     #include "src/Scalars/combine_scalars.hpp"
     #include "src/TypeName.hpp"
     
@@ -215,23 +235,6 @@ namespace Tools
         {                                                                           \
             return new DERIVED(*this);                                              \
         }
-        
-        
-        
-  
-
-
-    // constexpr version of conditional ?-operator
-    #define COND( condition, case1, case2 ) ([&]{               \
-                if constexpr ( condition )                      \
-                {                                               \
-                    return case1;                               \
-                }                                               \
-                else                                            \
-                {                                               \
-                    return case2;                               \
-                }                                               \
-            }())
 
 
     namespace Tools
