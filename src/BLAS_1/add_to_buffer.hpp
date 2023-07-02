@@ -20,5 +20,6 @@ namespace Tools
             },
             n, thread_count
         );
-    }    
+    }
+
 } // namespace Tools
