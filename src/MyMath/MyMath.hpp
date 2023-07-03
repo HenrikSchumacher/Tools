@@ -5,7 +5,7 @@ namespace Tools
     inline Power( const Real base, const T exponent )
     {
         // Warning: Use only for positive base! This is basically pow with certain checks and cases deactivated
-        return base > static_cast<Real>(0) ? std::exp2( static_cast<Real>(exponent) * std::log2(base) ) : ( static_cast<Real>(exponent)!=static_cast<Real>(0) ? static_cast<Real>(0) : static_cast<Real>(1) );
+        return base > Scalar::Zero<Real> ? std::exp2( static_cast<Real>(exponent) * std::log2(base) ) : ( static_cast<Real>(exponent)!=Scalar::Zero<Real> ? Scalar::Zero<Real> : Scalar::One<Real> );
     } // Power
     
     template<typename Real, typename Int>
@@ -18,7 +18,7 @@ namespace Tools
             {
                 case 0:
                 {
-                    return static_cast<Real>(1);
+                    return Scalar::One<Real>;
                 }
                 case 1:
                 {
@@ -93,21 +93,21 @@ namespace Tools
         }
         else
         {
-            return static_cast<Real>(1)/Power(base, -exponent);
+            return Scalar::Inv<Real>( Power(base, -exponent) );
         }
     } // Power
     
     template<typename T>
     inline T Sign( const T val)
     {
-        return static_cast<T>( (static_cast<T>(0) < val) - (val < static_cast<T>(0)) );
+        return static_cast<T>( (static_cast<T>(0) < val) - (val < static_cast<T>(0)) ) ;
     }
     
     template<int AmbDim, typename Real>
     inline Real AngleBetweenUnitVectors( ptr<Real> x, ptr<Real> y )
     {
-        Real a = static_cast<Real>(0);
-        Real b = static_cast<Real>(0);
+        Real a = Scalar::Zero<Real>;
+        Real b = Scalar::Zero<Real>;
         
         for( int i = 0; i < AmbDim; ++i )
         {
@@ -121,8 +121,8 @@ namespace Tools
     template<int AmbDim, typename Real>
     inline Real Angle( ptr<Real> x, ptr<Real> y )
     {
-        Real a2 = static_cast<Real>(0);
-        Real b2 = static_cast<Real>(0);
+        Real a2 = Scalar::Zero<Real>;
+        Real b2 = Scalar::Zero<Real>;
         
         Real u [AmbDim] = {};
         Real v [AmbDim] = {};
@@ -133,8 +133,8 @@ namespace Tools
             b2 += y[i] * y[i];
         }
         
-        const Real a_inv = static_cast<Real>(1)/std::sqrt(a2);
-        const Real b_inv = static_cast<Real>(1)/std::sqrt(b2);
+        const Real a_inv = Scalar::Inv<Real>(std::sqrt(a2));
+        const Real b_inv = Scalar::Inv<Real>(std::sqrt(b2));
         
         for( int i = 0; i < AmbDim; ++i )
         {
@@ -177,9 +177,9 @@ namespace Tools
         constexpr Real two   = 2;
         constexpr Real three = 3;
         
-        constexpr Real factor = Scalar::One<Real>/static_cast<Real>(27);
-        constexpr Real third  = Scalar::One<Real>/static_cast<Real>(3);
-        constexpr Real half   = Scalar::One<Real>/static_cast<Real>(2);
+        constexpr Real factor = Scalar::Inv<Real>(27);
+        constexpr Real third  = Scalar::Inv<Real>(3);
+        constexpr Real half   = Scalar::Inv<Real>(2);
 
         
         constexpr Real Pi_third = Scalar::Pi<Real> * third;
@@ -229,7 +229,7 @@ namespace Tools
                 
                 const Real p = C/B;
                 const Real q = D/B;
-                const Real disc = p * p - static_cast<Real>(4)*q;
+                const Real disc = p * p - Scalar::Four<Real> * q;
                 
                 if( std::abs(disc) < eps )
                 {
@@ -260,7 +260,7 @@ namespace Tools
             const Real p = b - aa * third;
             const Real q = two * aa* a * factor - a * b * third + c;
             
-            const Real disc = q * q * static_cast<Real>(0.25) + p * p * p * factor;
+            const Real disc = q * q * Scalar::Quarter<Real> + p * p * p * factor;
             if( std::abs(disc) > eps )
             {
                 if( disc > zero )
@@ -343,7 +343,7 @@ namespace Tools
             
             return curr == prev
                 ? curr
-                : SqrtNewtonRaphson(x, static_cast<Real>(0.5) * (curr + x / curr), curr);
+                : SqrtNewtonRaphson(x, Scalar::Half<Real> * (curr + x / curr), curr);
         }
     }
 
