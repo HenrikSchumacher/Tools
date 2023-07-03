@@ -133,6 +133,10 @@ namespace Tools
         template<> constexpr bool RealQ<Complex64 >    = false;
         template<> constexpr bool RealQ<Complex128>    = false;
         
+        template<> constexpr bool RealQ<Int16 >        = true;
+        template<> constexpr bool RealQ<Int32 >        = true;
+        template<> constexpr bool RealQ<Int64>         = true;
+        
 //        template<> constexpr bool RealQ<Int16>         = true;
 //        template<> constexpr bool RealQ<Int32>         = true;
 //        template<> constexpr bool RealQ<Int64>         = true;
