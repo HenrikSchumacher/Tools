@@ -22,7 +22,12 @@ namespace Tools
     
     template<> constexpr const char * TypeName<UInt64> = "U64";
     
+    
+    // Apparently, GCC treats `long` as an alias (e.g. for `long long` on 64-bit systems).
+    // clang treats the types `long` and `long long` as incompatible, though.
+#if !defined(__GNUC__)
     template<> constexpr const char * TypeName<long> = "long";
+#endif
 
     
     // Microsoft's C compiler defines std::size_t as an alias onto unsigned long long and throws an error here.
@@ -42,6 +47,6 @@ namespace Tools
     
     template<> constexpr const char * TypeName<Complex64>  = "C64";
     
-    template<> constexpr const char * TypeName<Complex128> = "C16";
+    template<> constexpr const char * TypeName<Complex128> = "C128";
     
 } // namespace Tools
