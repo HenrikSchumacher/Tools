@@ -233,7 +233,7 @@ namespace Tools
         
         template<typename T> constexpr Scalar::Complex<T> I {0,1};
         
-        template<typename T> constexpr Scalar::Real<T> Pi = 3.141592653589793238462643383279502884197;
+        template<typename T> constexpr Scalar::Real<T> Pi = static_cast<Scalar::Real<T>>(3.141592653589793238462643383279502884197);
         
         template<typename T> constexpr Scalar::Real<T> TwoPi = Scalar::Two<T> * Scalar::Pi<T>;
         
