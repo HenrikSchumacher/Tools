@@ -8,7 +8,7 @@ namespace Tools
         typename T
     >
     force_inline void iota_buffer(
-        mut<T> a,
+        mptr<T> a,
         const Size_T n = N, const Size_T thread_count = 1
     )
     {

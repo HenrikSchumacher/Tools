@@ -4,7 +4,7 @@ namespace Tools
 {
 
     template <typename S>
-    force_inline std::pair<S,S> minmax_buffer( ptr<S> z, const Size_T n )
+    force_inline std::pair<S,S> minmax_buffer( cptr<S> z, const Size_T n )
     {
         S min_ = std::numeric_limits<S>::max();
         S max_ = std::numeric_limits<S>::lowest();
@@ -18,7 +18,7 @@ namespace Tools
     }
     
     template <Size_T n, typename S>
-    force_inline std::pair<S,S> minmax_buffer( ptr<S> z )
+    force_inline std::pair<S,S> minmax_buffer( cptr<S> z )
     {
         S min_ = std::numeric_limits<S>::max();
         S max_ = std::numeric_limits<S>::lowest();
@@ -34,7 +34,7 @@ namespace Tools
     
     
     template <typename S>
-    force_inline S max_buffer( ptr<S> z, const Size_T n )
+    force_inline S max_buffer( cptr<S> z, const Size_T n )
     {
         S m = std::numeric_limits<S>::lowest();
         
@@ -46,7 +46,7 @@ namespace Tools
     }
     
     template <Size_T n, typename S>
-    force_inline S max_buffer( ptr<S> z )
+    force_inline S max_buffer( cptr<S> z )
     {
         S m = std::numeric_limits<S>::lowest();
         
@@ -59,7 +59,7 @@ namespace Tools
     
     
     template <typename S>
-    force_inline S min_buffer( ptr<S> z, const Size_T n )
+    force_inline S min_buffer( cptr<S> z, const Size_T n )
     {
         S m = std::numeric_limits<S>::max();
         
@@ -71,7 +71,7 @@ namespace Tools
     }
     
     template <Size_T n, typename S>
-    force_inline S min_buffer( ptr<S> z )
+    force_inline S min_buffer( cptr<S> z )
     {
         S m = std::numeric_limits<S>::max();
         

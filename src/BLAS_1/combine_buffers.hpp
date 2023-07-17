@@ -7,13 +7,13 @@ namespace Tools
     
     template<
         Scalar::Flag alpha_flag, Scalar::Flag beta_flag,
-        Tensors::Op opx = Tensors::Op::Id, Tensors::Op opy = Tensors::Op::Id,
         Size_T N = VarSize, Parallel_T parQ = Sequential,
+        Tensors::Op opx = Tensors::Op::Id, Tensors::Op opy = Tensors::Op::Id,
         typename R_0, typename S_0, typename R_1, typename S_1
     >
     force_inline void combine_buffers(
-        const R_0 & alpha, ptr<S_0> x,
-        const R_1 & beta,  mut<S_1> y,
+        cref<R_0> alpha, cptr<S_0> x,
+        cref<R_1> beta,  mptr<S_1> y,
         const Size_T n = N,
         const Size_T thread_count = 1
     )

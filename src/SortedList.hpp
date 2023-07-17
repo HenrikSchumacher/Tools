@@ -53,7 +53,7 @@ namespace Tools
         }
 
 
-        Int FindPosition( const T & restrict X ) const
+        Int FindPosition( cref<T> X ) const
         {
             //Finds first position whose element is not smaller than X.
 
@@ -66,7 +66,7 @@ namespace Tools
         }
 
         
-        Int Find( const T & restrict X ) const
+        Int Find( cref<T> X ) const
         {
             if( Size() == 0 )
             {
@@ -78,7 +78,7 @@ namespace Tools
             return (list[i] == X) ? i : -1;
         }
         
-        bool Insert( const T & restrict X )
+        bool Insert( cref<T> X )
         {
             Int i = FindPosition(X);
             
@@ -100,7 +100,7 @@ namespace Tools
             
         }
         
-        bool Drop( const T & restrict X )
+        bool Drop( cref<T> X )
         {
             Int i = Find(X);
             if( i >= 0 )

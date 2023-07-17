@@ -7,7 +7,7 @@ namespace Tools
         typename R, typename S
     >
     force_inline void add_to_buffer(
-        ptr<R> x, mut<S> y,
+        cptr<R> x, mptr<S> y,
         const Size_T n = N, const Size_T thread_count = 1
     )
     {

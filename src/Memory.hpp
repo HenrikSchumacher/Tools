@@ -49,14 +49,28 @@ namespace Tools
         #define PREFETCH_STRIDE (4*CACHE_LINE_WIDTH)
     #endif
 
-        
+
+    // Only for backward compatibility. Better use cptr and mptr.
     // immutable, unaliased pointer to immutable type
     template<typename T> using ptr = const T * restrict const;
     
     // immutable, unaliased pointer to mutable type
     template<typename T> using mut =       T * restrict const;
     
-
+    
+    
+    // immutable, unaliased pointer to immutable type
+    template<typename T> using cptr = const T * restrict const;
+    
+    // immutable, unaliased pointer to mutable type
+    template<typename T> using mptr =       T * restrict const;
+    
+    // unaliased reference to immutable type
+    template<typename T> using cref = const T & restrict;
+    
+    // unaliased reference to immutable type
+    template<typename T> using mref =       T & restrict;
+    
     
     template<typename Int>
     force_inline constexpr Int CeilDivide( const Int n, const Int b )
@@ -202,7 +216,7 @@ namespace Tools
 #endif
     
     template<int readwrite, int locality, typename T>
-    force_inline void prefetch_buffer( ptr<T> begin, const Size_T n )
+    force_inline void prefetch_buffer( cptr<T> begin, const Size_T n )
     {
         const Size_T prefetch_size = n * sizeof(T);
         
@@ -215,7 +229,7 @@ namespace Tools
     }
     
     template<Size_T N, int readwrite, int locality, typename T>
-    force_inline void prefetch_buffer( ptr<T> begin )
+    force_inline void prefetch_buffer( cptr<T> begin )
     {
         constexpr Size_T PREFETCH_SIZE = N * sizeof(T);
         

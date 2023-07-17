@@ -8,7 +8,7 @@ namespace Tools
         typename R, typename S
     >
     force_inline void scale_buffer(
-        const R beta_, mut<S> y, const Size_T n = N, const Size_T thread_count = 1
+        const R beta_, mptr<S> y, const Size_T n = N, const Size_T thread_count = 1
     )
     {
         check_sequential<parQ>( "scale_buffer", thread_count );

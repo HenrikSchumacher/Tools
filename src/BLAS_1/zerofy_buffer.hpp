@@ -6,7 +6,7 @@ namespace Tools
         Size_T N = VarSize, Parallel_T parQ = Sequential,
         typename T
     >
-    force_inline void zerofy_buffer( mut<T> a, const Size_T n = N, const Size_T thread_count = 1 )
+    force_inline void zerofy_buffer( mptr<T> a, const Size_T n = N, const Size_T thread_count = 1 )
     {
         check_sequential<parQ>( "zerofy_buffer", thread_count );
         

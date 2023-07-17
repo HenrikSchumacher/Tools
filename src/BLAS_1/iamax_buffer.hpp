@@ -4,7 +4,7 @@ namespace Tools
 {
     
     template <typename S>
-    force_inline Size_T iamax_buffer( ptr<S> z, const Size_T n )
+    force_inline Size_T iamax_buffer( cptr<S> z, const Size_T n )
     {
         using R = typename Scalar::Real<S>;
         
@@ -24,7 +24,7 @@ namespace Tools
     }
 
     template <Size_T n, typename S>
-    force_inline Size_T iamax_buffer( ptr<S> z )
+    force_inline Size_T iamax_buffer( cptr<S> z )
     {
         using R = typename Scalar::Real<S>;
         
@@ -45,7 +45,7 @@ namespace Tools
 
 
     template <typename S>
-    force_inline Size_T imax_buffer( ptr<S> x, const Size_T n )
+    force_inline Size_T imax_buffer( cptr<S> x, const Size_T n )
     {
         S max = std::numeric_limits<S>::lowest();
         Size_T pos = 0;
@@ -61,7 +61,7 @@ namespace Tools
     }
 
     template <Size_T n, typename S>
-    force_inline Size_T imax_buffer( ptr<S> x )
+    force_inline Size_T imax_buffer( cptr<S> x )
     {
         S max = std::numeric_limits<S>::lowest();
         Size_T pos = 0;
@@ -78,7 +78,7 @@ namespace Tools
 
     
     template <typename S>
-    force_inline Size_T imin_buffer( ptr<S> x, const Size_T n )
+    force_inline Size_T imin_buffer( cptr<S> x, const Size_T n )
     {
         S min = std::numeric_limits<S>::max();
         Size_T pos = 0;
@@ -94,7 +94,7 @@ namespace Tools
     }
 
     template <Size_T n, typename S>
-    force_inline Size_T imin_buffer( ptr<S> x )
+    force_inline Size_T imin_buffer( cptr<S> x )
     {
         S min = std::numeric_limits<S>::max();
         Size_T pos = 0;

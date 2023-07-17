@@ -4,7 +4,7 @@ namespace Tools
 {
     
     template <typename S>
-    force_inline typename Scalar::Real<S> norm_2( ptr<S> z, const Size_T n )
+    force_inline typename Scalar::Real<S> norm_2( cptr<S> z, const Size_T n )
     {
         typename Scalar::Real<S> norm_squared = 0;
         
@@ -16,7 +16,7 @@ namespace Tools
     }
 
     template <Size_T n, typename S>
-    force_inline typename Scalar::Real<S> norm_2( ptr<S> z )
+    force_inline typename Scalar::Real<S> norm_2( cptr<S> z )
     {
         typename Scalar::Real<S> norm_squared = 0;
         

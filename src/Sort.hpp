@@ -8,14 +8,14 @@ namespace Tools
     struct SortNet
     {
         template<typename C = std::less<T>>
-        void operator()( mut<T> a, C comp = C() )
+        void operator()( mptr<T> a, C comp = C() )
         {
             std::sort( a, a+n, comp );
         }
     };
 
     template<typename T, typename C>
-    force_inline void CompSwap( T & restrict a, T & restrict b, C comp = C()  )
+    force_inline void CompSwap( mref<T> a, mref<T> b, C comp = C()  )
     {
         const std::pair<T,T> p = std::minmax(a,b,comp);
 
@@ -27,7 +27,7 @@ namespace Tools
     struct SortNet<1,T>
     {
         template<typename C = std::less<T>>
-        void operator()( mut<T> a, C comp = C() )
+        void operator()( mptr<T> a, C comp = C() )
         {}
     };
     
@@ -35,7 +35,7 @@ namespace Tools
     struct SortNet<2,T>
     {
         template<typename C = std::less<T>>
-        void operator()( mut<T> a, C comp = C() )
+        void operator()( mptr<T> a, C comp = C() )
         {
             CompSwap(a[0],a[1],comp);
         }
@@ -45,7 +45,7 @@ namespace Tools
     struct SortNet<3,T>
     {
         template<typename C = std::less<T>>
-        void operator()( mut<T> a, C comp = C() )
+        void operator()( mptr<T> a, C comp = C() )
         {
             CompSwap(a[0],a[1],comp);
             CompSwap(a[0],a[2],comp);
@@ -57,7 +57,7 @@ namespace Tools
     struct SortNet<4,T>
     {
         template<typename C = std::less<T>>
-        void operator()( mut<T> a, C comp = C() )
+        void operator()( mptr<T> a, C comp = C() )
         {
             CompSwap(a[0],a[1],comp);
             CompSwap(a[2],a[3],comp);
@@ -74,7 +74,7 @@ namespace Tools
     struct SortNet<5,T>
     {
         template<typename C = std::less<T>>
-        void operator()( mut<T> a, C comp = C() )
+        void operator()( mptr<T> a, C comp = C() )
         {
             CompSwap(a[0],a[1],comp);
             CompSwap(a[2],a[3],comp);
@@ -97,7 +97,7 @@ namespace Tools
     struct SortNet<6,T>
     {
         template<typename C = std::less<T>>
-        void operator()( mut<T> a, C comp = C() )
+        void operator()( mptr<T> a, C comp = C() )
         {
             CompSwap(a[0],a[1],comp);
             CompSwap(a[2],a[3],comp);
@@ -124,7 +124,7 @@ namespace Tools
     struct SortNet<7,T>
     {
         template<typename C = std::less<T>>
-        void operator()( mut<T> a, C comp = C() )
+        void operator()( mptr<T> a, C comp = C() )
         {
             CompSwap(a[1],a[2],comp);
             CompSwap(a[3],a[4],comp);
@@ -156,7 +156,7 @@ namespace Tools
     {
         
         template<typename C = std::less<T>>
-        void operator()( mut<T> a, C comp = C() )
+        void operator()( mptr<T> a, C comp = C() )
         {
             CompSwap(a[0],a[2],comp);
             CompSwap(a[1],a[3],comp);
@@ -191,7 +191,7 @@ namespace Tools
     struct SortNet<9,T>
     {
         template<typename C = std::less<T>>
-        void operator()( mut<T> a, C comp = C() )
+        void operator()( mptr<T> a, C comp = C() )
         {
             CompSwap(a[1],a[8],comp);
             CompSwap(a[2],a[7],comp);
@@ -232,7 +232,7 @@ namespace Tools
     struct SortNet<10,T>
     {
         template<typename C = std::less<T>>
-        void operator()( mut<T> a, C comp = C() )
+        void operator()( mptr<T> a, C comp = C() )
         {
             CompSwap(a[0],a[1],comp);
             CompSwap(a[2],a[3],comp);
@@ -279,7 +279,7 @@ namespace Tools
     struct SortNet<11,T>
     {
         template<typename C = std::less<T>>
-        void operator()( mut<T> a, C comp = C() )
+        void operator()( mptr<T> a, C comp = C() )
         {
             CompSwap(a[ 0],a[ 9],comp);
             CompSwap(a[ 1],a[ 8],comp);
@@ -331,7 +331,7 @@ namespace Tools
     struct SortNet<12,T>
     {
         template<typename C = std::less<T>>
-        void operator()( mut<T> a, C comp = C() )
+        void operator()( mptr<T> a, C comp = C() )
         {
             CompSwap(a[ 0],a[ 6],comp);
             CompSwap(a[ 1],a[ 7],comp);
@@ -389,7 +389,7 @@ namespace Tools
     {
         // This should be a depth-optimal solution.
         template<typename C = std::less<T>>
-        void operator()( mut<T> a, C comp = C() )
+        void operator()( mptr<T> a, C comp = C() )
         {
             CompSwap(a[ 3],a[12],comp);
             CompSwap(a[ 4],a[11],comp);
@@ -455,7 +455,7 @@ namespace Tools
     {
         // This should be a depth-optimal solution.
         template<typename C = std::less<T>>
-        void operator()( mut<T> a, C comp = C() )
+        void operator()( mptr<T> a, C comp = C() )
         {
             CompSwap(a[ 2],a[13],comp);
             CompSwap(a[ 3],a[12],comp);
@@ -526,7 +526,7 @@ namespace Tools
     {
         // This should be a depth-optimal solution.
         template<typename C = std::less<T>>
-        void operator()( mut<T> a, C comp = C() )
+        void operator()( mptr<T> a, C comp = C() )
         {
             CompSwap(a[ 1],a[14],comp);
             CompSwap(a[ 2],a[13],comp);
@@ -604,7 +604,7 @@ namespace Tools
     {
         // This should be a depth-optimal solution.
         template<typename C = std::less<T>>
-        void operator()( mut<T> a, C comp = C() )
+        void operator()( mptr<T> a, C comp = C() )
         {
             CompSwap(a[ 0],a[15],comp);
             CompSwap(a[ 1],a[14],comp);
@@ -681,7 +681,7 @@ namespace Tools
     };
     
     template<typename T, typename C = std::less<T>>
-    void Sort( mut<T> begin, mut<T> end, C comp = C() )
+    void Sort( mptr<T> begin, mptr<T> end, C comp = C() )
     {
         
         // Use sorting networks for inputs of length <= 16; use std::sort otherwise.

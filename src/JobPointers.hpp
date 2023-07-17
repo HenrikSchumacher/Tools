@@ -26,7 +26,7 @@ namespace Tools
         }
         
         template<typename T, typename I>
-        JobPointers( const Int job_count, ptr<T> costs, const I thread_count, bool accumulate = true )
+        JobPointers( const Int job_count, cptr<T> costs, const I thread_count, bool accumulate = true )
         :   job_ptr ( std::vector<Int>(thread_count+1, static_cast<Int>(0) ) )
         {
             if( accumulate )
@@ -104,7 +104,7 @@ namespace Tools
         }
         
         template<typename T>
-        void BalanceWorkLoad_Accumulated( const Int job_count, ptr<T> costs )
+        void BalanceWorkLoad_Accumulated( const Int job_count, cptr<T> costs )
         {
             const Int thread_count = ThreadCount();
             
@@ -131,7 +131,7 @@ namespace Tools
         }
         
         template<typename T>
-        void BalanceWorkLoad( const Int job_count, ptr<T> acc_costs )
+        void BalanceWorkLoad( const Int job_count, cptr<T> acc_costs )
         {
             const Int thread_count = ThreadCount();
             

@@ -8,7 +8,7 @@ namespace Tools
         typename T
     >
     force_inline void fill_buffer(
-        mut<T> a, const T init, const Size_T n = N, const Size_T thread_count = 1
+        mptr<T> a, const T init, const Size_T n = N, const Size_T thread_count = 1
     )
     {
         check_sequential<parQ>( "fill_buffer", thread_count );

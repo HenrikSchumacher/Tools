@@ -9,8 +9,8 @@ namespace Tools
         typename R_0, typename S_0, typename Int, typename R_1, typename S_1
     >
     constexpr force_inline void combine_scatter_write(
-        const R_0 & alpha, ptr<S_0> x,
-        const R_1 & beta,  mut<S_1> y, ptr<Int> idx, Size_T n = N, Size_T thread_count = 1
+        cref<R_0> alpha, cptr<S_0> x,
+        cref<R_1> beta,  mptr<S_1> y, cptr<Int> idx, Size_T n = N, Size_T thread_count = 1
     )
     {
         check_sequential<parQ>( "combine_scatter_write", thread_count );

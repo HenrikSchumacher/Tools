@@ -104,7 +104,7 @@ namespace Tools
     }
     
     template<int AmbDim, typename Real>
-    inline Real AngleBetweenUnitVectors( ptr<Real> x, ptr<Real> y )
+    inline Real AngleBetweenUnitVectors( cptr<Real> x, cptr<Real> y )
     {
         Real a = Scalar::Zero<Real>;
         Real b = Scalar::Zero<Real>;
@@ -119,7 +119,7 @@ namespace Tools
     }
     
     template<int AmbDim, typename Real>
-    inline Real Angle( ptr<Real> x, ptr<Real> y )
+    inline Real Angle( cptr<Real> x, cptr<Real> y )
     {
         Real a2 = Scalar::Zero<Real>;
         Real b2 = Scalar::Zero<Real>;
@@ -167,7 +167,7 @@ namespace Tools
     
     template<typename Real>
     void RealCubicSolve(
-        const Real A, const Real B, const Real C, const Real D, mut<Real> t_out
+        const Real A, const Real B, const Real C, const Real D, mptr<Real> t_out
     )
     {
         static_assert( Scalar::RealQ<Real>, "Input parameters must be real floating point types.");

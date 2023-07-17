@@ -65,7 +65,7 @@ namespace Tools
         typename F, typename T_a, typename T_b, typename T_c
     >
     force_inline void zip_buffers(
-        F & zip, ptr<T_a> a, ptr<T_b> b, mut<T_c> c,
+        F & zip, cptr<T_a> a, cptr<T_b> b, mptr<T_c> c,
         const Size_T n = N, const Size_T thread_count = 1
     )
     {
