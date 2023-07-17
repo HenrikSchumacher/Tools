@@ -144,6 +144,10 @@ namespace Tools
 
     #include "src/Scalars.hpp"
     #include "src/BLAS_Enums.hpp"
+
+    using Tensors::Op;
+    using Tensors::AddTo;
+
     #include "src/Scalars/combine_scalars.hpp"
     #include "src/TypeName.hpp"
     

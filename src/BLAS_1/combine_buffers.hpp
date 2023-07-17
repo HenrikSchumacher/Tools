@@ -8,7 +8,7 @@ namespace Tools
     template<
         Scalar::Flag alpha_flag, Scalar::Flag beta_flag,
         Size_T N = VarSize, Parallel_T parQ = Sequential,
-        Tensors::Op opx = Tensors::Op::Id, Tensors::Op opy = Tensors::Op::Id,
+        Op opx = Op::Id, Op opy = Op::Id,
         typename R_0, typename S_0, typename R_1, typename S_1
     >
     force_inline void combine_buffers(
@@ -18,9 +18,7 @@ namespace Tools
         const Size_T thread_count = 1
     )
     {
-        
         using namespace Scalar;
-        using Op = Tensors::Op;
         
         check_sequential<parQ>( "combine_buffers", thread_count );
         

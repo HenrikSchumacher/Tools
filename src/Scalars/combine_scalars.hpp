@@ -4,7 +4,7 @@ namespace Tools
 {
     template<
         Scalar::Flag alpha_flag, Scalar::Flag beta_flag,
-        Tensors::Op opx = Tensors::Op::Id, Tensors::Op opy = Tensors::Op::Id,
+        Op opx = Op::Id, Op opy = Op::Id,
         typename R_0, typename S_0,
         typename R_1, typename S_1
     >
@@ -13,8 +13,6 @@ namespace Tools
         cref<R_1> beta,  mref<S_1> y
     )
     {
-        using Op = Tensors::Op;
-        
         // Computes y = alpha * opx( x ) + beta * opy( y ).
         
         
