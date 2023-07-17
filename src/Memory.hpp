@@ -5,22 +5,24 @@ namespace Tools
     
     // length of cache line measured in bytes
     static constexpr Size_T CACHE_LINE_WIDTH = 64;
-    //TODO: Replace the hard-coded constant by __cpp_lib_hardware_interference_size as soon as this C++17 feature is supported by all compilers.
+//    //TODO: Replace the hard-coded constant by __cpp_lib_hardware_interference_size as soon as this C++17 feature is supported by all compilers.
+    
+//    static constexpr Size_T CACHE_LINE_WIDTH = std::hardware_destructive_interference_size;
 
     static constexpr Size_T MEMORY_PADDING = 1;
 
     #if !defined(restrict)
         #if defined(__GNUC__)
             #define restrict __restrict__
-            #define COMPILER_IS_NAZI_ABOUT_RESTRICT 1
+            #define COMPILER_IS_ANAL_ABOUT_RESTRICT 1
         #elif defined(__clang__)
             #define restrict __restrict__
-            #define COMPILER_IS_NAZI_ABOUT_RESTRICT 0
+            #define COMPILER_IS_ANAL_ABOUT_RESTRICT 0
         #elif defined(_MSC_VER)
             #define restrict __restrict
-            #define COMPILER_IS_NAZI_ABOUT_RESTRICT 0
+            #define COMPILER_IS_ANAL_ABOUT_RESTRICT 0
         #else
-            #define COMPILER_IS_NAZI_ABOUT_RESTRICT 0
+            #define COMPILER_IS_ANAL_ABOUT_RESTRICT 0
         #endif
     #endif
 
@@ -31,9 +33,10 @@ namespace Tools
     #endif
 
     //#define SAFE_ALLOCATE_WARNINGS
-
-    static constexpr Size_T ALIGNMENT = 8;
-
+    
+    static constexpr Size_T ALIGNMENT = std::max( sizeof(void*), std::size_t(8) );
+    
+    
     #if defined(__GNUC__) || defined(__clang__)
         #define ALIGNED __attribute__((aligned(ALIGNMENT)))
     #else
@@ -46,11 +49,6 @@ namespace Tools
         #define PREFETCH_STRIDE (4*CACHE_LINE_WIDTH)
     #endif
 
-    //    // immutable, unaliased pointer to immutable type
-    //    template<typename T> using ptr = const T * restrict const;
-    //
-    //    // immutable, unaliased pointer to mutable type
-    //    template<typename T> using mut =       T * restrict const;
         
     // immutable, unaliased pointer to immutable type
     template<typename T> using ptr = const T * restrict const;
@@ -88,9 +86,14 @@ namespace Tools
     
     // Computes k-th job pointer for job_count equally sized jobs distributed on thread_count threads.
     template<typename Int, typename Int1, typename Int2>
-    force_inline Int JobPointer( const Int job_count, const Int1 thread_count, const Int2 k )
+    force_inline Int JobPointer( const Int job_count, const Int1 thread_count_, const Int2 thread_ )
     {
-        return job_count/static_cast<Int>(thread_count)*static_cast<Int>(k) + job_count%static_cast<Int>(thread_count)*static_cast<Int>(k)/static_cast<Int>(thread_count);
+        const Int thread_count = static_cast<Int>(thread_count_);
+        const Int thread       = static_cast<Int>(thread_);
+        const Int chunk_size   = job_count / thread_count;
+        const Int remainder    = job_count % thread_count;
+        
+        return chunk_size * thread + (remainder * thread) / thread_count;
     }
     
     inline bool is_aligned( const void * const pointer, const Size_T byte_count = ALIGNMENT )
@@ -98,10 +101,9 @@ namespace Tools
         return reinterpret_cast<std::uintptr_t>(pointer) % byte_count == 0;
     }
     
-    force_inline void * aligned_malloc( const Size_T size, const Size_T alignment )
+    [[nodiscard]] force_inline void * aligned_malloc( const Size_T size, const Size_T alignment )
     {
-        const Size_T padded_size = ( (size - 1) / alignment + 1 ) * alignment;
-//        const Size_T padded_size = RoundUpTo(size, alignment);
+        const Size_T padded_size = RoundUpTo(size, alignment);
         
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
         void * ptr_ = _aligned_malloc(padded_size, alignment);
@@ -145,7 +147,7 @@ namespace Tools
         return !wasallocated;
     }
     
-#if COMPILER_IS_NAZI_ABOUT_RESTRICT
+#if COMPILER_IS_ANAL_ABOUT_RESTRICT
     // overload function for restrict qualifier
     template <typename T>
     force_inline int safe_free( T * restrict & ptr_ )
@@ -178,7 +180,7 @@ namespace Tools
         return wasallocated;
     }
     
-#if COMPILER_IS_NAZI_ABOUT_RESTRICT
+#if COMPILER_IS_ANAL_ABOUT_RESTRICT
     // overload function for restrict qualifier
     template <typename T>
     force_inline int safe_alloc( T * restrict & ptr_, const Size_T n )
