@@ -9,8 +9,8 @@ namespace Tools
         typename R_1, typename S_1
     >
     constexpr force_inline void combine_scalars(
-        const R_0 & alpha, const S_0 & x,
-        const R_1 & beta,        S_1 & y
+        cref<R_0> alpha, cref<S_0> x,
+        cref<R_1> beta,  mref<S_1> y
     )
     {
         using Op = Tensors::Op;
