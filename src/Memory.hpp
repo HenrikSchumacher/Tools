@@ -2,21 +2,14 @@
 
 namespace Tools
 {
-    
-    // length of cache line measured in bytes
-    static constexpr Size_T CACHE_LINE_WIDTH = 64;
-//    //TODO: Replace the hard-coded constant by __cpp_lib_hardware_interference_size as soon as this C++17 feature is supported by all compilers.
-    
-//    static constexpr Size_T CACHE_LINE_WIDTH = std::hardware_destructive_interference_size;
 
-    static constexpr Size_T MEMORY_PADDING = 1;
 
     #if !defined(restrict)
         #if defined(__GNUC__)
             #define restrict __restrict__
             #define COMPILER_IS_ANAL_ABOUT_RESTRICT 1
         #elif defined(__clang__)
-            #define restrict __restrict__
+            #define restrict __restrict
             #define COMPILER_IS_ANAL_ABOUT_RESTRICT 0
         #elif defined(_MSC_VER)
             #define restrict __restrict
@@ -31,32 +24,29 @@ namespace Tools
             #define prefetch __builtin_prefetch
         #endif
     #endif
-
-    //#define SAFE_ALLOCATE_WARNINGS
-    
-    static constexpr Size_T ALIGNMENT = std::max( sizeof(void*), std::size_t(8) );
     
     
-    #if defined(__GNUC__) || defined(__clang__)
-        #define ALIGNED __attribute__((aligned(ALIGNMENT)))
-    #else
-        #define ALIGNED
-    #endif
+    // length of cache line measured in bytes
+    static constexpr Size_T CacheLineWidth = 64;
+//    //TODO: Replace the hard-coded constant by __cpp_lib_hardware_interference_size as soon as this C++17 feature is supported by all compilers.
+    
+//    static constexpr Size_T CacheLineWidth = std::hardware_destructive_interference_size;
 
-    static constexpr Size_T OBJECT_ALIGNMENT = 2 * CACHE_LINE_WIDTH;
+//    static constexpr Size_T MemoryPadding = 1;
+    
+    static constexpr Size_T Alignment = std::max( sizeof(void*), std::size_t(16) );
 
-    #ifndef PREFETCH_STRIDE
-        #define PREFETCH_STRIDE (4*CACHE_LINE_WIDTH)
-    #endif
+    static constexpr Size_T ObjectAlignment = std::max( CacheLineWidth, Alignment );
 
+    static constexpr Size_T PrefetchStride = 4 * CacheLineWidth;
 
+    
     // Only for backward compatibility. Better use cptr and mptr.
     // immutable, unaliased pointer to immutable type
     template<typename T> using ptr = const T * restrict const;
     
     // immutable, unaliased pointer to mutable type
     template<typename T> using mut =       T * restrict const;
-    
     
     
     // immutable, unaliased pointer to immutable type
@@ -110,21 +100,28 @@ namespace Tools
         return chunk_size * thread + (remainder * thread) / thread_count;
     }
     
-    inline bool is_aligned( const void * const pointer, const Size_T byte_count = ALIGNMENT )
+    inline bool is_aligned( const void * const pointer, const Size_T byte_count = Alignment )
     {
         return reinterpret_cast<std::uintptr_t>(pointer) % byte_count == 0;
+    }
+    
+    inline Size_T get_alignment( const void * const pointer )
+    {
+        std::uintptr_t ptr = reinterpret_cast<std::uintptr_t>(pointer);
+
+        return (Size_T(1) << std::countr_zero(ptr));
     }
     
     [[nodiscard]] force_inline void * aligned_malloc( const Size_T size, const Size_T alignment )
     {
         const Size_T padded_size = RoundUpTo(size, alignment);
-        
+
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
         void * ptr_ = _aligned_malloc(padded_size, alignment);
 #else
         void * ptr_ = std::aligned_alloc(alignment, padded_size);
 #endif
-        
+
         if( ptr_ == nullptr )
         {
             eprint("aligned_malloc: failed to allocate memory.");
@@ -145,9 +142,9 @@ namespace Tools
             free( ptr_ );
         #endif
     }
-    
-    
-    
+
+
+
     template <typename T>
     force_inline int safe_free( T * & ptr_ )
     {
@@ -156,11 +153,11 @@ namespace Tools
         {
             aligned_free(ptr_);
             ptr_ = nullptr;
-            
+
         }
         return !wasallocated;
     }
-    
+
 #if COMPILER_IS_ANAL_ABOUT_RESTRICT
     // overload function for restrict qualifier
     template <typename T>
@@ -174,13 +171,13 @@ namespace Tools
         return !wasallocated;
     }
 #endif
-    
-    
+
+
     template <typename T>
-    force_inline int safe_alloc( T * & ptr_, const Size_T n )
+    force_inline int safe_alloc( T * & ptr_, const Size_T n, const Size_T aligment = Alignment )
     {
         int wasallocated = (ptr_ != nullptr);
-        
+
         if( wasallocated != 0 )
         {
 #ifdef SAFE_ALLOCATE_WARNINGS
@@ -188,19 +185,19 @@ namespace Tools
 #endif
             safe_free(ptr_);
         }
-        
-        ptr_ = static_cast<T *>( aligned_malloc( n * sizeof(T), ALIGNMENT ) );
+
+        ptr_ = static_cast<T *>( aligned_malloc( n * sizeof(T), aligment ) );
 
         return wasallocated;
     }
-    
+
 #if COMPILER_IS_ANAL_ABOUT_RESTRICT
     // overload function for restrict qualifier
     template <typename T>
-    force_inline int safe_alloc( T * restrict & ptr_, const Size_T n )
+    force_inline int safe_alloc( T * restrict & ptr_, const Size_T n, const Size_T aligment = Alignment )
     {
         int wasallocated = (ptr_ != nullptr);
-        
+
         if( wasallocated != 0 )
         {
         #ifdef SAFE_ALLOCATE_WARNINGS
@@ -208,12 +205,13 @@ namespace Tools
         #endif
             safe_free(ptr_);
         }
-        
-        ptr_ = static_cast<T *>( aligned_malloc( n * sizeof(T), ALIGNMENT ) );
-        
+
+        ptr_ = static_cast<T *>( aligned_malloc( n * sizeof(T), aligment ) );
+
         return wasallocated;
     }
 #endif
+    
     
     template<int readwrite, int locality, typename T>
     force_inline void prefetch_buffer( cptr<T> begin, const Size_T n )
@@ -222,7 +220,7 @@ namespace Tools
         
         const unsigned char * ptr_ = reinterpret_cast<const unsigned char*>(begin);
     
-        for( Size_T offset = 0; offset < prefetch_size; offset += PREFETCH_STRIDE )
+        for( Size_T offset = 0; offset < prefetch_size; offset += PrefetchStride )
         {
             prefetch( &ptr_[offset], readwrite, locality );
         }
@@ -231,12 +229,12 @@ namespace Tools
     template<Size_T N, int readwrite, int locality, typename T>
     force_inline void prefetch_buffer( cptr<T> begin )
     {
-        constexpr Size_T PREFETCH_SIZE = N * sizeof(T);
+        constexpr Size_T prefetch_size = N * sizeof(T);
         
         const unsigned char * ptr_ = reinterpret_cast<const unsigned char*>(begin);
     
         LOOP_UNROLL_FULL
-        for( Size_T offset = 0; offset < PREFETCH_SIZE; offset += PREFETCH_STRIDE )
+        for( Size_T offset = 0; offset < prefetch_size; offset += PrefetchStride )
         {
             prefetch( &ptr_[offset], readwrite, locality );
         }

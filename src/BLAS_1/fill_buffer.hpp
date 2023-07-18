@@ -17,13 +17,13 @@ namespace Tools
         {
             if constexpr ( parQ == Sequential )
             {
-                std::fill( &a[0], &a[n], init );
+                std::fill_n( a, n, init );
             }
             else
             {
                 if( thread_count <= Scalar::One<Size_T> )
                 {
-                    std::fill( &a[0], &a[n], init );
+                    std::fill_n( a, n, init );
                 }
                 else
                 {
@@ -42,7 +42,7 @@ namespace Tools
         }
         else
         {
-            std::fill( &a[0], &a[N], init );
+            std::fill_n( a, N, init );
         }
         
     }

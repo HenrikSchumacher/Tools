@@ -208,7 +208,7 @@ namespace Tools
         }
         
 
-        std::string ToString( const int p = 16) const
+        [[nodiscard]] std::string ToString( const int p = 16) const
         {
             std::stringstream sout;
             sout << "{ ";

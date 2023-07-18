@@ -28,6 +28,7 @@
     #include <iomanip>
     #include <mutex>
     #include <functional>
+    #include <bit>
    
 
     // In case somebody got the idea to ruin all other people's code.
@@ -140,6 +141,7 @@ namespace Tools
     #include "src/ToString.hpp"
     #include "src/Print.hpp"
     #include "src/Profiler.hpp"
+    #include "src/BitFiddling.hpp"
     #include "src/Memory.hpp"
 
     #include "src/Scalars.hpp"
@@ -152,40 +154,7 @@ namespace Tools
     #include "src/TypeName.hpp"
     
 
-#ifdef TOOLS_ENABLE_OPENMP
-
-    #include "src/OpenMP.hpp"
-
-    #ifdef TOOLS_PARALLELDO_USE_OPENMP
-
-        #include "src/ParallelDo_OpenMP.hpp"
-
-    #else
-
-//        #include "src/ParallelDo_ThreadPool.hpp"
-        #include "src/ParallelDo_Thread.hpp"
-
-    #endif
-
-
-#else
-
-    static constexpr Tools::Size_T omp_get_num_threads()
-    {
-        return 0;
-    }
-
-    static constexpr Tools::Size_T omp_get_thread_num()
-    {
-        return 0;
-    }
-
-    void omp_set_num_threads( const Tools::Size_T thread_count) {};
-
-//    #include "src/ParallelDo_ThreadPool.hpp"
     #include "src/ParallelDo_Thread.hpp"
-
-#endif
 
     #include "src/ParallelAlgorithms.hpp"
     #include "src/JobPointers.hpp"
@@ -195,7 +164,6 @@ namespace Tools
     #include "src/BLAS_1.hpp"
 
     #include "src/SortedList.hpp"
-    #include "src/BitFiddling.hpp"
         
     #define _USE_MATH_DEFINES
     #include <cmath>

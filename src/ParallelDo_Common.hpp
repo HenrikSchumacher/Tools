@@ -4,7 +4,7 @@ namespace Tools
 {
     struct AndReducer
     {
-        void operator()( const Size_T thread, const bool value, bool & result )
+        void operator()( const Size_T thread, cref<bool> value, mref<bool> result )
         {
             result = result && value;
         }
@@ -12,7 +12,7 @@ namespace Tools
     
     struct OrReducer
     {
-        void operator()( const Size_T thread, const bool value, bool & result )
+        void operator()( const Size_T thread, cref<bool> value, mref<bool> result )
         {
             result = result || value;
         }
@@ -21,7 +21,7 @@ namespace Tools
     template<typename Scal_in, typename Scal_out>
     struct AddReducer
     {
-        void operator()( const Size_T thread, const Scal_in value, Scal_out & result )
+        void operator()( const Size_T thread, cref<Scal_in> value, mref<Scal_out> result )
         {
             result += value;
         }
@@ -30,7 +30,7 @@ namespace Tools
     template<typename Scal_in, typename Scal_out>
     struct TimesReducer
     {
-        void operator()( const Size_T thread, const Scal_in value, Scal_out & result )
+        void operator()( const Size_T thread, cref<Scal_in> value, mref<Scal_out> result )
         {
             result *= value;
         }
@@ -43,7 +43,7 @@ namespace Tools
     // Executes the function `fun` of the form `[]( const Int i ) -> void {...}` parallelized over chunks defined by `job_ptr`.
     template<typename F, typename Int>
     force_inline void ParallelDo(
-        F && fun, const JobPointers<Int> & job_ptr
+        F && fun, cref<JobPointers<Int>> job_ptr
     )
     {
         ParallelDo(
@@ -155,7 +155,7 @@ namespace Tools
     
     template<typename F, typename R, typename T, typename Int>
     force_inline T ParallelDoReduce(
-        F && fun, R && reducer, const T & init, const JobPointers<Int> & job_ptr
+        F && fun, R && reducer, cref<T> init, cref<JobPointers<Int>> job_ptr
     )
     {
         return ParallelDoReduce(
@@ -181,7 +181,7 @@ namespace Tools
     
     template<typename F, typename R, typename T, typename Int>
     force_inline T ParallelDoReduce(
-        F && fun, R && reducer, const T & init, const Int begin, const Int end, const Int thread_count
+        F && fun, R && reducer, cref<T> init, const Int begin, const Int end, const Int thread_count
     )
     {
         return ParallelDoReduce(

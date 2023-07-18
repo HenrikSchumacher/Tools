@@ -33,7 +33,7 @@ namespace Tools
     // Executes the function `fun` of the `form []( const Int thread ) -> void {...}` parallelized over `thread_count` threads.
     // Afterwards, reduces with the function `reducer` of the form `[]( const Int thread, const S &, T & result ) {...}`.
     template<typename F, typename R, typename T, typename Int>
-    force_inline T ParallelDoReduce( F && fun, R && reducer, const T & init, const Int thread_count )
+    force_inline T ParallelDoReduce( F && fun, R && reducer, cref<T> init, const Int thread_count )
     {
         T result (init);
         
