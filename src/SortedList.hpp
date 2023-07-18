@@ -177,7 +177,7 @@ namespace Tools
         friend void Intersection(
             cref<SortedList<T,Int>> a,
             cref<SortedList<T,Int>> b,
-            mref<SortedList<T,Int> c
+            mref<SortedList<T,Int>> c
         )
         {
             c.Clear();
