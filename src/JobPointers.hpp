@@ -156,7 +156,7 @@ namespace Tools
 
             // binary search for best work load distribution
             
-            //  TODO: There is quite a lot false sharing in this loop... so better not parallelize it.
+            //  There is quite a lot false sharing in this loop... so better not parallelize it.
             for( Int thread = 0; thread < thread_count - 1; ++thread)
             {
                 // each thread (other than the last one) is required to have at least this accumulated cost
