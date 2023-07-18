@@ -135,8 +135,8 @@ namespace Tools
         }
         
         friend bool IntersectingQ(
-            const SortedList<T,Int> & restrict a,
-            const SortedList<T,Int> & restrict b
+            cref<SortedList<T,Int>> a,
+            cref<SortedList<T,Int>> b
         )
         {
             if( (a.Max() < b.Min()) || (b.Max() < a.Min()) )
@@ -175,9 +175,9 @@ namespace Tools
         }
         
         friend void Intersection(
-            const SortedList<T,Int> & restrict a,
-            const SortedList<T,Int> & restrict b,
-                  SortedList<T,Int> & restrict c
+            cref<SortedList<T,Int>> a,
+            cref<SortedList<T,Int>> b,
+            mref<SortedList<T,Int> c
         )
         {
             c.Clear();
@@ -217,8 +217,8 @@ namespace Tools
         }
         
         friend bool operator==(
-            const SortedList<T,Int> & restrict a,
-            const SortedList<T,Int> & restrict b
+            cref<SortedList<T,Int>> a,
+            cref<SortedList<T,Int>> b
         )
         {
             if( a.Size() != b.Size() )
@@ -239,8 +239,8 @@ namespace Tools
         }
         
         friend bool operator!=(
-            const SortedList<T,Int> & restrict a,
-            const SortedList<T,Int> & restrict b
+            cref<SortedList<T,Int>> a,
+            cref<SortedList<T,Int>> b
         )
         {
             if( a.Size() != b.Size() )
