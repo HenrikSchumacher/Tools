@@ -31,8 +31,6 @@ namespace Tools
 //    //TODO: Replace the hard-coded constant by __cpp_lib_hardware_interference_size as soon as this C++17 feature is supported by all compilers.
     
 //    static constexpr Size_T CacheLineWidth = std::hardware_destructive_interference_size;
-
-//    static constexpr Size_T MemoryPadding = 1;
     
     static constexpr Size_T Alignment = std::max( sizeof(void*), std::size_t(16) );
 
