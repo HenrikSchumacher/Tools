@@ -140,6 +140,7 @@ namespace Tools
         }
         else
         {
+            LOOP_UNROLL_FULL
             for( Int i = zero; i < N; ++i ) { fun(i); }
         }
     }
