@@ -5,7 +5,7 @@ namespace Tools
     inline Power( const Real base, const T exponent )
     {
         // Warning: Use only for positive base! This is basically pow with certain checks and cases deactivated
-        return base > Scalar::Zero<Real> ? std::exp2( static_cast<Real>(exponent) * std::log2(base) ) : ( static_cast<Real>(exponent)!=Scalar::Zero<Real> ? Scalar::Zero<Real> : Scalar::One<Real> );
+        return (base > Scalar::Zero<Real>) ? std::exp2( static_cast<Real>(exponent) * std::log2(base) ) : ( static_cast<Real>(exponent)!=Scalar::Zero<Real> ? Scalar::Zero<Real> : Scalar::One<Real> );
     } // Power
     
     template<typename Real, typename Int>
