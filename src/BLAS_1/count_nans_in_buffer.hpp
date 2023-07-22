@@ -28,6 +28,8 @@ namespace Tools
                     {
                         counter += static_cast<Size_T>(std::isnan(a[i]));
                     }
+                    
+                    return counter;
                 },
                 AddReducer<Size_T,Size_T>(),
                 Scalar::Zero<Size_T>,
