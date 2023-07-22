@@ -28,3 +28,5 @@
 
 #include "BLAS_1/scatter_read_combine.hpp"
 #include "BLAS_1/combine_scatter_write.hpp"
+
+#include "BLAS_1/count_nans_in_buffer.hpp"
