@@ -135,6 +135,22 @@
 namespace Tools
 {
     using Size_T = std::size_t;
+    
+    
+    
+#if ( defined(__clang__) && __has_attribute(ext_vector_type) && false )
+    static constexpr bool vec_enabledQ = true;
+    
+    template<Size_T N, typename T>
+    using vec_T = T __attribute__((__ext_vector_type__(N))) ;
+#else
+    static constexpr bool vec_enabledQ = false;
+    
+    template<Size_T N, typename T>
+    using vec_T = std::array<T,N>; //Just a dummy; will not be used, actually.
+#endif
+
+    
 }
 
     #include <complex>
@@ -145,6 +161,33 @@ namespace Tools
     #include "src/Memory.hpp"
 
     #include "src/Scalars.hpp"
+
+namespace Tools
+{
+    
+    template<typename S, typename T>
+    static constexpr bool SameQ = std::is_same_v<S,T>;
+    
+    template<typename T>
+    static constexpr bool VectorizableQ = vec_enabledQ && (SameQ<T,Real32> || SameQ<T,Real64> || SameQ<T,Int32> || SameQ<T,Int64> || SameQ<T,UInt32> || SameQ<T,UInt64>);
+    
+    template<Size_T N, typename T>
+    cref<vec_T<N,T>> as_vec( cptr<T> v )
+    {
+        static_assert(VectorizableQ<T>, "Type T is not vectorizable.");
+        
+        return (*reinterpret_cast<const vec_T<N,T>*>(v));
+    }
+    
+    template<Size_T N, typename T>
+    mref<vec_T<N,T>> as_vec( mptr<T> v )
+    {
+        static_assert(VectorizableQ<T>, "Type T is not vectorizable.");
+        
+        return (*reinterpret_cast<vec_T<N,T>*>(v));
+    }
+}
+
     #include "src/BLAS_Enums.hpp"
 
     using Tensors::Op;

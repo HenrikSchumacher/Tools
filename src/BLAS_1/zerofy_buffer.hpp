@@ -39,7 +39,14 @@ namespace Tools
         }
         else
         {
-            std::fill( &a[0], &a[N], static_cast<T>(0) );
+            if constexpr ( VectorizableQ<T> )
+            {
+                as_vec<N,T>(a) = static_cast<T>(0);
+            }
+            else
+            {
+                std::fill( &a[0], &a[N], static_cast<T>(0) );
+            }
         }
         
     }

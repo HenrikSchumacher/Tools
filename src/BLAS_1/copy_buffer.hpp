@@ -31,7 +31,7 @@ namespace Tools
             if constexpr ( parQ == Sequential )
             {
                 
-                if constexpr ( std::is_same_v<T,S> )
+                if constexpr ( SameQ<T,S> )
                 {
                     std::copy( &from[0], &from[n], &to[0] );
                 }
@@ -44,7 +44,7 @@ namespace Tools
             {
                 if( thread_count <= Scalar::One<Size_T> )
                 {
-                    if constexpr ( std::is_same_v<T,S> )
+                    if constexpr ( SameQ<T,S> )
                     {
                         std::copy( &from[0], &from[n], &to[0] );
                     }
@@ -61,7 +61,7 @@ namespace Tools
                             const Size_T begin = JobPointer(n,thread_count,thread  );
                             const Size_T end   = JobPointer(n,thread_count,thread+1);
 
-                            if constexpr ( std::is_same_v<T,S> )
+                            if constexpr ( SameQ<T,S> )
                             {
                                 std::copy( &from[begin], &from[end], &to[begin] );
                             }
@@ -77,9 +77,16 @@ namespace Tools
         }
         else
         {
-            if constexpr ( std::is_same_v<T,S> )
+            if constexpr ( SameQ<T,S> )
             {
-                std::copy( &from[0], &from[N], &to[0] );
+//                if constexpr ( VectorizableQ<S> )
+//                {
+//                    as_vec<N,S>(to) = as_vec<N,S>(from);
+//                }
+//                else
+                {
+                    std::copy( &from[0], &from[N], &to[0] );
+                }
             }
             else
             {

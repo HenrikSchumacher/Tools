@@ -42,7 +42,14 @@ namespace Tools
         }
         else
         {
-            std::fill_n( a, N, init );
+            if constexpr ( VectorizableQ<T> )
+            {
+                (*reinterpret_cast<vec_T<N,T>*>(a)) = init;
+            }
+            else
+            {
+                std::fill_n( a, N, init );
+            }
         }
         
     }

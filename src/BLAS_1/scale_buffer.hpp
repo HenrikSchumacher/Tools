@@ -13,16 +13,22 @@ namespace Tools
     {
         check_sequential<parQ>( "scale_buffer", thread_count );
         
-        const auto beta = scalar_cast<S>(beta_);
-        
-        Do<VarSize,Parallel>(
-            [=]( const Size_T i )
-            {
-                y[i] *= beta;
-            },
-            n, thread_count
-        );
-        
+        if constexpr ( (N > VarSize) && VectorizableQ<S> && SameQ<R,S> )
+        {
+            as_vec<N,S>(y) *= beta_;
+        }
+        else
+        {
+            const auto beta = scalar_cast<S>(beta_);
+            
+            Do<VarSize,Parallel>(
+                [=]( const Size_T i )
+                {
+                    y[i] *= beta;
+                },
+                n, thread_count
+            );
+        }
     }
 
     

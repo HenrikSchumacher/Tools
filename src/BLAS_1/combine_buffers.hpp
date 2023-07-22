@@ -9,11 +9,11 @@ namespace Tools
         Scalar::Flag alpha_flag, Scalar::Flag beta_flag,
         Size_T N = VarSize, Parallel_T parQ = Sequential,
         Op opx = Op::Id, Op opy = Op::Id,
-        typename R_0, typename S_0, typename R_1, typename S_1
+        typename alpha_T, typename x_T, typename beta_T, typename y_T
     >
     force_inline void combine_buffers(
-        cref<R_0> alpha, cptr<S_0> x,
-        cref<R_1> beta,  mptr<S_1> y,
+        cref<alpha_T> alpha, cptr<x_T> x,
+        cref< beta_T> beta,  mptr<y_T> y,
         const Size_T n = N,
         const Size_T thread_count = 1
     )
@@ -42,19 +42,19 @@ namespace Tools
         // If beta_flag == Flag::Minus, then it assumes beta = -1.
         // If beta_flag == Flag::Generic, then it assumes generic values for beta.
         
-        static_assert( ComplexQ<S_1> || (RealQ<R_0> && RealQ<S_0> && RealQ<R_1>),
+        static_assert( ComplexQ<y_T> || (RealQ<alpha_T> && RealQ<x_T> && RealQ<beta_T>),
             "Fourth argument is real, but some of the other arguments are complex."
         );
         
         // We refrain from automagically casting `alpha` and `beta` to the right precision because this is better done once before any loop that calls `combine_buffers`. Hence we prefer a compile error here.
         
         static_assert(
-            Prec<R_0> == Prec<S_1>,
+            Prec<alpha_T> == Prec<y_T>,
             "Precisions of first and fourth argument do not coincide."
         );
         
         static_assert(
-            Prec<R_1> == Prec<S_1>,
+            Prec<beta_T> == Prec<y_T>,
             "Precisions of third and fourth argument do not coincide."
         );
         
@@ -71,13 +71,30 @@ namespace Tools
         }
         else
         {
-            Do<N,parQ,Static>(
-                [=]( const Size_T i )
-                {
-                    combine_scalars<alpha_flag,beta_flag,opx,opy>( alpha, x[i], beta, y[i] );
-                },
-                n, thread_count
-            );
+            if constexpr ( (N > VarSize) && VectorizableQ<y_T> )
+            {
+                vec_T<N,y_T> x_vec;
+                
+                copy_buffer<N>( x, reinterpret_cast<y_T *>(&x_vec) );
+                
+//                copy_buffer<N>( y, reinterpret_cast<y_T *>(&y_vec) );
+//
+//                y_vec = static_cast<y_T>(alpha) * x_vec + static_cast<y_T>(beta) * y_vec;
+//
+//                copy_buffer<N>( reinterpret_cast<y_T *>(&y_vec), y );
+                
+                as_vec<N,y_T>(y) = static_cast<y_T>(alpha) * x_vec + static_cast<y_T>(beta) * as_vec<N,y_T>(y);
+            }
+            else
+            {
+                Do<N,parQ,Static>(
+                    [=]( const Size_T i )
+                    {
+                        combine_scalars<alpha_flag,beta_flag,opx,opy>( alpha, x[i], beta, y[i] );
+                    },
+                    n, thread_count
+                );
+            }
         }
     }
 

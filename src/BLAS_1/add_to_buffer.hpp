@@ -13,13 +13,22 @@ namespace Tools
     {
         check_sequential<parQ>( "add_to_buffer", thread_count );
         
-        Do<N,parQ>(
-            [=]( const Size_T i )
-            {
-                y[i] += scalar_cast<S>(x[i]);
-            },
-            n, thread_count
-        );
+        if constexpr ( (N > VarSize) && VectorizableQ<S> && SameQ<R,S> )
+        {
+            (*reinterpret_cast<      vec_T<N,S>*>(y))
+            +=
+            (*reinterpret_cast<const vec_T<N,S>*>(x));
+        }
+        else
+        {
+            Do<N,parQ>(
+                [=]( const Size_T i )
+                {
+                    y[i] += scalar_cast<S>(x[i]);
+                },
+                n, thread_count
+            );
+        }
     }
 
 } // namespace Tools
