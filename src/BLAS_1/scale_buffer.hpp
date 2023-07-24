@@ -15,7 +15,15 @@ namespace Tools
         
         if constexpr ( (N > VarSize) && VectorizableQ<S> && SameQ<R,S> )
         {
-            as_vec<N,S>(y) *= beta_;
+            vec_T<N,S> y_vec;
+            
+            // All this copying looks insane, but the clang compiler happily optimizes it away...
+            
+            copy_buffer<N>( y, reinterpret_cast<S *>(&y_vec) );
+
+            y_vec *= beta_;
+
+            copy_buffer<N>( reinterpret_cast<S *>(&y_vec), y );
         }
         else
         {

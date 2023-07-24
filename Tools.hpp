@@ -138,7 +138,7 @@ namespace Tools
     
     
     
-#if ( defined(__clang__) && __has_attribute(ext_vector_type) && false )
+#if ( defined(__clang__) && __has_attribute(ext_vector_type) )
     static constexpr bool vec_enabledQ = true;
     
     template<Size_T N, typename T>
@@ -169,23 +169,7 @@ namespace Tools
     static constexpr bool SameQ = std::is_same_v<S,T>;
     
     template<typename T>
-    static constexpr bool VectorizableQ = vec_enabledQ && (SameQ<T,Real32> || SameQ<T,Real64> || SameQ<T,Int32> || SameQ<T,Int64> || SameQ<T,UInt32> || SameQ<T,UInt64>);
-    
-    template<Size_T N, typename T>
-    cref<vec_T<N,T>> as_vec( cptr<T> v )
-    {
-        static_assert(VectorizableQ<T>, "Type T is not vectorizable.");
-        
-        return (*reinterpret_cast<const vec_T<N,T>*>(v));
-    }
-    
-    template<Size_T N, typename T>
-    mref<vec_T<N,T>> as_vec( mptr<T> v )
-    {
-        static_assert(VectorizableQ<T>, "Type T is not vectorizable.");
-        
-        return (*reinterpret_cast<vec_T<N,T>*>(v));
-    }
+    static constexpr bool VectorizableQ = vec_enabledQ && ( SameQ<T,Real32> || SameQ<T,Real64> || SameQ<T,Int16> ||SameQ<T,Int32> || SameQ<T,Int64> || SameQ<T,UInt16> ||SameQ<T,UInt32> || SameQ<T,UInt64> );
 }
 
     #include "src/BLAS_Enums.hpp"

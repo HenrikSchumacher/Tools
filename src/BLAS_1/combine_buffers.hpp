@@ -74,16 +74,17 @@ namespace Tools
             if constexpr ( (N > VarSize) && VectorizableQ<y_T> )
             {
                 vec_T<N,y_T> x_vec;
+                vec_T<N,y_T> y_vec;
+                
+                // All this copying looks insane, but the clang compiler happily optimizes it away...
                 
                 copy_buffer<N>( x, reinterpret_cast<y_T *>(&x_vec) );
+                copy_buffer<N>( y, reinterpret_cast<y_T *>(&y_vec) );
+
+                y_vec = static_cast<y_T>(alpha) * x_vec + static_cast<y_T>(beta) * y_vec;
+
+                copy_buffer<N>( reinterpret_cast<y_T *>(&y_vec), y );
                 
-//                copy_buffer<N>( y, reinterpret_cast<y_T *>(&y_vec) );
-//
-//                y_vec = static_cast<y_T>(alpha) * x_vec + static_cast<y_T>(beta) * y_vec;
-//
-//                copy_buffer<N>( reinterpret_cast<y_T *>(&y_vec), y );
-                
-                as_vec<N,y_T>(y) = static_cast<y_T>(alpha) * x_vec + static_cast<y_T>(beta) * as_vec<N,y_T>(y);
             }
             else
             {

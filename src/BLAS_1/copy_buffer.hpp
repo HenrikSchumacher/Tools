@@ -79,14 +79,7 @@ namespace Tools
         {
             if constexpr ( SameQ<T,S> )
             {
-//                if constexpr ( VectorizableQ<S> )
-//                {
-//                    as_vec<N,S>(to) = as_vec<N,S>(from);
-//                }
-//                else
-                {
-                    std::copy( &from[0], &from[N], &to[0] );
-                }
+                std::copy( &from[0], &from[N], &to[0] );
             }
             else
             {
