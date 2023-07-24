@@ -237,10 +237,10 @@ namespace Tools
         
         template<typename T> constexpr Scalar::Real<T> TwoPi = Scalar::Two<T> * Scalar::Pi<T>;
         
-        template<typename T> constexpr Scalar::Real<T> eps   = std::numeric_limits<Scalar::Real<T>>::epsilon();
-        template<typename T> constexpr Scalar::Real<T> Max   = std::numeric_limits<Scalar::Real<T>>::max();
-        template<typename T> constexpr Scalar::Real<T> Infty = std::numeric_limits<Scalar::Real<T>>::max();
-        template<typename T> constexpr Scalar::Real<T> Min   = std::numeric_limits<Scalar::Real<T>>::lowest();
+        template<typename T> constexpr Scalar::Real<T> eps      = std::numeric_limits<Scalar::Real<T>>::epsilon();
+        template<typename T> constexpr Scalar::Real<T> Max      = std::numeric_limits<Scalar::Real<T>>::max();
+        template<typename T> constexpr Scalar::Real<T> Infty    = std::numeric_limits<Scalar::Real<T>>::max();
+        template<typename T> constexpr Scalar::Real<T> Min      = std::numeric_limits<Scalar::Real<T>>::lowest();
 
         
 //        template<> constexpr bool ComplexQ<Complex32 > = true;

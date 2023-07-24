@@ -10,6 +10,8 @@ namespace Tools
     template<typename T>
     constexpr const char * TypeName = "UnknownType";
     
+    template<> constexpr const char * TypeName<bool> = "Bool";
+    
     template<> constexpr const char * TypeName<Int16> = "I16";
     
     template<> constexpr const char * TypeName<Int32> = "I32";
