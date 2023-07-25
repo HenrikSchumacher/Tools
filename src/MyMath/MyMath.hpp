@@ -93,7 +93,7 @@ namespace Tools
         }
         else
         {
-            return Scalar::Inv<Real>( Power(base, -exponent) );
+            return Inv( Power(base, -exponent) );
         }
     } // Power
     
@@ -133,8 +133,8 @@ namespace Tools
             b2 += y[i] * y[i];
         }
         
-        const Real a_inv = Scalar::Inv<Real>(std::sqrt(a2));
-        const Real b_inv = Scalar::Inv<Real>(std::sqrt(b2));
+        const Real a_inv = InvSqrt(a2);
+        const Real b_inv = InvSqrt(b2);
         
         for( int i = 0; i < AmbDim; ++i )
         {
@@ -177,9 +177,9 @@ namespace Tools
         constexpr Real two   = 2;
         constexpr Real three = 3;
         
-        constexpr Real factor = Scalar::Inv<Real>(27);
-        constexpr Real third  = Scalar::Inv<Real>(3);
-        constexpr Real half   = Scalar::Inv<Real>(2);
+        constexpr Real factor = Inv<Real>(27);
+        constexpr Real third  = Inv<Real>(3);
+        constexpr Real half   = Inv<Real>(2);
 
         
         constexpr Real Pi_third = Scalar::Pi<Real> * third;
@@ -355,7 +355,7 @@ namespace Tools
     * See https://stackoverflow.com/a/34134071/8248900.
     */
     template<typename Real>
-    Real constexpr Sqrt( const Real x)
+    Real constexpr cSqrt( const Real x)
     {
         ASSERT_REAL(Real)
         
@@ -369,11 +369,58 @@ namespace Tools
     
     
     template<typename T>
-    force_inline bool Equal3( const T & a, const T & b, const T & c )
+    force_inline constexpr bool Equal3( const T & a, const T & b, const T & c )
     {
         return (a == b) && (b == c);
     }
     
+    template<typename Real>
+    force_inline constexpr Real Max( const Real & x, const Real & y )
+    {
+        static_assert( Scalar::RealQ<Real>, "Max makes sense only for real input." );
+        
+        return std::max( x, y );
+    }
+    
+    template<typename Real>
+    force_inline constexpr Real Min( const Real & x, const Real & y )
+    {
+        static_assert( Scalar::RealQ<Real>, "Min makes sense only for real input." );
+        
+        return std::min( x, y );
+    }
+    
+    template<typename Real>
+    force_inline constexpr Real Ramp( const Real & x )
+    {
+        static_assert( Scalar::RealQ<Real>, "Ramp makes sense only for real input." );
+        
+        return std::max( Scalar::Zero<Real>, x );
+    }
+    
+    template<typename Real>
+    force_inline constexpr Real Sqrt( const Real & x )
+    {
+        static_assert( Scalar::RealQ<Real>, "Sqrt makes sense only for real input." );
+        
+        return std::sqrt( x );
+    }
+    
+    template<typename Real>
+    force_inline constexpr Real InvSqrt( const Real & x )
+    {
+        static_assert( Scalar::RealQ<Real>, "Sqrt makes sense only for real input." );
+        
+        return Inv( Sqrt(x) );
+    }
+    
+    
+    
+    template<typename S, typename T>
+    static constexpr bool SameQ = std::is_same_v<S,T>;
+    
+    template<typename T>
+    static constexpr bool VectorizableQ = vec_enabledQ && ( SameQ<T,Real32> || SameQ<T,Real64> || SameQ<T,Int16> ||SameQ<T,Int32> || SameQ<T,Int64> || SameQ<T,UInt16> ||SameQ<T,UInt32> || SameQ<T,UInt64> );
 }
 
  

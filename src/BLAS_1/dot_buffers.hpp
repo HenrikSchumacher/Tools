@@ -25,12 +25,12 @@ namespace Tools
         );
         
         constexpr auto ox = COND( opx == Op::Conj,
-                []( const R & z ){ return Scalar::Conj<R>(z); },
+                []( const R & z ){ return Conj<R>(z); },
                 []( const R & z ){ return z; }
         );
         
         constexpr auto oy = COND( opy == Op::Conj,
-                []( const S & z ){ return Scalar::Conj<S>(z); },
+                []( const S & z ){ return Conj<S>(z); },
                 []( const S & z ){ return z; }
         );
         

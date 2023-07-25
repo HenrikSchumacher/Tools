@@ -45,7 +45,7 @@ namespace Tools
         {
             void operator()( const T_a & a, const T_b & b, T_c & c )
             {
-                return c = std::max(a,b);
+                return c = Max(a,b);
             }
         };
         
@@ -54,7 +54,7 @@ namespace Tools
         {
             void operator()( const T_a & a, const T_b & b, T_c & c )
             {
-                return c = std::min(a,b);
+                return c = Min(a,b);
             }
         };
         

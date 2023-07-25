@@ -115,13 +115,21 @@ namespace Tools
             return  x * x + y * y;
         }
         
+        
+        
+        template<typename T>
+        force_inline constexpr T Abs( const T & z )
+        {
+            return  std::abs(z);
+        }
+        
         template<typename T> constexpr bool ComplexQ = false;
         
-        template<> constexpr bool ComplexQ<Real32 >    = false;
-        template<> constexpr bool ComplexQ<Real64 >    = false;
+        template<> constexpr bool ComplexQ<Real32>     = false;
+        template<> constexpr bool ComplexQ<Real64>     = false;
         template<> constexpr bool ComplexQ<Real128>    = false;
-        template<> constexpr bool ComplexQ<Complex32 > = true;
-        template<> constexpr bool ComplexQ<Complex64 > = true;
+        template<> constexpr bool ComplexQ<Complex32>  = true;
+        template<> constexpr bool ComplexQ<Complex64>  = true;
         template<> constexpr bool ComplexQ<Complex128> = true;
         
         template<typename T> constexpr bool RealQ = false;
@@ -133,16 +141,13 @@ namespace Tools
         template<> constexpr bool RealQ<Complex64 >    = false;
         template<> constexpr bool RealQ<Complex128>    = false;
         
-        template<> constexpr bool RealQ<Int16 >        = true;
-        template<> constexpr bool RealQ<Int32 >        = true;
+        template<> constexpr bool RealQ<Int16>         = true;
+        template<> constexpr bool RealQ<Int32>         = true;
         template<> constexpr bool RealQ<Int64>         = true;
         
-//        template<> constexpr bool RealQ<Int16>         = true;
-//        template<> constexpr bool RealQ<Int32>         = true;
-//        template<> constexpr bool RealQ<Int64>         = true;
-//        template<> constexpr bool RealQ<UInt16>        = true;
-//        template<> constexpr bool RealQ<UInt32>        = true;
-//        template<> constexpr bool RealQ<UInt64>        = true;
+        template<> constexpr bool RealQ<UInt16>        = true;
+        template<> constexpr bool RealQ<UInt32>        = true;
+        template<> constexpr bool RealQ<UInt64>        = true;
         
         template<typename T> constexpr bool ScalarQ = false;
         

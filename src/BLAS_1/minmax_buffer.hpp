@@ -11,8 +11,8 @@ namespace Tools
         
         for( Size_T i = 0; i < n; ++i )
         {
-            min_ = std::min( min_, z[i] );
-            max_ = std::max( max_, z[i] );
+            min_ = Min( min_, z[i] );
+            max_ = Max( max_, z[i] );
         }
         return std::pair<S,S>(min_,max_);
     }
@@ -25,8 +25,8 @@ namespace Tools
         
         for( Size_T i = 0; i < n; ++i )
         {
-            min_ = std::min( min_, z[i] );
-            max_ = std::max( max_, z[i] );
+            min_ = Min( min_, z[i] );
+            max_ = Max( max_, z[i] );
         }
         return std::pair<S,S>(min_,max_);
     }
@@ -40,7 +40,7 @@ namespace Tools
         
         for( Size_T i = 0; i < n; ++i )
         {
-            m = std::max( m, z[i] );
+            m = Max( m, z[i] );
         }
         return m;
     }
@@ -52,7 +52,7 @@ namespace Tools
         
         for( Size_T i = 0; i < n; ++i )
         {
-            m = std::max( m, z[i] );
+            m = Max( m, z[i] );
         }
         return m;
     }
@@ -65,7 +65,7 @@ namespace Tools
         
         for( Size_T i = 0; i < n; ++i )
         {
-            m = std::min( m, z[i] );
+            m = Min( m, z[i] );
         }
         return m;
     }
@@ -77,7 +77,7 @@ namespace Tools
         
         for( Size_T i = 0; i < n; ++i )
         {
-            m = std::min( m, z[i] );
+            m = Min( m, z[i] );
         }
         return m;
     }

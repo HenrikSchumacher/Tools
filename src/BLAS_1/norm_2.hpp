@@ -10,9 +10,9 @@ namespace Tools
         
         for( Size_T i = 0; i < n; ++i )
         {
-            norm_squared += Scalar::AbsSquared(z[i]);
+            norm_squared += AbsSquared(z[i]);
         }
-        return std::sqrt(norm_squared);
+        return Sqrt(norm_squared);
     }
 
     template <Size_T n, typename S>
@@ -22,9 +22,9 @@ namespace Tools
         
         for( Size_T i = 0; i < n; ++i )
         {
-            norm_squared += Scalar::AbsSquared(z[i]);
+            norm_squared += AbsSquared(z[i]);
         }
-        return std::sqrt(norm_squared);
+        return Sqrt(norm_squared);
     }
     
 } // namespace Tools

@@ -8,11 +8,22 @@ namespace Tools
     {
         typename Scalar::Real<S> max = 0;
         
-        for( Size_T i = 0; i < n; ++i )
+        if constexpr ( Scalar::RealQ<S> )
         {
-            max = std::max( max, Scalar::AbsSquared(z[i]));
+            for( Size_T i = 0; i < n; ++i )
+            {
+                max = Max( max, Abs(z[i]) );
+            }
+            return max;
         }
-        return std::sqrt(max);
+        else
+        {
+            for( Size_T i = 0; i < n; ++i )
+            {
+                max = Max( max, AbsSquared(z[i]) );
+            }
+            return Sqrt(max);
+        }
     }
 
     template <Size_T n, typename S>
@@ -20,11 +31,22 @@ namespace Tools
     {
         typename Scalar::Real<S> max = 0;
         
-        for( Size_T i = 0; i < n; ++i )
+        if constexpr ( Scalar::RealQ<S> )
         {
-            max = std::max( max, Scalar::AbsSquared(z[i]));
+            for( Size_T i = 0; i < n; ++i )
+            {
+                max = Max( max, Abs(z[i]) );
+            }
+            return max;
         }
-        return std::sqrt(max);
+        else
+        {
+            for( Size_T i = 0; i < n; ++i )
+            {
+                max = Max( max, AbsSquared(z[i]) );
+            }
+            return Sqrt(max);
+        }
     }
 
     

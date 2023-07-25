@@ -160,26 +160,26 @@ namespace Tools
             for( Int thread = 0; thread < thread_count - 1; ++thread)
             {
                 // each thread (other than the last one) is required to have at least this accumulated cost
-                T target = std::min( total_cost, static_cast<T>(per_thread_cost * (thread + 1)) );
+                T target = Min( total_cost, static_cast<T>(per_thread_cost * (thread + 1)) );
                 Int pos;
                 // find an index a such that b_row_acc_costs[ a ] < target;
                 // taking naive_chunk_size * thread as initial guess, because that might be nearly correct for costs that are evenly distributed over the block rows
                 pos = thread + 1;
-                Int a = std::min(job_count, static_cast<Int>(naive_chunk_size * pos) );
+                Int a = Min(job_count, static_cast<Int>(naive_chunk_size * pos) );
                 while( acc_costs[a] >= target )
                 {
                     --pos;
-                    a = std::min(job_count, static_cast<Int>(naive_chunk_size * pos) );
+                    a = Min(job_count, static_cast<Int>(naive_chunk_size * pos) );
                 };
                 
                 // find an index  b such that b_row_acc_costs[ b ] >= target;
                 // taking naive_chunk_size * (thread + 1) as initial guess, because that might be nearly correct for costs that are evenly distributed over the block rows
                 pos = thread + 1;
-                Int b = std::min(job_count, static_cast<Int>(naive_chunk_size * pos) );
+                Int b = Min(job_count, static_cast<Int>(naive_chunk_size * pos) );
                 while( (b < job_count) && (acc_costs[b] < target) )
                 {
                     ++pos;
-                    b = std::min(job_count, static_cast<Int>(naive_chunk_size * pos) );
+                    b = Min(job_count, static_cast<Int>(naive_chunk_size * pos) );
                 };
 
                 // binary search

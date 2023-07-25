@@ -10,7 +10,7 @@ namespace Tools
         
         for( Size_T i = 0; i < n; ++i )
         {
-            norm += std::abs(z[i]);
+            norm += Abs(z[i]);
         }
         return norm;
     }
@@ -22,7 +22,7 @@ namespace Tools
         
         for( Size_T i = 0; i < n; ++i )
         {
-            norm += std::abs(z[i]);
+            norm += Abs(z[i]);
         }
         return norm;
 

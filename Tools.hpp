@@ -164,13 +164,18 @@ namespace Tools
 
 namespace Tools
 {
-    
-    template<typename S, typename T>
-    static constexpr bool SameQ = std::is_same_v<S,T>;
-    
-    template<typename T>
-    static constexpr bool VectorizableQ = vec_enabledQ && ( SameQ<T,Real32> || SameQ<T,Real64> || SameQ<T,Int16> ||SameQ<T,Int32> || SameQ<T,Int64> || SameQ<T,UInt16> ||SameQ<T,UInt32> || SameQ<T,UInt64> );
+    using Scalar::Inv;
+    using Scalar::Abs;
+    using Scalar::AbsSquared;
+    using Scalar::Re;
+    using Scalar::Im;
+    using Scalar::Conj;
+
 }
+
+    #define _USE_MATH_DEFINES
+    #include <cmath>
+    #include "src/MyMath/MyMath.hpp"
 
     #include "src/BLAS_Enums.hpp"
 
@@ -191,10 +196,6 @@ namespace Tools
     #include "src/BLAS_1.hpp"
 
     #include "src/SortedList.hpp"
-        
-    #define _USE_MATH_DEFINES
-    #include <cmath>
-    #include "src/MyMath/MyMath.hpp"
 
 
     #include "src/CachedObject.hpp"

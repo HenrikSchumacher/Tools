@@ -114,7 +114,7 @@ namespace Tools
                             // Iterator `iter` is not out of bound. Assign a new chunk to worker.
                             i_begin = iter;
                             
-                            iter = std::min( iter + inc, end );
+                            iter = Min( iter + inc, end );
                             
                             i_end   = iter;
                         }

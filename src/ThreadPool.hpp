@@ -52,7 +52,7 @@ namespace Tools
 //            dump(std::thread::hardware_concurrency());
             
             Int thread_count = (thread_count_ > static_cast<Int>(0)) ? thread_count_ :  static_cast<Int>(1);
-//            :   std::max(
+//            :   Max(
 //                         static_cast<Int>(1),
 //                         static_cast<Int>(std::thread::hardware_concurrency())
 //                );
