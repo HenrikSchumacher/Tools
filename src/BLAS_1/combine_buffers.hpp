@@ -71,7 +71,7 @@ namespace Tools
         }
         else
         {
-            if constexpr ( (N > VarSize) && VectorizableQ<y_T> )
+            if constexpr ( (N > VarSize) && VectorizableQ<y_T> && ( opx == Op::Id ) && (opy == Op::Id ) )
             {
                 vec_T<N,y_T> x_vec;
                 vec_T<N,y_T> y_vec;
