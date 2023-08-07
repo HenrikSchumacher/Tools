@@ -64,65 +64,7 @@ namespace Tools
     namespace Scalar
     {
         
-        template<typename T>
-        force_inline constexpr T Conj( const T & x )
-        {
-            return x;
-        }
-        
-        template<typename T>
-        force_inline constexpr T Re( const T & x )
-        {
-            return x;
-        }
-        
-        template<typename T>
-        force_inline constexpr T Im( const T & x )
-        {
-            return static_cast<T>(0);
-        }
-        
-        template<typename T>
-        force_inline constexpr T AbsSquared( const T & x )
-        {
-            return x * x;
-        }
-        
-        
-        template<typename T>
-        force_inline constexpr std::complex<T> Conj( const std::complex<T> & z )
-        {
-            return std::conj(z);
-        }
-        
-        template<typename T>
-        force_inline constexpr T Re( const std::complex<T> & z )
-        {
-            return std::real(z);
-        }
-        
-        template<typename T>
-        force_inline constexpr T Im( const std::complex<T> & z )
-        {
-            return std::imag(z);
-        }
-        
-        template<typename T>
-        force_inline constexpr T AbsSquared( const std::complex<T> & z )
-        {
-            const T x = std::real(z);
-            const T y = std::imag(z);
-            return  x * x + y * y;
-        }
-        
-        
-        
-        template<typename T>
-        force_inline constexpr T Abs( const T & z )
-        {
-            return  std::abs(z);
-        }
-        
+
         template<typename T> constexpr bool ComplexQ = false;
         
         template<> constexpr bool ComplexQ<Real32>     = false;
@@ -256,6 +198,72 @@ namespace Tools
         
     } // namespace Scalar
     
+    template<typename T>
+    force_inline constexpr T Conj( const T & z )
+    {
+        if constexpr ( Scalar::ComplexQ<T> )
+        {
+            return std::conj(z) ;
+        }
+        else
+        {
+            return z;
+        }
+    }
+    
+    
+    template<typename T>
+    force_inline constexpr std::complex<T> Conj( const std::complex<T> & z )
+    {
+        return std::conj(z);
+    }
+    
+    template<typename T>
+    force_inline constexpr Scalar::Real<T> Re( const T & z )
+    {
+        if constexpr ( Scalar::ComplexQ<T> )
+        {
+            return std::real(z) ;
+        }
+        else
+        {
+            return z;
+        }
+    }
+    
+    template<typename T>
+    force_inline constexpr Scalar::Real<T> Im( const T & z )
+    {
+        if constexpr ( Scalar::ComplexQ<T> )
+        {
+            return std::imag(z) ;
+        }
+        else
+        {
+            return static_cast<Scalar::Real<T>>(0);
+        }
+    }
+    
+    template<typename T>
+    force_inline constexpr Scalar::Real<T> AbsSquared( const T & z )
+    {
+        if constexpr ( Scalar::ComplexQ<T> )
+        {
+            return Re(z) * Re(z) + Im(z) * Im(z) ;
+        }
+        else
+        {
+            return z * z;
+        }
+    }
+    
+    template<typename T>
+    force_inline constexpr Scalar::Real<T> Abs( const T & z )
+    {
+        return  std::abs(z);
+    }
+    
+    
     // scalar_cast<T>(x) cast x to the precision of T, but preserves Real/Complex
     template<typename T, typename S>
     force_inline constexpr
@@ -283,14 +291,12 @@ namespace Tools
         return static_cast<typename Scalar::Complex<T>>(x);
     }
     
-namespace Scalar
-{
     // First converts to Real<R> and then compute the reciprocal.
     template<typename S, typename R = S>
     force_inline constexpr
     R Inv( const S & a )
     {
-        return One<R> / scalar_cast<R>(a);
+        return Scalar::One<R> / scalar_cast<R>(a);
     }
 
     template<typename S, typename T, typename R = decltype( S(1)*T(1) )>
@@ -299,7 +305,7 @@ namespace Scalar
     {
         return scalar_cast<R>(a) / scalar_cast<R>(b);
     }
-}
+
     
 //    // lo_prec_cast<S,T>(x) casts x to the lower precision of S and T, but preserves Real/Complex
 //    template<typename S, typename T, typename R>

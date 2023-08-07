@@ -162,17 +162,6 @@ namespace Tools
 
     #include "src/Scalars.hpp"
 
-namespace Tools
-{
-    using Scalar::Inv;
-    using Scalar::Abs;
-    using Scalar::AbsSquared;
-    using Scalar::Re;
-    using Scalar::Im;
-    using Scalar::Conj;
-
-}
-
     #define _USE_MATH_DEFINES
     #include <cmath>
     #include "src/MyMath/MyMath.hpp"

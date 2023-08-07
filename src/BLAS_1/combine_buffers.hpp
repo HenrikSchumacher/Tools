@@ -12,8 +12,7 @@ namespace Tools
         typename alpha_T, typename x_T, typename beta_T, typename y_T
     >
     force_inline void combine_buffers(
-        cref<alpha_T> alpha, cptr<x_T> x,
-        cref< beta_T> beta,  mptr<y_T> y,
+        cref<alpha_T> alpha, cptr<x_T> x, cref< beta_T> beta,  mptr<y_T> y,
         const Size_T n = N,
         const Size_T thread_count = 1
     )
