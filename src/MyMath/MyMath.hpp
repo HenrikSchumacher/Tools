@@ -377,40 +377,30 @@ namespace Tools
     template<typename Real>
     force_inline constexpr Real Max( const Real & x, const Real & y )
     {
-        static_assert( Scalar::RealQ<Real>, "Max makes sense only for real input." );
-        
         return std::max( x, y );
     }
     
     template<typename Real>
     force_inline constexpr Real Min( const Real & x, const Real & y )
     {
-        static_assert( Scalar::RealQ<Real>, "Min makes sense only for real input." );
-        
         return std::min( x, y );
     }
     
     template<typename Real>
     force_inline constexpr Real Ramp( const Real & x )
     {
-        static_assert( Scalar::RealQ<Real>, "Ramp makes sense only for real input." );
-        
         return std::max( Scalar::Zero<Real>, x );
     }
     
     template<typename Real>
     force_inline constexpr Real Sqrt( const Real & x )
     {
-        static_assert( Scalar::RealQ<Real>, "Sqrt makes sense only for real input." );
-        
         return std::sqrt( x );
     }
     
     template<typename Real>
     force_inline constexpr Real InvSqrt( const Real & x )
     {
-        static_assert( Scalar::RealQ<Real>, "Sqrt makes sense only for real input." );
-        
         return Inv( Sqrt(x) );
     }
     
