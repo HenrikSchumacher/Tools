@@ -173,9 +173,14 @@ namespace Tools
         template<typename T> constexpr Scalar::Real<T> Two   {2};
         template<typename T> constexpr Scalar::Real<T> Three {3};
         template<typename T> constexpr Scalar::Real<T> Four  {4};
+        template<typename T> constexpr Scalar::Real<T> Fife  {5};
+        template<typename T> constexpr Scalar::Real<T> Six   {6};
         template<typename T> constexpr Scalar::Real<T> Half    = One<T>/Two<T>;
         template<typename T> constexpr Scalar::Real<T> Third   = One<T>/Three<T>;
         template<typename T> constexpr Scalar::Real<T> Quarter = One<T>/Four<T>;
+        template<typename T> constexpr Scalar::Real<T> Fourth  = One<T>/Four<T>;
+        template<typename T> constexpr Scalar::Real<T> Fifth   = One<T>/Fife<T>;
+        template<typename T> constexpr Scalar::Real<T> Sixth   = One<T>/Six<T>;
         
         
         template<typename T> constexpr Scalar::Complex<T> I {0,1};
