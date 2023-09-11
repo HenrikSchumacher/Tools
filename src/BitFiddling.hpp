@@ -29,5 +29,24 @@ namespace Tools
     {
         x &= ~(static_cast<I>(1)<<pos);
     }
+    
+    
+    
+    
+    template<typename I, typename J>
+    inline constexpr void set_byte( I & x, const J pos, const I b )
+    {
+        const I mask = ( ~static_cast<I>(0xFF) ) << (pos * 8);
+        
+        x = (x & mask) | (static_cast<I>(b) << (pos * 8));
+    }
+    
+    template<typename I, typename J>
+    inline constexpr I get_byte( const I & x, const J pos )
+    {
+        constexpr I mask = static_cast<I>(0xFF);
+        
+        return ( x >> (pos * 8) ) & mask;
+    }
 
 } // namespace Tools
