@@ -50,11 +50,11 @@ namespace Tools
     
     using Real32  = float;
     using Real64  = double;
-    using Real128 = long double;
+//    using Real128 = long double;
     
     using Complex32  = std::complex<Real32>;
     using Complex64  = std::complex<Real64>;
-    using Complex128 = std::complex<Real128>;
+//    using Complex128 = std::complex<Real128>;
     
     using std::conj;
     using std::real;
@@ -69,19 +69,19 @@ namespace Tools
         
         template<> constexpr bool ComplexQ<Real32>     = false;
         template<> constexpr bool ComplexQ<Real64>     = false;
-        template<> constexpr bool ComplexQ<Real128>    = false;
+//        template<> constexpr bool ComplexQ<Real128>    = false;
         template<> constexpr bool ComplexQ<Complex32>  = true;
         template<> constexpr bool ComplexQ<Complex64>  = true;
-        template<> constexpr bool ComplexQ<Complex128> = true;
+//        template<> constexpr bool ComplexQ<Complex128> = true;
         
         template<typename T> constexpr bool RealQ = false;
         
         template<> constexpr bool RealQ<Real32 >       = true;
         template<> constexpr bool RealQ<Real64 >       = true;
-        template<> constexpr bool RealQ<Real128>       = true;
+//        template<> constexpr bool RealQ<Real128>       = true;
         template<> constexpr bool RealQ<Complex32 >    = false;
         template<> constexpr bool RealQ<Complex64 >    = false;
-        template<> constexpr bool RealQ<Complex128>    = false;
+//        template<> constexpr bool RealQ<Complex128>    = false;
         
         template<> constexpr bool RealQ<Int16>         = true;
         template<> constexpr bool RealQ<Int32>         = true;
@@ -95,10 +95,10 @@ namespace Tools
         
         template<> constexpr bool ScalarQ<Real32 >     = true;
         template<> constexpr bool ScalarQ<Real64 >     = true;
-        template<> constexpr bool ScalarQ<Real128>     = true;
+//        template<> constexpr bool ScalarQ<Real128>     = true;
         template<> constexpr bool ScalarQ<Complex32 >  = true;
         template<> constexpr bool ScalarQ<Complex64 >  = true;
-        template<> constexpr bool ScalarQ<Complex128>  = true;
+//        template<> constexpr bool ScalarQ<Complex128>  = true;
         
 //        template<> constexpr bool ScalarQ<Int16>       = true;
 //        template<> constexpr bool ScalarQ<Int32>       = true;
@@ -111,19 +111,19 @@ namespace Tools
         
         template<> constexpr bool FloatQ<Real32 >     = true;
         template<> constexpr bool FloatQ<Real64 >     = true;
-        template<> constexpr bool FloatQ<Real128>     = true;
+//        template<> constexpr bool FloatQ<Real128>     = true;
         template<> constexpr bool FloatQ<Complex32 >  = true;
         template<> constexpr bool FloatQ<Complex64 >  = true;
-        template<> constexpr bool FloatQ<Complex128>  = true;
+//        template<> constexpr bool FloatQ<Complex128>  = true;
         
         template<typename T> constexpr int Prec     = 0;
         
         template<> constexpr uint Prec<Real32 >     = 32u;
         template<> constexpr uint Prec<Real64 >     = 64u;
-        template<> constexpr uint Prec<Real128>     = 128u;
+//        template<> constexpr uint Prec<Real128>     = 128u;
         template<> constexpr uint Prec<Complex32 >  = 32u;
         template<> constexpr uint Prec<Complex64 >  = 64u;
-        template<> constexpr uint Prec<Complex128>  = 128u;
+//        template<> constexpr uint Prec<Complex128>  = 128u;
         
 //        template<> constexpr uint Prec<Int8  >      =  8u;
 //        template<> constexpr uint Prec<Int16 >      = 16u;
@@ -139,15 +139,15 @@ namespace Tools
         using Real =
             std::conditional_t<Prec<T> ==  32u,  Real32,
             std::conditional_t<Prec<T> ==  64u,  Real64,
-            std::conditional_t<Prec<T> == 128u, Real128,
-            T>>>;
+//            std::conditional_t<Prec<T> == 128u, Real128,
+            T>>;
 
         template<typename T>
         using Complex =
             std::conditional_t<Prec<T> ==  32u,  Complex32,
             std::conditional_t<Prec<T> ==  64u,  Complex64,
-            std::conditional_t<Prec<T> == 128u, Complex128,
-            T>>>;
+//            std::conditional_t<Prec<T> == 128u, Complex128,
+            T>>;
         
 //        template<typename T>
 //        using Real =

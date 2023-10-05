@@ -42,13 +42,13 @@ namespace Tools
     
     template<> constexpr const char * TypeName<Real64>  = "R64";
     
-    template<> constexpr const char * TypeName<Real128> = "R128";
+//    template<> constexpr const char * TypeName<Real128> = "R128";
 
     
     template<> constexpr const char * TypeName<Complex32>  = "C32";
     
     template<> constexpr const char * TypeName<Complex64>  = "C64";
     
-    template<> constexpr const char * TypeName<Complex128> = "C128";
+//    template<> constexpr const char * TypeName<Complex128> = "C128";
     
 } // namespace Tools
