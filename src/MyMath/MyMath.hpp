@@ -146,18 +146,45 @@ namespace Tools
     }
     
 
+//    template<typename T>
+//    inline static constexpr T Factorial( T n )
+//    {
+//        T result ( 1 );
+//        
+//        for( T k = static_cast<T>(2); k <= n; ++k )
+//        {
+//            result *= k;
+//        }
+//        
+//        return result;
+//    }
+    
     template<typename T>
     inline static constexpr T Factorial( T n )
     {
         T result ( 1 );
         
-        for( T k = static_cast<T>(2); k <= n; ++k )
+        for( T k = n; k > 1; k -= 1 )
         {
             result *= k;
         }
         
         return result;
     }
+    
+    template<typename T>
+    inline static constexpr T DoubleFactorial( T n )
+    {
+        T result ( 1 );
+        
+        for( T k = n; k > 1; k -= 2 )
+        {
+            result *= k;
+        }
+        
+        return result;
+    }
+    
     
     template<typename T_out, typename T_in>
     inline static constexpr T_out Delta( const T_in & a, const T_in & b )
@@ -411,6 +438,53 @@ namespace Tools
     
     template<typename T>
     static constexpr bool VectorizableQ = vec_enabledQ && ( SameQ<T,Real32> || SameQ<T,Real64> || SameQ<T,Int16> ||SameQ<T,Int32> || SameQ<T,Int64> || SameQ<T,UInt16> ||SameQ<T,UInt32> || SameQ<T,UInt64> );
+    
+    
+    template < typename T >
+    inline static constexpr T SphereVolume ( Size_T n )
+    {
+        
+        T result (  (n % 2 == 0) ? Scalar::Two < T > : Scalar::TwoPi < T > );
+        
+        for ( T k = n; k > Scalar::One < T >; k -= Scalar::Two < T > )
+        {
+            
+            result *= Frac < T > ( Scalar::TwoPi < T >, k - 1);
+        }
+        
+        return result;
+    }
+    
+    template < typename T >
+    inline static constexpr T BallVolume ( Size_T n )
+    {
+        
+        T result ( (n % 2 == 0) ? Scalar::One < T > : Scalar::Two < T > );
+        
+        for ( T k = n; k > Scalar::One < T >; k -= Scalar::Two < T > )
+        {
+            
+            result *= Frac < T > ( Scalar::TwoPi < T >, k );
+        }
+        
+        return result;
+    }
+    
+    template < typename T >
+    inline static constexpr T SOVolume ( Size_T n )
+    {
+        
+        T result ( Scalar::One < T > );
+        
+        for ( T k = Scalar::One<T>; k < n; ++k )
+        {
+            
+            result *= SphereVolume<T>(k);
+        }
+        
+        return result;
+    }
+    
 }
 
  
