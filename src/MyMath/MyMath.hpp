@@ -441,7 +441,7 @@ namespace Tools
     
     
     template < typename T >
-    inline static constexpr T SphereVolume ( Size_T n )
+    inline static constexpr T SphereVolume ( const Size_T n )
     {
         
         T result (  (n % 2 == 0) ? Scalar::Two < T > : Scalar::TwoPi < T > );
@@ -456,7 +456,7 @@ namespace Tools
     }
     
     template < typename T >
-    inline static constexpr T BallVolume ( Size_T n )
+    inline static constexpr T BallVolume ( const Size_T n )
     {
         
         T result ( (n % 2 == 0) ? Scalar::One < T > : Scalar::Two < T > );
@@ -471,12 +471,12 @@ namespace Tools
     }
     
     template < typename T >
-    inline static constexpr T SOVolume ( Size_T n )
+    inline static constexpr T SOVolume ( const Size_T n )
     {
         
         T result ( Scalar::One < T > );
         
-        for ( T k = Scalar::One<T>; k < n; ++k )
+        for ( Size_T k = 1; k < n; ++k )
         {
             
             result *= SphereVolume<T>(k);
@@ -485,6 +485,48 @@ namespace Tools
         return result;
     }
     
+    
+    template < typename T >
+    inline static constexpr T GammaQuotient ( const T x, const T a )
+    {
+        // Computes Gamma(x+a)/Gamma(x) with considerably less risk of overflow than std::tgamma(x+a)/std::tgamma(x).
+
+        ASSERT_FLOAT(T);
+        
+        static_assert( Scalar::RealQ<T>, "GammaQuotient is only implemented for real floating point types." );
+        
+        if( (x > Scalar::Zero<T>) && (a >= Scalar::Zero<T>) )
+        {
+            if( x <= Scalar::One<T> )
+            {
+                return std::tgamma(x+a) / std::tgamma(x);
+            }
+            else
+            {
+                T n;
+                
+                T r = modf( x, &n ) + Scalar::One<T>;
+                
+                // Adding 1 to guarantee that r > 0.
+                
+                // So r lies within [1,2).
+                
+                T result = std::tgamma(r+a) / std::tgamma(r);
+                
+                for ( T y = x; y --> r; )
+                {
+                    result += (a / y) * result;
+                }
+                
+                return result;
+            }
+        }
+        else
+        {
+            wprint("GammaQuotient is only implemented for positive x and nonnegative a.");
+            return 1;
+        }
+    }
 }
 
  
