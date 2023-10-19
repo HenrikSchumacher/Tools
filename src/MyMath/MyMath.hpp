@@ -523,7 +523,7 @@ namespace Tools
         }
         else
         {
-            wprint("GammaQuotient is only implemented for positive x and nonnegative a.");
+            wprint("GammaQuotient is only implemented for positive x and nonnegative a. x = " + ToString(x) + ", a = " + ToString(a) + "." );
             return 1;
         }
     }
