@@ -82,26 +82,6 @@ namespace Tools
         );
     }
     
-    // Executes the function `fun` of the form `[]( const Int thread, const Int i ) -> void {...}` on the range [begin,end[, parallelized over `thread_count` threads.
-    template<typename F, typename Int>
-    force_inline void ParallelDo2(
-        F && fun, const Int begin, const Int end, const Int thread_count
-    )
-    {
-        ParallelDo(
-            [&fun,begin,end,thread_count]( const Int thread )
-            {
-                const Int i_begin = begin + JobPointer( end - begin, thread_count, thread     );
-                const Int i_end   = begin + JobPointer( end - begin, thread_count, thread + 1 );
-
-                for( Int i = i_begin; i < i_end; ++i )
-                {
-                    fun(thread, i);
-                }
-            },
-            thread_count
-        );
-    }
     
     // Executes the function `fun` of the form `[]( const Int i ) -> void {...}` on the range [0,end[, parallelized over `thread_count` threads.
     template<typename F, typename Int>
