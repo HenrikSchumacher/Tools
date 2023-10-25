@@ -103,6 +103,43 @@ namespace Tools
         return static_cast<T>( (static_cast<T>(0) < val) - (val < static_cast<T>(0)) ) ;
     }
     
+    
+    template<typename T>
+    force_inline constexpr bool Equal3( const T & a, const T & b, const T & c )
+    {
+        return (a == b) && (b == c);
+    }
+    
+    template<typename Real>
+    force_inline constexpr Real Max( const Real & x, const Real & y )
+    {
+        return std::max( x, y );
+    }
+    
+    template<typename Real>
+    force_inline constexpr Real Min( const Real & x, const Real & y )
+    {
+        return std::min( x, y );
+    }
+    
+    template<typename Real>
+    force_inline constexpr Real Ramp( const Real & x )
+    {
+        return std::max( Scalar::Zero<Real>, x );
+    }
+    
+    template<typename Real>
+    force_inline constexpr Real Sqrt( const Real & x )
+    {
+        return std::sqrt( x );
+    }
+    
+    template<typename Real>
+    force_inline constexpr Real InvSqrt( const Real & x )
+    {
+        return Inv( Sqrt(x) );
+    }
+    
     template<int AmbDim, typename Real>
     inline Real AngleBetweenUnitVectors( cptr<Real> x, cptr<Real> y )
     {
@@ -192,173 +229,6 @@ namespace Tools
         return static_cast<T_out>( a == b );
     }
     
-    template<typename Real>
-    void RealCubicSolve(
-        const Real A, const Real B, const Real C, const Real D, mptr<Real> t_out
-    )
-    {
-        static_assert( Scalar::RealQ<Real>, "Input parameters must be real floating point types.");
-        
-        constexpr Real zero  = 0;
-        constexpr Real one   = 1;
-        constexpr Real two   = 2;
-        constexpr Real three = 3;
-        
-        constexpr Real factor = Inv<Real>(27);
-        constexpr Real third  = Inv<Real>(3);
-        constexpr Real half   = Inv<Real>(2);
-
-        
-        constexpr Real Pi_third = Scalar::Pi<Real> * third;
-        constexpr Real Pi_sixth = Scalar::Pi<Real> * third * half;
-        
-        constexpr Real sqrt_three          = 1.7320508075688772;
-        constexpr Real two_over_sqrt_three = 1.1547005383792517;
-        constexpr Real factor_1 = three * sqrt_three * half;
-        
-        static constexpr Real eps   = 100 * std::numeric_limits<Real>::epsilon();
-        static constexpr Real infty = std::numeric_limits<Real>::max();
-        
-        Real x[3] = {};
-        
-        if( std::abs(A) < eps )
-        {
-            if( std::abs(B) < eps )
-            {
-                if( std::abs(C) < eps )
-                {
-//                    print("constant equation");
-                    if( std::abs(D) < eps )
-                    {
-                        x[0] = zero;
-                        x[1] = infty;
-                        x[2] = infty;
-                    }
-                    else
-                    {
-                        x[0] = infty;
-                        x[1] = infty;
-                        x[2] = infty;
-                    }
-                }
-                else
-                {
-//                    print("linear equation");
-                    
-                    x[0] = -D/C;
-                    x[1] = infty;
-                    x[2] = infty;
-                }
-            }
-            else
-            {
-//                print("quadratic equation");
-                
-                const Real p = C/B;
-                const Real q = D/B;
-                const Real disc = p * p - Scalar::Four<Real> * q;
-                
-                if( std::abs(disc) < eps )
-                {
-//                    print("no real solution");
-                    
-                    x[0] = infty;
-                    x[1] = infty;
-                    x[2] = infty;
-                }
-                else
-                {
-//                    print("two real solutions");
-                    const Real sqrt_disc = std::sqrt(disc);
-                    x[0] = half + sqrt_disc;
-                    x[1] = half - sqrt_disc;
-                    x[2] = infty;
-                }
-            }
-        }
-        else
-        {
-//            print("cubic equation");
-            
-            const Real a = B/A;
-            const Real b = C/A;
-            const Real c = D/A;
-            const Real aa = a * a;
-            const Real p = b - aa * third;
-            const Real q = two * aa* a * factor - a * b * third + c;
-            
-            const Real disc = q * q * Scalar::Quarter<Real> + p * p * p * factor;
-            if( std::abs(disc) > eps )
-            {
-                if( disc > zero )
-                {
-                    // std::abs(disc) > eps
-                    
-//                    print("exactly one real solutions");
-                    
-                    const Real sqrt_disc = std::sqrt(disc);
-                    
-                    const Real r1 = -q * half + sqrt_disc;
-                    const Real r2 = -q * half - sqrt_disc;
-                    
-                    x[0] = ((r1>=zero) ? one : -one) * std::pow( std::abs(r1), third )
-                         +
-                           ((r2>=zero) ? one : -one) * std::pow( std::abs(r2), third )
-                         -
-                         a * third;
-                    x[1] = infty;
-                    x[2] = infty;
-
-                }
-                else
-                {
-                    // std::abs(disc) < eps
-
-//                    print("exactly three real solutions");
-                    
-                    const Real sqrt_p = std::sqrt(-p);
-                    
-                    const Real theta_third = std::asin( factor_1 * q / ( (-p) * sqrt_p ) ) * third;
-                    
-                    const Real a_third = a * third;
-                    
-                    x[0] =  two_over_sqrt_three * sqrt_p * std::sin(theta_third)            - a_third;
-                    x[1] = -two_over_sqrt_three * sqrt_p * std::sin(theta_third + Pi_third) - a_third;
-                    x[2] =  two_over_sqrt_three * sqrt_p * std::cos(theta_third + Pi_sixth) - a_third;
-                }
-            }
-            else
-            {
-//                print("exactly two real solutions");
-                
-                const Real power = std::pow( half * q, third );
-                const Real a_third = a * third;
-                
-                x[0] = - two * power - a_third;
-                x[1] = power - a_third;
-                x[2] = infty;
-            }
-        }
-        
-//        // check
-//        for( int i = 0; i < 3; ++i )
-//        {
-//            if( x[i] < infty )
-//            {
-//                valprint("f(x["+ToString(i)+"])",
-//                         A * x[i] * x[i] * x[i] + B * x[i] * x[i] + C * x[i] + D
-//                );
-//            }
-//        }
-        
-        t_out[0] = x[0];
-        t_out[1] = x[1];
-        t_out[2] = x[2];
-        
-    }
-
-    
-    
     
 
     namespace Detail
@@ -391,45 +261,240 @@ namespace Tools
             : std::numeric_limits<Real>::quiet_NaN();
     }
     
-    
-    
-    
-    
-    template<typename T>
-    force_inline constexpr bool Equal3( const T & a, const T & b, const T & c )
+  
+    template<typename Real>
+    void RealCubicSolve( const Real b, const Real c, const Real d, mptr<Real> x,
+        const Real tol = 16 * Scalar::eps<Real>, const int max_iter = 16
+    )
     {
-        return (a == b) && (b == c);
+        // Computes the real roots of the cubic equation x^3 + b * x^2 + c * x + d = 0.
+        
+        static_assert( Scalar::RealQ<Real>, "Input parameters must be of real floating point types.");
+        
+        constexpr Real c_0   = 0;
+        constexpr Real c_3   = 3;
+
+        constexpr Real half  = Inv<Real>(2);
+        
+        constexpr Real C_0 = Frac<Real>(2,27);
+        constexpr Real C_1 = Frac<Real>(1,3);
+        
+        static constexpr Real infty = std::numeric_limits<Real>::max();
+        
+        // Convert to depressed form:
+        // t = x - shift
+        // a * x^3 + b * x^2 + c * x + d = t^3 + p * t + q
+        
+        const Real bb = b * b;
+        
+        const Real p  = c - bb * C_1;
+        
+        const Real shift = - b * C_1;
+        
+        const Real q  = (C_0 * bb - c * C_1) * b + d;
+
+        // Now we apply the iterative method from
+        // https://de.wikipedia.org/wiki/Kubische_Gleichung#Schnelle_numerische_Berechnung
+        
+        if( p == c_0 )
+        {
+            // Three-fold root.
+            
+            const Real t = - std::cbrt( q );
+            
+            x[0] = t + shift;
+            x[1] = t + shift;
+            x[2] = t + shift;
+            
+            return;
+        }
+        
+        // Halley / Newton iteration of upper bound
+        auto H_delta = [p,q]()
+        {
+            constexpr Real C_0 = static_cast<Real>(40) * cSqrt( c_3 );
+            constexpr Real C_1 = static_cast<Real>(18) * cSqrt( c_3 );
+            
+            const Real sqrt_minus_p = Sqrt( - p );
+            
+            return Frac<Real>(
+                p * ( C_0 * sqrt_minus_p * p + static_cast<Real>(63) * q ),
+                static_cast<Real>(69) * p * p - C_1 * sqrt_minus_p * q
+            );
+        };
+        
+        auto H_minus_delta = [p,q]()
+        {
+            constexpr Real C_0 = static_cast<Real>(40) * cSqrt( c_3 );
+            constexpr Real C_1 = static_cast<Real>(18) * cSqrt( c_3 );
+            
+            const Real sqrt_minus_p = Sqrt( - p );
+            
+            return Frac<Real>(
+                p * ( - C_0 * sqrt_minus_p * p + static_cast<Real>(63) * q ),
+                static_cast<Real>(69) * p * p + C_1 * sqrt_minus_p * q
+            );
+        };
+        
+        // General Halley iteration.
+        auto Step = [p,q]( const Real t )
+        {
+            const Real tt = t * t;
+            
+            const Real f        = (tt + p) * t + q;
+            const Real Df       = c_3 * tt + p;
+            const Real DDf_half = c_3 * t;
+            
+            return ( Df * f ) / ( Df * Df - DDf_half * f);
+        };
+        
+//        // General Newton iteration.
+//        auto Step = [p,q]( const Real t )
+//        {
+//            const Real tt = t * t;
+//            
+//            const Real f        = (tt + p) * t + q;
+//            const Real Df       = c_3 * tt + p;
+//            
+//            return f / Df ;
+//        };
+        
+        
+        Real t_0 = 0;
+        
+        if( q != c_0 )
+        {
+            // First Halley iteration.
+            Real t  = (p > c_0 ) ? -q/p : ( (q > c_0 ) ? H_minus_delta() : H_delta() );
+            
+            Real delta_t = Step(t);
+            t -= delta_t;
+            
+            int iter = 2;
+            
+            while( (Abs(delta_t) > tol) && (iter < max_iter) )
+            {
+                ++iter;
+                
+                delta_t = Step(t);
+                t -= delta_t;
+            }
+            
+            if( iter >= max_iter )
+            {
+                const Real f = (t * t + p) * t + q;
+                
+                eprint( std::string("RealCubicSolve( ") + ToString(b) + ", " + ToString(c) + ", " + ToString(d) + "," + ToString(tol) + ", " + ToString(max_iter) + " ) did not converge. Residual = " + ToString(f) + ", last step size = " + ToString(delta_t) + ".");
+            }
+
+            t_0 = t;
+        }
+        
+        x[0] = t_0 + shift;
+        
+        const Real discriminant = - Scalar::Four<Real> * p - c_3 * t_0 * t_0;
+        
+        if( discriminant >= c_0 )
+        {
+            const Real sqrt_discriminant = Sqrt(discriminant);
+            
+            x[1] = shift - half * ( t_0 + sqrt_discriminant);
+            x[2] = shift - half * ( t_0 - sqrt_discriminant);
+        }
+        else
+        {
+            x[1] = infty;
+            x[2] = infty;
+        }
     }
+    
+    
     
     template<typename Real>
-    force_inline constexpr Real Max( const Real & x, const Real & y )
+    void RealCubicSolve( const Real a, const Real b, const Real c, const Real d, mptr<Real> x,
+        const Real tol = 16 * Scalar::eps<Real>, const int max_iter = 16
+    )
     {
-        return std::max( x, y );
+        // Computes the real roots of the cubic equation a * x^3 + b * x^2 + c * x + d = 0.
+        
+        static_assert( Scalar::RealQ<Real>, "Input parameters must be of real floating point types.");
+        
+        constexpr Real half = Inv<Real>(2);
+        
+        static constexpr Real eps   = 8 * std::numeric_limits<Real>::epsilon();
+        static constexpr Real infty = std::numeric_limits<Real>::max();
+        
+        if( std::abs(a) < eps )
+        {
+            if( std::abs(b) < eps )
+            {
+                if( std::abs(c) < eps )
+                {
+//                    print("constant equation");
+                    
+                    if( std::abs(d) < eps )
+                    {
+                        x[0] = Scalar::Zero<Real>;
+                        x[1] = infty;
+                        x[2] = infty;
+                    }
+                    else
+                    {
+                        x[0] = infty;
+                        x[1] = infty;
+                        x[2] = infty;
+                    }
+                }
+                else
+                {
+//                    print("linear equation");
+                    
+                    x[0] = -d/c;
+                    x[1] = infty;
+                    x[2] = infty;
+                }
+            }
+            else
+            {
+//                print("quadratic equation");
+                
+                const Real p = c/b;
+                const Real q = d/b;
+                const Real discriminant = p * p - Scalar::Four<Real> * q;
+                
+                if( std::abs(discriminant) < eps )
+                {
+//                    print("no real solution");
+                    
+                    x[0] = infty;
+                    x[1] = infty;
+                    x[2] = infty;
+                }
+                else
+                {
+//                    print("two real solutions");
+                    const Real sqrt_discriminant = Sqrt(discriminant);
+                    x[0] = half + sqrt_discriminant;
+                    x[1] = half - sqrt_discriminant;
+                    x[2] = infty;
+                }
+            }
+        }
+        else
+        {
+//            print("cubic equation");
+
+            const Real a_inv = Inv(a);
+            
+            RealCubicSolve( b * a_inv, c * a_inv, d * a_inv, x, tol, max_iter );
+        }
+        
     }
     
-    template<typename Real>
-    force_inline constexpr Real Min( const Real & x, const Real & y )
-    {
-        return std::min( x, y );
-    }
     
-    template<typename Real>
-    force_inline constexpr Real Ramp( const Real & x )
-    {
-        return std::max( Scalar::Zero<Real>, x );
-    }
     
-    template<typename Real>
-    force_inline constexpr Real Sqrt( const Real & x )
-    {
-        return std::sqrt( x );
-    }
     
-    template<typename Real>
-    force_inline constexpr Real InvSqrt( const Real & x )
-    {
-        return Inv( Sqrt(x) );
-    }
+    
     
     
     
