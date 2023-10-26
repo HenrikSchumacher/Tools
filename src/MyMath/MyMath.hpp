@@ -264,7 +264,7 @@ namespace Tools
   
     template<typename Real>
     void RealCubicSolve( const Real b, const Real c, const Real d, mptr<Real> x,
-        const Real tol = 16 * Scalar::eps<Real>, const int max_iter = 16
+        const Real tol = 64 * Scalar::eps<Real>, const int max_iter = 32
     )
     {
         // Computes the real roots of the cubic equation x^3 + b * x^2 + c * x + d = 0.
@@ -380,12 +380,12 @@ namespace Tools
                 t -= delta_t;
             }
             
-            if( iter >= max_iter )
-            {
-                const Real f = (t * t + p) * t + q;
-                
-                eprint( std::string("RealCubicSolve( ") + ToString(b) + ", " + ToString(c) + ", " + ToString(d) + "," + ToString(tol) + ", " + ToString(max_iter) + " ) did not converge. Residual = " + ToString(f) + ", last step size = " + ToString(delta_t) + ".");
-            }
+//            if( iter >= max_iter )
+//            {
+//                const Real f = (t * t + p) * t + q;
+//                
+//                wprint( std::string("RealCubicSolve( ") + ToString(b) + ", " + ToString(c) + ", " + ToString(d) + "," + ToString(tol) + ", " + ToString(max_iter) + " ) did not converge. Residual = " + ToString(f) + ", last step size = " + ToString(delta_t) + ".");
+//            }
 
             t_0 = t;
         }
@@ -412,7 +412,7 @@ namespace Tools
     
     template<typename Real>
     void RealCubicSolve( const Real a, const Real b, const Real c, const Real d, mptr<Real> x,
-        const Real tol = 16 * Scalar::eps<Real>, const int max_iter = 16
+        const Real tol = 64 * Scalar::eps<Real>, const int max_iter = 32
     )
     {
         // Computes the real roots of the cubic equation a * x^3 + b * x^2 + c * x + d = 0.

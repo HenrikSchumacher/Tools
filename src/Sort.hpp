@@ -18,9 +18,11 @@ namespace Tools
     force_inline void CompSwap( mref<T> a, mref<T> b, C comp = C()  )
     {
         const std::pair<T,T> p = std::minmax(a,b,comp);
-
+        
         a = p.first;
         b = p.second;
+        
+//        std::tie( a, b ) = std::minmax(a,b,comp);
     }
 
     template<typename T>

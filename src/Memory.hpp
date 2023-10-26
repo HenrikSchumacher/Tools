@@ -39,12 +39,12 @@ namespace Tools
     static constexpr Size_T PrefetchStride = 4 * CacheLineWidth;
 
     
-    // Only for backward compatibility. Better use cptr and mptr.
-    // immutable, unaliased pointer to immutable type
-    template<typename T> using ptr = const T * restrict const;
-    
-    // immutable, unaliased pointer to mutable type
-    template<typename T> using mut =       T * restrict const;
+//    // Only for backward compatibility. Better use cptr and mptr.
+//    // immutable, unaliased pointer to immutable type
+//    template<typename T> using ptr = const T * restrict const;
+//    
+//    // immutable, unaliased pointer to mutable type
+//    template<typename T> using mut =       T * restrict const;
     
     
     // immutable, unaliased pointer to immutable type
