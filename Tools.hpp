@@ -166,6 +166,7 @@ namespace Tools
     #include <cmath>
     #include "src/MyMath/MyMath.hpp"
     #include "src/MyMath/BisectionSearch.hpp"
+    #include "src/MyMath/ProbabilityDistributions.hpp"
 
     #include "src/BLAS_Enums.hpp"
 
