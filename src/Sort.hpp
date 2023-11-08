@@ -14,15 +14,25 @@ namespace Tools
         }
     };
 
-    template<typename T, typename C>
+    template<typename T, typename C = std::less<T>>
     force_inline void CompSwap( mref<T> a, mref<T> b, C comp = C()  )
     {
-        const std::pair<T,T> p = std::minmax(a,b,comp);
+        // Beware, std::tie( a, b ) = std::minmax(a,b,comp) does not work!!!
+
+        // The initializer list makes this fast. I don't know why!
+        std::tie(a,b) = std::minmax({a,b},comp); // We need to enforce a copy.
         
-        a = p.first;
-        b = p.second;
+//        // This 3-4 times slower. I don't really have any idea why:
+//        const std::pair<T,T> p = std::minmax(a,b,comp);
+//        a = p.first;
+//        b = p.second;
+
         
-//        std::tie( a, b ) = std::minmax(a,b,comp);
+//        // Even slower:
+//        if( comp(b,a) )
+//        {
+//            std::swap(a,b);
+//        }
     }
 
     template<typename T>
@@ -685,7 +695,6 @@ namespace Tools
     template<typename T, typename C = std::less<T>>
     void Sort( mptr<T> begin, mptr<T> end, C comp = C() )
     {
-        
         // Use sorting networks for inputs of length <= 16; use std::sort otherwise.
         switch( std::distance( begin, end ) )
         {
