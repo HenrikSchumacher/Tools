@@ -27,14 +27,6 @@ namespace Tools
             return ((c_3 * x + c_2) * x + c_1) * x + c_0;
         };
         
-        const Real Dc_3  = Scalar::Three<Real> * c_3;
-        const Real Dc_2  = Scalar::Two<Real>   * c_2;
-        
-        auto Df = [Dc_3,Dc_2,c_1]( const Real x )
-        {
-            return (( Dc_3 * x + Dc_2) * x + c_1);
-        };
-        
         const Real x_I = - c_2 / ( Scalar::Three<Real> * c_3);
         const Real D   = c_2 * c_2 - Scalar::Three<Real> * c_1 * c_3;
         

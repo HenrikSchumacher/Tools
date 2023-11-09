@@ -157,10 +157,11 @@ namespace Tools
     #include "src/ToString.hpp"
     #include "src/Print.hpp"
     #include "src/Profiler.hpp"
+    #include "src/Scalars.hpp"
     #include "src/BitFiddling.hpp"
     #include "src/Memory.hpp"
 
-    #include "src/Scalars.hpp"
+    
 
     #define _USE_MATH_DEFINES
     #include <cmath>

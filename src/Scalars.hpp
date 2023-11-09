@@ -38,15 +38,15 @@ namespace Tools
             }
         }
     }
-    using Int8   = int8_t;
-    using Int16  = int16_t;
-    using Int32  = int32_t;
-    using Int64  = int64_t;
+    using Int8    = std::int8_t;
+    using Int16   = std::int16_t;
+    using Int32   = std::int32_t;
+    using Int64   = std::int64_t;
     
-    using UInt8   = uint8_t;
-    using UInt16  = uint16_t;
-    using UInt32  = uint32_t;
-    using UInt64  = uint64_t;
+    using UInt8   = std::uint8_t;
+    using UInt16  = std::uint16_t;
+    using UInt32  = std::uint32_t;
+    using UInt64  = std::uint64_t;
     
     using Real32  = float;
     using Real64  = double;
@@ -118,21 +118,21 @@ namespace Tools
         
         template<typename T> constexpr int Prec     = 0;
         
-        template<> constexpr uint Prec<Real32 >     = 32u;
-        template<> constexpr uint Prec<Real64 >     = 64u;
-//        template<> constexpr uint Prec<Real128>     = 128u;
-        template<> constexpr uint Prec<Complex32 >  = 32u;
-        template<> constexpr uint Prec<Complex64 >  = 64u;
-//        template<> constexpr uint Prec<Complex128>  = 128u;
+        template<> constexpr UInt32 Prec<Real32 >     = 32u;
+        template<> constexpr UInt32 Prec<Real64 >     = 64u;
+//        template<> constexpr UInt32 Prec<Real128>     = 128u;
+        template<> constexpr UInt32 Prec<Complex32 >  = 32u;
+        template<> constexpr UInt32 Prec<Complex64 >  = 64u;
+//        template<> constexpr UInt32 Prec<Complex128>  = 128u;
         
-//        template<> constexpr uint Prec<Int8  >      =  8u;
-//        template<> constexpr uint Prec<Int16 >      = 16u;
-//        template<> constexpr uint Prec<Int32 >      = 32u;
-//        template<> constexpr uint Prec<Int64 >      = 64u;
-//        template<> constexpr uint Prec<UInt8 >      =  8u;
-//        template<> constexpr uint Prec<UInt16>      = 16u;
-//        template<> constexpr uint Prec<UInt32>      = 32u;
-//        template<> constexpr uint Prec<UInt64>      = 64u;
+//        template<> constexpr UInt32 Prec<Int8  >      =  8u;
+//        template<> constexpr UInt32 Prec<Int16 >      = 16u;
+//        template<> constexpr UInt32 Prec<Int32 >      = 32u;
+//        template<> constexpr UInt32 Prec<Int64 >      = 64u;
+//        template<> constexpr UInt32 Prec<UInt8 >      =  8u;
+//        template<> constexpr UInt32 Prec<UInt16>      = 16u;
+//        template<> constexpr UInt32 Prec<UInt32>      = 32u;
+//        template<> constexpr UInt32 Prec<UInt64>      = 64u;
         
   
         template<typename T>
@@ -148,6 +148,17 @@ namespace Tools
             std::conditional_t<Prec<T> ==  64u,  Complex64,
 //            std::conditional_t<Prec<T> == 128u, Complex128,
             T>>;
+        
+
+        template<typename T>
+        using Unsigned =
+            std::conditional_t<sizeof(T) ==  1u,  UInt8,
+            std::conditional_t<sizeof(T) ==  2u,  UInt16,
+            std::conditional_t<sizeof(T) ==  4u,  UInt32,
+            std::conditional_t<sizeof(T) ==  8u,  UInt64,
+//            std::conditional_t<Prec<T> == 128u, Real128,
+            T>>>>;
+        
         
 //        template<typename T>
 //        using Real =

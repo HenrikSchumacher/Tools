@@ -7,7 +7,7 @@ namespace Tools
         Size_T N = VarSize, Parallel_T parQ = Sequential,
         typename T
     >
-    force_inline void iota_buffer(
+    force_inline constexpr void iota_buffer(
         mptr<T> a,
         const Size_T n = N, const Size_T thread_count = 1
     )

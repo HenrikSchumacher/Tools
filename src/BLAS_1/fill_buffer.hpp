@@ -7,7 +7,7 @@ namespace Tools
         Size_T N = VarSize, Parallel_T parQ = Sequential,
         typename T
     >
-    force_inline void fill_buffer(
+    force_inline constexpr void fill_buffer(
         mptr<T> a, const T init, const Size_T n = N, const Size_T thread_count = 1
     )
     {

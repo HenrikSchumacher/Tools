@@ -6,7 +6,7 @@ namespace Tools
     template<typename From, typename To>
     struct static_caster
     {
-        To operator()(const From & p)
+        constexpr To operator()(const From & p)
         {
             return static_cast<To>(p);
         }
@@ -20,7 +20,7 @@ namespace Tools
         Size_T N = VarSize, Parallel_T parQ = Sequential,
         typename S, typename T
     >
-    force_inline void copy_buffer(
+    force_inline constexpr void copy_buffer(
         cptr<S> from, mptr<T> to, const Size_T n = N, const Size_T thread_count = 1
     )
     {
