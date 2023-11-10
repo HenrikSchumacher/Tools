@@ -107,7 +107,7 @@ namespace Tools
 
                 c = ( b * f_a - a * f_b ) / ( f_a - f_b );
                 
-                const Real f_c = f(c) - value;
+                f_c = f(c) - value;
                 
                 if( f_c > zero )
                 {
