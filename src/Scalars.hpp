@@ -198,7 +198,8 @@ namespace Tools
         
         template<typename T> constexpr Scalar::Real<T> Pi = static_cast<Scalar::Real<T>>(3.141592653589793238462643383279502884197);
         
-        template<typename T> constexpr Scalar::Real<T> TwoPi = Scalar::Two<T> * Scalar::Pi<T>;
+        template<typename T> constexpr Scalar::Real<T> TwoPi    = Scalar::Two<T> * Scalar::Pi<T>;
+        template<typename T> constexpr Scalar::Real<T> TwoPiInv = Scalar::One<T> / ( Scalar::Two<T> * Scalar::Pi<T> );
         
         template<typename T> constexpr Scalar::Real<T> eps      = std::numeric_limits<Scalar::Real<T>>::epsilon();
         template<typename T> constexpr Scalar::Real<T> Max      = std::numeric_limits<Scalar::Real<T>>::max();
