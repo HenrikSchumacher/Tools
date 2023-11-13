@@ -205,7 +205,7 @@ namespace Tools
             return std::shared_ptr<BASE>(CloneImplementation());                    \
         }                                                                           \
     private:                                                                        \
-        virtual BASE * CloneImplementation() const = 0;
+        [[nodiscard]] virtual BASE * CloneImplementation() const = 0;
         
     #define __ADD_CLONE_CODE_FOR_ABSTRACT_CLASS__(CLASS)                            \
     public:                                                                         \
@@ -214,7 +214,7 @@ namespace Tools
             return std::shared_ptr<CLASS>(CloneImplementation());                   \
         }                                                                           \
     private:                                                                        \
-        virtual CLASS * CloneImplementation() const override = 0;
+        [[nodiscard]] virtual CLASS * CloneImplementation() const override = 0;
         
         
     #define __ADD_CLONE_CODE__(DERIVED)                                             \
@@ -225,7 +225,7 @@ namespace Tools
         }                                                                           \
                                                                                     \
     private:                                                                        \
-        virtual DERIVED * CloneImplementation() const override                      \
+        [[nodiscard]] virtual DERIVED * CloneImplementation() const override        \
         {                                                                           \
             return new DERIVED(*this);                                              \
         }
