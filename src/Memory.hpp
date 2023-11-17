@@ -22,6 +22,8 @@ namespace Tools
     #if !defined(prefetch)
         #if defined(__GNUC__) || defined(__clang__)
             #define prefetch __builtin_prefetch
+        #else
+            #define prefetch( a, b, c)
         #endif
     #endif
     
