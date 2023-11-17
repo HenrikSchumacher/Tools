@@ -138,11 +138,13 @@ namespace Tools
     
     
     
-#if ( defined(__clang__) && __has_attribute(ext_vector_type) )
-    static constexpr bool vec_enabledQ = true;
+#if defined(__clang__)
+    #if ( __has_attribute(ext_vector_type) )
+        static constexpr bool vec_enabledQ = true;
     
-    template<Size_T N, typename T>
-    using vec_T = T __attribute__((__ext_vector_type__(N))) ;
+        template<Size_T N, typename T>
+        using vec_T = T __attribute__((__ext_vector_type__(N))) ;
+    #endif
 #else
     static constexpr bool vec_enabledQ = false;
     
