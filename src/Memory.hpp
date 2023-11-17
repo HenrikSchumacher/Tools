@@ -2,8 +2,6 @@
 
 namespace Tools
 {
-
-
     #if !defined(restrict)
         #if defined(__GNUC__)
             #define restrict __restrict__
@@ -23,10 +21,9 @@ namespace Tools
         #if defined(__GNUC__) || defined(__clang__)
             #define prefetch __builtin_prefetch
         #else
-            #define prefetch( a, b, c)
+            #define prefetch( a, b, c )
         #endif
     #endif
-    
     
     // length of cache line measured in bytes
     static constexpr Size_T CacheLineWidth = 64;
