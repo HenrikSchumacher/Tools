@@ -3,17 +3,17 @@
 namespace Tools
 {
     template<
-        Scalar::Flag alpha_flag, Scalar::Flag beta_flag,
+        Scalar::Flag a_flag, Scalar::Flag b_flag,
         Op opx = Op::Id, Op opy = Op::Id,
-        typename R_0, typename S_0,
-        typename R_1, typename S_1
+        typename a_T, typename x_T,
+        typename b_T, typename y_T
     >
     constexpr force_inline void combine_scalars(
-        cref<R_0> alpha, cref<S_0> x,
-        cref<R_1> beta,  mref<S_1> y
+        cref<a_T> a, cref<x_T> x,
+        cref<b_T> b, mref<y_T> y
     )
     {
-        // Computes y = alpha * opx( x ) + beta * opy( y ).
+        // Computes y = a * opx( x ) + b * opy( y ).
         
         
         static_assert( (opx == Op::Id) || (opx == Op::Conj),
@@ -25,55 +25,55 @@ namespace Tools
         );
         
         constexpr auto ox = COND( opx == Op::Conj,
-                []( const S_0 & z ){ return Conj<S_0>(z); },
-                []( const S_0 & z ){ return z; }
+                []( const x_T & X ){ return scalar_cast<y_T>( Conj<x_T>(X) ); },
+                []( const x_T & X ){ return scalar_cast<y_T>( X ); }
         );
         
         constexpr auto oy = COND( opy == Op::Conj,
-                []( const S_1 & z ){ return Conj<S_1>(z); },
-                []( const S_1 & z ){ return z; }
+                []( const y_T & Y ){ return Conj<y_T>(Y); },
+                []( const y_T & Y ){ return Y; }
         );
         
-        static_assert( Scalar::ComplexQ<S_1> || (Scalar::RealQ<R_0> && Scalar::RealQ<S_0> && Scalar::RealQ<R_1>),
+        static_assert( Scalar::ComplexQ<y_T> || (Scalar::RealQ<a_T> && Scalar::RealQ<x_T> && Scalar::RealQ<b_T>),
             "Fourth argument is real, but some of the other arguments are complex."
         );
         
-        // We refrain from automagically casting `alpha` and `beta` to the right precision because this is better done once before any loop that calls `combine_scalars`. Hence we prefer a compile error here.
+        // We refrain from automagically casting `a` and `b` to the right precision because this is better done once before any loop that calls `combine_scalars`. Hence we prefer a compile error here.
         
         static_assert(
-            Scalar::Prec<R_0> == Scalar::Prec<S_1>,
+            Scalar::Prec<a_T> == Scalar::Prec<y_T>,
             "Precisions of first and fourth argument do not coincide."
         );
         
         static_assert(
-            Scalar::Prec<R_1> == Scalar::Prec<S_1>,
+            Scalar::Prec<b_T> == Scalar::Prec<y_T>,
             "Precisions of third and fourth argument do not coincide."
         );
         
-        switch( alpha_flag )
+        switch( a_flag )
         {
             case Scalar::Flag::Generic:
             {
-                switch( beta_flag )
+                switch( b_flag )
                 {
                     case Scalar::Flag::Generic:
                     {
-                        y = (alpha * scalar_cast<S_1>( ox(x) )) + (beta * oy(y) );
+                        y = a * ox(x) + b * oy(y);
                         break;
                     }
                     case Scalar::Flag::Plus:
                     {
-                        y = alpha * scalar_cast<S_1>( ox(x) ) + oy(y);
+                        y = a * ox(x) + oy(y);
                         break;
                     }
                     case Scalar::Flag::Zero:
                     {
-                        y = alpha * scalar_cast<S_1>( ox(x) );
+                        y = a * ox(x);
                         break;
                     }
                     case Scalar::Flag::Minus:
                     {
-                        y = (alpha * scalar_cast<S_1>( ox(x) )) - oy(y);
+                        y = a * ox(x) - oy(y);
                         break;
                     }
                 }
@@ -81,26 +81,26 @@ namespace Tools
             }
             case Scalar::Flag::Plus:
             {
-                switch( beta_flag )
+                switch( b_flag )
                 {
                     case Scalar::Flag::Generic:
                     {
-                        y = scalar_cast<S_1>( ox(x) ) + (beta * oy(y));
+                        y = ox(x) + b * oy(y);
                         break;
                     }
                     case Scalar::Flag::Plus:
                     {
-                        y = scalar_cast<S_1>( ox(x) ) + oy(y);
+                        y = ox(x) + oy(y);
                         break;
                     }
                     case Scalar::Flag::Zero:
                     {
-                        y = scalar_cast<S_1>( ox(x) );
+                        y = ox(x);
                         break;
                     }
                     case Scalar::Flag::Minus:
                     {
-                        y = scalar_cast<S_1>( ox(x) ) - oy(y);
+                        y = ox(x) - oy(y);
                         break;
                     }
                 }
@@ -108,11 +108,11 @@ namespace Tools
             }
             case Scalar::Flag::Zero:
             {
-                switch( beta_flag )
+                switch( b_flag )
                 {
                     case Scalar::Flag::Generic:
                     {
-                        y = beta * oy(y);
+                        y = b * oy(y);
                         break;
                     }
                     case Scalar::Flag::Plus:
@@ -122,7 +122,7 @@ namespace Tools
                     }
                     case Scalar::Flag::Zero:
                     {
-                        y = Scalar::Zero<S_1>;
+                        y = Scalar::Zero<y_T>;
                         break;
                     }
                     case Scalar::Flag::Minus:
@@ -135,26 +135,190 @@ namespace Tools
             }
             case Scalar::Flag::Minus:
             {
-                switch( beta_flag )
+                switch( b_flag )
                 {
                     case Scalar::Flag::Generic:
                     {
-                        y = (beta * oy(y)) - scalar_cast<S_1>( ox(x) );
+                        y = b * oy(y) - ox(x);
                         break;
                     }
                     case Scalar::Flag::Plus:
                     {
-                        y = oy(y) - scalar_cast<S_1>( ox(x) );
+                        y = oy(y) - ox(x);
                         break;
                     }
                     case Scalar::Flag::Zero:
                     {
-                        y = scalar_cast<S_1>( - ox(x) );
+                        y = - ox(x);
                         break;
                     }
                     case Scalar::Flag::Minus:
                     {
-                        y = -( scalar_cast<S_1>(ox(x)) + oy(y) );
+                        y = -( ox(x) + oy(y) );
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+    }
+    
+    
+    template<
+        Scalar::Flag a_flag, Scalar::Flag b_flag,
+        Op opx = Op::Id, Op opy = Op::Id,
+        typename a_T, typename x_T,
+        typename b_T, typename y_T, typename z_T
+    >
+    constexpr force_inline void combine_scalars(
+        cref<a_T> a, cref<x_T> x,
+        cref<b_T> b, cref<y_T> y,
+                     mref<z_T> z
+    )
+    {
+        // This computes z = a * opx( x ) + b * opy( y ).
+        // Most importantly, we guarantee casting to the correct output type.
+        
+        
+        static_assert( (opx == Op::Id) || (opx == Op::Conj),
+            "combine_scalars: Only the values Op::Id and Op::Conj are allowed for opx."
+        );
+        
+        static_assert( (opy == Op::Id) || (opy == Op::Conj),
+            "combine_scalars: Only the values Op::Id and Op::Conj are allowed for opy."
+        );
+        
+        constexpr auto ox = COND( opx == Op::Conj,
+                []( const x_T & X ){ return scalar_cast<z_T>( Conj<x_T>(X) ); },
+                []( const x_T & X ){ return scalar_cast<z_T>( X ); }
+        );
+        
+        constexpr auto oy = COND( opy == Op::Conj,
+                []( const y_T & Y ){ return scalar_cast<z_T>( Conj<y_T>(Y) ); },
+                []( const y_T & Y ){ return scalar_cast<z_T>( Y ); }
+        );
+        
+        static_assert( Scalar::ComplexQ<z_T> || (Scalar::RealQ<a_T> && Scalar::RealQ<x_T> && Scalar::RealQ<b_T> && Scalar::RealQ<y_T>),
+            "Last argument is real, but some of the other arguments are complex."
+        );
+        
+        // We refrain from automagically casting `a` and `b` to the right precision because this is better done once before any loop that calls `combine_scalars`. Hence we prefer a compile error here.
+        
+        static_assert(
+            Scalar::Prec<a_T> == Scalar::Prec<z_T>,
+            "Precisions of first and last argument do not coincide."
+        );
+        
+        static_assert(
+            Scalar::Prec<b_T> == Scalar::Prec<z_T>,
+            "Precisions of third and last argument do not coincide."
+        );
+        
+        switch( a_flag )
+        {
+            case Scalar::Flag::Generic:
+            {
+                switch( b_flag )
+                {
+                    case Scalar::Flag::Generic:
+                    {
+                        z = a * ox(x) + b * oy(y);
+                        break;
+                    }
+                    case Scalar::Flag::Plus:
+                    {
+                        z = a * ox(x) + oy(y);
+                        break;
+                    }
+                    case Scalar::Flag::Zero:
+                    {
+                        z = a * ox(x);
+                        break;
+                    }
+                    case Scalar::Flag::Minus:
+                    {
+                        z = a * ox(x) - oy(y);
+                        break;
+                    }
+                }
+                break;
+            }
+            case Scalar::Flag::Plus:
+            {
+                switch( b_flag )
+                {
+                    case Scalar::Flag::Generic:
+                    {
+                        z = ox(x) + b * oy(y);
+                        break;
+                    }
+                    case Scalar::Flag::Plus:
+                    {
+                        z = ox(x) + oy(y);
+                        break;
+                    }
+                    case Scalar::Flag::Zero:
+                    {
+                        z = ox(x);
+                        break;
+                    }
+                    case Scalar::Flag::Minus:
+                    {
+                        z = ox(x) - oy(y);
+                        break;
+                    }
+                }
+                break;
+            }
+            case Scalar::Flag::Zero:
+            {
+                switch( b_flag )
+                {
+                    case Scalar::Flag::Generic:
+                    {
+                        z = b * oy(y);
+                        break;
+                    }
+                    case Scalar::Flag::Plus:
+                    {
+                        z = oy(y);
+                        break;
+                    }
+                    case Scalar::Flag::Zero:
+                    {
+                        z = Scalar::Zero<z_T>;
+                        break;
+                    }
+                    case Scalar::Flag::Minus:
+                    {
+                        z = - oy(y);
+                        break;
+                    }
+                }
+                break;
+            }
+            case Scalar::Flag::Minus:
+            {
+                switch( b_flag )
+                {
+                    case Scalar::Flag::Generic:
+                    {
+                        z = b * oy(y) - ox(x);
+                        break;
+                    }
+                    case Scalar::Flag::Plus:
+                    {
+                        z = oy(y) - ox(x);
+                        break;
+                    }
+                    case Scalar::Flag::Zero:
+                    {
+                        z = - ox(x);
+                        break;
+                    }
+                    case Scalar::Flag::Minus:
+                    {
+                        z = -( ox(x) + oy(y) );
                         break;
                     }
                 }

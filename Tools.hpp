@@ -202,7 +202,7 @@ namespace Tools
         
     #define __ADD_CLONE_CODE_FOR_BASE_CLASS__(BASE)                                 \
     public:                                                                         \
-        std::shared_ptr<BASE> Clone () const                                        \
+        [[nodiscard]] std::shared_ptr<BASE> Clone () const                          \
         {                                                                           \
             return std::shared_ptr<BASE>(CloneImplementation());                    \
         }                                                                           \
@@ -211,7 +211,7 @@ namespace Tools
         
     #define __ADD_CLONE_CODE_FOR_ABSTRACT_CLASS__(CLASS)                            \
     public:                                                                         \
-        std::shared_ptr<CLASS> Clone () const                                       \
+        [[nodiscard]] std::shared_ptr<CLASS> Clone () const                         \
         {                                                                           \
             return std::shared_ptr<CLASS>(CloneImplementation());                   \
         }                                                                           \
@@ -221,7 +221,7 @@ namespace Tools
         
     #define __ADD_CLONE_CODE__(DERIVED)                                             \
     public:                                                                         \
-        std::shared_ptr<DERIVED> Clone () const                                     \
+        [[nodiscard]] std::shared_ptr<DERIVED> Clone () const                       \
         {                                                                           \
             return std::shared_ptr<DERIVED>(CloneImplementation());                 \
         }                                                                           \

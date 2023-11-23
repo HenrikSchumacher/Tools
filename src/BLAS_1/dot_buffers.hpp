@@ -5,16 +5,16 @@ namespace Tools
     template <
         Size_T N = VarSize, Parallel_T parQ = Sequential,
         Op opx = Op::Id, Op opy = Op::Id,
-        typename R, typename S
+        typename x_T, typename y_T
     >
-    force_inline
-    decltype( R(1)*S(1) ) dot_buffers(
-        cptr<R> x, cptr<S> y, const Size_T n = N, const Size_T thread_count = 1
+    [[nodiscard]] force_inline
+    decltype( x_T(1) * y_T(1) ) dot_buffers(
+        cptr<x_T> x, cptr<y_T> y, const Size_T n = N, const Size_T thread_count = 1
     )
     {
         // Computes inner product <opx(x), opx(y)> of two vectors x and y.
 
-        check_sequential<parQ>( "combine_scatter_write", thread_count );
+        check_sequential<parQ>( "dot_buffers", thread_count );
         
         static_assert( (opx == Op::Id) || (opx == Op::Conj),
             "dot_buffers: Only the values Op::Id and Op::Conj are allowed for opx."
@@ -24,28 +24,28 @@ namespace Tools
             "dot_buffers: Only the values Op::Id and Op::Conj are allowed for opy."
         );
         
+        using T = decltype( x_T(1) * y_T(1) );
+        
         constexpr auto ox = COND( opx == Op::Conj,
-                []( const R & z ){ return Conj<R>(z); },
-                []( const R & z ){ return z; }
+                []( const x_T & z ){ return scalar_cast<T>( Conj<x_T>(z) ); },
+                []( const x_T & z ){ return scalar_cast<T>( z ); }
         );
         
         constexpr auto oy = COND( opy == Op::Conj,
-                []( const S & z ){ return Conj<S>(z); },
-                []( const S & z ){ return z; }
+                []( const y_T & z ){ return scalar_cast<T>( Conj<y_T>(z) ); },
+                []( const y_T & z ){ return scalar_cast<T>( z ); }
         );
-        
-        using T = decltype( R(1)*S(1) );
         
         if constexpr ( N == VarSize )
         {
             if constexpr ( parQ == Parallel )
             {
                 return ParallelDoReduce(
-                    [=]( const Size_T i ) -> T
+                    [=]( const Size_T i )
                     {
-                        return scalar_cast<T>( ox(x[i]) ) * scalar_cast<T>( oy(y[i]) );
+                        return ox(x[i]) * oy(y[i]);
                     },
-                    []( const Size_T thread, const T & value, T & result ) -> T
+                    []( const Size_T thread, const T & value, T & result )
                     {
                         result += value;
                     },
@@ -54,11 +54,11 @@ namespace Tools
             }
             else
             {
-                decltype( R(1) * S(1) ) sum = 0;
+                T sum = 0;
                 
                 for( Size_T i = 0; i < n; ++i )
                 {
-                    sum += scalar_cast<T>( ox(x[i]) ) * scalar_cast<T>( oy(y[i]) );
+                    sum += ox(x[i]) * oy(y[i]);
                 }
                 
                 return sum;
@@ -67,9 +67,10 @@ namespace Tools
         else
         {
             T sum = 0;
-            for( Size_T i = 0; i < n; ++i )
+            
+            for( Size_T i = 0; i < N; ++i )
             {
-                sum += scalar_cast<T>( ox(x[i]) ) * scalar_cast<T>( oy(y[i]) );
+                sum += ox(x[i]) * oy(y[i]);
             }
             return sum;
         }
