@@ -32,7 +32,7 @@ namespace Tools
         
         auto Solve = [f,TOL]( const Real L, const Real R, const Real x_init )
         {
-            return RegulaFalsi<0>( f, L, R, 0., TOL );
+            return RegulaFalsi<0>( f, L, R, Scalar::Zero<Real>, TOL );
         };
 
         std::vector<Real> cand;
@@ -46,7 +46,7 @@ namespace Tools
         
         if( D > zero )
         {
-            const Real delta = Sqrt(D) /  ( Scalar::Three<Real> * c_3);
+            const Real delta = Abs( Sqrt(D) /  ( Scalar::Three<Real> * c_3 ) );
             
             // The two critical points.
             const Real x_L = x_I - delta;
@@ -102,8 +102,7 @@ namespace Tools
             {
                 x_out[counter++] = Solve( cand[i-1], cand[i], Scalar::Half<Real>*(cand[i-1]+cand[i]) );
             }
-                
-            if( sign[i] == zero )
+            else if( sign[i] == zero )
             {
                 x_out[counter++] = cand[i];
             }
