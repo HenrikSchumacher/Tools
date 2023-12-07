@@ -54,6 +54,27 @@ namespace Tools
         
         ~Interval() = default;
         
+    
+#if defined(LTEMPLATE_H) || defined(MATHEMATICA)
+        
+        explicit Interval( cref<mma::TensorRef<Real>> A )
+        : Interval{ A.data()[0], A.data()[1]  }
+        {}
+        
+        mma::TensorRef<Real> to_MTensorRef() const
+        {
+            mma::makeVector<Real>( 2 ) R;
+            
+            data(R)[0] = -a;
+            data(R)[1] =  b;
+            
+            return R;
+        }
+        
+        
+#endif
+        
+    
         
         // Copy constructor
         Interval( const Interval & J )
