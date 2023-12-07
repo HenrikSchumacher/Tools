@@ -21,7 +21,7 @@ namespace Tools
         ,   end_(end__)
         ,   block_count(block_count__)
         {
-            total_size = Max( static_cast<Int>(0), end_ - begin_ );
+            total_size = Ramp( end_ - begin_ );
             block_size = total_size / block_count;
             if (block_size == 0)
             {

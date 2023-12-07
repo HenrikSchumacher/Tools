@@ -11,8 +11,8 @@ namespace Tools
         // If up_lo_flag >  0, then return interval endpoint with higher function value.
         // If up_lo_flag <  0, then return interval endpoint with lower function value.
         
-        Real a = std::min(a_0,b_0);
-        Real b = std::max(a_0,b_0);
+        Real a = Min(a_0,b_0);
+        Real b = Max(a_0,b_0);
         
         Real f_a = f(a);
         Real f_b = f(b);

@@ -118,25 +118,68 @@ namespace Tools
     template<typename Real>
     force_inline constexpr Real Max( const Real & x, const Real & y )
     {
-        return std::max( x, y );
+        if constexpr ( std::is_floating_point_v<Real> )
+        {
+            return std::fmax(x,y);
+        }
+        else
+        {
+            return std::max(x,y);
+        }
     }
     
     template<typename Real>
     force_inline constexpr Real Min( const Real & x, const Real & y )
     {
-        return std::min( x, y );
+        if constexpr ( std::is_floating_point_v<Real> )
+        {
+            return std::fmin(x,y);
+        }
+        else
+        {
+            return std::min(x,y);
+        }
+    }
+    
+    
+    template<typename Real>
+    force_inline constexpr std::pair<Real,Real> MinMax( const Real & x, const Real & y )
+    {
+        if constexpr ( std::is_floating_point_v<Real> )
+        {
+            return std::pair<Real,Real>( std::fmin(x,y), std::fmax(x,y) );
+        }
+        else
+        {
+            return std::max(x,y);
+        }
     }
     
     template<typename Real>
     force_inline constexpr Real Ramp( const Real & x )
     {
-        return std::max( Scalar::Zero<Real>, x );
+        static_assert(Scalar::RealQ<Real>, "Argument must be of a real type.");
+        return Max( Scalar::Zero<Real>, x );
+    }
+    
+    template<typename Real>
+    force_inline constexpr Real Clamp( const Real & x, const Real & a, const Real & b )
+    {
+        static_assert(Scalar::RealQ<Real>, "Argument must be of a real type.");
+        return Max( a, Min( b, x ) );
+    }
+    
+    template<typename Real>
+    force_inline constexpr Real Ramp_1( const Real & x )
+    {
+        static_assert(Scalar::RealQ<Real>, "Argument must be of a real type.");
+        return Max( Scalar::One<Real>, x );
     }
     
     template<typename Real>
     force_inline constexpr Real Sqrt( const Real & x )
     {
-        return std::sqrt( x );
+        return std::sqrt(x);
     }
     
     template<typename Real>

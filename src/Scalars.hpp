@@ -91,6 +91,8 @@ namespace Tools
         template<> constexpr bool RealQ<UInt32>        = true;
         template<> constexpr bool RealQ<UInt64>        = true;
         
+        template<> constexpr bool RealQ<Size_T>        = true;
+        
         template<typename T> constexpr bool ScalarQ = false;
         
         template<> constexpr bool ScalarQ<Real32 >     = true;

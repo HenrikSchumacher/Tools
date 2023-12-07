@@ -171,7 +171,6 @@ namespace Tools
     #include "src/MyMath/ProbabilityDistributions.hpp"
     #include "src/MyMath/BisectionSearch.hpp"
     #include "src/MyMath/RegulaFalsi.hpp"
-    #include "src/MyMath/RealCubicSolve.hpp"
 
     #include "src/BLAS_Enums.hpp"
 
@@ -197,6 +196,8 @@ namespace Tools
     #include "src/CachedObject.hpp"
 
     #include "src/Sort.hpp"
+
+    #include "src/MyMath/RealCubicSolve.hpp"
 
         //https://stackoverflow.com/a/43587319/8248900
         

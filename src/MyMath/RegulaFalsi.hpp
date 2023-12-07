@@ -18,8 +18,8 @@ namespace Tools
         
         const Real e = Scalar::Half<Real> * relative_error;
         
-        Real a = std::min(a_0,b_0);
-        Real b = std::max(a_0,b_0);
+        Real a = Min(a_0,b_0);
+        Real b = Max(a_0,b_0);
         
         Real f_a = f(a) - value;
         Real f_b = f(b) - value;
