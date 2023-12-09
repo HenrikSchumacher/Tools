@@ -205,7 +205,7 @@ namespace Tools
         
         template<typename T> constexpr Scalar::Real<T> eps      = std::numeric_limits<Scalar::Real<T>>::epsilon();
         template<typename T> constexpr Scalar::Real<T> Max      = std::numeric_limits<Scalar::Real<T>>::max();
-        template<typename T> constexpr Scalar::Real<T> Infty    = std::numeric_limits<Scalar::Real<T>>::max();
+        template<typename T> constexpr Scalar::Real<T> Infty    = std::numeric_limits<Scalar::Real<T>>::has_infinity ? std::numeric_limits<Scalar::Real<T>>::infinity() : std::numeric_limits<Scalar::Real<T>>::max();
         template<typename T> constexpr Scalar::Real<T> Min      = std::numeric_limits<Scalar::Real<T>>::lowest();
 
         
@@ -279,7 +279,7 @@ namespace Tools
     template<typename T>
     force_inline constexpr Scalar::Real<T> Abs( const T & z )
     {
-        return  std::abs(z);
+        return std::abs(z);
     }
     
     

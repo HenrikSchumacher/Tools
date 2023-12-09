@@ -98,15 +98,22 @@ namespace Tools
     } // Power
     
     template<typename T>
-    inline T Sign( const T val)
+    inline T Sign( const T x)
     {
-//        return static_cast<T>( (static_cast<T>(0) < val) - (val < static_cast<T>(0)) ) ;
-        
         constexpr T zero = 0;
-        constexpr T one  = 1;
         
-        return (val > zero) ? one : (val < zero) ? -one :  zero;
+        return static_cast<T>( (zero < x) - (x < zero) );
     }
+    
+    template<typename T>
+    inline int IntSign( const T x)
+    {
+        constexpr T zero = 0;
+        
+        return static_cast<int>( (zero < x) - (x < zero) );
+    }
+    
+    
     
     
     template<typename T>
@@ -151,7 +158,7 @@ namespace Tools
         }
         else
         {
-            return std::max(x,y);
+            return std::minmax(x,y);
         }
     }
     
@@ -200,7 +207,7 @@ namespace Tools
             b += (x[i]+y[i]) * (x[i]+y[i]);
         }
         
-        return 2*atan( std::sqrt(a/b) );
+        return Scalar::Two<Real> * atan( std::sqrt(a/b) );
     }
     
     template<int AmbDim, typename Real>
