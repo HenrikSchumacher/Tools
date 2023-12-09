@@ -20,6 +20,62 @@
 
 namespace Tools
 {
+
+    // From Hida, Li, Bailey - Library for Double-Double and Quad-Double Arithmetic
+    template<typename Real>
+    std::pair<Real,Real> TwoSum( const Real a, const Real b )
+    {
+        ASSERT_FLOAT(Real);
+        
+        const Real s = a + b;
+        const Real v = s - b;
+        const Real e = (a - (s - v)) + (b-v);
+        
+        return std::pair(s,e);
+        
+    }
+    
+    // From Hida, Li, Bailey - Library for Double-Double and Quad-Double Arithmetic
+    template<typename Real>
+    std::pair<Real,Real> TwoProdFMA( const Real a, const Real b )
+    {
+        ASSERT_FLOAT(Real);
+        
+        const Real p = a * b;
+        const Real e = std::fma(a,b,-p);
+        
+        return std::pair(p,e);
+        
+    }
+    
+    template<typename Real>
+    int DetSign2D_Corrected( cptr<Real> A )
+    {
+        ASSERT_FLOAT(Real);
+        
+        const auto [ad,ade] = TwoProdFMA(A[0],A[3]);
+        const auto [bc,bce] = TwoProdFMA(A[1],A[2]);
+
+        const Real diff = ad  - bc;
+        const Real e    = bce - ade;
+            
+        return (diff > e) - (diff < e);
+    }
+    
+    template<typename Real>
+    int Det2D_Corrected( cptr<Real> A )
+    {
+        ASSERT_FLOAT(Real);
+        
+        const auto [ad,ade] = TwoProdFMA(A[0],A[3]);
+        const auto [bc,bce] = TwoProdFMA(A[1],A[2]);
+
+        const Real diff = ad  - bc;
+        const Real e    = bce - ade;
+            
+        return diff - e;
+    }
+    
     class RoundingModeBarrier
     {
     protected:
@@ -30,16 +86,30 @@ namespace Tools
         
     public:
         
+        RoundingModeBarrier() = delete;
+        
         explicit RoundingModeBarrier( int state_ )
         :   prev_state( std::fegetround() )
         ,   state ( state_ )
         {
-            std::fesetround( state_ );
+            std::fesetround( state );
+            
+//            dump( prev_state );
+//            
+//            dump( state );
+//            
+//            dump( std::fegetround() );
         }
         
         ~RoundingModeBarrier()
         {
             std::fesetround( prev_state );
+            
+//            dump( prev_state );
+//            
+//            dump( state );
+//            
+//            dump( std::fegetround() );
         }
         
     }; // class RoundingModeBarrier

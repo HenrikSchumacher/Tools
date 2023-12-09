@@ -2,28 +2,109 @@
 
 namespace Tools
 {
+    
     template<bool fmaQ = true, typename Real>
-    force_inline Real SignedVolume2D_Naive( cptr<Real> x, cptr<Real> y, cptr<Real> z )
+    force_inline Real Det2D_Naive( cptr<Real> A )
     {
         if constexpr ( fmaQ )
         {
-            return std::fma( (y[0] - x[0]), (z[1] - x[1]), (x[1] - y[1]) * (z[0] - x[0]) );
+            return std::fma( A[0], A[3], - A[1] * A[2] );
         }
         else
         {
-            return (y[0] - x[0]) * (z[1] - x[1]) + (x[1] - y[1]) * (z[0] - x[0]);
+            return A[0] * A[3] - A[1] * A[2];
         }
     }
     
     template<typename Real>
-    force_inline Real Oriented2D_Naive( cptr<Real> x, cptr<Real> y, cptr<Real> z )
+    force_inline int DetSign2D_Naive( cptr<Real> A )
+    {
+        const Real ad = A[0] * A[3];
+        const Real bc = A[1] * A[2];
+        
+        return (ad > bc) - (ad < bc);
+    }
+    
+    template<bool fmaQ = true, typename Real>
+    force_inline Real SignedVolume2D_Naive( cptr<Real> x, cptr<Real> y, cptr<Real> z )
+    {
+        const Real A [2][2] {
+            { y[0] - x[0], z[1] - x[1] },
+            { y[1] - x[1], z[0] - x[0] }
+        };
+    
+        return Det2D_Naive<fmaQ>( &A[0][0] );
+    }
+    
+    template<typename Real>
+    force_inline int Oriented2D_Naive( cptr<Real> x, cptr<Real> y, cptr<Real> z )
     {
         const Real A = (y[0] - x[0]) * (z[1] - x[1]);
         const Real B = (y[1] - x[1]) * (z[0] - x[0]);
 
-        return static_cast<Real>( (A > B) - (A < B) );
+        return (A > B) - (A < B);
     }
     
+    
+
+    template<typename Real>
+    force_inline Real Det2D_Kahan( cptr<Real> A )
+    {
+        // https://www.johndcook.com/blog/2020/05/31/kahan-determinant/
+
+//        const Real w = A[1] * A[2];
+//        const Real e = std::fma(-A[1],A[2], w);
+//        const Real f = std::fma( A[0],A[3],-w);
+//    
+//        return e+f;
+        
+        const Real w = - A[1] * A[2];
+        const Real e = std::fma( A[1], A[2], w );
+        const Real f = std::fma( A[0], A[3], w );
+        
+        return f-e;
+    }
+    
+    
+    template<typename Real>
+    force_inline int DetSign2D_Kahan( cptr<Real> A )
+    {
+        const Real w = - A[1] * A[2];
+        const Real e = std::fma( A[1], A[2], w );
+        const Real f = std::fma( A[0], A[3], w );
+        
+        return (f > e) - (f < e);
+    }
+    
+    
+    template<typename Real>
+    force_inline Real SignedVolume2D_Kahan( cptr<Real> x, cptr<Real> y, cptr<Real> z )
+    {
+        const Real A [2][2] {
+            { y[0] - x[0], z[1] - x[1] },
+            { y[1] - x[1], z[0] - x[0] }
+        };
+        
+        return Det2D_Kahan( &A[0][0] );
+    }
+    
+
+    template<typename Real>
+    force_inline int Oriented2D_Kahan( cptr<Real> x, cptr<Real> y, cptr<Real> z )
+    {
+        // TODO: If this is the best solution, then I have inline here.
+    
+        const Real A [2][2] {
+            { y[0] - x[0], z[1] - x[1] },
+            { y[1] - x[1], z[0] - x[0] }
+        };
+        
+        const Real w = - A[0][1] * A[1][0];
+        const Real e = std::fma( A[0][1], A[1][0], w );
+        const Real f = std::fma( A[0][0], A[1][1], w );
+        
+        return (f > e) - (f < e);
+    }
     
     
     
@@ -61,20 +142,32 @@ namespace Tools
         }
     }
     
+    template<typename Real>
+    force_inline int DetSign2D_IA( cptr<Real> A_ )
+    {
+        using I_T = Interval<Real>;
+        using S_T = Singleton<Real>;
+        
+        cptr<S_T> A = reinterpret_cast<cptr<S_T>>(A_);
+        
+        const I_T ad = A[0] * A[3];
+        const I_T bc = A[1] * A[2];
+
+        return (ad > bc) - (ad < bc);
+    }
     
     template<bool diffsafeQ, typename Real>
-    force_inline Real Oriented2D_IA( cptr<Real> x, cptr<Real> y, cptr<Real> z )
+    force_inline int Oriented2D_IA( cptr<Real> x, cptr<Real> y, cptr<Real> z )
     {
         using I_T = Interval<Real>;
         using S_T = Singleton<Real>;
         
         if constexpr ( diffsafeQ )
         {
-            // Beware, it is fully intentional that we apply I only to one factor!
             const I_T A = S_T(y[0] - x[0]) * S_T(z[1] - x[1]);
             const I_T B = S_T(y[1] - x[1]) * S_T(z[0] - x[0]);
 
-            return static_cast<Real>( (A > B) - (A < B) );
+            return (A > B) - (A < B);
         }
         else
         {
@@ -85,7 +178,7 @@ namespace Tools
             const I_T A { (Y[0] - X[0]) * (Z[1] - X[1]) };
             const I_T B { (Y[1] - X[1]) * (Z[0] - X[0]) };
             
-            return static_cast<Real>( (A > B) - (A < B) );
+            return (A > B) - (A < B);
         }
     }
     
