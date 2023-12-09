@@ -10,7 +10,7 @@
 // https://www.codeproject.com/Articles/1040839/Interval-arithmetic-using-round-to-nearest-mode-pa
 
 
-
+// TODO: MinMax.
 // TODO: integer power.
 // TODO: operator/
 
@@ -123,41 +123,41 @@ namespace Tools
         
     public:
         
-        force_inline friend S_T operator+( cref<S_T> s )
+        force_inline friend S_T operator+( const S_T s )
         {
             return S_T{s.x};
         }
         
-        force_inline friend S_T operator-( cref<S_T> s )
+        force_inline friend S_T operator-( const S_T s )
         {
             return S_T{-s.x};
         }
         
-        force_inline friend S_T Abs( cref<S_T> s )
+        force_inline friend S_T Abs( const S_T s )
         {
             return S_T{Abs(s.x)};
         }
         
-        force_inline friend I_T Square( cref<S_T> s )
+        force_inline friend I_T Square( const S_T s )
         {
             s.RoundingModeWarning("Square");
             
             return I_T::Create( (- s.x) * s.x,  s.x * s.x);
         }
 
-        force_inline friend S_T Ramp( cref<S_T> s )
+        force_inline friend S_T Ramp( const S_T s )
         {
             return S_T{Ramp(s.x)};
         }
         
-        force_inline friend Real Sign( cref<S_T> s )
+        force_inline friend Real Sign( const S_T s )
         {
             constexpr Real zero = 0;
             
             return static_cast<Real>( (zero < s.x) - (s.x < zero) );
         }
         
-        force_inline friend int IntSign( cref<S_T> s )
+        force_inline friend int IntSign( const S_T s )
         {
             constexpr Real zero = 0;
             
@@ -173,7 +173,7 @@ namespace Tools
     
     public:
         
-        force_inline friend I_T operator+( cref<S_T> s, cref<S_T> t )
+        force_inline friend I_T operator+( const S_T s, const S_T t )
         {
             s.RoundingModeWarning("operator+ (SS)");
             
@@ -181,14 +181,14 @@ namespace Tools
         }
         
         
-        force_inline friend I_T operator-( cref<S_T> s, cref<S_T> t )
+        force_inline friend I_T operator-( const S_T s, const S_T t )
         {
             s.RoundingModeWarning("operator- (SS)");
             
             return I_T::Create( (-s.x) + t.x , s.x + (-t.x) );
         }
         
-        force_inline friend I_T operator*( cref<S_T> s, cref<S_T> t )
+        force_inline friend I_T operator*( const S_T s, const S_T t )
         {
             s.RoundingModeWarning("operator* (SS)");
             
@@ -196,12 +196,12 @@ namespace Tools
         }
         
         
-        force_inline friend S_T Max( cref<S_T> s, cref<S_T> t )
+        force_inline friend S_T Max( const S_T s, const S_T t )
         {
             return S_T( Max( s.x, t.x ) );
         }
         
-        force_inline friend S_T Min( cref<S_T> s, cref<S_T> t )
+        force_inline friend S_T Min( const S_T s, const S_T t )
         {
             return S_T( Min( s.x, t.x ) );
         }
@@ -212,7 +212,7 @@ namespace Tools
 //######################################################
         
         
-        force_inline friend I_T fma( cref<S_T> r, cref<S_T> s, cref<S_T> t )
+        force_inline friend I_T fma( const S_T r, const S_T s, const S_T t )
         {
             r.RoundingModeWarning("fma (SSS)");
             
@@ -272,14 +272,24 @@ namespace Tools
         , b{ 0 }
         {}
         
-        explicit Interval( const Real & x )
+        explicit Interval( cref<R_T> x )
         : a{ -x }
         , b{  x }
         {}
         
-        explicit Interval( const Real & lower_, const Real & upper_ )
-//        : a{ -a_ }
-//        , b{  b_ }
+        explicit Interval( cref<S_T> s )
+        : a{ -s.x }
+        , b{  s.x }
+        {}
+        
+        
+        // Copy constructor
+        Interval( cref<I_T> J )
+        :   a { J.a }
+        ,   b { J.b }
+        {}
+        
+        explicit Interval( const R_T lower_, const R_T upper_ )
         : a{ -Min(lower_,upper_) }
         , b{  Max(lower_,upper_) }
         {}
@@ -293,7 +303,7 @@ namespace Tools
         : Interval{ A.data()[0], A.data()[1]  }
         {}
         
-        mma::TensorRef<Real> friend to_MTensorRef( cref<I_T> I )
+        mma::TensorRef<Real> friend to_MTensorRef( const I_T I )
         {
             auto R = mma::makeVector<Real>( 2 );
             
@@ -303,16 +313,10 @@ namespace Tools
             return R;
         }
 #endif
+
         
         
-        // Copy constructor
-        Interval( const Interval & J )
-        :   a { J.a }
-        ,   b { J.b }
-        {}
-        
-        
-        static Interval Create( const Real & a, const Real & b )
+        static Interval Create( const R_T a, const R_T b )
         {
 #if defined(INTERVAL_DEBUG)
             if( -a > b )
@@ -329,7 +333,7 @@ namespace Tools
             return K;
         }
         
-        friend void swap (Interval & I, Interval & J ) noexcept
+        friend void swap( I_T & I, I_T & J ) noexcept
         {
             // see https://stackoverflow.com/questions/5695548/public-friend-swap-member-function for details
             using std::swap;
@@ -339,7 +343,7 @@ namespace Tools
         }
         
         // (Copy-)assignment operator
-        Interval & operator=( Interval other )
+        Interval & operator=( I_T other )
         {
             swap( *this, other );
             
@@ -347,7 +351,7 @@ namespace Tools
         }
         
         // Move constructor
-        Interval( Interval && other ) noexcept
+        Interval( I_T && other ) noexcept
         {
             swap(*this, other);
         }
@@ -395,12 +399,12 @@ namespace Tools
             return (b >= 0) && (a >= 0);
         }
         
-        force_inline bool ContainsQ( cref<R_T> x ) const
+        force_inline bool ContainsQ( const R_T x ) const
         {
             return (b >= x) && (-a <= x);
         }
         
-        force_inline bool NotContainsQ( cref<R_T> x ) const
+        force_inline bool NotContainsQ( const R_T x ) const
         {
             return (b < x) || (-a > x);
         }
@@ -416,54 +420,54 @@ namespace Tools
         }
         
 
-        force_inline friend bool operator<( cref<I_T> I, cref<I_T> J )
+        force_inline friend bool operator<( const I_T I, const I_T J )
         {
             return I.b < -J.a;
         }
         
-        force_inline friend bool operator>( cref<I_T> I, cref<I_T> J )
+        force_inline friend bool operator>( const I_T I, const I_T J )
         {
             return -I.a > J.b;
         }
         
         
         
-        force_inline friend bool operator<( cref<I_T> I, cref<R_T> x )
+        force_inline friend bool operator<( const I_T I, const R_T x )
         {
             return I.b < x;
         }
         
-        force_inline friend bool operator<( cref<I_T> I, cref<S_T> s )
+        force_inline friend bool operator<( const I_T I, const S_T s )
         {
             return I < s.x;
         }
         
-        force_inline friend bool operator>( cref<R_T> x, cref<I_T> I )
+        force_inline friend bool operator>( const R_T x, const I_T I )
         {
             return I < x;
         }
         
-        force_inline friend bool operator>( cref<S_T> s, cref<I_T> I )
+        force_inline friend bool operator>( const S_T s, const I_T I )
         {
             return I < s.x;
         }
         
-        force_inline friend bool operator>( cref<I_T> I, cref<R_T> x )
+        force_inline friend bool operator>( const I_T I, const R_T x )
         {
             return -I.a > x;
         }
         
-        force_inline friend bool operator>( cref<I_T> I, cref<S_T> s )
+        force_inline friend bool operator>( const I_T I, const S_T s )
         {
             return I > s.x;
         }
         
-        force_inline friend bool operator<( cref<R_T> x, cref<I_T> I )
+        force_inline friend bool operator<( const R_T x, const I_T I )
         {
             return I > x;
         }
         
-        force_inline friend bool operator<( cref<S_T> s, cref<I_T> I )
+        force_inline friend bool operator<( const S_T s, const I_T I )
         {
             return I > s.x;
         }
@@ -474,17 +478,17 @@ namespace Tools
         
     public:
         
-        force_inline friend I_T operator+( cref<I_T> I )
+        force_inline friend I_T operator+( const I_T I )
         {
             return Create( I.a, I.b );
         }
         
-        force_inline friend I_T operator-( cref<I_T> I )
+        force_inline friend I_T operator-( const I_T I )
         {
             return Create( I.b, I.a );
         }
         
-        force_inline friend I_T Abs( cref<I_T> I )
+        force_inline friend I_T Abs( const I_T I )
         {
             const Real A = Abs(I.a);
             const Real B = Abs(I.b);
@@ -492,7 +496,7 @@ namespace Tools
             return Create( I.ContainsZeroQ() ? 0 : Min(A,B), Max(A,B) );
         }
         
-        force_inline friend I_T Square( cref<I_T> I )
+        force_inline friend I_T Square( const I_T I )
         {
             I.RoundingModeWarning("Square");
             
@@ -502,7 +506,7 @@ namespace Tools
             return Create( I.ContainsZeroQ() ? 0 : Min(A,B), Max(A,B) );
         }
 
-        force_inline friend I_T Ramp( cref<I_T> I )
+        force_inline friend I_T Ramp( const I_T I )
         {
             return Create( Min(Scalar::Zero<Real>,I.a), Max(Scalar::Zero<Real>,I.b) );
         }
@@ -516,14 +520,14 @@ namespace Tools
 //            return (I > zero) ? one : ((I < zero) ? -one : zero);
 //        }
         
-        force_inline friend Real Sign( cref<I_T> I )
+        force_inline friend Real Sign( const I_T I )
         {
             constexpr Real zero = 0;
             
             return static_cast<Real>( (zero < I) - (I < zero) );
         }
         
-        force_inline friend int IntSign( cref<I_T> I )
+        force_inline friend int IntSign( const I_T I )
         {
             constexpr Real zero = 0;
             
@@ -539,72 +543,72 @@ namespace Tools
     
     public:
         
-        force_inline friend I_T operator+( cref<I_T> I, cref<I_T> J )
+        force_inline friend I_T operator+( const I_T I, const I_T J )
         {
             I.RoundingModeWarning("operator+ (II)");
             
             return Create( I.a + J.a, I.b + J.b );
         }
         
-        force_inline friend I_T operator+( cref<I_T> I, cref<R_T> x )
+        force_inline friend I_T operator+( const I_T I, const R_T x )
         {
             I.RoundingModeWarning("operator+ (IR)");
             
             return Create( I.a - x, I.b + x );
         }
         
-        force_inline friend I_T operator+( cref<I_T> I, cref<S_T> s )
+        force_inline friend I_T operator+( const I_T I, const S_T s )
         {
             return I + s.x;
         }
         
         
-        force_inline friend I_T operator+( cref<R_T> x, cref<I_T> I )
+        force_inline friend I_T operator+( const R_T x, const I_T I )
         {
             return I + x;
         }
         
-        force_inline friend I_T operator+( cref<S_T> s, cref<I_T> I )
+        force_inline friend I_T operator+( const S_T s, const I_T I )
         {
             return I + s.x;
         }
         
         
         
-        force_inline friend I_T operator-( cref<I_T> I, cref<I_T> J )
+        force_inline friend I_T operator-( const I_T I, const I_T J )
         {
             I.RoundingModeWarning("operator- (II)");
             
             return Create( I.a + J.b , I.b + J.a );
         }
         
-        force_inline friend I_T operator-( cref<I_T> I, cref<R_T> x )
+        force_inline friend I_T operator-( const I_T I, const R_T x )
         {
             I.RoundingModeWarning("operator- (IR)");
             
             return Create( I.a + x , I.b - x );
         }
 
-        force_inline friend I_T operator-( cref<I_T> I, cref<S_T> s )
+        force_inline friend I_T operator-( const I_T I, const S_T s )
         {
             return I + s.x;
         }
         
 
-        force_inline friend I_T operator-( cref<R_T> x, cref<I_T> I )
+        force_inline friend I_T operator-( const R_T x, const I_T I )
         {
             I.RoundingModeWarning("operator- (RI)");
             
             return Create( -x + I.b , x + I.a );
         }
 
-        force_inline friend I_T operator-( cref<S_T> s, cref<I_T> J )
+        force_inline friend I_T operator-( const S_T s, const I_T J )
         {
             return s.x - J;
         }
 
         
-        force_inline friend I_T mult_II_pos_pos( cref<I_T> I, cref<I_T> J )
+        force_inline friend I_T mult_II_pos_pos( const I_T I, const I_T J )
         {
             // I.Lower() > 0, I.Upper() > 0, J.Lower() > 0, J.Upper() > 0
             // Then solution is
@@ -615,7 +619,7 @@ namespace Tools
             return Create( I.a * (-J.a), I.b * J.b );
         }
         
-        force_inline friend I_T mult_II_branching( cref<I_T> I, cref<I_T> J )
+        force_inline friend I_T mult_II_branching( const I_T I, const I_T J )
         {
             constexpr Real zero = 0;
             
@@ -714,7 +718,7 @@ namespace Tools
             }
         }
         
-        force_inline friend I_T mult_II_switch( cref<I_T> I, cref<I_T> J )
+        force_inline friend I_T mult_II_switch( const I_T I, const I_T J )
         {
             switch( IntSign(I) )
             {
@@ -826,7 +830,7 @@ namespace Tools
         }
         
         
-        force_inline friend I_T mul_II_bruteforce( cref<I_T> I, cref<I_T> J )
+        force_inline friend I_T mul_II_bruteforce( const I_T I, const I_T J )
         {
             const Real A = Max(
                 Max( (-I.a) * ( J.a), ( I.a) * ( J.b) ),
@@ -841,7 +845,7 @@ namespace Tools
             return Create( A, B );
         }
         
-        force_inline friend I_T operator*( cref<I_T> I, cref<I_T> J )
+        force_inline friend I_T operator*( const I_T I, const I_T J )
         {
             I.RoundingModeWarning("operator* (II)");
             
@@ -852,7 +856,7 @@ namespace Tools
 //            return mult_II_switch( I, J );
         }
         
-        force_inline friend I_T operator*( cref<I_T> I, cref<R_T> x )
+        force_inline friend I_T operator*( const I_T I, const R_T x )
         {
             I.RoundingModeWarning("operator* (IR)");
             
@@ -862,18 +866,18 @@ namespace Tools
             );
         }
         
-        force_inline friend I_T operator*( cref<I_T> I, cref<S_T> s )
+        force_inline friend I_T operator*( const I_T I, const S_T s )
         {
             return I * s.x;
         }
         
         
-        force_inline friend I_T operator*( cref<R_T> x, cref<I_T> I )
+        force_inline friend I_T operator*( const R_T x, const I_T I )
         {
             return I * x;
         }
         
-        force_inline friend I_T operator*( cref<S_T> s, cref<I_T> I )
+        force_inline friend I_T operator*( const S_T s, const I_T I )
         {
             return I * s.x;
         }
@@ -882,56 +886,56 @@ namespace Tools
         
         
         
-        force_inline friend I_T Max( cref<I_T> I, cref<I_T> J )
+        force_inline friend I_T Max( const I_T I, const I_T J )
         {
             return Create( Min(I.a,J.a), Max(I.b,J.b) );
         }
         
 
-        force_inline friend I_T Max( cref<I_T> I, cref<R_T> x )
+        force_inline friend I_T Max( const I_T I, const R_T x )
         {
             return Create( Min(I.a,-x), Max(I.b,x) );
         }
         
-        force_inline friend I_T Max( cref<I_T> I, cref<S_T> s )
+        force_inline friend I_T Max( const I_T I, const S_T s )
         {
             return Max(I,s.x);
         }
         
         
-        force_inline friend I_T Max( cref<R_T> x, cref<I_T> I )
+        force_inline friend I_T Max( const R_T x, const I_T I )
         {
             return Create( Min(-x,I.a), Max(x,I.b) );
         }
         
-        force_inline friend I_T Max( cref<S_T> s, cref<I_T> I )
+        force_inline friend I_T Max( const S_T s, const I_T I )
         {
             return Max(I,s.x);
         }
         
         
-        force_inline friend I_T Min( cref<I_T> I, cref<I_T> J )
+        force_inline friend I_T Min( const I_T I, const I_T J )
         {
             return Create( Max(I.a,J.a), Min(I.b,J.b) );
         }
         
         
-        force_inline friend I_T Min( cref<I_T> I, cref<R_T> x )
+        force_inline friend I_T Min( const I_T I, const R_T x )
         {
             return Create( Max(I.a,-x), Min(I.b,x) );
         }
         
-        force_inline friend I_T Min( cref<I_T> I, cref<S_T> s )
+        force_inline friend I_T Min( const I_T I, const S_T s )
         {
             return Min(I,s.x);
         }
 
-        force_inline friend I_T Min( cref<R_T> x, cref<I_T> I )
+        force_inline friend I_T Min( const R_T x, const I_T I )
         {
             return Min(I,x);
         }
         
-        force_inline friend I_T Min( cref<S_T> s, cref<I_T> I )
+        force_inline friend I_T Min( const S_T s, const I_T I )
         {
             return Min(I,s.x);
         }
@@ -940,7 +944,7 @@ namespace Tools
 //##                   Trivariate                      ##
 //######################################################
         
-        force_inline friend I_T fma( cref<I_T> I, cref<I_T> J, cref<I_T> K )
+        force_inline friend I_T fma( const I_T I, const I_T J, const I_T K )
         {
             I.RoundingModeWarning("fma (III)");
 
@@ -957,7 +961,7 @@ namespace Tools
             return Create(A,B);
         }
         
-        force_inline friend I_T fma( cref<I_T> I, cref<I_T> J, cref<R_T> z )
+        force_inline friend I_T fma( const I_T I, const I_T J, const R_T z )
         {
             I.RoundingModeWarning("fma (IIR)");
 
@@ -974,13 +978,13 @@ namespace Tools
             return Create(A,B);
         }
         
-        force_inline friend I_T fma( cref<I_T> I, cref<I_T> J, cref<S_T> t )
+        force_inline friend I_T fma( const I_T I, const I_T J, const S_T t )
         {
             return fma(I,J,t.x);
         }
 
         
-        force_inline friend I_T fma( cref<R_T> x, cref<I_T> J, cref<I_T> K )
+        force_inline friend I_T fma( const R_T x, const I_T J, const I_T K )
         {
             J.RoundingModeWarning("fma (RII)");
 
@@ -990,36 +994,36 @@ namespace Tools
             return Create(A,B);
         }
         
-        force_inline friend I_T fma( cref<S_T> s, cref<I_T> J, cref<I_T> K )
+        force_inline friend I_T fma( const S_T s, const I_T J, const I_T K )
         {
             return fma( s.x, J, K );
         }
         
-        force_inline friend I_T fma( cref<I_T> J, cref<R_T> x, cref<I_T> K )
+        force_inline friend I_T fma( const I_T J, const R_T x, const I_T K )
         {
             return fma( x, J, K );
         }
         
-        force_inline friend I_T fma( cref<I_T> J, cref<S_T> s, cref<I_T> K )
+        force_inline friend I_T fma( const I_T J, const S_T s, const I_T K )
         {
             return fma( s.x, J, K );
         }
         
         
-        force_inline friend I_T fma( cref<R_T> x, cref<R_T> y, cref<I_T> K )
+        force_inline friend I_T fma( const R_T x, const R_T y, const I_T K )
         {
             K.RoundingModeWarning("fma (RRI)");
             
             return Create(std::fma( -x, y, K.a ), std::fma( x, y, K.b ) );
         }
         
-        force_inline friend I_T fma( cref<S_T> s, cref<S_T> t, cref<I_T> K )
+        force_inline friend I_T fma( const S_T s, const S_T t, const I_T K )
         {
             return fma( s.x, t.x, K );
         }
         
         
-        force_inline friend I_T fma( cref<R_T> x, cref<I_T> I, cref<R_T> z )
+        force_inline friend I_T fma( const R_T x, const I_T I, const R_T z )
         {
             I.RoundingModeWarning("fma (RIR)");
             
@@ -1029,18 +1033,18 @@ namespace Tools
             );
         }
         
-        force_inline friend I_T fma( cref<S_T> r, cref<I_T> I, cref<S_T> t )
+        force_inline friend I_T fma( const S_T r, const I_T I, const S_T t )
         {
             return fma( r.x, I, t.x );
         }
         
         
-        force_inline friend I_T fma( cref<I_T> I, cref<R_T> x, cref<R_T> z )
+        force_inline friend I_T fma( const I_T I, const R_T x, const R_T z )
         {
             return fma( x, I, z );
         }
         
-        force_inline friend I_T fma( cref<I_T> I, cref<S_T> r, cref<S_T> t )
+        force_inline friend I_T fma( const I_T I, const S_T r, const S_T t )
         {
             return fma( r.x, I, t.x );
         }
@@ -1074,10 +1078,51 @@ namespace Tools
     }; // class Interval
     
 
-    template<typename T>
-    std::string ToString( const Interval<T> & I )
+    template<typename Real>
+    std::string ToString( const Interval<Real> I )
     {
         return std::string("[ ") + Tools::ToString(I.Lower()) + ", " + Tools::ToString(I.Upper()) + " ]";
+    }
+    
+    
+    
+    template<int D, bool fmaQ = true, typename c_T, typename x_T>
+    decltype( c_T(1) * x_T(1) ) EvaluatePolynomial_Horner( cptr<c_T> c, const x_T x )
+    {
+        using std::fma;
+        
+        using oux_T = decltype( c_T(1) * x_T(1) );
+        
+        if( D <= 0 )
+        {
+            return oux_T{c[0]};
+        }
+        
+        if constexpr ( fmaQ )
+        {
+            oux_T r = fma( c[D], x, c[D-1] );
+            
+            for( int i = D-1; i --> 0;  )
+            {
+                
+                r = fma( r, x, c[i] );
+            }
+            
+            return r;
+        }
+        else
+        {
+            oux_T r = c[D] * x + c[D-1];
+            
+            for( int i = D-1; i --> 0;  )
+            {
+                
+                r = r * x + c[i];
+            }
+            
+            return r;
+        }
+        
     }
     
 } // namespace Tools
