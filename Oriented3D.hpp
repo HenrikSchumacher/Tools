@@ -41,7 +41,7 @@ namespace Tools
         cptr<Real> x, cptr<Real> y, cptr<Real> z, cptr<Real> w
     )
     {
-        return IntSign( SignedVolume3D_Naive<fmaQ>( x, y, z, w ) );
+        return Sign( SignedVolume3D_Naive<fmaQ>( x, y, z, w ) );
     }
     
     
@@ -122,7 +122,7 @@ namespace Tools
         cptr<Real> x, cptr<Real> y, cptr<Real> z, cptr<Real> w
     )
     {
-        return IntSign( SignedVolume3D_IA<diffsafeQ,fmaQ>(x,y,z,w) );
+        return Sign( SignedVolume3D_IA<diffsafeQ,fmaQ>(x,y,z,w) );
     }
     
 } // namespace Tools

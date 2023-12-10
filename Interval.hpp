@@ -59,7 +59,7 @@ namespace Tools
         const Real diff = ad  - bc;
         const Real e    = bce - ade;
             
-        return (diff > e) - (diff < e);
+        return DifferenceSign(diff,e);
     }
     
     template<typename Real>
@@ -220,22 +220,12 @@ namespace Tools
             return S_T{Ramp(s.x)};
         }
         
-        force_inline friend Real Sign( const S_T s )
+        template<typename R = int>
+        force_inline friend R Sign( const S_T s )
         {
-            constexpr Real zero = 0;
-            
-            return static_cast<Real>( (zero < s.x) - (s.x < zero) );
+            return Sign<R>(s.x);
         }
         
-        force_inline friend int IntSign( const S_T s )
-        {
-            constexpr Real zero = 0;
-            
-            return static_cast<int>(zero < s.x) - static_cast<int>(s.x < zero);
-        }
-        
-        
-
         
 //######################################################
 //##                   Bivariate                      ##
@@ -581,27 +571,12 @@ namespace Tools
             return Create( Min(Scalar::Zero<Real>,I.a), Max(Scalar::Zero<Real>,I.b) );
         }
         
-        
-//        force_inline friend Real Sign( cref<Interval> I )
-//        {
-//            constexpr Real zero = Scalar::Zero<Real>;
-//            constexpr Real one  = Scalar::One<Real>;
-//            
-//            return (I > zero) ? one : ((I < zero) ? -one : zero);
-//        }
-        
-        force_inline friend Real Sign( const I_T I )
+        template<typename R = int>
+        force_inline friend R Sign( const I_T I )
         {
             constexpr Real zero = 0;
             
-            return static_cast<Real>( (zero < I) - (I < zero) );
-        }
-        
-        force_inline friend int IntSign( const I_T I )
-        {
-            constexpr Real zero = 0;
-            
-            return static_cast<int>(zero < I) - static_cast<int>(I < zero);
+            return static_cast<R>( (I > zero) - (I < zero) );
         }
         
         
@@ -790,11 +765,11 @@ namespace Tools
         
         force_inline friend I_T mult_II_switch( const I_T I, const I_T J )
         {
-            switch( IntSign(I) )
+            switch( Sign(I) )
             {
                 case 1:
                 {
-                    switch( IntSign(J) )
+                    switch( Sign(J) )
                     {
                         case 1:
                         {
@@ -824,7 +799,7 @@ namespace Tools
                 }
                 case -1:
                 {
-                    switch( IntSign(J) )
+                    switch( Sign(J) )
                     {
                         case 1:
                         {
@@ -860,7 +835,7 @@ namespace Tools
                 }
                 case 0:
                 {
-                    switch( IntSign(J) )
+                    switch( Sign(J) )
                     {
                         case 1:
                         {
@@ -894,7 +869,7 @@ namespace Tools
                     }
                 }
                     
-            } // switch( IntSign(I) )
+            } // switch( Sign(I) )
             
             return I_T();
         }

@@ -20,7 +20,8 @@ namespace Tools
         {
             for( Size_T i = 0; i < n; ++i )
             {
-                R abs_z = Scalar::RealQ<S> ? Abs(z[i]) : AbsSquared(z[i]);
+                const R abs_z = COND( Scalar::RealQ<S>, Abs(z[i]), AbsSquared(z[i]) );
+                
                 if( abs_z > max )
                 {
                     pos = i;
@@ -32,7 +33,8 @@ namespace Tools
         {
             for( Size_T i = 0; i < N; ++i )
             {
-                R abs_z = Scalar::RealQ<S> ? Abs(z[i]) : AbsSquared(z[i]);
+                const R abs_z = COND( Scalar::RealQ<S>, Abs(z[i]), AbsSquared(z[i]) );
+                
                 if( abs_z > max )
                 {
                     pos = i;

@@ -97,22 +97,36 @@ namespace Tools
         }
     } // Power
     
-    template<typename T>
-    inline T Sign( const T x)
+    template<typename R = int, typename T>
+    force_inline R Sign( const T x)
     {
         constexpr T zero = 0;
         
-        return static_cast<T>( (zero < x) - (x < zero) );
+        return static_cast<R>( (x > zero) - (x < zero) );
     }
     
-    template<typename T>
-    inline int IntSign( const T x)
+    template<typename R = int, typename S, typename T>
+    force_inline R DifferenceSign( const S x, const T y )
     {
-        constexpr T zero = 0;
+        // Returns the sign of x - y.
         
-        return static_cast<int>( (zero < x) - (x < zero) );
+        return static_cast<R>( (x > y) - (x < y) );
     }
     
+    force_inline bool OppositeSignQ( const int x, const int y )
+    {
+        // This is often adviced, but it is wrong.
+        // It returns true for ( -1 ^ 0 ) < 0.
+//        return (x ^ y) < 0;
+        
+        return x * y < 0;
+    }
+    
+    template<typename R = int, typename S, typename T>
+    force_inline R KroneckerDelta( const S i, const T j )
+    {
+        return static_cast<R>( i == j );
+    }
     
     
     
@@ -120,6 +134,17 @@ namespace Tools
     force_inline constexpr bool Equal3( const T & a, const T & b, const T & c )
     {
         return (a == b) && (b == c);
+    }
+    
+    
+    template<typename Scal>
+    force_inline constexpr Scal Mean( const Scal & x, const Scal & y )
+    {
+        using Real = Scalar::Real<Scal>;
+     
+        ASSERT_FLOAT(Real);
+        
+        return Scalar::Half<Real> * (x + y);
     }
     
     template<typename Real>
@@ -329,12 +354,12 @@ namespace Tools
     inline static constexpr T SphereVolume ( const Size_T n )
     {
         
-        T result (  (n % 2 == 0) ? Scalar::Two < T > : Scalar::TwoPi < T > );
+        T result ( (n % 2 == 0) ? Scalar::Two<T> : Scalar::TwoPi<T> );
         
-        for ( T k = n; k > Scalar::One < T >; k -= Scalar::Two < T > )
+        for ( T k = n; k > Scalar::One<T>; k -= Scalar::Two<T> )
         {
             
-            result *= Frac < T > ( Scalar::TwoPi < T >, k - 1);
+            result *= Frac<T> ( Scalar::TwoPi<T>, k - 1);
         }
         
         return result;
@@ -344,12 +369,12 @@ namespace Tools
     inline static constexpr T BallVolume ( const Size_T n )
     {
         
-        T result ( (n % 2 == 0) ? Scalar::One < T > : Scalar::Two < T > );
+        T result ( (n % 2 == 0) ? Scalar::One<T> : Scalar::Two<T> );
         
-        for ( T k = n; k > Scalar::One < T >; k -= Scalar::Two < T > )
+        for ( T k = n; k > Scalar::One<T>; k -= Scalar::Two<T> )
         {
             
-            result *= Frac < T > ( Scalar::TwoPi < T >, k );
+            result *= Frac<T> ( Scalar::TwoPi<T>, k );
         }
         
         return result;
@@ -359,7 +384,7 @@ namespace Tools
     inline static constexpr T SOVolume ( const Size_T n )
     {
         
-        T result ( Scalar::One < T > );
+        T result ( Scalar::One<T> );
         
         for ( Size_T k = 1; k < n; ++k )
         {

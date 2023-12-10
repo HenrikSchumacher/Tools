@@ -27,10 +27,11 @@ namespace Tools
             return ((c_3 * x + c_2) * x + c_1) * x + c_0;
         };
         
-        const Real Dc_3_inv = Inv( Scalar::Three<Real> * c_3 );
+        const Real Dc_3     = Scalar::Three<Real> * c_3;
+        const Real Dc_3_inv = Inv( Dc_3 );
         
         const Real x_I = - c_2 * Dc_3_inv;
-        const Real D   = c_2 * c_2 - Scalar::Three<Real> * c_1 * c_3;
+        const Real D   = c_2 * c_2 - c_1 * Dc_3;
         
         auto Solve = [f,TOL]( const Real L, const Real R, const Real x_init )
         {
@@ -38,7 +39,7 @@ namespace Tools
         };
      
         Real cand [5];
-        Real sign [5];
+        int  sign [5];
         int  size = 0;
         
         cand[size] = a;
@@ -97,18 +98,18 @@ namespace Tools
         
         int counter = 0;
         
-        if( sign[0] == zero )
+        if( sign[0] == 0 )
         {
             x_out[counter++] = cand[0];
         }
         
         for( int i = 1; i < size; ++i )
         {
-            if( sign[i-1] * sign[i] < zero )
+            if( OppositeSignQ( sign[i-1], sign[i] ) )
             {
-                x_out[counter++] = Solve( cand[i-1], cand[i], Scalar::Half<Real>*(cand[i-1]+cand[i]) );
+                x_out[counter++] = Solve( cand[i-1], cand[i], Mean(cand[i-1],cand[i]) );
             }
-            else if( sign[i] == zero )
+            else if( sign[i] == 0 )
             {
                 x_out[counter++] = cand[i];
             }
@@ -184,7 +185,7 @@ namespace Tools
         };
         
         Real cand [5];
-        Real sign [5];
+        int  sign [5];
         int  size = 0;
         
         cand[size] = a;
@@ -243,19 +244,18 @@ namespace Tools
         
         int counter = 0;
         
-        if( sign[0] == zero )
+        if( sign[0] == 0 )
         {
             x_out[counter++] = cand[0];
         }
         
         for( int i = 1; i < size; ++i )
         {
-            if( sign[i-1] * sign[i] < zero )
+            if( OppositeSignQ( sign[i-1], sign[i] ) )
             {
-                x_out[counter++] = Solve( cand[i-1], cand[i], Scalar::Half<Real>*(cand[i-1]+cand[i]) );
+                x_out[counter++] = Solve( cand[i-1], cand[i], Mean(cand[i-1],cand[i]) );
             }
-                
-            if( sign[i] == zero )
+            else if( sign[i] == 0 )
             {
                 x_out[counter++] = cand[i];
             }

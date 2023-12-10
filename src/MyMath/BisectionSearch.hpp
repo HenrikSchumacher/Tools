@@ -1,8 +1,10 @@
+#pragma once
+
 namespace Tools
 {
     
     template<int up_lo_flag, typename Real, typename Fun_T>
-    inline Real BisectionSearch(
+    force_inline Real BisectionSearch(
         const Fun_T & f, const Real a_0, const Real b_0, const Real value,
         const Real relative_error
     )
@@ -23,7 +25,7 @@ namespace Tools
             
             while( b - a > relative_error * b )
             {
-                const Real c = Scalar::Half<Real> * (a + b);
+                const Real c = Mean(a,b);
                 
                 const Real f_c = f(c);
                 
@@ -41,7 +43,7 @@ namespace Tools
             
             if constexpr ( up_lo_flag == 0 )
             {
-                return Scalar::Half<Real> * (a + b);
+                return Mean(a,b);
             }
             else if constexpr ( up_lo_flag < 0 )
             {
@@ -58,7 +60,7 @@ namespace Tools
             
             while( b - a > relative_error * b )
             {
-                const Real c = Scalar::Half<Real> * (a + b);
+                const Real c = Mean(a,b);
                 
                 const Real f_c = f(c);
                 
@@ -76,7 +78,7 @@ namespace Tools
                   
             if constexpr ( up_lo_flag == 0 )
             {
-                return Scalar::Half<Real> * (a + b);
+                return Mean(a,b);
             }
             else if constexpr ( up_lo_flag < 0 )
             {
@@ -91,7 +93,7 @@ namespace Tools
         {
             wprint("BisectionSearch: The functions values of the interval end points do not bracket the value f. Returning interval midpoint.");
                 
-            return Scalar::Half<Real> * (a + b);
+            return Mean(a,b);
         }
         
     } // BisectionSearch
