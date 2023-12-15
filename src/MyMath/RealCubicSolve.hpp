@@ -107,7 +107,7 @@ namespace Tools
         {
             if( OppositeSignQ( sign[i-1], sign[i] ) )
             {
-                x_out[counter++] = Solve( cand[i-1], cand[i], Mean(cand[i-1],cand[i]) );
+                x_out[counter++] = Solve( cand[i-1], cand[i], Mean(cand[i-1], cand[i]) );
             }
             else if( sign[i] == 0 )
             {
@@ -253,7 +253,7 @@ namespace Tools
         {
             if( OppositeSignQ( sign[i-1], sign[i] ) )
             {
-                x_out[counter++] = Solve( cand[i-1], cand[i], Mean(cand[i-1],cand[i]) );
+                x_out[counter++] = Solve( cand[i-1], cand[i], Mean(cand[i-1], cand[i]) );
             }
             else if( sign[i] == 0 )
             {

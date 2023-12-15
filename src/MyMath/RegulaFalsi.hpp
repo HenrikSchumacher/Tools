@@ -161,7 +161,7 @@ namespace Tools
             dump(Sign(f_a));
             dump(Sign(f_b));
                 
-            return Mean(a + b);
+            return Mean(a,b);
         }
         
     } // RegularFalsi
