@@ -263,26 +263,12 @@ namespace Tools
         return AngleBetweenUnitVectors<AmbDim>(&u[0],&v[0]);
     }
     
-
-//    template<typename T>
-//    inline static constexpr T Factorial( T n )
-//    {
-//        T result ( 1 );
-//        
-//        for( T k = static_cast<T>(2); k <= n; ++k )
-//        {
-//            result *= k;
-//        }
-//        
-//        return result;
-//    }
-    
-    template<typename T>
-    inline static constexpr T Factorial( T n )
+    template<typename T, typename I>
+    inline static constexpr T Factorial( I n )
     {
         T result ( 1 );
         
-        for( T k = n; k > 1; k -= 1 )
+        for( T k = static_cast<T>(n); k > 1; k -= 1 )
         {
             result *= k;
         }
@@ -290,12 +276,12 @@ namespace Tools
         return result;
     }
     
-    template<typename T>
-    inline static constexpr T DoubleFactorial( T n )
+    template<typename T, typename I>
+    inline static constexpr T DoubleFactorial( I n )
     {
         T result ( 1 );
         
-        for( T k = n; k > 1; k -= 2 )
+        for( T k = static_cast<T>(n); k > 1; k -= 2 )
         {
             result *= k;
         }
@@ -303,6 +289,12 @@ namespace Tools
         return result;
     }
     
+    
+    template<typename T, typename I>
+    inline static constexpr T StandardSimplexVolume( I d )
+    {
+        return Inv( Factorial<T>(d) );
+    }
     
 
     namespace Detail
