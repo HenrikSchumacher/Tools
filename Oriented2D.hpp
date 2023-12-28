@@ -2,41 +2,48 @@
 
 namespace Tools
 {
+
+    template<bool fmaQ = true, typename Real>
+    force_inline Real Det2D_Naive( const Real a, const Real b, const Real c, const Real d )
+    {
+        if constexpr ( fmaQ )
+        {
+            return std::fma( a, d, - b * c );
+        }
+        else
+        {
+            return a * d - b * c;
+        }
+    }
     
     template<bool fmaQ = true, typename Real>
     force_inline Real Det2D_Naive( cptr<Real> A )
     {
-        if constexpr ( fmaQ )
-        {
-            return std::fma( A[0], A[3], - A[1] * A[2] );
-        }
-        else
-        {
-            return A[0] * A[3] - A[1] * A[2];
-        }
+        return Det2D_Naive<fmaQ>( A[0], A[1], A[2], A[3] );
+    }
+
+    template<typename Out_T = int, typename Real>
+    force_inline Out_T DetSign2D_Naive( const Real a, const Real b, const Real c, const Real d )
+    {
+        return DifferenceSign<Out_T>( a * d, b * c );
     }
     
-    template<typename Real>
-    force_inline int DetSign2D_Naive( cptr<Real> A )
+    template<typename Out_T = int, typename Real>
+    force_inline Out_T DetSign2D_Naive( cptr<Real> A )
     {
-        return DifferenceSign( A[0] * A[3], A[1] * A[2] );
+        return DetSign2D_Naive<Out_T>( A[0], A[1], A[2], A[3] );
     }
     
     template<bool fmaQ = true, typename Real>
     force_inline Real SignedVolume2D_Naive( cptr<Real> x, cptr<Real> y, cptr<Real> z )
     {
-        const Real A [2][2] {
-            { y[0] - x[0], z[1] - x[1] },
-            { y[1] - x[1], z[0] - x[0] }
-        };
-    
-        return Det2D_Naive<fmaQ>( &A[0][0] );
+        return Det2D_Naive<fmaQ>( y[0] - x[0], z[0] - x[0], y[1] - x[1], z[1] - x[1] );
     }
     
-    template<typename Real>
-    force_inline int Oriented2D_Naive( cptr<Real> x, cptr<Real> y, cptr<Real> z )
+    template<typename Out_T = int, typename Real>
+    force_inline Out_T Oriented2D_Naive( cptr<Real> x, cptr<Real> y, cptr<Real> z )
     {
-        return DifferenceSign( (y[0] - x[0]) * (z[1] - x[1]), (y[1] - x[1]) * (z[0] - x[0]) );
+        return DifferenceSign<Out_T>( (y[0] - x[0]) * (z[1] - x[1]), (y[1] - x[1]) * (z[0] - x[0]) );
     }
     
     
@@ -59,14 +66,14 @@ namespace Tools
         return f - e;
     }
     
-    template<typename Real>
-    force_inline int DetSign2D_Kahan( const Real a, const Real b, const Real c, const Real d )
+    template<typename Out_T = int, typename Real>
+    force_inline Out_T DetSign2D_Kahan( const Real a, const Real b, const Real c, const Real d )
     {
         const Real w = - b * c;
         const Real e = std::fma( b, c, w );
         const Real f = std::fma( a, d, w );
         
-        return DifferenceSign(f,e);
+        return DifferenceSign<Out_T>(f,e);
     }
     
     template<typename Real>
@@ -88,33 +95,33 @@ namespace Tools
     }
     
     
-    template<typename Real>
-    force_inline int DetSign2D_Kahan( cptr<Real> A )
+    template<typename Out_T = int, typename Real>
+    force_inline Out_T DetSign2D_Kahan( cptr<Real> A )
     {
-        return DetSign2D_Kahan( A[0], A[1], A[2], A[3] );
+        return DetSign2D_Kahan<Out_T>( A[0], A[1], A[2], A[3] );
     }
     
     
     template<typename Real>
     force_inline Real SignedVolume2D_Kahan( cptr<Real> x, cptr<Real> y, cptr<Real> z )
     {
-        return Det2D_Kahan( y[0] - x[0], z[1] - x[1], y[1] - x[1], z[0] - x[0] );
+        return Det2D_Kahan( y[0] - x[0], z[0] - x[0], y[1] - x[1], z[1] - x[1] );
     }
     
 
-    template<typename Real>
-    force_inline int Oriented2D_Kahan( cptr<Real> x, cptr<Real> y, cptr<Real> z )
+    template<typename Out_T = int, typename Real>
+    force_inline Out_T Oriented2D_Kahan( cptr<Real> x, cptr<Real> y, cptr<Real> z )
     {
-        return DetSign2D_Kahan( y[0] - x[0], z[1] - x[1], y[1] - x[1], z[0] - x[0] );
+        return DetSign2D_Kahan<Out_T>( y[0] - x[0], z[0] - x[0], y[1] - x[1], z[1] - x[1] );
     }
     
     
 
     
-    template<bool fmaQ = true, typename Real>
-    force_inline Interval<Real> Det2D_IA(
-        const Singleton<Real> a, const Singleton<Real> b,
-        const Singleton<Real> c, const Singleton<Real> d
+    template<bool fmaQ = true, typename Real, RoundingPolicy RP>
+    force_inline Interval<Real,RP> Det2D_IA(
+        const Singleton<Real,RP> a, const Singleton<Real,RP> b,
+        const Singleton<Real,RP> c, const Singleton<Real,RP> d
     )
     {
         if constexpr ( fmaQ )
@@ -127,21 +134,18 @@ namespace Tools
         }
     }
     
-    template<bool fmaQ = true, typename Real>
-    force_inline Interval<Real> Det2D_IA(
-        const Real a, const Real b,
-        const Real c, const Real d
-    )
+    
+    
+    template<bool fmaQ = true, typename Real, RoundingPolicy RP>
+    force_inline Interval<Real,RP> Det2D_IA( cptr<Singleton<Real,RP>> A )
     {
-        using S_T = Singleton<Real>;
-        
-        return Det2D_IA<fmaQ>( S_T(a), S_T(b), S_T(c), S_T(d) );
+        return Det2D_IA<fmaQ>( A[0], A[1], A[2], A[3] );
     }
     
-    template<bool fmaQ = true, typename Real>
-    force_inline Interval<Real> Det2D_IA(
-        const Interval<Real> a, const Interval<Real> b,
-        const Interval<Real> c, const Interval<Real> d
+    template<bool fmaQ = true, typename Real, RoundingPolicy RP>
+    force_inline Interval<Real,RP> Det2D_IA(
+        const Interval<Real,RP> a, const Interval<Real,RP> b,
+        const Interval<Real,RP> c, const Interval<Real,RP> d
     )
     {
         if constexpr ( fmaQ )
@@ -154,14 +158,21 @@ namespace Tools
         }
     }
     
-    template<bool diffsafeQ = false, bool fmaQ = true, typename Real>
-    force_inline Interval<Real> SignedVolume2D_IA( cptr<Real> x, cptr<Real> y, cptr<Real> z )
+    template<bool fmaQ = true, typename Real, RoundingPolicy RP>
+    force_inline Interval<Real,RP> Det2D_IA( cptr<Interval<Real,RP>> A )
     {
-        using S_T = Singleton<Real>;
+        return Det2D_IA<fmaQ>( A[0], A[1], A[2], A[3] );
+    }
+
+    
+    template<RoundingPolicy RP, bool diffsafeQ = false, bool fmaQ = true, typename Real>
+    force_inline Interval<Real,RP> SignedVolume2D_IA( cptr<Real> x, cptr<Real> y, cptr<Real> z )
+    {
+        using S_T = Singleton<Real,RP>;
         
         if constexpr ( diffsafeQ )
         {
-            return Det2D_IA<fmaQ>( y[0] - x[0], y[1] - x[1], z[0] - x[0], z[1] - x[1] );
+            return Det2D_IA<fmaQ>( S_T(y[0] - x[0]), S_T(z[0] - x[0]), S_T(y[1] - x[1]), S_T(z[1] - x[1]) );
         }
         else
         {
@@ -169,67 +180,131 @@ namespace Tools
             cptr<S_T> Y = reinterpret_cast<cptr<S_T>>(y);
             cptr<S_T> Z = reinterpret_cast<cptr<S_T>>(z);
             
-            return Det2D_IA<fmaQ>( Y[0] - X[0], Y[1] - X[1], Z[0] - X[0], Z[1] - X[1] );
+            return Det2D_IA<fmaQ>( Y[0] - X[0], Z[0] - X[0], Y[1] - X[1], Z[1] - X[1] );
         }
     }
     
     
 
     
-    template<typename Real>
-    force_inline int DetSign2D_IA(
-        const Singleton<Real> a, const Singleton<Real> b,
-        const Singleton<Real> c, const Singleton<Real> d
+    template<typename Out_T = int, typename Real, RoundingPolicy RP>
+    force_inline Out_T DetSign2D_IA(
+        const Singleton<Real,RP> a, const Singleton<Real,RP> b,
+        const Singleton<Real,RP> c, const Singleton<Real,RP> d
     )
     {
-        return DifferenceSign( a * d, b * c );
+        return DifferenceSign<Out_T>( a * d, b * c );
     }
     
-    template<typename Real>
-    force_inline int DetSign2D_IA(
-        const Real a, const Real b,
-        const Real c, const Real d
-    )
-    {
-        using S_T = Singleton<Real>;
-        
-        return DifferenceSign( S_T(a) * S_T(d), S_T(b) * S_T(c) );
-    }
-    
-    template<typename Real>
-    force_inline Interval<Real> DetSign2D_IA(
-        const Interval<Real> a, const Interval<Real> b,
-        const Interval<Real> c, const Interval<Real> d
-    )
-    {
-        return DifferenceSign( a * d, b * c );
-    }
-    
-    template<typename T>
-    force_inline int DetSign2D_IA( cptr<T> A_ )
+    template<typename Out_T = int, typename Real, RoundingPolicy RP>
+    force_inline Out_T DetSign2D_IA( cptr<Singleton<Real,RP>> A )
     {
         return DetSign2D_IA( A[0], A[1], A[2], A[3] );
     }
     
-    template<bool diffsafeQ, typename Real>
-    force_inline int Oriented2D_IA( cptr<Real> x, cptr<Real> y, cptr<Real> z )
+//    template<typename Out_T = int, typename Real>
+//    force_inline Out_T DetSign2D_IA(
+//        const Real a, const Real b,
+//        const Real c, const Real d
+//    )
+//    {
+//        using S_T = Singleton<Real,RP>;
+//        
+//        return DifferenceSign<Out_T>( S_T(a) * S_T(d), S_T(b) * S_T(c) );
+//    }
+
+//    template<typename Out_T = int, typename Real>
+//    force_inline Out_T DetSign2D_IA( cptr<Real> A )
+//    {
+//        return DetSign2D_IA<Out_T>( A[0], A[1], A[2], A[3] );
+//    }
+    
+    template<typename Out_T = int, typename Real, RoundingPolicy RP>
+    force_inline Out_T DetSign2D_IA(
+        const Interval<Real,RP> a, const Interval<Real,RP> b,
+        const Interval<Real,RP> c, const Interval<Real,RP> d
+    )
     {
-        using S_T = Singleton<Real>;
+        return DifferenceSign<Out_T>( a * d, b * c );
+    }
+    
+//    template<typename Out_T = int, typename Real>
+//    force_inline Out_T DetSign2D_IA( cptr<Interval<Real>> A )
+//    {
+//        return DetSign2D_IA( A[0], A[1], A[2], A[3] );
+//    }
+    
+    template<RoundingPolicy RP, typename Out_T, bool diffsafeQ, typename Real>
+    force_inline Out_T Oriented2D_IA( cptr<Real> x, cptr<Real> y, cptr<Real> z )
+    {
+        using S_T = Singleton<Real,RP>;
         
         if constexpr ( diffsafeQ )
         {
-            // This calls the Real overload of DetSign2D_IA.
-            return DetSign2D_IA( y[0] - x[0], y[1] - x[1], z[0] - x[0], z[1] - x[1] );
+            // This calls the Singleton<Real,RP> overload of DetSign2D_IA.
+            return DetSign2D_IA<Out_T>( S_T(y[0] - x[0]), S_T(z[0] - x[0]), S_T(y[1] - x[1]), S_T(z[1] - x[1]) );
         }
         else
         {
+            
             cptr<S_T> X = reinterpret_cast<cptr<S_T>>(x);
             cptr<S_T> Y = reinterpret_cast<cptr<S_T>>(y);
             cptr<S_T> Z = reinterpret_cast<cptr<S_T>>(z);
             
-            // This calls the Interval<Real> overload of DetSign2D_IA.
-            return DetSign2D_IA( Y[0] - X[0], Y[1] - X[1], Z[0] - X[0], Z[1] - X[1] );
+            // This calls the Interval<Real,RP> overload of DetSign2D_IA.
+            return DetSign2D_IA<Out_T>( Y[0] - X[0], Z[0] - X[0], Y[1] - X[1], Z[1] - X[1] );
         }
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    
+    template<typename Out_T = int, typename Real>
+    force_inline Out_T DetSign2D_Corrected( const Real a, const Real b, const Real c, const Real d )
+    {
+        ASSERT_FLOAT(Real);
+        
+        const auto [ad,ade] = TwoMulFMA(a,d);
+        const auto [bc,bce] = TwoMulFMA(b,c);
+
+        const Real diff = ad  - bc;
+        const Real e    = bce - ade;
+            
+        return DifferenceSign<Out_T>(diff,e);
+    }
+    
+    template<typename Out_T = int, typename Real>
+    force_inline Out_T DetSign2D_Corrected( cptr<Real> A )
+    {
+        return DetSign2D_Corrected<Out_T>( A[0], A[1], A[2], A[3] );
+    }
+
+    template<typename Real>
+    force_inline Real Det2D_Corrected( const Real a, const Real b, const Real c, const Real d )
+    {
+        ASSERT_FLOAT(Real);
+        
+        const auto [ad,ade] = TwoMulFMA(a,d);
+        const auto [bc,bce] = TwoMulFMA(b,c);
+
+        const Real diff = ad  - bc;
+        const Real e    = bce - ade;
+            
+        return diff - e;
+    }
+    
+    template<typename Real>
+    force_inline Real Det2D_Corrected( cptr<Real> A )
+    {
+        return Det2D_Corrected( A[0], A[1], A[2], A[3] );
     }
     
 } // namespace Tools

@@ -20,60 +20,29 @@
 
 namespace Tools
 {
-
-    // From Hida, Li, Bailey - Library for Double-Double and Quad-Double Arithmetic
-    template<typename Real>
-    std::pair<Real,Real> TwoSum( const Real a, const Real b )
+    enum struct RoundingPolicy : int
     {
-        ASSERT_FLOAT(Real);
-        
-        const Real s = a + b;
-        const Real v = s - b;
-        const Real e = (a - (s - v)) + (b-v);
-        
-        return std::pair(s,e);
-        
-    }
+        UseRoundingMode = 1,
+        UseErrorTerm    = 0
+    };
     
-    // From Hida, Li, Bailey - Library for Double-Double and Quad-Double Arithmetic
-    template<typename Real>
-    std::pair<Real,Real> TwoProdFMA( const Real a, const Real b )
+    std::string ToString( const RoundingPolicy RP )
     {
-        ASSERT_FLOAT(Real);
-        
-        const Real p = a * b;
-        const Real e = std::fma(a,b,-p);
-        
-        return std::pair(p,e);
-        
-    }
-    
-    template<typename Real>
-    int DetSign2D_Corrected( cptr<Real> A )
-    {
-        ASSERT_FLOAT(Real);
-        
-        const auto [ad,ade] = TwoProdFMA(A[0],A[3]);
-        const auto [bc,bce] = TwoProdFMA(A[1],A[2]);
-
-        const Real diff = ad  - bc;
-        const Real e    = bce - ade;
-            
-        return DifferenceSign(diff,e);
-    }
-    
-    template<typename Real>
-    int Det2D_Corrected( cptr<Real> A )
-    {
-        ASSERT_FLOAT(Real);
-        
-        const auto [ad,ade] = TwoProdFMA(A[0],A[3]);
-        const auto [bc,bce] = TwoProdFMA(A[1],A[2]);
-
-        const Real diff = ad  - bc;
-        const Real e    = bce - ade;
-            
-        return diff - e;
+        switch( RP )
+        {
+            case RoundingPolicy::UseRoundingMode:
+            {
+                return std::string("UseRoundingMode");
+            }
+            case RoundingPolicy::UseErrorTerm:
+            {
+                return std::string("UseErrorTerm");
+            }
+            default:
+            {
+                return std::string("Unknown");
+            }
+        }
     }
     
     class RoundingModeBarrier
@@ -115,12 +84,99 @@ namespace Tools
     }; // class RoundingModeBarrier
     
     
-    template<typename Real_>
+    template<typename Real_, RoundingPolicy RP_>
+    class Interval;
+    
+    template<typename Real_, RoundingPolicy RP_>
     class Interval;
     
     
-    template<typename Real_>
-    class Singleton
+    // From Hida, Li, Bailey - Library for Double-Double and Quad-Double Arithmetic
+    template<typename Real>
+    force_inline std::pair<Real,Real> TwoAdd( const Real a, const Real b )
+    {
+        const Real s = a + b;
+        const Real v = s - b;
+        const Real e = (a - (s - v)) + (b-v);
+        
+        return std::pair(s,e);
+    }
+    
+    // From Hida, Li, Bailey - Library for Double-Double and Quad-Double Arithmetic
+    template<typename Real>
+    force_inline std::pair<Real,Real> TwoMulFMA( const Real a, const Real b )
+    {
+        const Real p = a * b;
+        const Real e = std::fma(a,b,-p);
+        
+        return std::pair(p,e);
+    }
+    
+    template<typename Real>
+    force_inline Real RoundUp( const Real x, const bool increaseQ )
+    {
+        return std::nextafter( x, increaseQ ? std::numeric_limits<Real>::max() : x );
+    }
+    
+    template<typename Real, RoundingPolicy RP = RoundingPolicy::UseRoundingMode>
+    class Rounding_T
+    {
+        ASSERT_FLOAT(Real);
+        
+    protected:
+
+        static void RoundingModeWarning( cref<std::string> tag )
+        {
+            #ifdef CHECK_ROUNDING_MODE
+          
+            if( std::fegetround() != FE_UPWARD )
+            {
+                eprint(ClassName()+"::" + tag + ": Rounding mode not set to FE_UPWARD.");
+            }
+            #endif
+        }
+
+        force_inline static Real AddRoundUp( const Real a, const Real b )
+        {
+            if constexpr ( RP == RoundingPolicy::UseRoundingMode )
+            {
+                    RoundingModeWarning("AddRoundUp");
+
+                    return a + b;
+            }
+            else
+            {
+                const auto [p, e] = TwoAdd( a, b );
+                
+                return RoundUp( p, e > 0 );
+            }
+        }
+        
+        force_inline static Real MulRoundUp( const Real a, const Real b )
+        {
+            if constexpr ( RP == RoundingPolicy::UseRoundingMode)
+            {
+                RoundingModeWarning("MulRoundUp");
+                return a * b;
+            }
+            else
+            {
+                const auto [p, e] = TwoMulFMA( a, b );
+                
+                return RoundUp( p, e > 0 );
+            }
+        }
+        
+        static std::string ClassName()
+        {
+            return std::string("Rounding_T<") + TypeName<Real> + ", " + ToString(RP) + ">";
+        }
+        
+    }; // class Rounding_T
+    
+    
+    template<typename Real_, RoundingPolicy RP_ = RoundingPolicy::UseRoundingMode>
+    class Singleton : Rounding_T<Real_,RP_>
     {
         ASSERT_FLOAT(Real_)
         
@@ -128,12 +184,20 @@ namespace Tools
         
         using Real = Real_;
         
-        friend class Interval<Real>;
+        static constexpr RoundingPolicy RP = RP_;
+
+        using Base_T = Rounding_T<Real,RP>;
         
-        using S_T = Singleton<Real>;
-        using I_T = Interval<Real>;
+        friend class Interval<Real,RP>;
+        
+        using S_T = Singleton<Real,RP>;
+        using I_T = Interval <Real,RP>;
         
     protected:
+        
+        using Base_T::AddRoundUp;
+        using Base_T::MulRoundUp;
+        using Base_T::RoundingModeWarning;
         
         Real x;
         
@@ -210,9 +274,7 @@ namespace Tools
         
         force_inline friend I_T Square( const S_T s )
         {
-            s.RoundingModeWarning("Square");
-            
-            return I_T::Create( (- s.x) * s.x,  s.x * s.x);
+            return I_T::Create( MulRoundUp(- s.x, s.x),  MulRoundUp(s.x, s.x) );
         }
 
         force_inline friend S_T Ramp( const S_T s )
@@ -235,24 +297,17 @@ namespace Tools
         
         force_inline friend I_T operator+( const S_T s, const S_T t )
         {
-            s.RoundingModeWarning("operator+ (SS)");
-            
-            return I_T::Create( (-s.x) + (-t.x), s.x + t.s );
+            return I_T::Create( AddRoundUp(-s.x,-t.x), AddRoundUp( s.x, t.x) );
         }
-        
         
         force_inline friend I_T operator-( const S_T s, const S_T t )
         {
-            s.RoundingModeWarning("operator- (SS)");
-            
-            return I_T::Create( (-s.x) + t.x , s.x + (-t.x) );
+            return I_T::Create( AddRoundUp(-s.x, t.x), AddRoundUp( s.x,-t.x) );
         }
         
         force_inline friend I_T operator*( const S_T s, const S_T t )
         {
-            s.RoundingModeWarning("operator* (SS)");
-            
-            return I_T::Create( (-s.x) * t.x, s.x * t.x );
+            return I_T::Create( MulRoundUp(-s.x, t.x), MulRoundUp( s.x, t.x) );
         }
         
         
@@ -274,24 +329,12 @@ namespace Tools
         
         force_inline friend I_T fma( const S_T r, const S_T s, const S_T t )
         {
-            r.RoundingModeWarning("fma (SSS)");
+            RoundingModeWarning("fma (SSS)");
             
             return I_T::Create( std::fma( r.x, -s.x, -t.x ), std::fma( r.x, s.x, t.x ) );
         }
         
-        
-        void RoundingModeWarning( cref<std::string> tag ) const
-        {
-            #ifdef CHECK_ROUNDING_MODE
-          
-            if( std::fegetround() != FE_UPWARD )
-            {
-                eprint(ClassName()+"::" + tag + ": Rounding mode not set to FE_UPWARD.");
-            }
-            #endif
-        }
-        
-        std::string ClassName() const
+        static std::string ClassName()
         {
             return std::string("Singleton<") + TypeName<Real> + ">";
         }
@@ -302,8 +345,8 @@ namespace Tools
     
     
     
-    template<typename Real_>
-    class Interval
+    template<typename Real_, RoundingPolicy RP_ = RoundingPolicy::UseRoundingMode>
+    class Interval : Rounding_T<Real_,RP_>
     {
         ASSERT_FLOAT(Real_)
         
@@ -311,16 +354,21 @@ namespace Tools
         
         using Real = Real_;
 
-        friend class Singleton<Real>;
+        static constexpr RoundingPolicy RP = RP_;
         
+        using Base_T = Rounding_T<Real,RP>;
+        
+        friend class Singleton<Real,RP>;
         
         using R_T = Real;
-        using I_T = Interval<Real>;
-        using S_T = Singleton<Real>;
-        
-        
+        using I_T = Interval<Real,RP>;
+        using S_T = Singleton<Real,RP>;
         
     protected:
+        
+        using Base_T::AddRoundUp;
+        using Base_T::MulRoundUp;
+        using Base_T::RoundingModeWarning;
         
         Real a;
         Real b;
@@ -558,10 +606,8 @@ namespace Tools
         
         force_inline friend I_T Square( const I_T I )
         {
-            I.RoundingModeWarning("Square");
-            
-            const Real A = I.a * I.a;
-            const Real B = I.b * I.b;
+            const Real A = MulRoundUp( I.a, I.a );
+            const Real B = MulRoundUp( I.b, I.b );
             
             return Create( I.ContainsZeroQ() ? 0 : Min(A,B), Max(A,B) );
         }
@@ -590,16 +636,12 @@ namespace Tools
         
         force_inline friend I_T operator+( const I_T I, const I_T J )
         {
-            I.RoundingModeWarning("operator+ (II)");
-            
-            return Create( I.a + J.a, I.b + J.b );
+            return Create( AddRoundUp( I.a, J.a ), AddRoundUp( I.b, J.b ) );
         }
         
         force_inline friend I_T operator+( const I_T I, const R_T x )
         {
-            I.RoundingModeWarning("operator+ (IR)");
-            
-            return Create( I.a - x, I.b + x );
+            return Create( AddRoundUp( I.a, -x ), AddRoundUp( I.b, x ) );
         }
         
         force_inline friend I_T operator+( const I_T I, const S_T s )
@@ -622,17 +664,14 @@ namespace Tools
         
         force_inline friend I_T operator-( const I_T I, const I_T J )
         {
-            I.RoundingModeWarning("operator- (II)");
-            
-            return Create( I.a + J.b , I.b + J.a );
+            return Create( AddRoundUp( I.a, J.b ), AddRoundUp( I.b, J.a ) );
         }
         
         force_inline friend I_T operator-( const I_T I, const R_T x )
         {
-            I.RoundingModeWarning("operator- (IR)");
-            
-            return Create( I.a + x , I.b - x );
+            return Create( AddRoundUp( I.a, x ) , AddRoundUp( I.b, -x ) );
         }
+        
 
         force_inline friend I_T operator-( const I_T I, const S_T s )
         {
@@ -642,9 +681,8 @@ namespace Tools
 
         force_inline friend I_T operator-( const R_T x, const I_T I )
         {
-            I.RoundingModeWarning("operator- (RI)");
+            return Create( AddRoundUp( -x, I.b ) , AddRoundUp( x, I.a ) );
             
-            return Create( -x + I.b , x + I.a );
         }
 
         force_inline friend I_T operator-( const S_T s, const I_T J )
@@ -656,111 +694,9 @@ namespace Tools
         force_inline friend I_T mult_II_pos_pos( const I_T I, const I_T J )
         {
             // I.Lower() > 0, I.Upper() > 0, J.Lower() > 0, J.Upper() > 0
-            // Then solution is
             // [ I.Lower() * J.Lower(), I.Upper() * J.Upper() ]
-
-//            return Create( (-I.Lower()) * J.Lower(), I.Upper() * J.Upper() );
             
-            return Create( I.a * (-J.a), I.b * J.b );
-        }
-        
-        force_inline friend I_T mult_II_branching( const I_T I, const I_T J )
-        {
-            constexpr Real zero = 0;
-            
-            
-            if( I > zero )
-            {
-                if( J > zero )
-                {
-                    return mult_II_pos_pos( I, J );
-                }
-                else if( J < zero )
-                {
-                    // I.Lower() > 0, I.Upper() > 0, J.Lower() < 0, J.Upper() < 0
-                    // Then solution is
-                    // [ I.Upper() * J.Lower(), I.Lower() * J.Upper() ]
-
-//                    return Create( I.Upper() * (-J.Lower()), I.Lower() * J.Upper() );
-
-                    return Create( I.b * J.a, (-I.a) * J.b );
-                }
-                else
-                {
-                    // I.Lower() > 0, I.Upper() > 0, J.Lower() <= 0, J.Upper() >= 0
-                    // Then solution is
-                    // [ I.Upper() * J.Lower(), I.Upper() * J.Upper() ]
-
-//                    return Create( I.Upper() * (-J.Lower()), I.Upper() * J.Upper() );
-
-                    return Create( I.b * J.a, I.b * J.b );
-                }
-            }
-            else if( I < zero )
-            {
-                if( J > zero )
-                {
-                    // I.Lower() < 0, I.Upper() < 0, J.Lower() > 0, J.Upper() > 0
-                    // Then solution is
-                    // [ I.Lower() * J.Upper(), I.Upper() * J.Lower() ]
-
-//                    return Create( (-I.Lower()) * J.Upper(), I.Upper() * J.Lower() );
-
-                    return Create( I.a * J.b, I.b * (-J.a) );
-                }
-                else if( J < zero )
-                {
-                    // I.Lower() < 0, I.Upper() < 0, J.Lower() < 0, J.Upper() < 0
-                    // Then solution is
-                    // [ I.Upper() * J.Upper(), I.Lower() * J.Lower() ]
-
-//                    return Create( (-I.Upper()) * J.Upper(), I.Lower() * J.Lower() );
-
-                    return Create( (-I.b) * J.b, I.a * J.a );
-                }
-                else
-                {
-                    // I.Lower() < 0, I.Upper() < 0, J.Lower() <= 0, J.Upper() >= 0
-                    // Then solution is
-                    // [ I.Lower() * J.Upper(), I.Lower() * J.Lower() ]
-
-//                    return Create( (-I.Lower() * J.Upper(), I.Lower() * J.Lower() );
-
-                    return Create( I.a * J.b, I.a * J.a );
-                }
-            }
-            else
-            {
-                if( J > zero )
-                {
-                    // I.Lower() <= 0, I.Upper() >= 0, J.Lower() > 0, J.Upper() > 0
-                    // Then solution is
-                    // [ I.Lower() * J.Upper(), I.Upper() * J.Upper() ]
-
-//                    return Create( (-I.Lower()) * J.Upper(), I.Upper() * J.Upper() );
-
-                    return Create( I.a * J.b, I.b * J.b );
-                }
-                else if( J < zero )
-                {
-                    // I.Lower() <= 0, I.Upper() >= 0, J.Lower() < 0, J.Upper() < 0
-                    // Then solution is
-                    // [ I.Upper() * J.Lower(), I.Lower() * J.Lower() ]
-
-//                    return Create( I.Upper() * (-J.Lower()), I.Lower() * J.Lower() );
-
-                    return Create( I.b * J.a, I.a * J.a );
-                }
-                else
-                {
-                    // I.Lower() <= 0, I.Upper() => 0, J.Lower() <= 0, J.Upper() => 0
-                    // Then solution is
-                    // [ Min(I.Lower() * J.Upper(), I.Upper() * J.Lower(),
-                    //   Max(I.Lower() * J.Lower(), I.Upper() * J.Upper() ]
-
-                    return Create( Max( I.a * J.b, I.b * J.a ), Max( I.a * J.a, I.b * J.b ) );
-                }
-            }
+            return Create( MulRoundUp(I.a, -J.a), MulRoundUp(I.b, J.b) );
         }
         
         force_inline friend I_T mult_II_switch( const I_T I, const I_T J )
@@ -778,22 +714,16 @@ namespace Tools
                         case -1:
                         {
                             // I.Lower() > 0, I.Upper() > 0, J.Lower() < 0, J.Upper() < 0
-                            // Then solution is
                             // [ I.Upper() * J.Lower(), I.Lower() * J.Upper() ]
-                            
-                            // return Create( I.Upper() * (-J.Lower()), I.Lower() * J.Upper() );
-                            
-                            return Create( I.b * J.a, (-I.a) * J.b );
+
+                            return Create( MulRoundUp(I.b,J.a), MulRoundUp(-I.a,J.b) );
                         }
                         case 0:
                         {
                             // I.Lower() > 0, I.Upper() > 0, J.Lower() <= 0, J.Upper() >= 0
-                            // Then solution is
                             // [ I.Upper() * J.Lower(), I.Upper() * J.Upper() ]
-                            
-                            // return Create( I.Upper() * (-J.Lower()), I.Upper() * J.Upper() );
-                            
-                            return Create( I.b * J.a, I.b * J.b );
+
+                            return Create( MulRoundUp(I.b,J.a), MulRoundUp(I.b,J.b) );
                         }
                     }
                 }
@@ -804,32 +734,23 @@ namespace Tools
                         case 1:
                         {
                             // I.Lower() < 0, I.Upper() < 0, J.Lower() > 0, J.Upper() > 0
-                            // Then solution is
                             // [ I.Lower() * J.Upper(), I.Upper() * J.Lower() ]
                             
-                            // return Create( (-I.Lower()) * J.Upper(), I.Upper() * J.Lower() );
-                            
-                            return Create( I.a * J.b, I.b * (-J.a) );
+                            return Create( MulRoundUp(I.a,J.b), MulRoundUp(I.b,-J.a) );
                         }
                         case -1:
                         {
                             // I.Lower() < 0, I.Upper() < 0, J.Lower() < 0, J.Upper() < 0
-                            // Then solution is
                             // [ I.Upper() * J.Upper(), I.Lower() * J.Lower() ]
                             
-                            // return Create( (-I.Upper()) * J.Upper(), I.Lower() * J.Lower() );
-                            
-                            return Create( (-I.b) * J.b, I.a * J.a );
+                            return Create( MulRoundUp(-I.b,J.b), MulRoundUp(I.a,J.a) );
                         }
                         case 0:
                         {
                             // I.Lower() < 0, I.Upper() < 0, J.Lower() <= 0, J.Upper() >= 0
-                            // Then solution is
                             // [ I.Lower() * J.Upper(), I.Lower() * J.Lower() ]
                             
-                            // return Create( (-I.Lower() * J.Upper(), I.Lower() * J.Lower() );
-                            
-                            return Create( I.a * J.b, I.a * J.a );
+                            return Create( MulRoundUp(I.a,J.b), MulRoundUp(I.a,J.a) );
                         }
                     }
                 }
@@ -840,31 +761,27 @@ namespace Tools
                         case 1:
                         {
                             // I.Lower() <= 0, I.Upper() >= 0, J.Lower() > 0, J.Upper() > 0
-                            // Then solution is
                             // [ I.Lower() * J.Upper(), I.Upper() * J.Upper() ]
                             
-                            // return Create( (-I.Lower()) * J.Upper(), I.Upper() * J.Upper() );
-                            
-                            return Create( I.a * J.b, I.b * J.b );
+                            return Create( MulRoundUp(I.a,J.b), MulRoundUp(I.b,J.b) );
                         }
                         case -1:
                         {
                             // I.Lower() <= 0, I.Upper() >= 0, J.Lower() < 0, J.Upper() < 0
-                            // Then solution is
                             // [ I.Upper() * J.Lower(), I.Lower() * J.Lower() ]
                             
-                            // return Create( I.Upper() * (-J.Lower()), I.Lower() * J.Lower() );
-                            
-                            return Create( I.b * J.a, I.a * J.a );
+                            return Create( MulRoundUp(I.b,J.a), MulRoundUp(I.a,J.a) );
                         }
                         case 0:
                         {
                             // I.Lower() <= 0, I.Upper() => 0, J.Lower() <= 0, J.Upper() => 0
-                            // Then solution is
                             // [ Min(I.Lower() * J.Upper(), I.Upper() * J.Lower(),
                             //   Max(I.Lower() * J.Lower(), I.Upper() * J.Upper() ]
                             
-                            return Create( Max( I.a * J.b, I.b * J.a ), Max( I.a * J.a, I.b * J.b ) );
+                            return Create(
+                                Max( MulRoundUp(I.a,J.b), MulRoundUp(I.b,J.a) ),
+                                Max( MulRoundUp(I.a,J.a), MulRoundUp(I.b,J.b) )
+                            );
                         }
                     }
                 }
@@ -875,40 +792,108 @@ namespace Tools
         }
         
         
+        force_inline friend I_T mult_RI_switch( const R_T x, const I_T J )
+        {
+            switch( Sign(x) )
+            {
+                case 1:
+                {
+                    return Create( MulRoundUp(x,J.a), MulRoundUp(x,J.b) );
+                }
+                case -1:
+                {
+                    return Create( MulRoundUp(-x,J.b), MulRoundUp(-x,J.a) );
+                }
+                case 0:
+                {
+                    return Create( 0, 0 );
+                }
+                    
+            } // switch( Sign(x) )
+            
+            return I_T();
+        }
+        
+        
+        
         force_inline friend I_T mul_II_bruteforce( const I_T I, const I_T J )
         {
+            // 8(!) multiplications, but apparently, they can be vectorized.
+            
             const Real A = Max(
-                Max( (-I.a) * ( J.a), ( I.a) * ( J.b) ),
-                Max( ( I.b) * ( J.a), (-I.b) * ( J.b) )
+                Max( MulRoundUp( -I.a, J.a), MulRoundUp(  I.a, J.b) ),
+                Max( MulRoundUp(  I.b, J.a), MulRoundUp( -I.b, J.b) )
             );
             
             const Real B = Max(
-                Max( ( I.a) * ( J.a), (-I.a) * ( J.b) ),
-                Max( (-I.b) * ( J.a), ( I.b) * ( J.b) )
+                Max( MulRoundUp(  I.a, J.a), MulRoundUp( -I.a, J.b) ),
+                Max( MulRoundUp( -I.b, J.a), MulRoundUp(  I.b, J.b) )
             );
             
             return Create( A, B );
         }
         
+        force_inline friend I_T mul_IR_bruteforce( const I_T I, const R_T x )
+        {
+            return Create(
+                Max( MulRoundUp(  I.a, x ), MulRoundUp( -I.b, x ) ),
+                Max( MulRoundUp( -I.a, x ), MulRoundUp(  I.b, x ) )
+            );
+        }
+        
+        force_inline friend I_T mul_II_bruteforce2( const I_T I, const I_T J )
+        {
+            // Advantage: No switching of rounding mode needed.
+            // Is slower than mul_II_bruteforce, though.
+            // For some reason, clang does not want to vectorize this.
+            
+            const auto [aa, e_aa] = TwoMulFMA( I.a, J.a );
+            const auto [ab, e_ab] = TwoMulFMA( I.a, J.b );
+            const auto [ba, e_ba] = TwoMulFMA( I.b, J.a );
+            const auto [bb, e_bb] = TwoMulFMA( I.b, J.b );
+
+            const Real A = Max(
+                Max( RoundUp( -aa, e_aa < 0 ), RoundUp(  ab, e_ab > 0 ) ),
+                Max( RoundUp(  ba, e_ba > 0 ), RoundUp( -bb, e_bb < 0 ) )
+            );
+            
+            const Real B = Max(
+                Max( RoundUp(  aa, e_aa > 0 ), RoundUp( -ab, e_ab < 0 ) ),
+                Max( RoundUp( -ba, e_ba < 0 ), RoundUp(  bb, e_bb > 0 ) )
+            );
+            
+            return Create( A, B );
+        }
+        
+        force_inline friend I_T mul_IR_bruteforce2( const I_T I, const R_T x )
+        {
+            const auto [ax, e_ax] = TwoMulFMA( I.a, x );
+            const auto [bx, e_bx] = TwoMulFMA( I.b, x );
+
+            const Real A = Max( RoundUp(  ax, e_ax > 0 ), RoundUp( -bx, e_bx < 0 ) );
+            
+            const Real B = Max( RoundUp( -ax, e_ax < 0 ), RoundUp(  bx, e_bx > 0 ) );
+            
+            return Create( A, B );
+            
+        }
+        
         force_inline friend I_T operator*( const I_T I, const I_T J )
         {
-            I.RoundingModeWarning("operator* (II)");
-            
             return mul_II_bruteforce( I, J );
             
-//            return mult_II_branching( I, J );
+//            return mul_II_bruteforce2( I, J );
             
 //            return mult_II_switch( I, J );
         }
-        
+                                          
         force_inline friend I_T operator*( const I_T I, const R_T x )
         {
-            I.RoundingModeWarning("operator* (IR)");
+            return mul_IR_bruteforce( I, x );
             
-            return Create(
-                Max( ( I.a) * x, (-I.b) * x ),
-                Max( (-I.a) * x, ( I.b) * x )
-            );
+//            return mul_IR_bruteforce2( I, x );
+                                
+//            return mult_RI_switch( x, I );
         }
         
         force_inline friend I_T operator*( const I_T I, const S_T s )
@@ -991,7 +976,7 @@ namespace Tools
         
         force_inline friend I_T fma( const I_T I, const I_T J, const I_T K )
         {
-            I.RoundingModeWarning("fma (III)");
+            RoundingModeWarning("fma (III)");
 
             const Real A = Max(
                 Max( std::fma( -I.a, J.a, K.a ), std::fma(  I.a, J.b, K.a) ),
@@ -1008,7 +993,7 @@ namespace Tools
         
         force_inline friend I_T fma( const I_T I, const I_T J, const R_T z )
         {
-            I.RoundingModeWarning("fma (IIR)");
+            RoundingModeWarning("fma (IIR)");
 
             const Real A = Max(
                 Max( std::fma( -I.a, J.a, -z ), std::fma(  I.a, J.b, -z) ),
@@ -1031,7 +1016,7 @@ namespace Tools
         
         force_inline friend I_T fma( const R_T x, const I_T J, const I_T K )
         {
-            J.RoundingModeWarning("fma (RII)");
+            RoundingModeWarning("fma (RII)");
 
             const Real A = Max( std::fma(  x, J.a, K.a ), std::fma( -x, J.b, K.a ) );
             const Real B = Max( std::fma( -x, J.a, K.b ), std::fma(  x, J.b, K.b ) );
@@ -1057,7 +1042,7 @@ namespace Tools
         
         force_inline friend I_T fma( const R_T x, const R_T y, const I_T K )
         {
-            K.RoundingModeWarning("fma (RRI)");
+            RoundingModeWarning("fma (RRI)");
             
             return Create(std::fma( -x, y, K.a ), std::fma( x, y, K.b ) );
         }
@@ -1070,7 +1055,7 @@ namespace Tools
         
         force_inline friend I_T fma( const R_T x, const I_T I, const R_T z )
         {
-            I.RoundingModeWarning("fma (RIR)");
+            RoundingModeWarning("fma (RIR)");
             
             return Create (
                 Max( std::fma( x,  I.a, -z ), std::fma( x, -I.b, -z ) ),
@@ -1094,37 +1079,24 @@ namespace Tools
             return fma( r.x, I, t.x );
         }
         
-
-
         
-
-        
-        
-        
-        void RoundingModeWarning( cref<std::string> tag ) const
+        static std::string ClassName()
         {
-            #ifdef CHECK_ROUNDING_MODE
-          
-            if( std::fegetround() != FE_UPWARD )
-            {
-                eprint(ClassName()+"::" + tag + ": Rounding mode not set to FE_UPWARD.");
-            }
-            #endif
-        }
-        
-        
-        
-        std::string ClassName() const
-        {
-            return std::string("Interval<") + TypeName<Real> + ">";
+            return std::string("Interval<") + TypeName<Real> + ", " + ToString(RP) + ">";
         }
         
         
     }; // class Interval
     
 
-    template<typename Real>
-    std::string ToString( const Interval<Real> I )
+    template<typename Real, RoundingPolicy RP >
+    std::string ToString( const Singleton<Real,RP> s )
+    {
+        return std::string("{ ") + Tools::ToString(s.x) + " }";
+    }
+    
+    template<typename Real, RoundingPolicy RP >
+    std::string ToString( const Interval<Real,RP> I )
     {
         return std::string("[ ") + Tools::ToString(I.Lower()) + ", " + Tools::ToString(I.Upper()) + " ]";
     }

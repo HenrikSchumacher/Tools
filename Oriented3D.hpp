@@ -3,56 +3,115 @@
 namespace Tools
 {
     template<bool fmaQ = true, typename Real>
+    force_inline Real Det3D_Naive( cptr<Real> A )
+    {
+        if constexpr( fmaQ )
+        {
+            const Real r [3] {
+                fma( A[4], A[8], - A[5] * A[7] ),
+                fma( A[5], A[6], - A[3] * A[8] ),
+                fma( A[3], A[7], - A[4] * A[6] )
+            };
+            
+            return fma( A[2], r[2], fma( A[1], r[1], A[0] * r[0] ) );
+        }
+        else
+        {
+            return
+                A[0] * (A[4] * A[8] - A[5] * A[7])
+                +
+                A[1] * (A[5] * A[6] - A[3] * A[8])
+                +
+                A[2] * (A[3] * A[7] - A[4] * A[6]);
+        }
+    }
+    
+    template<bool fmaQ = true, typename Real>
     force_inline Real SignedVolume3D_Naive(
         cptr<Real> x, cptr<Real> y, cptr<Real> z, cptr<Real> w
     )
     {
-        using std::fma;
-        
         const Real A [3][3] {
             { y[0] - x[0], z[0] - x[0], w[0] - x[0] },
             { y[1] - x[1], z[1] - x[1], w[1] - x[1] },
             { y[2] - x[2], z[2] - x[2], w[2] - x[2] }
         };
         
+        return Det3D_Naive<fmaQ>( &A[0][0] );
+    }
+    
+    template<typename Out_T = int, bool fmaQ = true, typename Real>
+    force_inline Out_T Oriented3D_Naive(
+        cptr<Real> x, cptr<Real> y, cptr<Real> z, cptr<Real> w
+    )
+    {
+        return Sign<Out_T>( SignedVolume3D_Naive<fmaQ>( x, y, z, w ) );
+    }
+    
+    
+    
+    template<bool fmaQ = true, typename Real, RoundingPolicy RP>
+    force_inline Interval<Real,RP> Det3D_IA( cptr<Singleton<Real,RP>> A )
+    {
         if constexpr( fmaQ )
         {
-            const Real r [3] {
-                fma( A[1][1], A[2][2], - A[1][2] * A[2][1]),
-                fma( A[1][2], A[2][0], - A[1][0] * A[2][2]),
-                fma( A[1][0], A[2][1], - A[1][1] * A[2][0])
+            const Interval<Real,RP> r [3] {
+                fma( A[4], A[8], - A[5] * A[7] ),
+                fma( A[5], A[6], - A[3] * A[8] ),
+                fma( A[3], A[7], - A[4] * A[6] )
             };
             
-            return fma( A[0][2], r[2], fma( A[0][1], r[1], A[0][0] * r[0] ) );
+            return fma( A[2], r[2], fma( A[1], r[1], A[0] * r[0] ) );
         }
         else
         {
             return
-                A[0][0] * (A[1][1] * A[2][2] - A[1][2] * A[2][1])
+                A[0] * (A[4] * A[8] - A[5] * A[7])
                 +
-                A[0][1] * (A[1][2] * A[2][0] - A[1][0] * A[2][2])
+                A[1] * (A[5] * A[6] - A[3] * A[8])
                 +
-                A[0][2] * (A[1][0] * A[2][1] - A[1][1] * A[2][0]);
+                A[2] * (A[3] * A[7] - A[4] * A[6]);
         }
     }
     
-    template<bool fmaQ = true, typename Real>
-    force_inline int Oriented3D_Naive(
-        cptr<Real> x, cptr<Real> y, cptr<Real> z, cptr<Real> w
-    )
+//    template<bool fmaQ = true, typename Real>
+//    force_inline Interval<Real,RP> Det3D_IA( cptr<Real> A )
+//    {
+//        return Det3D_IA( reinterpret_cast<cptr<Singleton<Real>>>(A) );
+//    }
+    
+    template<bool fmaQ = true, typename Real, RoundingPolicy RP>
+    force_inline Interval<Real,RP> Det3D_IA( cptr<Interval<Real,RP>> A )
     {
-        return Sign( SignedVolume3D_Naive<fmaQ>( x, y, z, w ) );
+        if constexpr( fmaQ )
+        {
+            const Interval<Real,RP> r [3] {
+                fma( A[4], A[8], - A[5] * A[7] ),
+                fma( A[5], A[6], - A[3] * A[8] ),
+                fma( A[3], A[7], - A[4] * A[6] )
+            };
+            
+            return fma( A[2], r[2], fma( A[1], r[1], A[0] * r[0] ) );
+        }
+        else
+        {
+            return
+                A[0] * (A[4] * A[8] - A[5] * A[7])
+                +
+                A[1] * (A[5] * A[6] - A[3] * A[8])
+                +
+                A[2] * (A[3] * A[7] - A[4] * A[6]);
+        }
     }
     
-    
-    template<bool diffsafeQ = false, bool fmaQ = true, typename Real>
-    force_inline Interval<Real> SignedVolume3D_IA(
+    template<RoundingPolicy RP, bool diffsafeQ = false, bool fmaQ = true, typename Real>
+    force_inline Interval<Real,RP> SignedVolume3D_IA(
         cptr<Real> x, cptr<Real> y, cptr<Real> z, cptr<Real> w
     )
     {
-        using I_T = Interval<Real>;
-        using S_T = Singleton<Real>;
-        
+        using S_T = Singleton<Real,RP>;
+        using I_T = Interval <Real,RP>;
+
         if constexpr ( diffsafeQ )
         {
             const S_T A [3][3] {
@@ -61,28 +120,10 @@ namespace Tools
                 { S_T(y[2] - x[2]), S_T(z[2] - x[2]), S_T(w[2] - x[2]) }
             };
             
-            if constexpr( fmaQ )
-            {
-                const I_T r [3] {
-                    fma( A[1][1], A[2][2], - A[1][2] * A[2][1]),
-                    fma( A[1][2], A[2][0], - A[1][0] * A[2][2]),
-                    fma( A[1][0], A[2][1], - A[1][1] * A[2][0])
-                };
-
-                return fma( A[0][2], r[2], fma( A[0][1], r[1], A[0][0] * r[0] ) );
-            }
-            else
-            {
-                return
-                    A[0][0] * (A[1][1] * A[2][2] - A[1][2] * A[2][1])
-                    +
-                    A[0][1] * (A[1][2] * A[2][0] - A[1][0] * A[2][2])
-                    +
-                    A[0][2] * (A[1][0] * A[2][1] - A[1][1] * A[2][0]);
-            }
+            return Det3D_IA<fmaQ>( &A[0][0] );
         }
         else
-        {
+        {        
             cptr<S_T> X = reinterpret_cast<cptr<S_T>>(x);
             cptr<S_T> Y = reinterpret_cast<cptr<S_T>>(y);
             cptr<S_T> Z = reinterpret_cast<cptr<S_T>>(z);
@@ -94,35 +135,17 @@ namespace Tools
                 { Y[2] - X[2], Z[2] - X[2], W[2] - X[2] }
             };
             
-            if constexpr( fmaQ )
-            {
-                const I_T r [3] {
-                    fma( A[1][1], A[2][2], - A[1][2] * A[2][1]),
-                    fma( A[1][2], A[2][0], - A[1][0] * A[2][2]),
-                    fma( A[1][0], A[2][1], - A[1][1] * A[2][0])
-                };
-
-                return fma( A[0][2], r[2], fma( A[0][1], r[1], A[0][0] * r[0] ) );
-            }
-            else
-            {
-                return
-                    A[0][0] * (A[1][1] * A[2][2] - A[1][2] * A[2][1])
-                    +
-                    A[0][1] * (A[1][2] * A[2][0] - A[1][0] * A[2][2])
-                    +
-                    A[0][2] * (A[1][0] * A[2][1] - A[1][1] * A[2][0]);
-            }
+            return Det3D_IA<fmaQ>( &A[0][0] );
         }
     }
     
     
-    template<bool diffsafeQ = false, bool fmaQ = true, typename Real>
-    force_inline int Oriented3D_IA(
+    template<RoundingPolicy RP, typename Out_T = int, bool diffsafeQ = false, bool fmaQ = true, typename Real>
+    force_inline Out_T Oriented3D_IA(
         cptr<Real> x, cptr<Real> y, cptr<Real> z, cptr<Real> w
     )
     {
-        return Sign( SignedVolume3D_IA<diffsafeQ,fmaQ>(x,y,z,w) );
+        return Sign<Out_T>( SignedVolume3D_IA<RP,diffsafeQ,fmaQ>(x,y,z,w) );
     }
     
 } // namespace Tools
