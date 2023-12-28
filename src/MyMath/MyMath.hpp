@@ -98,7 +98,7 @@ namespace Tools
     } // Power
     
     template<typename R = int, typename T>
-    force_inline R Sign( const T x)
+    force_inline constexpr R Sign( const T x)
     {
         constexpr T zero = 0;
         
@@ -106,14 +106,14 @@ namespace Tools
     }
     
     template<typename R = int, typename S, typename T>
-    force_inline R DifferenceSign( const S x, const T y )
+    force_inline constexpr R DifferenceSign( const S x, const T y )
     {
         // Returns the sign of x - y.
         
         return static_cast<R>( (x > y) - (x < y) );
     }
     
-    force_inline bool OppositeSignQ( const int x, const int y )
+    force_inline constexpr bool OppositeSignQ( const int x, const int y )
     {
         // This is often adviced, but it is wrong.
         // It returns true for ( -1 ^ 0 ) < 0.
@@ -122,8 +122,9 @@ namespace Tools
         return x * y < 0;
     }
     
+    
     template<typename R = int, typename S, typename T>
-    force_inline R KroneckerDelta( const S i, const T j )
+    force_inline constexpr R KroneckerDelta( const S i, const T j )
     {
         return static_cast<R>( i == j );
     }
@@ -300,13 +301,6 @@ namespace Tools
         }
         
         return result;
-    }
-    
-    
-    template<typename T_out, typename T_in>
-    inline static constexpr T_out Delta( const T_in & a, const T_in & b )
-    {
-        return static_cast<T_out>( a == b );
     }
     
     
