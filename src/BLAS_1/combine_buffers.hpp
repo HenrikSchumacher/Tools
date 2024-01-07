@@ -195,7 +195,7 @@ namespace Tools
                     [=]( const Size_T i )
                     {
                         constexpr auto ox = COND( opx == Op::Conj,
-                                []( const x_T & X ){ return scalar_cast<z_T>( Conj<x_T>(X) ); },
+                                []( const x_T & X ){ return scalar_cast<z_T>( Conj(X) ); },
                                 []( const x_T & X ){ return scalar_cast<z_T>( X ); }
                         );
                         
@@ -237,7 +237,7 @@ namespace Tools
                     [=]( const Size_T i )
                     {
                         constexpr auto oy = COND( opy == Op::Conj,
-                                []( const y_T & Y ){ return scalar_cast<y_T>( Conj<y_T>(Y) ); },
+                                []( const y_T & Y ){ return scalar_cast<y_T>( Conj(Y) ); },
                                 []( const y_T & Y ){ return scalar_cast<y_T>( Y ); }
                         );
                         

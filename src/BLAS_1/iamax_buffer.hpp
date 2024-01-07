@@ -2,131 +2,44 @@
 
 namespace Tools
 {
-    
-    template <
-        Size_T N = VarSize,
-        typename S
-    >
-    force_inline Size_T iamax_buffer( cptr<S> z, const Size_T n = N )
+    template <Size_T N = VarSize, Parallel_T parQ = Sequential, typename S >
+    [[nodiscard]] force_inline Size_T
+    iamax_buffer( cptr<S> z, const Size_T n = N, const Size_T thread_count = 1 )
     {
-        // Find the element i with maximal modulus.
+        // Find the first position i such that z[i] has maximal modulus.
         
-        using R = typename Scalar::Real<S>;
-
-        R max = 0;
-        Size_T pos = 0;
-        
-        if constexpr ( N == VarSize )
+        if constexpr ( Scalar::RealQ<S> )
         {
-            for( Size_T i = 0; i < n; ++i )
-            {
-                const R abs_z = COND( Scalar::RealQ<S>, Abs(z[i]), AbsSquared(z[i]) );
-                
-                if( abs_z > max )
-                {
-                    pos = i;
-                    max = abs_z;
-                }
-            }
+            return MaximumBy<N,parQ>(
+                [z]( const Size_T i ){ return Abs(z[i]); }, n, thread_count
+            ).first;
         }
         else
         {
-            for( Size_T i = 0; i < N; ++i )
-            {
-                const R abs_z = COND( Scalar::RealQ<S>, Abs(z[i]), AbsSquared(z[i]) );
-                
-                if( abs_z > max )
-                {
-                    pos = i;
-                    max = abs_z;
-                }
-            }
+            return MaximumBy<N,parQ>(
+                [z]( const Size_T i ){ return AbsSquared(z[i]); }, n, thread_count
+            ).first;
         }
-        
-        return pos;
     }
     
-    
-    
-    
-    template <
-        Size_T N = VarSize,
-        typename R
-    >
-    force_inline Size_T imax_buffer( cptr<R> x, const Size_T n = N )
+    template <Size_T N = VarSize, Parallel_T parQ = Sequential, typename S >
+    [[nodiscard]] force_inline Size_T
+    iamin_buffer( cptr<S> z, const Size_T n = N, const Size_T thread_count = 1 )
     {
-        // Find the maximal element i.
-    
+        // Find the first position i such that z[i] has minimal modulus.
         
-        if constexpr ( N == VarSize )
+        if constexpr ( Scalar::RealQ<S> )
         {
-            R max = std::numeric_limits<R>::lowest();
-            Size_T pos = 0;
-            for( Size_T i = 0; i < n; ++i )
-            {
-                if( x[i] > max )
-                {
-                    pos = i;
-                    max = x[i];
-                }
-            }
-            return pos;
+            return MinimumBy<N,parQ>(
+                [z]( const Size_T i ){ return Abs(z[i]); }, n, thread_count
+            ).first;
         }
         else
         {
-            R max = std::numeric_limits<R>::lowest();
-            Size_T pos = 0;
-            for( Size_T i = 0; i < N; ++i )
-            {
-                if( x[i] > max )
-                {
-                    pos = i;
-                    max = x[i];
-                }
-            }
-            return pos;
-        }
-    }
-
-
-    template <
-        Size_T N = VarSize,
-        typename R
-    >
-    force_inline Size_T imin_buffer( cptr<R> x, const Size_T n = N )
-    {
-        // Find the maximal element i.
-    
-        
-        if constexpr ( N == VarSize )
-        {
-            R min = std::numeric_limits<R>::max();
-            Size_T pos = 0;
-            for( Size_T i = 0; i < n; ++i )
-            {
-                if( x[i] < min )
-                {
-                    pos = i;
-                    min = x[i];
-                }
-            }
-            return pos;
-        }
-        else
-        {
-            R min = std::numeric_limits<R>::max();
-            Size_T pos = 0;
-            for( Size_T i = 0; i < N; ++i )
-            {
-                if( x[i] < min )
-                {
-                    pos = i;
-                    min = x[i];
-                }
-            }
-            return pos;
+            return MinimumBy<N,parQ>(
+                [z]( const Size_T i ){ return AbsSquared(z[i]); }, n, thread_count
+            ).first;
         }
     }
     
 } // namespace Tools
-

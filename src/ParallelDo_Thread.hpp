@@ -6,13 +6,16 @@
 namespace Tools
 {
     
-    // Executes the function `fun` of the form `[]( const Int thread ) -> void {...}` parallelized over `thread_count` threads.
+    // Executes the function `fun` of the form `[]( const Int thread ) -> S {...}` parallelized over `thread_count` threads.
     template<typename F, typename Int>
     force_inline void ParallelDo( F && fun, const Int thread_count )
     {
-        if( thread_count <= static_cast<Int>(1) )
+        constexpr Int zero = 0;
+        constexpr Int one  = 1;
+        
+        if( thread_count <= one )
         {
-            std::invoke( fun, static_cast<Int>(0) );
+            std::invoke( fun, zero );
         }
         else
         {
@@ -30,21 +33,20 @@ namespace Tools
         }
     }
     
-    // Executes the function `fun` of the `form []( const Int thread ) -> void {...}` parallelized over `thread_count` threads.
-    // Afterwards, reduces with the function `reducer` of the form `[]( const Int thread, const S &, T & result ) {...}`.
+    // Executes the function `fun` of the `form []( const Int thread ) -> S {...}` parallelized over `thread_count` threads.
+    // Afterwards, reduces with the function `reducer` of the form `[]( const Int thread, cref<S> value, mref<T> result ) {...}`.
     template<typename F, typename R, typename T, typename Int>
     force_inline T ParallelDoReduce( F && fun, R && reducer, cref<T> init, const Int thread_count )
     {
         T result (init);
         
-        if( thread_count <= static_cast<Int>(1) )
+        constexpr Int zero = 0;
+        constexpr Int one  = 1;
+        
+        if( thread_count <= one )
         {
-            std::invoke(
-                reducer,
-                static_cast<Int>(0),
-                std::invoke( fun, static_cast<Int>(0) ),
-                result
-            );
+//            std::invoke( reducer, zero, std::invoke( fun, zero ), result );
+            std::invoke( reducer, zero, fun(zero), result );
         }
         else
         {

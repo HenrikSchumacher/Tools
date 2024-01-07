@@ -104,42 +104,13 @@ namespace Tools
         );
     }
     
-//    template<typename F, typename R, typename T, typename Int>
-//    force_inline void ParallelDo(
-//        F && fun, R && reducer, const T & init, const Int n, const Int thread_count
-//    )
-//    {
-//        ParallelDoReduce(
-//            [&fun,&reducer,n,thread_count,&init]( const Int thread )
-//            {
-//                T result (init);
-//
-//                const Int i_begin = JobPointer( n, thread_count, thread     );
-//                const Int i_end   = JobPointer( n, thread_count, thread + 1 );
-//
-//                for( Int i = i_begin; i < i_end; ++i )
-//                {
-//                    std::invoke( reducer, thread, fun(i), result );
-//                }
-//
-//                return result;
-//            },
-//            std::forward<R>(reducer),
-//            init,
-//            thread_count
-//        );
-//    }
-    
-    
-    //ParallelDoReduce
-    
     template<typename F, typename R, typename T, typename Int>
     force_inline T ParallelDoReduce(
         F && fun, R && reducer, cref<T> init, cref<JobPointers<Int>> job_ptr
     )
     {
         return ParallelDoReduce(
-            [&fun,&reducer,&job_ptr,&init]( const Int thread )
+            [&fun,&reducer,&job_ptr,&init]( const Int thread ) -> T
             {
                 T result (init);
                 
@@ -165,11 +136,11 @@ namespace Tools
     )
     {
         return ParallelDoReduce(
-            [&fun,&reducer,begin,end,thread_count,&init]( const Int thread )
+            [&fun,&reducer,begin,end,thread_count,&init]( const Int thread ) -> T
             {
                 T result (init);
 
-                const Int i_begin = begin + JobPointer( end - begin, thread_count, thread      );
+                const Int i_begin = begin + JobPointer( end - begin, thread_count, thread     );
                 const Int i_end   = begin + JobPointer( end - begin, thread_count, thread + 1 );
 
                 for( Int i = i_begin; i < i_end; ++i )
@@ -184,6 +155,18 @@ namespace Tools
             thread_count
         );
     }
+    
+//    template<typename F, typename R, typename T, typename Int>
+//    force_inline T ParallelDoReduce(
+//        F && fun, R && reducer, cref<T> init, const Int n, const Int thread_count
+//    )
+//    {
+//        return ParallelDoReduce(
+//            std::forward<F>(fun),
+//            std::forward<R>(reducer),
+//            init, Int(0), n, thread_count
+//        );
+//    }
     
 
 

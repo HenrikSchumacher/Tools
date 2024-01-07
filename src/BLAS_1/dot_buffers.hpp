@@ -2,8 +2,8 @@
 
 namespace Tools
 {
-    template <
-        Size_T N = VarSize, Parallel_T parQ = Sequential,
+    
+    template< Size_T N = VarSize, Parallel_T parQ = Sequential, 
         Op opx = Op::Id, Op opy = Op::Id,
         typename x_T, typename y_T
     >
@@ -26,54 +26,20 @@ namespace Tools
         
         using T = decltype( x_T(1) * y_T(1) );
         
-        constexpr auto ox = COND( opx == Op::Conj,
-                []( const x_T & z ){ return scalar_cast<T>( Conj<x_T>(z) ); },
-                []( const x_T & z ){ return scalar_cast<T>( z ); }
+        return DoReduce<N,parQ>(
+            [x,y]( const Size_T i ) -> T
+            {
+                return
+                    scalar_cast<T>( opx == Op::Conj ? Conj(x[i]) : x[i] )
+                    *
+                    scalar_cast<T>( opy == Op::Conj ? Conj(y[i]) : y[i] );
+            },
+            []( const T & value, T & result )
+            {
+                result += value;
+            },
+            T(0), n, thread_count
         );
-        
-        constexpr auto oy = COND( opy == Op::Conj,
-                []( const y_T & z ){ return scalar_cast<T>( Conj<y_T>(z) ); },
-                []( const y_T & z ){ return scalar_cast<T>( z ); }
-        );
-        
-        if constexpr ( N == VarSize )
-        {
-            if constexpr ( parQ == Parallel )
-            {
-                return ParallelDoReduce(
-                    [=]( const Size_T i )
-                    {
-                        return ox(x[i]) * oy(y[i]);
-                    },
-                    []( const Size_T thread, const T & value, T & result )
-                    {
-                        result += value;
-                    },
-                    n, static_cast<T>(0), thread_count
-                );
-            }
-            else
-            {
-                T sum = 0;
-                
-                for( Size_T i = 0; i < n; ++i )
-                {
-                    sum += ox(x[i]) * oy(y[i]);
-                }
-                
-                return sum;
-            }
-        }
-        else
-        {
-            T sum = 0;
-            
-            for( Size_T i = 0; i < N; ++i )
-            {
-                sum += ox(x[i]) * oy(y[i]);
-            }
-            return sum;
-        }
     }
     
 } // namespace Tools

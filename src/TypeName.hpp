@@ -49,6 +49,8 @@ namespace Tools
     
     template<> constexpr const char * TypeName<Complex64>  = "C64";
     
+    template<typename S, typename T> const char * TypeName<std::pair<S,T>> = "pair<?,?>";
+    
 //    template<> constexpr const char * TypeName<Complex128> = "C128";
     
 } // namespace Tools

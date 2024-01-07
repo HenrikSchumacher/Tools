@@ -96,7 +96,7 @@ namespace Tools
                 wprint("Do: Input n does not coincide with template parameter N.");
             }
             
-            if constexpr ( parQ == Parallel_T::True )
+            if constexpr ( parQ == Parallel )
             {
                 if( thread_count_ <= one )
                 {
@@ -115,11 +115,14 @@ namespace Tools
         
         if constexpr ( N == VarSize )
         {
-            if constexpr (parQ == Parallel_T::True)
+            if constexpr (parQ == Parallel)
             {
                 if( thread_count <= one )
                 {
-                    for( Int i = zero; i < n; ++i ) { fun(i); }
+                    for( Int i = zero; i < n; ++i ) 
+                    {
+                        fun(i);
+                    }
                 }
                 else
                 {
@@ -135,13 +138,74 @@ namespace Tools
             }
             else
             {
-                for( Int i = zero; i < n; ++i ) { fun(i); }
+                for( Int i = zero; i < n; ++i ) 
+                {
+                    fun(i);
+                }
             }
         }
         else
         {
-            LOOP_UNROLL_FULL
-            for( Int i = zero; i < N; ++i ) { fun(i); }
+            for( Int i = zero; i < N; ++i ) 
+            {
+                fun(i);
+            }
+        }
+    }
+    
+    
+    
+    template<Size_T N = VarSize, Parallel_T parQ = Sequential,
+        typename T, typename F, typename R, typename Int, typename Int_
+    >
+    [[nodiscard]] force_inline T DoReduce(
+        F && fun, R && reducer, cref<T> init, const Int n = N, const Int_ thread_count_ = 1
+    )
+    {
+        // reducer must have prototype reducer( value, result );
+        constexpr Int zero = 0;
+        
+        using S = decltype( fun(zero) );
+        
+        const Int thread_count = static_cast<Int>(thread_count_);
+        
+        if constexpr ( N == VarSize )
+        {
+            if constexpr ( parQ == Parallel )
+            {
+                return ParallelDoReduce(
+                    std::forward<F>(fun),
+                    // ParallelDoReduce expects reducer with
+                    // prototype reducer( thread, value, result ).
+                    [&reducer]( const Int thread, cref<S> value, mref<T> result )
+                    {
+                        std::invoke( reducer, value, result );
+                    },
+                    init, zero, n, thread_count
+                );
+            }
+            else
+            {
+                T result (init);
+                
+                for( Int i = 0; i < n; ++i )
+                {
+                    std::invoke( reducer, fun(i), result );
+                }
+                
+                return result;
+            }
+        }
+        else
+        {
+            T result (init);
+            
+            for( Int i = 0; i < static_cast<Int>(N); ++i )
+            {
+                std::invoke( reducer, fun(i), result );
+            }
+            
+            return result;
         }
     }
 }

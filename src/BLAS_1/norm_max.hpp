@@ -2,53 +2,22 @@
 
 namespace Tools
 {
-    
-    template <typename S>
-    force_inline typename Scalar::Real<S> norm_max( cptr<S> z, const Size_T n )
+    template< Size_T N = VarSize, Parallel_T parQ = Sequential, typename S >
+    [[nodiscard]] force_inline Scalar::Real<S> norm_max(
+        cptr<S> x, const Size_T n = N, const Size_T thread_count = 1
+    )
     {
-        typename Scalar::Real<S> max = 0;
-        
         if constexpr ( Scalar::RealQ<S> )
         {
-            for( Size_T i = 0; i < n; ++i )
-            {
-                max = Max( max, Abs(z[i]) );
-            }
-            return max;
+            return MaxBy<N,parQ>( [x]( const Size_T i ){ return Abs(x[i]); }, n, thread_count );
         }
         else
         {
-            for( Size_T i = 0; i < n; ++i )
-            {
-                max = Max( max, AbsSquared(z[i]) );
-            }
-            return Sqrt(max);
+            return Sqrt(
+                MaxBy<N,parQ>( [x]( const Size_T i ){ return AbsSquared(x[i]); }, n, thread_count )
+            );
         }
     }
-
-    template <Size_T n, typename S>
-    force_inline typename Scalar::Real<S> norm_max( cptr<S> z )
-    {
-        typename Scalar::Real<S> max = 0;
-        
-        if constexpr ( Scalar::RealQ<S> )
-        {
-            for( Size_T i = 0; i < n; ++i )
-            {
-                max = Max( max, Abs(z[i]) );
-            }
-            return max;
-        }
-        else
-        {
-            for( Size_T i = 0; i < n; ++i )
-            {
-                max = Max( max, AbsSquared(z[i]) );
-            }
-            return Sqrt(max);
-        }
-    }
-
     
 } // namespace Tools
 
