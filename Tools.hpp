@@ -151,6 +151,20 @@ namespace Tools
     template<Size_T N, typename T>
     using vec_T = std::array<T,N>; //Just a dummy; will not be used, actually.
 #endif
+    
+#if defined(__clang__)
+    #if ( __has_attribute(matrix_type) )
+        static constexpr bool mat_enabledQ = true;
+    
+        template<Size_T M, Size_T N, typename T>
+        using mat_T = T __attribute__((matrix_type(M,N))) ;
+    #endif
+#else
+    static constexpr bool mat_enabledQ = false;
+    
+    template<Size_T M, Size_T N, typename T>
+    using mat_T = std::array<std::array<T,N>,M>; //Just a dummy; will not be used, actually.
+#endif
 
     
 }

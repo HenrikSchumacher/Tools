@@ -26,7 +26,7 @@ namespace Tools
         UseErrorTerm    = 0
     };
     
-    std::string ToString( const RoundingPolicy RP )
+    [[nodiscard]] std::string ToString( const RoundingPolicy RP )
     {
         switch( RP )
         {
@@ -1090,15 +1090,15 @@ namespace Tools
     
 
     template<typename Real, RoundingPolicy RP >
-    std::string ToString( const Singleton<Real,RP> s )
+    [[nodiscard]] std::string ToString( const Singleton<Real,RP> s )
     {
-        return std::string("{ ") + Tools::ToString(s.x) + " }";
+        return std::string("{ ") + ToString(s.x) + " }";
     }
     
     template<typename Real, RoundingPolicy RP >
-    std::string ToString( const Interval<Real,RP> I )
+    [[nodiscard]] std::string ToString( const Interval<Real,RP> I )
     {
-        return std::string("[ ") + Tools::ToString(I.Lower()) + ", " + Tools::ToString(I.Upper()) + " ]";
+        return std::string("[ ") + ToString(I.Lower()) + ", " + ToString(I.Upper()) + " ]";
     }
     
     

@@ -13,10 +13,33 @@ namespace Tools
             Zero    =  0
         };
         
+        template<typename T>
+        [[nodiscard]] constexpr Scalar::Flag ToFlag( const T x )
+        {
+            if( x == T(0) )
+            {
+                return Scalar::Flag::Zero;
+            }
+            else if( x == T(1) )
+            {
+                return Scalar::Flag::Plus;
+            }
+            else if( x == T(-1) )
+            {
+                return Scalar::Flag::Minus;
+            }
+            else
+            {
+                return Scalar::Flag::Generic;
+            }
+        }
+        
     } // namespace Scalar
     
     
-    std::string ToString( Scalar::Flag flag )
+
+    
+    [[nodiscard]] std::string ToString( const Scalar::Flag flag )
     {
         switch( flag )
         {
@@ -38,6 +61,7 @@ namespace Tools
             }
         }
     }
+    
     using Int8    = std::int8_t;
     using Int16   = std::int16_t;
     using Int32   = std::int32_t;
@@ -312,18 +336,38 @@ namespace Tools
     
     // First converts to Real<R> and then compute the reciprocal.
     template<typename S, typename R = S>
-    force_inline constexpr
-    R Inv( const S & a )
+    force_inline constexpr R Inv( const S & a )
     {
         return Scalar::One<R> / scalar_cast<R>(a);
     }
 
     template<typename S, typename T, typename R = decltype( S(1)*T(1) )>
-    force_inline constexpr 
-    R Frac( const S & a, const T & b )
+    force_inline constexpr R Frac( const S & a, const T & b )
     {
         return scalar_cast<R>(a) / scalar_cast<R>(b);
     }
+    
+    
+    template<Scalar::Flag a_flag, typename S, typename T, typename R = decltype( S(1) * T(1) ) >
+    force_inline constexpr R Mult( const S a, const T x )
+    {
+        if constexpr ( a_flag == Scalar::Flag::Generic )
+        {
+            return a * x;
+        }
+        else if constexpr ( a_flag == Scalar::Flag::Plus )
+        {
+            return x;
+        }
+        else if constexpr ( a_flag == Scalar::Flag::Minus )
+        {
+            return -x;
+        }
+        else if constexpr ( a_flag == Scalar::Flag::Zero )
+        {
+            return static_cast<R>(0);
+        }
+    };
 
     
 //    // lo_prec_cast<S,T>(x) casts x to the lower precision of S and T, but preserves Real/Complex

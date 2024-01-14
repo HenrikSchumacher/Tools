@@ -208,17 +208,17 @@ namespace Tools
         }
         
 
-        [[nodiscard]] std::string ToString( const int p = 16) const
+        [[nodiscard]] std::string friend ToString( const JobPointers & J, const int p = 16)
         {
             std::stringstream sout;
             sout << "{ ";
-            if( Size() > 0 )
+            if( J.Size() > 0 )
             {
-                sout << Tools::ToString(job_ptr[0],p);
+                sout << ToString(J.job_ptr[0],p);
             }
-            for( Int i = 1; i < Size(); ++i )
+            for( Int i = 1; i < J.Size(); ++i )
             {
-                sout << ", " << Tools::ToString(job_ptr[i],p);
+                sout << ", " << ToString(J.job_ptr[i],p);
             }
             sout << " }";
             return sout.str();

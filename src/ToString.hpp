@@ -3,7 +3,7 @@
 namespace Tools
 {
     template <typename T>
-    std::string ToString(const T & a_value, const int p = 16)
+    [[nodiscard]] std::string ToString(const T & a_value, const int p = 16)
     {
         std::stringstream sout;
         sout.precision(p);
@@ -20,7 +20,7 @@ namespace Tools
     }
     
     template <typename T>
-    std::string ToString(const std::complex<T> & z, const int p = 16)
+    [[nodiscard]] std::string ToString(const std::complex<T> & z, const int p = 16)
     {
         std::stringstream sout;
         sout.precision(p);
@@ -128,7 +128,7 @@ namespace Tools
     }
     
     template<typename T>
-    std::string ToString( const std::vector<T> & v )
+    [[nodiscard]] std::string ToString( const std::vector<T> & v )
     {
         const Size_T dim = v.size();
         return ArrayToString( &v[0], &dim, 1);

@@ -14,7 +14,7 @@ namespace Tools
         
         using T = std::pair<S,S>;
         
-        T init { std::numeric_limits<S>::max(), std::numeric_limits<S>::min() };
+        T init { std::numeric_limits<S>::max(), std::numeric_limits<S>::lowestr() };
         
         return DoReduce<N,parQ>(
             [&f]( const Size_T i ) -> T
@@ -129,7 +129,7 @@ namespace Tools
             {
                 result = Max( result, value );
             },
-            std::numeric_limits<S>::min(), n, thread_count
+            std::numeric_limits<S>::lowest(), n, thread_count
         );
     }
     
@@ -142,7 +142,7 @@ namespace Tools
         
         using T = std::pair<Size_T,S>;
         
-        T init { Size_T(0), std::numeric_limits<S>::min() };
+        T init { Size_T(0), std::numeric_limits<S>::lowest() };
         
         return DoReduce<N,parQ>(
             [&f]( const Size_T i ) -> T
