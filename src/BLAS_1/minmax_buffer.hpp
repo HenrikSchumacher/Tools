@@ -14,7 +14,7 @@ namespace Tools
         
         using T = std::pair<S,S>;
         
-        T init { std::numeric_limits<S>::max(), std::numeric_limits<S>::lowestr() };
+        T init { std::numeric_limits<S>::max(), std::numeric_limits<S>::lowest() };
         
         return DoReduce<N,parQ>(
             [&f]( const Size_T i ) -> T

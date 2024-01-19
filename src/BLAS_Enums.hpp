@@ -56,7 +56,7 @@ namespace Tensors
         }
     }
     
-    [[nodiscard]] constexpr Op Conj( const Op op )
+    [[nodiscard]] constexpr Op Conjugate( const Op op )
     {
         switch( op )
         {
