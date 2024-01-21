@@ -74,11 +74,6 @@ namespace Tools
                     }
                     side = 1;
                 }
-                
-//                dump(a);
-//                dump(b);
-//                dump(f_a);
-//                dump(f_b);
             }
             
             if constexpr ( up_lo_flag == 0 )
@@ -129,11 +124,6 @@ namespace Tools
                     }
                     side = -1;
                 }
-                
-//                dump(a);
-//                dump(b);
-//                dump(f_a);
-//                dump(f_b);
             }
             
             if constexpr ( up_lo_flag == 0 )
@@ -154,8 +144,6 @@ namespace Tools
         {
             wprint("RegularFalsi: The functions values of the interval end points do not bracket the value f. Returning interval midpoint.");
             
-//            dump(a);
-//            dump(b);
             dump(f_a);
             dump(f_b);
             dump(Sign(f_a));

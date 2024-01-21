@@ -23,9 +23,9 @@ namespace Tools
         ,   p_cache( rhs.p_cache )
         {}
         
-        CachedObject( CachedObject && rhs)
-        :   cache( rhs.cache )
-        ,   p_cache( rhs.p_cache )
+        CachedObject( CachedObject && rhs) noexcept
+        :   cache   ( std::move(rhs.cache   ) )
+        ,   p_cache ( std::move(rhs.p_cache ) )
         {}
         
         const CachedObject & operator=( const CachedObject & rhs)
@@ -36,7 +36,7 @@ namespace Tools
             return *this;
         };
 
-        const CachedObject & operator=( CachedObject && rhs)
+        const CachedObject & operator=( CachedObject && rhs) noexcept
         {
             cache   = std::move(rhs.cache);
             p_cache = std::move(rhs.p_cache);

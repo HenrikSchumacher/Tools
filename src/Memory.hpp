@@ -102,12 +102,14 @@ namespace Tools
         return reinterpret_cast<std::uintptr_t>(pointer) % byte_count == 0;
     }
     
-    inline Size_T get_alignment( const void * const pointer )
-    {
-        std::uintptr_t ptr = reinterpret_cast<std::uintptr_t>(pointer);
-
-        return (Size_T(1) << std::countr_zero(ptr));
-    }
+    // DEBUGGING
+    
+//    inline Size_T get_alignment( const void * const pointer )
+//    {
+//        std::uintptr_t ptr = reinterpret_cast<std::uintptr_t>(pointer);
+//
+//        return (Size_T(1) << std::countr_zero(ptr));
+//    }
     
     [[nodiscard]] force_inline void * aligned_malloc( const Size_T size, const Size_T alignment )
     {
