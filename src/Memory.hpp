@@ -102,14 +102,12 @@ namespace Tools
         return reinterpret_cast<std::uintptr_t>(pointer) % byte_count == 0;
     }
     
-    // DEBUGGING
-    
-//    inline Size_T get_alignment( const void * const pointer )
-//    {
-//        std::uintptr_t ptr = reinterpret_cast<std::uintptr_t>(pointer);
-//
-//        return (Size_T(1) << std::countr_zero(ptr));
-//    }
+    inline Size_T get_alignment( const void * const pointer )
+    {
+        std::uintptr_t ptr = reinterpret_cast<std::uintptr_t>(pointer);
+
+        return (Size_T(1) << std::countr_zero(ptr));
+    }
     
     [[nodiscard]] force_inline void * aligned_malloc( const Size_T size, const Size_T alignment )
     {
@@ -124,6 +122,8 @@ namespace Tools
         if( ptr_ == nullptr )
         {
             eprint("aligned_malloc: failed to allocate memory.");
+            dump(size);
+            dump(alignment);
             dump(padded_size);
             return nullptr;
         }
