@@ -50,8 +50,6 @@ namespace Tools
         print( s + " = " + value );
     }
     
-#define dump(x) valprint( std::string(#x), x );
-    
     inline void tic(const std::string & s)
     {
         {
@@ -89,3 +87,6 @@ namespace Tools
     }
 
 } // namespace Tools
+
+
+#define dump(x) Tools::valprint( std::string(#x), x );
