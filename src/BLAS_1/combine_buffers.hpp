@@ -200,8 +200,6 @@ namespace Tools
         }
         else if constexpr ( vectorizableQ )
         {
-            print("call to combine_buffers_vec");
-            
             combine_buffers_vec<a_flag, b_flag, N>(
                 static_cast<y_T>(a), x, static_cast<y_T>(b), y
             );
