@@ -438,6 +438,7 @@ namespace Tools
         copy_buffer<N>( reinterpret_cast<z_T *>(&z_vec), z );
     }
     
+    
     template<
         Scalar::Flag a_flag, Scalar::Flag b_flag,
         Size_T N = VarSize, Parallel_T parQ = Sequential,
@@ -583,8 +584,6 @@ namespace Tools
                 );
             }
         }
-        
-        
     }
 
     
