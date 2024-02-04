@@ -10,7 +10,7 @@ namespace Tools
         cref<a_T> a_, cptr<x_T> x, cref< b_T> b_, mptr<y_T> y
     )
     {
-        static_assert( VectorizableQ<y_T>, "combine_buffers_vec: type z_T must allowable for clang's vector extension." );
+        static_assert( VectorizableQ<y_T>, "combine_buffers_vec: type y_T must be allowable for clang's vector extension." );
         
         using namespace Scalar;
         
@@ -326,7 +326,7 @@ namespace Tools
         cref<a_T> a_, cptr<x_T> x, cref< b_T> b_, cptr<y_T> y, mptr<z_T> z
     )
     {
-        static_assert( VectorizableQ<z_T>, "combine_buffers_vec: type z_T must allowable for clang's vector extension." );
+        static_assert( VectorizableQ<z_T>, "combine_buffers_vec: type z_T be must allowable for clang's vector extension." );
         
         using namespace Scalar;
         
