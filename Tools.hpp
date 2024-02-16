@@ -131,12 +131,25 @@
 
 #define ASSERT_FLOAT(type) static_assert( std::is_floating_point_v<type>, "Template parameter " #type " must be floating point type." );
 
-
 namespace Tools
 {
     using Size_T = std::size_t;
     
     
+    template <typename E>
+    std::conditional_t< std::is_enum_v<E>,typename std::underlying_type<E>::type, E >
+    ToUnderlying(E e) noexcept
+    {
+        if constexpr( std::is_enum_v<E> )
+        {
+            return static_cast<typename std::underlying_type<E>::type>(e);
+        }
+        else
+        {
+            return e;
+        }
+    }
+
     
 #if defined(__clang__)
     #if ( __has_attribute(ext_vector_type) )
@@ -246,18 +259,6 @@ namespace Tools
         {                                                                           \
             return new DERIVED(*this);                                              \
         }
-
-
-    namespace Tools
-    {
-        
-        template <typename E>
-        constexpr typename std::underlying_type<E>::type to_underlying(E e) noexcept
-        {
-            return static_cast<typename std::underlying_type<E>::type>(e);
-        }
-
-    }
 
 #endif
 

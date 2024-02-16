@@ -109,7 +109,7 @@ namespace Tools
             const Int thread_count = ThreadCount();
             
             // This function reads in a list job_acc_costs of accumulated costs, then allocates job_ptr as a vector of size thread_count + 1, and writes the work distribution to it.
-            // Aasigns threads to consecutive chunks jobs, ..., job_ptr[k+1]-1 of jobs.
+            // Assigns threads to consecutive chunks jobs, ..., job_ptr[k+1]-1 of jobs.
             // Uses a binary search to find the chunk boundaries.
             // The cost of the i-th job is job_acc_costs[i+1] - job_acc_costs[i].
             // The cost of the k-th thread goes from job no job_ptr[k] to job no job_ptr[k+1] (as always in C/C++, job_ptr[k+1] points _after_ the last job.
@@ -136,7 +136,7 @@ namespace Tools
             const Int thread_count = ThreadCount();
             
             // This function reads in a list job_acc_costs of accumulated costs, then allocates job_ptr as a vector of size thread_count + 1, and writes the work distribution to it.
-            // Aasigns threads to consecutive chunks jobs, ..., job_ptr[k+1]-1 of jobs.
+            // Assigns threads to consecutive chunks jobs, ..., job_ptr[k+1]-1 of jobs.
             // Uses a binary search to find the chunk boundaries.
             // The cost of the i-th job is job_acc_costs[i+1] - job_acc_costs[i].
             // The cost of the k-th thread goes from job no job_ptr[k] to job no job_ptr[k+1] (as always in C/C++, job_ptr[k+1] points _after_ the last job.

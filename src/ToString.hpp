@@ -3,11 +3,11 @@
 namespace Tools
 {
     template <typename T>
-    [[nodiscard]] std::string ToString(const T & a_value, const int p = 16)
+    [[nodiscard]] std::string ToString( const T & a_value, const int p = 16 )
     {
         std::stringstream sout;
         sout.precision(p);
-        sout << a_value;
+        sout << ToUnderlying(a_value);
         return sout.str();
     }
 
@@ -20,11 +20,19 @@ namespace Tools
     }
     
     template <typename T>
-    [[nodiscard]] std::string ToString(const std::complex<T> & z, const int p = 16)
+    [[nodiscard]] std::string ToString( const std::complex<T> & z, const int p = 16)
     {
         std::stringstream sout;
         sout.precision(p);
         sout << z;
+        return sout.str();
+    }
+    
+    template <typename T>
+    [[nodiscard]] std::string ToString( const signed char & z )
+    {
+        std::stringstream sout;
+        sout << static_cast<int>(z);
         return sout.str();
     }
     
@@ -40,7 +48,7 @@ namespace Tools
     {
         if( rank <= 0 )
         {
-            s << a[0];
+            s << ToUnderlying(a[0]);
         }
         else if( rank == 1 )
         {
@@ -48,12 +56,12 @@ namespace Tools
             
             if( dims[0] > 0 )
             {
-                s << a[0];
+                s << ToUnderlying(a[0]);
             }
             
             for( Int i = 1; i < dims[0]; ++i )
             {
-                s << ", " << a[i];
+                s << ", " << ToUnderlying(a[i]);
             }
             
             s << " }";
