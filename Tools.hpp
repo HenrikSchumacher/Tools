@@ -137,8 +137,7 @@ namespace Tools
     
     
     template <typename E>
-    std::conditional_t< std::is_enum_v<E>,typename std::underlying_type<E>::type, E >
-    ToUnderlying(E e) noexcept
+    auto ToUnderlying( const E & e) noexcept
     {
         if constexpr( std::is_enum_v<E> )
         {
