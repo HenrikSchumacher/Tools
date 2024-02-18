@@ -18,16 +18,22 @@ namespace Tools
         
         ~CachedObject() = default;
         
+        // TODO: We might have to do deep copies in the following 4 if we store pointers...
+        
+        /* Copy constructor */
         CachedObject(const CachedObject & rhs)
         :     cache( rhs.cache )
         ,   p_cache( rhs.p_cache )
         {}
         
+        /* Move constructor */
         CachedObject( CachedObject && rhs) noexcept
         :   cache   ( std::move(rhs.cache   ) )
         ,   p_cache ( std::move(rhs.p_cache ) )
         {}
         
+        // TODO: Why return a const reference here?
+        /* Copy assignment */
         const CachedObject & operator=( const CachedObject & rhs)
         {
             cache   = rhs.cache;
@@ -36,6 +42,8 @@ namespace Tools
             return *this;
         };
 
+        // TODO: Why return a const reference here?
+        /* Move assignment */
         const CachedObject & operator=( CachedObject && rhs) noexcept
         {
             cache   = std::move(rhs.cache);
