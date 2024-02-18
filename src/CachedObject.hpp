@@ -60,22 +60,22 @@ namespace Tools
 //      Cache
 //##############################################################################################
         
-        bool InCacheQ( const std::string & s ) const
+        bool InCacheQ( cref<std::string> key ) const
         {
-            // For some reason gcc-12 does not allow me to return static_cast<bool>( cache.count(s) ) directly.
+            // For some reason gcc-12 does not allow me to return static_cast<bool>( cache.count(key) ) directly.
             
             bool result = false;
             
-            const std::lock_guard<std::mutex> cache_lock( cache_mutex );
+//            const std::lock_guard<std::mutex> cache_lock( cache_mutex );
             
-            result = static_cast<bool>( cache.count(s) );
+            result = static_cast<bool>( cache.count( key ) );
             
             return result;
         }
         
-        std::any & GetCache( const std::string & s ) const
+        std::any & GetCache( cref<std::string> key ) const
         {
-            // For some reason gcc-12 does not allow me to return cache.at(s) directly. =/
+            // For some reason gcc-12 does not allow me to return cache.at(key) directly. =/
             // Maybe because that might throw an exception.
             
             std::any * thing;
@@ -84,11 +84,11 @@ namespace Tools
             
             try
             {
-                thing = &cache.at(s);
+                thing = &cache.at( key );
             }
             catch( const std::out_of_range & e )
             {
-                eprint(this->ClassName()+"GetCache: Key \""+s+"\" not found!.");
+                eprint(this->ClassName()+"::GetCache: Key \""+key+"\" not found!.");
                 throw; //an internal catch block forwards the exception to its external level
             }
             
@@ -96,18 +96,18 @@ namespace Tools
         }
         
 //        // Caution! This function is destructive.
-//        void SetCache( const std::string & s, std::any & thing ) const
+//        void SetCache( cref<std::string> key, std::any & thing ) const
 //        {
 //            const std::lock_guard<std::mutex> cache_lock( cache_mutex );
-//            cache[s] = std::move(thing);
+//            cache[key] = std::move(thing);
 //        }
         
         // Caution! This function is destructive.
-        void SetCache( const std::string & s, std::any && thing ) const
+        void SetCache( cref<std::string> key, std::any && thing ) const
         {
             const std::lock_guard<std::mutex> cache_lock( cache_mutex );
             
-            cache[s] = std::move(thing);
+            cache[key] = std::move(thing);
         }
         
         std::string CacheKeys() const
@@ -129,7 +129,17 @@ namespace Tools
         {
             const std::lock_guard<std::mutex> cache_lock( cache_mutex );
             
-            cache = Container_T();
+            cache.clear();
+        }
+        
+        void ClearCache( const std::string & key ) const
+        {
+            if( InCacheQ( key ) )
+            {
+                const std::lock_guard<std::mutex> cache_lock( cache_mutex );
+                
+                cache.erase( key );
+            }
         }
         
         
@@ -137,22 +147,22 @@ namespace Tools
 //      PersistentCache
 //##############################################################################################
         
-        bool InPersistentCacheQ( const std::string & s ) const
+        bool InPersistentCacheQ( cref<std::string> key ) const
         {
-            // For some reason gcc-12 does not allow me to return static_cast<bool>( cache.count(s) ) directly.
+            // For some reason gcc-12 does not allow me to return static_cast<bool>( cache.count(key) ) directly.
             
             bool result = false;
             
-            const std::lock_guard<std::mutex> p_cache_lock( p_cache_mutex );
+//            const std::lock_guard<std::mutex> p_cache_lock( p_cache_mutex );
             
-            result = static_cast<bool>( p_cache.count(s) );
+            result = static_cast<bool>( p_cache.count( key ) );
             
             return result;
         }
         
-        std::any & GetPersistentCache( const std::string & s ) const
+        std::any & GetPersistentCache( cref<std::string> key ) const
         {
-            // For some reason gcc-12 does not allow me to return cache.at(s) directly. =/
+            // For some reason gcc-12 does not allow me to return cache.at(key) directly. =/
             // Maybe because that might throw an exception.
             
             std::any * thing;
@@ -161,11 +171,11 @@ namespace Tools
             
             try
             {
-                thing = &p_cache.at(s);
+                thing = &p_cache.at( key );
             }
             catch( const std::out_of_range & e )
             {
-                eprint(this->ClassName()+"GetPersistentCache: Key \""+s+"\" not found!.");
+                eprint(this->ClassName()+"GetPersistentCache: Key \""+key+"\" not found!.");
                 throw; //an internal catch block forwards the exception to its external level
             }
             
@@ -173,11 +183,11 @@ namespace Tools
         }
         
         // Caution! This function is destructive.
-        void SetPersistentCache( const std::string & s, std::any && thing ) const
+        void SetPersistentCache( cref<std::string> key, std::any && thing ) const
         {
             const std::lock_guard<std::mutex> p_cache_lock( p_cache_mutex );
             
-            p_cache[s] = std::move(thing);
+            p_cache[key] = std::move(thing);
         }
         
         std::string PersistentCacheKeys() const
@@ -199,8 +209,19 @@ namespace Tools
         {
             const std::lock_guard<std::mutex> p_cache_lock( p_cache_mutex );
             
-            p_cache = Container_T();
+            p_cache.clear();
         }
+        
+        void ClearPersistentCache( cref<std::string> key ) const
+        {
+            if( InPersistentCacheQ( key ) )
+            {
+                const std::lock_guard<std::mutex> p_cache_lock( p_cache_mutex );
+                
+                p_cache.erase( key );
+            }
+        }
+        
         
         
 //##############################################################################################
@@ -212,9 +233,9 @@ namespace Tools
             const std::lock_guard<std::mutex>   cache_lock(   cache_mutex );
             const std::lock_guard<std::mutex> p_cache_lock( p_cache_mutex );
             
-            cache = Container_T();
+            cache.clear();
             
-            p_cache = Container_T();
+            p_cache.clear();
         }
         
         
