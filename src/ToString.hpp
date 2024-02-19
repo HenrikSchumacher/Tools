@@ -135,6 +135,16 @@ namespace Tools
         return s.str();
     }
     
+    template<typename Scal, typename Int>
+    std::string ArrayToString(
+        const Scal * const a,
+        std::initializer_list<Int> dims,
+        int prec = 16
+    )
+    {
+        return ArrayToString( a, &*dims.begin(), dims.size(), prec );
+    }
+    
     template<typename T>
     [[nodiscard]] std::string ToString( const std::vector<T> & v )
     {
