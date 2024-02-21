@@ -4,16 +4,7 @@
 
 namespace Tools
 {
-    template<int n, typename T>
-    struct SortNet
-    {
-        template<typename C = std::less<T>>
-        void operator()( mptr<T> a, C comp = C() )
-        {
-            std::sort( a, a+n, comp );
-        }
-    };
-
+    
     template<typename T, typename C = std::less<T>>
     force_inline void CompSwap( mref<T> a, mref<T> b, C comp = C()  )
     {
@@ -34,10 +25,35 @@ namespace Tools
 //            std::swap(a,b);
 //        }
     }
+    
+    
+    template<int n, typename T>
+    struct SortNet
+    {
+        template<typename C = std::less<T>>
+        void operator()( cptr<T> a, mptr<T> b,C comp = C() )
+        {
+            copy_buffer( a, b, n );
+            this->operator()( b, comp );
+        }
+        
+        template<typename C = std::less<T>>
+        void operator()( mptr<T> a, C comp = C() )
+        {
+            std::sort( a, a+n, comp );
+        }
+    };
 
     template<typename T>
     struct SortNet<1,T>
     {
+        template<typename C = std::less<T>>
+        void operator()( cptr<T> a, mptr<T> b,C comp = C() )
+        {
+            copy_buffer<1>( a, b );
+            this->operator()( b, comp );
+        }
+     
         template<typename C = std::less<T>>
         void operator()( mptr<T> a, C comp = C() )
         {}
@@ -46,6 +62,13 @@ namespace Tools
     template<typename T>
     struct SortNet<2,T>
     {
+        template<typename C = std::less<T>>
+        void operator()( cptr<T> a, mptr<T> b,C comp = C() )
+        {
+            copy_buffer<2>( a, b );
+            this->operator()( b, comp );
+        }
+     
         template<typename C = std::less<T>>
         void operator()( mptr<T> a, C comp = C() )
         {
@@ -56,6 +79,13 @@ namespace Tools
     template<typename T>
     struct SortNet<3,T>
     {
+        template<typename C = std::less<T>>
+        void operator()( cptr<T> a, mptr<T> b,C comp = C() )
+        {
+            copy_buffer<3>( a, b );
+            this->operator()( b, comp );
+        }
+     
         template<typename C = std::less<T>>
         void operator()( mptr<T> a, C comp = C() )
         {
@@ -68,6 +98,13 @@ namespace Tools
     template<typename T>
     struct SortNet<4,T>
     {
+        template<typename C = std::less<T>>
+        void operator()( cptr<T> a, mptr<T> b,C comp = C() )
+        {
+            copy_buffer<4>( a, b );
+            this->operator()( b, comp );
+        }
+     
         template<typename C = std::less<T>>
         void operator()( mptr<T> a, C comp = C() )
         {
@@ -85,6 +122,13 @@ namespace Tools
     template<typename T>
     struct SortNet<5,T>
     {
+        template<typename C = std::less<T>>
+        void operator()( cptr<T> a, mptr<T> b,C comp = C() )
+        {
+            copy_buffer<5>( a, b );
+            this->operator()( b, comp );
+        }
+     
         template<typename C = std::less<T>>
         void operator()( mptr<T> a, C comp = C() )
         {
@@ -108,6 +152,13 @@ namespace Tools
     template<typename T>
     struct SortNet<6,T>
     {
+        template<typename C = std::less<T>>
+        void operator()( cptr<T> a, mptr<T> b,C comp = C() )
+        {
+            copy_buffer<6>( a, b );
+            this->operator()( b, comp );
+        }
+     
         template<typename C = std::less<T>>
         void operator()( mptr<T> a, C comp = C() )
         {
@@ -135,6 +186,13 @@ namespace Tools
     template<typename T>
     struct SortNet<7,T>
     {
+        template<typename C = std::less<T>>
+        void operator()( cptr<T> a, mptr<T> b,C comp = C() )
+        {
+            copy_buffer<7>( a, b );
+            this->operator()( b, comp );
+        }
+     
         template<typename C = std::less<T>>
         void operator()( mptr<T> a, C comp = C() )
         {
@@ -166,7 +224,13 @@ namespace Tools
     template<typename T>
     struct SortNet<8,T>
     {
-        
+        template<typename C = std::less<T>>
+        void operator()( cptr<T> a, mptr<T> b,C comp = C() )
+        {
+            copy_buffer<8>( a, b );
+            this->operator()( b, comp );
+        }
+     
         template<typename C = std::less<T>>
         void operator()( mptr<T> a, C comp = C() )
         {
@@ -202,6 +266,13 @@ namespace Tools
     template<typename T>
     struct SortNet<9,T>
     {
+        template<typename C = std::less<T>>
+        void operator()( cptr<T> a, mptr<T> b,C comp = C() )
+        {
+            copy_buffer<9>( a, b );
+            this->operator()( b, comp );
+        }
+     
         template<typename C = std::less<T>>
         void operator()( mptr<T> a, C comp = C() )
         {
@@ -243,6 +314,13 @@ namespace Tools
     template<typename T>
     struct SortNet<10,T>
     {
+        template<typename C = std::less<T>>
+        void operator()( cptr<T> a, mptr<T> b,C comp = C() )
+        {
+            copy_buffer<10>( a, b );
+            this->operator()( b, comp );
+        }
+     
         template<typename C = std::less<T>>
         void operator()( mptr<T> a, C comp = C() )
         {
@@ -290,6 +368,13 @@ namespace Tools
     template<typename T>
     struct SortNet<11,T>
     {
+        template<typename C = std::less<T>>
+        void operator()( cptr<T> a, mptr<T> b,C comp = C() )
+        {
+            copy_buffer<11>( a, b );
+            this->operator()( b, comp );
+        }
+     
         template<typename C = std::less<T>>
         void operator()( mptr<T> a, C comp = C() )
         {
@@ -342,6 +427,13 @@ namespace Tools
     template<typename T>
     struct SortNet<12,T>
     {
+        template<typename C = std::less<T>>
+        void operator()( cptr<T> a, mptr<T> b,C comp = C() )
+        {
+            copy_buffer<12>( a, b );
+            this->operator()( b, comp );
+        }
+     
         template<typename C = std::less<T>>
         void operator()( mptr<T> a, C comp = C() )
         {
@@ -399,6 +491,13 @@ namespace Tools
     template<typename T>
     struct SortNet<13,T>
     {
+        template<typename C = std::less<T>>
+        void operator()( cptr<T> a, mptr<T> b,C comp = C() )
+        {
+            copy_buffer<13>( a, b );
+            this->operator()( b, comp );
+        }
+     
         // This should be a depth-optimal solution.
         template<typename C = std::less<T>>
         void operator()( mptr<T> a, C comp = C() )
@@ -465,6 +564,13 @@ namespace Tools
     template<typename T>
     struct SortNet<14,T>
     {
+        template<typename C = std::less<T>>
+        void operator()( cptr<T> a, mptr<T> b,C comp = C() )
+        {
+            copy_buffer<14>( a, b );
+            this->operator()( b, comp );
+        }
+     
         // This should be a depth-optimal solution.
         template<typename C = std::less<T>>
         void operator()( mptr<T> a, C comp = C() )
@@ -535,7 +641,14 @@ namespace Tools
     // https://www.angelfire.com/blog/ronz/Articles/999SortingNetworksReferen.html
     template<typename T>
     struct SortNet<15,T>
-    {
+    
+    {   template<typename C = std::less<T>>
+        void operator()( cptr<T> a, mptr<T> b,C comp = C() )
+        {
+            copy_buffer<15>( a, b );
+            this->operator()( b, comp );
+        }
+     
         // This should be a depth-optimal solution.
         template<typename C = std::less<T>>
         void operator()( mptr<T> a, C comp = C() )
@@ -614,6 +727,13 @@ namespace Tools
     template<typename T>
     struct SortNet<16,T>
     {
+        template<typename C = std::less<T>>
+        void operator()( cptr<T> a, mptr<T> b,C comp = C() )
+        {
+            copy_buffer<16>( a, b );
+            this->operator()( b, comp );
+        }
+        
         // This should be a depth-optimal solution.
         template<typename C = std::less<T>>
         void operator()( mptr<T> a, C comp = C() )
@@ -784,4 +904,6 @@ namespace Tools
             }
         }
     }
-}
+    
+
+} // namespace Tools
