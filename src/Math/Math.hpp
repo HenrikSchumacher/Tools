@@ -1,3 +1,5 @@
+#pragma once
+
 namespace Tools
 {
     template<typename Real, typename T>

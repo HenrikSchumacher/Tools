@@ -193,10 +193,11 @@ namespace Tools
 
     #define _USE_MATH_DEFINES
     #include <cmath>
-    #include "src/MyMath/MyMath.hpp"
-    #include "src/MyMath/ProbabilityDistributions.hpp"
-    #include "src/MyMath/BisectionSearch.hpp"
-    #include "src/MyMath/RegulaFalsi.hpp"
+    #include "src/Math/Math.hpp"
+    #include "src/Math/ProbabilityDistributions.hpp"
+    #include "src/Math/BisectionSearch.hpp"
+    #include "src/Math/RegulaFalsi.hpp"
+    #include "src/Math/Kahan.hpp"
 
     #include "src/BLAS_Enums.hpp"
 
@@ -223,7 +224,7 @@ namespace Tools
 
     #include "src/Sort.hpp"
 
-    #include "src/MyMath/RealCubicSolve.hpp"
+    #include "src/Math/RealCubicSolve.hpp"
 
         //https://stackoverflow.com/a/43587319/8248900
         
