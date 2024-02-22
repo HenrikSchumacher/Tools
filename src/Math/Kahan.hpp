@@ -73,6 +73,62 @@ namespace Tools
         return DetSign2D_Kahan<Out_T>( y[0] - x[0], z[0] - x[0], y[1] - x[1], z[1] - x[1] );
     }
     
+    template<typename Real>
+    force_inline bool ConvexPlanarQuadrilateralQ_Kahan(
+        cptr<Real> x_0, cptr<Real> x_1, cptr<Real> x_2, cptr<Real> x_3
+    )
+    {
+        // TODO: One can probably boil down the number of subtractions by half here.
+        
+        using T = signed char;
+        
+        const T signs [4] {
+            Oriented2D_Kahan<T>( x_1, x_2, x_3 ),
+            Oriented2D_Kahan<T>( x_2, x_3, x_0 ),
+            Oriented2D_Kahan<T>( x_3, x_0, x_1 ),
+            Oriented2D_Kahan<T>( x_0, x_1, x_2 )
+        };
+        
+        return (
+            ( signs[0] != T(0)     )
+            &&
+            ( signs[0] == signs[1] )
+            &&
+            ( signs[1] == signs[2] )
+            &&
+            ( signs[2] == signs[3] )
+        );
+    }
+    
+    template<typename Real>
+    force_inline bool LineSegmentsIntersectQ_Kahan(
+        cptr<Real> x_0, cptr<Real> x_1, cptr<Real> y_0, cptr<Real> y_1
+    )
+    {
+        // TODO: One can probably boil down the number of subtractions by half here.
+        
+        using T = signed char;
+        
+        const T signs [4] {
+            Oriented2D_Kahan<T>( x_1, y_0, y_1 ),
+            Oriented2D_Kahan<T>( y_0, y_1, x_0 ),
+            Oriented2D_Kahan<T>( y_1, x_0, x_1 ),
+            Oriented2D_Kahan<T>( x_0, x_1, y_0 )
+        };
+        
+        return (
+            ( signs[0] != T(0)     )
+            &&
+            ( signs[1] != T(0)     )
+            &&
+            ( signs[0] != signs[1] )
+            &&
+            ( signs[0] == signs[3] )
+            &&
+            ( signs[1] == signs[2] )
+        );
+    }
+    
 } // namespace Tools
 
  
