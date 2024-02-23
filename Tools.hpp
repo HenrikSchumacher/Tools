@@ -199,8 +199,6 @@ namespace Tools
     #include "src/Math/RegulaFalsi.hpp"
     #include "src/Math/Kahan.hpp"
 
-    #include "src/Math/Det_Bareiss.hpp"
-
     #include "src/BLAS_Enums.hpp"
 
     using Tensors::Op;
@@ -227,6 +225,7 @@ namespace Tools
     #include "src/Sort.hpp"
 
     #include "src/Math/RealCubicSolve.hpp"
+    #include "src/Math/Det_Bareiss.hpp"
 
         //https://stackoverflow.com/a/43587319/8248900
         

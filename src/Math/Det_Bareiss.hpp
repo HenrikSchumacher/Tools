@@ -4,14 +4,16 @@ namespace Tools
 {
 
     template<typename Scal, typename Int>
-    [[nodiscard]] Scal Det_Bareiss( const Int n, mptr<Scal> A_, const Int ldA ) const
+    [[nodiscard]] Scal Det_Bareiss( const Int n, mptr<Scal> A_, const Int ldA )
     {
         ASSERT_INT(Int);
+        
+        constexpr Scal zero ( 0 );
         
         auto A = [A_,ldA]( const Int i, const Int j) -> Scal &
         {
             return A_[ldA * i + j];
-        }
+        };
         
         if( n == 0 )
         {
@@ -48,43 +50,32 @@ namespace Tools
             
             for(Int k = 0; k < n - 1; ++k )
             {
-                //Pivot - row swap needed
-                if( A(k,k) == zero )
+                //Pivot column swap.
+                
+                const Int l = k + iamax_buffer( &A(k,k), n-k );
+                
+                if( l != k )
                 {
-                    const Int l = iamax_buffer( &A(k,k+1), n-k-1  );
+                    sign = -sign;
                     
-                    for( Int j = 0; j < n; ++j )
+                    for( Int i = 0; i < n; ++i )
                     {
-                        std::swap( A(k,j), A(l,j) );
+                        std::swap(A(i,k),A(i,l));
+//                        const Scal buffer = A(k,j);
+//                        A(k,j) = A(l,j);
+//                        A(l,j) = buffer;
                     }
-                    
-                    if( A(k,k) == zero )
-                    {
-                        return zero;
-                    };
-                    
-//                    Int l;
-//                    
-//                    for( l = k + 1; l < n; ++l )
-//                    {
-//                        // TODO: We could find a better pivot...
-//                        if( A(l,k) != zero )
-//                        {
-//                            std::swap_ranges( &A(l,0), &A(l,n), &A(k,0) );
-//                            sign = -sign;
-//                            break;
-//                        }
-//                    }
-//                    
-//                    //No entries != 0 found in column k -> det = 0
-//                    if(l == n)
-//                    {
-//                        return zero;
-//                    }
                 }
                 
-                const Scal A_k_k = A(k  ,k  );
-                const Scal a     = A(k-1,k-1);
+                const Scal A_k_k = A(k,k);
+                
+                if( A_k_k == zero )
+                {
+                    return zero;
+                };
+                    
+                
+                const Scal a  = A(k-1,k-1);
                 
                 // TODO: When not working with integers, we probably want to compute 1/a only once.
                 
