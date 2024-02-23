@@ -199,6 +199,8 @@ namespace Tools
     #include "src/Math/RegulaFalsi.hpp"
     #include "src/Math/Kahan.hpp"
 
+    #include "src/Math/Det_Bareiss.hpp"
+
     #include "src/BLAS_Enums.hpp"
 
     using Tensors::Op;
