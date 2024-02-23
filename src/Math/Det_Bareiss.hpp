@@ -61,9 +61,6 @@ namespace Tools
                     for( Int i = 0; i < n; ++i )
                     {
                         std::swap(A(i,k),A(i,l));
-//                        const Scal buffer = A(k,j);
-//                        A(k,j) = A(l,j);
-//                        A(l,j) = buffer;
                     }
                 }
                 
@@ -75,20 +72,29 @@ namespace Tools
                 };
                     
                 
-                const Scal a  = A(k-1,k-1);
+                // When not working with integers, we want to compute 1/a only once.
                 
-                // TODO: When not working with integers, we probably want to compute 1/a only once.
+                
+                const Scal a = std::numeric_limits<Scal>::is_integer ? A(k-1,k-1) : Inv(A(k-1,k-1));
+                
                 
                 //Apply formula
                 for( Int i = k + 1; i < n; ++i )
                 {
                     for( Int j = k + 1; j < n; ++j )
                     {
-                        A(i,j) = A_k_k * A(i,j) - A(i,k) * A(k,j);
-
+                        A(i,j) = A(k,k) * A(i,j) - A(i,k) * A(k,j);
+                        
                         if(k != 0)
                         {
-                            A(i,j) /= a;
+                            if constexpr( std::numeric_limits<Scal>::is_integer )
+                            {
+                                A(i,j) /= a;
+                            }
+                            else
+                            {
+                                A(i,j) *= a;
+                            }
                         }
                     }
                 }
