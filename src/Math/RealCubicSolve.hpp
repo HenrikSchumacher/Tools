@@ -348,7 +348,7 @@ namespace Tools
             
             if constexpr ( sortQ )
             {
-                SortNet<3,Real> S;
+                SortNet<3> S;
                 
                 S(&x[0]);
             }
@@ -476,7 +476,7 @@ namespace Tools
             }
         }
         
-        SortNet<3,Real> S;
+        SortNet<3> S;
         
         S(&x[0]);
         

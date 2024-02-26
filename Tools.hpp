@@ -222,7 +222,10 @@ namespace Tools
 
     #include "src/CachedObject.hpp"
 
-    #include "src/Sort.hpp"
+    #include "src/Sort/SortNet.hpp"
+    #include "src/Sort/BitonicSort.hpp"
+    #include "src/Sort/BitonicMergeSort.hpp"
+    #include "src/Sort/Sort.hpp"
 
     #include "src/Math/RealCubicSolve.hpp"
     #include "src/Math/Det_Bareiss.hpp"
