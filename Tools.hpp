@@ -224,7 +224,7 @@ namespace Tools
 
     #include "src/Sort/SortNet.hpp"
     #include "src/Sort/BitonicSort.hpp"
-    #include "src/Sort/BitonicMergeSort.hpp"
+//    #include "src/Sort/BitonicMergeSort.hpp"
     #include "src/Sort/Sort.hpp"
 
     #include "src/Math/RealCubicSolve.hpp"

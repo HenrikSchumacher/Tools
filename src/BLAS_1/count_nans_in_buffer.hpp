@@ -26,7 +26,7 @@ namespace Tools
                     
                     for( Size_T i = i_begin; i < i_end; ++i )
                     {
-                        counter += static_cast<Size_T>(std::isnan(a[i]));
+                        counter += NaNQ(a[i]);
                     }
                     
                     return counter;
@@ -42,7 +42,7 @@ namespace Tools
             
             for( Size_T i = 0; i < n; ++i )
             {
-                counter += static_cast<Size_T>(std::isnan(a[i]));
+                counter += NaNQ(a[i]);
             }
             
             return counter;
@@ -53,7 +53,7 @@ namespace Tools
             
             for( Size_T i = 0; i < N; ++i )
             {
-                counter += static_cast<Size_T>(std::isnan(a[i]));
+                counter += NaNQ(a[i]);
             }
             
             return counter;

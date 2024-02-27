@@ -437,6 +437,28 @@ namespace Tools
 //
 //    }
     
+    template<typename Scal>
+    inline constexpr bool NaNQ( const Scal & x )
+    {
+        // This is a work-around to detect NaNs under -ffast-math option.
+        // Not sure whether this is portable.
+        if constexpr ( Scalar::RealQ<Scal> )
+        {
+//            return !(
+//                (std::numeric_limits<Scal>::lowest() <= x)
+//                &&
+//                ( x <=  std::numeric_limits<Scal>::max() )
+//            );
+            
+            // This works at least for Apple clang.
+            return (x < std::numeric_limits<Scal>::lowest());
+        }
+        else
+        {
+            return NaNQ( Re(x) ) || NaNQ( Im(x) );
+        }
+    }
+    
 #define ASSERT_REAL(R) static_assert( Scalar::RealQ<R>, "Template parameter " #R " must be a real-valued type." );
     
 #define ASSERT_COMPLEX(C) static_assert( Scalar::ComplexQ<C>, "Template parameter " #C " must be a complex-valued type." );

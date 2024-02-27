@@ -72,7 +72,56 @@ namespace Tools
         }
         
     } // namespace Profiler
+    
+    
+// Print functions that are always active and print to the log file.
+    
+    inline void logprint( const std::string & s )
+    {
+        const std::lock_guard<std::mutex> lock( Profiler::log_mutex );
+        Profiler::log << s << "\n" << std::endl;
+    }
 
+    template<typename T>
+    inline void logvalprint( const std::string & s, const T & value)
+    {
+        logprint( s + " = " + ToString(value) );
+    }
+
+    template<typename T>
+    inline void logvalprint( const std::string & s, const T & value, const int p)
+    {
+        logprint( s + " = " + ToString(value, p) );
+    }
+    
+    inline void logvalprint( const std::string & s, const std::string & value)
+    {
+        logprint( s + " = " + value );
+    }
+    
+    inline void eprint( const std::string & s )
+    {
+        std::string msg ( std::string("ERROR: ") + s );
+        
+#if defined(LTEMPLATE_H) || defined(MATHEMATICA)
+
+        print( msg );
+#endif
+        const std::lock_guard<std::mutex> cerr_lock( Tools::cerr_mutex );
+        std::cerr << msg << std::endl;
+        logprint( msg );
+    }
+
+    inline void wprint( const std::string & s )
+    {
+        print(    std::string("WARNING: ") + s );
+        logprint( std::string("WARNING: ") + s );
+    }
+    
+#define logdump(x) logvalprint( std::string(#x), x );
+    
+    
+    
     
 // Print functions that are only active if macro TOOLS_ENABLE_PROFILER is defined.
     
@@ -171,51 +220,7 @@ namespace Tools
     }
     
     
-// Print functions that are always active and print to the log file.
     
-    inline void logprint( const std::string & s )
-    {
-        const std::lock_guard<std::mutex> lock( Profiler::log_mutex );
-        Profiler::log << s << "\n" << std::endl;
-    }
-
-    template<typename T>
-    inline void logvalprint( const std::string & s, const T & value)
-    {
-        logprint( s + " = " + ToString(value) );
-    }
-
-    template<typename T>
-    inline void logvalprint( const std::string & s, const T & value, const int p)
-    {
-        logprint( s + " = " + ToString(value, p) );
-    }
-    
-    inline void logvalprint( const std::string & s, const std::string & value)
-    {
-        logprint( s + " = " + value );
-    }
-    
-    inline void eprint( const std::string & s )
-    {
-        std::string msg ( std::string("ERROR: ") + s );
-        
-#if defined(LTEMPLATE_H) || defined(MATHEMATICA)
-
-        print( msg );
-#endif
-        const std::lock_guard<std::mutex> cerr_lock( Tools::cerr_mutex );
-        std::cerr << msg << std::endl;
-        logprint( msg );
-    }
-
-    inline void wprint( const std::string & s )
-    {
-        print(    std::string("WARNING: ") + s );
-        logprint( std::string("WARNING: ") + s );
-    }
-    
-#define logdump(x) logvalprint( std::string(#x), x );
     
     
     inline void debug_tic(const std::string & tag)
