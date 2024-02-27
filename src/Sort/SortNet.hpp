@@ -18,13 +18,40 @@ namespace Tools
         }
     }
     
-//    
-//    template<typename C = std::less<double>>
-//    force_inline void CompSwap( mref<double> a, mref<double> b, C comp = C()  )
-//    {
-//        std::tie(a,b) = MinMax(a,b);
-//    }
-//    
+    
+    template<bool reverseQ, typename C = std::less<double>>
+    force_inline void CompSwap( mref<double> a, mref<double> b, C comp = C()  )
+    {
+        using T = double;
+        
+        constexpr bool lessQ = std::is_same_v<C,std::less<T>> || std::is_same_v<C,std::less_equal<T>>;
+        
+        constexpr bool greaterQ = std::is_same_v<C,std::greater<T>> || std::is_same_v<C,std::greater_equal<T>>;
+        
+        if constexpr ( lessQ || greaterQ )
+        {
+            if constexpr ( lessQ == reverseQ )
+            {
+                std::tie(b,a) = MinMax(a,b);
+            }
+            else
+            {
+                std::tie(a,b) = MinMax(a,b);
+            }
+        }
+        else
+        {
+            if constexpr ( reverseQ )
+            {
+                std::tie(b,a) = std::minmax({a,b},comp);
+            }
+            else
+            {
+                std::tie(a,b) = std::minmax({a,b},comp);
+            }
+        }
+    }
+    
     
     template<int n, bool reverseQ = false>
     struct SortNet

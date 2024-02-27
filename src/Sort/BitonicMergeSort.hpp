@@ -17,31 +17,24 @@ namespace Tools
         {
             if( comp(a[i],b[j]) != reverseQ )
             {
-                c[k] = a[i];
-                ++i;
+                c[k++] = a[i++];
             }
             else
             {
-                c[k] = b[j];
-                ++j;
+                c[k++] = b[j++];
             }
-            ++k;
         }
      
         // Copy remaining elements of left, if any
         while( i < m )
         {
-            c[k] = a[i];
-            ++i;
-            ++k;
+            c[k++] = a[i++];
         }
      
         // Copy remaining element of right, if any
         while( j < n )
         {
-            c[k] = b[j];
-            k++;
-            j++;
+            c[k++] = b[j++];
         }
 
     }
