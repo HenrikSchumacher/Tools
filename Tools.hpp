@@ -42,11 +42,6 @@
 
 
 
-
-
-
-
-
     // constexpr version of conditional ?-operator
     #define COND( condition, case1, case2 ) ([&]{           \
             if constexpr ( condition )                      \
@@ -229,6 +224,8 @@ namespace Tools
 
     #include "src/Math/RealCubicSolve.hpp"
     #include "src/Math/Det_Bareiss.hpp"
+
+    #include "src/Debugging.hpp"
 
         //https://stackoverflow.com/a/43587319/8248900
         
