@@ -115,19 +115,20 @@ namespace Tools
             // The cost of the k-th thread goes from job no job_ptr[k] to job no job_ptr[k+1] (as always in C/C++, job_ptr[k+1] points _after_ the last job.
         
             
-            ptic("BalanceWorkLoad");
-            
-    //        auto costs_ = Tensor1<I,I> (costs,job_count+1);
-            
+            ptic("BalanceWorkLoad_Accumulated");
             
             T * restrict acc_costs = nullptr;
+            
             safe_alloc( acc_costs, job_count + 1 );
+            
             acc_costs[0] = static_cast<Int>(0);
             parallel_accumulate( &costs[0], &acc_costs[1], job_count, thread_count );
 
             BalanceWorkLoad( job_count, acc_costs);
             
-            ptoc("BalanceWorkLoad");
+            safe_free( acc_costs );
+            
+            ptoc("BalanceWorkLoad_Accumulated");
         }
         
         template<typename T>
