@@ -23,9 +23,10 @@ namespace Tools
         //    b[3] = f(b[3], a[4]);
         //    ...
         
-        T * S_buffer = nullptr;
-        safe_alloc(S_buffer,thread_count+1);
-        mptr<T> S = S_buffer;
+        std::vector<T> S_buffer ( thread_count+1 );
+        
+        mptr<T> S = &S_buffer[0];
+        
         S[0] = static_cast<T>(0);
         
         const I step = n / thread_count;
@@ -84,8 +85,6 @@ namespace Tools
             },
             thread_count
         );
-        
-        safe_free(S_buffer);
     }
     
     
@@ -94,9 +93,10 @@ namespace Tools
     template<typename T, typename I>
     inline void parallel_accumulate( mptr<T> a, const I n, const I thread_count )
     {
-        T * S_buffer = nullptr;
-        safe_alloc(S_buffer,thread_count+1);
-        mptr<T> S = S_buffer;
+        std::vector<T> S_buffer ( thread_count+1 );
+        
+        mptr<T> S = &S_buffer[0];
+        
         S[0] = static_cast<T>(0);
         
         const I step = n / thread_count;
@@ -155,16 +155,15 @@ namespace Tools
             },
             thread_count
         );
-        
-        safe_free(S_buffer);
     }
     
     template<typename T, typename I>
     inline void parallel_accumulate( cptr<T> a, mptr<T> b, const I n, const I thread_count )
     {
-        T * S_buffer = nullptr;
-        safe_alloc(S_buffer,thread_count+1);
-        mptr<T> S = S_buffer;
+        std::vector<T> S_buffer ( thread_count+1 );
+        
+        mptr<T> S = &S_buffer[0];
+        
         S[0] = static_cast<T>(0);
         
         const I step = n / thread_count;
@@ -222,8 +221,6 @@ namespace Tools
             },
             thread_count
         );
-        
-        safe_free(S_buffer);
     }
     
 } // namespace Tools
