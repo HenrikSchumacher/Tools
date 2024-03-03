@@ -24,13 +24,13 @@ namespace Tools
             "combine_scalars: Only the values Op::Id and Op::Conj are allowed for opy."
         );
         
-        constexpr auto ox = COND( opx == Op::Conj,
-                []( const x_T & X ){ return scalar_cast<y_T>( Conj<x_T>(X) ); },
+        constexpr auto ox = ( opx == Op::Conj ?
+                []( const x_T & X ){ return scalar_cast<y_T>( Conj<x_T>(X) ); } :
                 []( const x_T & X ){ return scalar_cast<y_T>( X ); }
         );
         
-        constexpr auto oy = COND( opy == Op::Conj,
-                []( const y_T & Y ){ return Conj<y_T>(Y); },
+        constexpr auto oy = ( opy == Op::Conj ?
+                []( const y_T & Y ){ return Conj<y_T>(Y); } :
                 []( const y_T & Y ){ return Y; }
         );
         
@@ -188,13 +188,13 @@ namespace Tools
             "combine_scalars: Only the values Op::Id and Op::Conj are allowed for opy."
         );
         
-        constexpr auto ox = COND( opx == Op::Conj,
-                []( const x_T & X ){ return scalar_cast<z_T>( Conj<x_T>(X) ); },
+        constexpr auto ox = ( opx == Op::Conj ?
+                []( const x_T & X ){ return scalar_cast<z_T>( Conj<x_T>(X) ); } :
                 []( const x_T & X ){ return scalar_cast<z_T>( X ); }
         );
         
-        constexpr auto oy = COND( opy == Op::Conj,
-                []( const y_T & Y ){ return scalar_cast<z_T>( Conj<y_T>(Y) ); },
+        constexpr auto oy = ( opy == Op::Conj ?
+                []( const y_T & Y ){ return scalar_cast<z_T>( Conj<y_T>(Y) ); } :
                 []( const y_T & Y ){ return scalar_cast<z_T>( Y ); }
         );
         

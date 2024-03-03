@@ -65,47 +65,61 @@
 #define CONCATT3(id1, id2, id3) id1##id2##id3
 #define CONCAT3(id1, id2, id3) CONCATT3(id1, id2, id3)
 
-#if defined(__GNUC__) || defined(__clang__) // force_inline
-#define force_inline inline __attribute__((always_inline))
+#if defined(TOOLS_AGGRESSIVE_INLINING)
 
-#define force_flattening __attribute__((flatten))
+    #if (defined(__GNUC__) || defined(__clang__))
+        #define force_inline inline __attribute__((always_inline))
+
+        #define force_flattening __attribute__((flatten))
+    #else
+        #define force_inline inline
+
+        #define force_flattening
+    #endif
+
 #else
-#define force_inline inline
 
-#define force_flattening
-#endif
+    #define force_inline
 
+    #define force_flattening
 
-
-// Define loop unrolling depending on the compiler
-#if defined(__ICC) || defined(__ICL)
-#define LOOP_UNROLL(n)      _Pragma(STRINGIFY2(unroll (n)))
-#elif defined(__clang__)
-#define LOOP_UNROLL(n)      _Pragma(STRINGIFY2(clang loop unroll_count(n)))
-#elif defined(__GNUC__) && !defined(__clang__)
-#define LOOP_UNROLL(n)      _Pragma(STRINGIFY2(GCC unroll (n)))
-#elif defined(_MSC_BUILD)
-//  #pragma message ("Microsoft Visual C++ (MSVC) detected: Loop unrolling not supported!")
-#define LOOP_UNROLL(n)
-#else
-//  #warning "Unknown compiler: Loop unrolling not supported!"
-#define LOOP_UNROLL(n)
 #endif
 
 // Define loop unrolling depending on the compiler
-#if defined(__ICC) || defined(__ICL)
-#define LOOP_UNROLL_FULL      _Pragma(STRINGIFY2(unroll))
-#elif defined(__clang__)
-#define LOOP_UNROLL_FULL      _Pragma(STRINGIFY2(clang loop unroll(enable)))
-#elif defined(__GNUC__) && !defined(__clang__)
-//  #define LOOP_UNROLL_FULL      _Pragma(STRINGIFY2(GCC unroll (16)))
-#define LOOP_UNROLL_FULL
-#elif defined(_MSC_BUILD)
-//  #pragma message ("Microsoft Visual C++ (MSVC) detected: Loop unrolling not supported!")
-#define LOOP_UNROLL_FULL
+#if defined(TOOLS_AGGRESSIVE_UNROLLING)
+
+    #if defined(__ICC) || defined(__ICL)
+
+        #define LOOP_UNROLL_FULL    _Pragma(STRINGIFY2(unroll))
+        #define LOOP_UNROLL(n)      _Pragma(STRINGIFY2(unroll (n)))
+
+    #elif defined(__clang__)
+
+        #define LOOP_UNROLL_FULL    _Pragma(STRINGIFY2(clang loop unroll(enable)))
+        #define LOOP_UNROLL(n)      _Pragma(STRINGIFY2(clang loop unroll_count(n)))
+
+    #elif defined(__GNUC__) && !defined(__clang__)
+
+        #define LOOP_UNROLL_FULL
+        #define LOOP_UNROLL(n)      _Pragma(STRINGIFY2(GCC unroll (n)))
+
+    #elif defined(_MSC_BUILD)
+        //  #pragma message ("Microsoft Visual C++ (MSVC) detected: Loop unrolling not supported!")
+        #define LOOP_UNROLL_FULL
+        #define LOOP_UNROLL(n)
+
+    #else
+        //  #warning "Unknown compiler: Loop unrolling not supported!"
+
+        #define LOOP_UNROLL_FULL
+        #define LOOP_UNROLL(n)
+    #endif
+
 #else
-//  #warning "Unknown compiler: Loop unrolling not supported!"
-#define LOOP_UNROLL_FULL
+    
+    #define LOOP_UNROLL_FULL
+    #define LOOP_UNROLL(n)
+
 #endif
 
 #define IS_ARITHMETIC(T) class = typename std::enable_if_t<std::is_arithmetic_v<T>>
@@ -127,53 +141,53 @@
 
 namespace Tools
 {
-using Size_T = std::size_t;
+    using Size_T = std::size_t;
 
 
-template <typename E>
-auto ToUnderlying( const E & e) noexcept
-{
-    if constexpr( std::is_enum_v<E> )
+    template <typename E>
+    auto ToUnderlying( const E & e) noexcept
     {
-        return static_cast<typename std::underlying_type<E>::type>(e);
+        if constexpr( std::is_enum_v<E> )
+        {
+            return static_cast<typename std::underlying_type<E>::type>(e);
+        }
+        else
+        {
+            return e;
+        }
     }
-    else
-    {
-        return e;
-    }
-}
 
 
 #if defined(__clang__)
-#if ( __has_attribute(ext_vector_type) )
-    static constexpr bool vec_enabledQ = true;
+    #if ( __has_attribute(ext_vector_type) )
+        static constexpr bool vec_enabledQ = true;
+
+        template<Size_T N, typename T>
+        using vec_T = T __attribute__((__ext_vector_type__(N))) ;
+    #endif
+#else
+    static constexpr bool vec_enabledQ = false;
 
     template<Size_T N, typename T>
-    using vec_T = T __attribute__((__ext_vector_type__(N))) ;
-#endif
-#else
-static constexpr bool vec_enabledQ = false;
-
-template<Size_T N, typename T>
-using vec_T = std::array<T,N>; //Just a dummy; will not be used, actually.
+    using vec_T = std::array<T,N>; //Just a dummy; will not be used, actually.
 #endif
 
 #if defined(__clang__)
-#if ( __has_attribute(matrix_type) )
-    static constexpr bool mat_enabledQ = true;
+    #if ( __has_attribute(matrix_type) )
+        static constexpr bool mat_enabledQ = true;
+
+        template<Size_T M, Size_T N, typename T>
+        using mat_T = T __attribute__((matrix_type(M,N))) ;
+    #endif
+#else
+    static constexpr bool mat_enabledQ = false;
 
     template<Size_T M, Size_T N, typename T>
-    using mat_T = T __attribute__((matrix_type(M,N))) ;
-#endif
-#else
-static constexpr bool mat_enabledQ = false;
-
-template<Size_T M, Size_T N, typename T>
-using mat_T = std::array<std::array<T,N>,M>; //Just a dummy; will not be used, actually.
+    using mat_T = std::array<std::array<T,N>,M>; //Just a dummy; will not be used, actually.
 #endif
 
 
-}
+} // namespace Tools
 
 #include <complex>
 #include "src/ToString.hpp"
