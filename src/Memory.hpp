@@ -65,7 +65,6 @@ namespace Tools
         return ( (n + b - Int(1) ) / b );
     }
 
-
     template<typename Int>
     force_inline constexpr Int RoundUpTo( const Int n, const Int b )
     {
@@ -132,7 +131,7 @@ namespace Tools
             return ptr_;
         }
     }
-
+    
     force_inline void aligned_free( void * ptr_ )
     {
         #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
