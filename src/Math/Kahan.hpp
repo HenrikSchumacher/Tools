@@ -105,21 +105,23 @@ namespace Tools
         cptr<Real> x_0, cptr<Real> x_1, cptr<Real> y_0, cptr<Real> y_1
     )
     {
+        // x_0, x_1, y_0, y_1 are supposed to be points in the plane.
+        
         // TODO: One can probably boil down the number of subtractions by half here.
         
-        using T = signed char;
+        using Sint = signed char;
         
-        const T signs [4] {
-            Oriented2D_Kahan<T>( x_1, y_0, y_1 ),
-            Oriented2D_Kahan<T>( y_0, y_1, x_0 ),
-            Oriented2D_Kahan<T>( y_1, x_0, x_1 ),
-            Oriented2D_Kahan<T>( x_0, x_1, y_0 )
+        const Sint signs [4] {
+            Oriented2D_Kahan<Sint>( x_1, y_0, y_1 ),
+            Oriented2D_Kahan<Sint>( y_0, y_1, x_0 ),
+            Oriented2D_Kahan<Sint>( y_1, x_0, x_1 ),
+            Oriented2D_Kahan<Sint>( x_0, x_1, y_0 )
         };
         
         return (
-            ( signs[0] != T(0)     )
+            ( signs[0] != Sint(0)     )
             &&
-            ( signs[1] != T(0)     )
+            ( signs[1] != Sint(0)     )
             &&
             ( signs[0] != signs[1] )
             &&
