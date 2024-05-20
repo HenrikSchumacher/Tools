@@ -18,8 +18,12 @@ namespace Tools
     };
     
     static constexpr Parallel_T Parallel   = Parallel_T::True;
+    
+    static constexpr Parallel_T Par        = Parallel_T::True;
 
     static constexpr Parallel_T Sequential = Parallel_T::False;
+    
+    static constexpr Parallel_T Seq        = Parallel_T::False;
     
     enum struct Dynamic_T : bool
     {

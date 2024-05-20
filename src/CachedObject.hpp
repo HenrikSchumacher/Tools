@@ -64,9 +64,9 @@ namespace Tools
         
     public:
         
-//##############################################################################################
+//##########################################################################################
 //      Cache
-//##############################################################################################
+//##########################################################################################
         
         bool InCacheQ( cref<std::string> key ) const
         {
@@ -81,7 +81,8 @@ namespace Tools
             return result;
         }
         
-        std::any & GetCache( cref<std::string> key ) const
+        template<typename T = std::any>
+        T & GetCache( cref<std::string> key ) const
         {
             // For some reason gcc-12 does not allow me to return cache.at(key) directly. =/
             // Maybe because that might throw an exception.
@@ -100,7 +101,14 @@ namespace Tools
                 throw; //an internal catch block forwards the exception to its external level
             }
             
-            return *thing;
+            if constexpr ( std::is_same_v<T,std::any> )
+            {
+                return *thing;
+            }
+            else
+            {
+                return std::any_cast<T &>(*thing);
+            }
         }
         
 //        // Caution! This function is destructive.
@@ -111,9 +119,18 @@ namespace Tools
 //        }
         
         // Caution! This function is destructive.
+        template<bool check_existence_Q = true>
         void SetCache( cref<std::string> key, std::any && thing ) const
         {
             const std::lock_guard<std::mutex> cache_lock( cache_mutex );
+            
+            if constexpr ( check_existence_Q )
+            {
+                if( InCacheQ(key) )
+                {
+                    wprint( this->ClassName() + "::SetCache: Key " + key + " is already in cache. Check for race conditions." );
+                }
+            }
             
             cache[key] = std::move(thing);
         }
@@ -151,9 +168,9 @@ namespace Tools
         }
         
         
-//##############################################################################################
+//##########################################################################################
 //      PersistentCache
-//##############################################################################################
+//##########################################################################################
         
         bool InPersistentCacheQ( cref<std::string> key ) const
         {
@@ -168,7 +185,8 @@ namespace Tools
             return result;
         }
         
-        std::any & GetPersistentCache( cref<std::string> key ) const
+        template<typename T = std::any>
+        T & GetPersistentCache( cref<std::string> key ) const
         {
             // For some reason gcc-12 does not allow me to return cache.at(key) directly. =/
             // Maybe because that might throw an exception.
@@ -187,13 +205,29 @@ namespace Tools
                 throw; //an internal catch block forwards the exception to its external level
             }
             
-            return *thing;
+            if constexpr ( std::is_same_v<T,std::any> )
+            {
+                return *thing;
+            }
+            else
+            {
+                return std::any_cast<T &>(*thing);
+            }
         }
         
         // Caution! This function is destructive.
+        template<bool check_existence_Q = true>
         void SetPersistentCache( cref<std::string> key, std::any && thing ) const
         {
             const std::lock_guard<std::mutex> p_cache_lock( p_cache_mutex );
+            
+            if constexpr ( check_existence_Q )
+            {
+                if( InCacheQ(key) )
+                {
+                    wprint( this->ClassName() + "::SetPersistentCache: Key " + key + " is already in cache. Check for race conditions." );
+                }
+            }
             
             p_cache[key] = std::move(thing);
         }
@@ -232,9 +266,9 @@ namespace Tools
         
         
         
-//##############################################################################################
+//##########################################################################################
 //      Misc
-//##############################################################################################
+//##########################################################################################
         
         void ClearAllCache() const
         {

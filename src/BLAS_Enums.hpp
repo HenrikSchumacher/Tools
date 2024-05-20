@@ -1,6 +1,6 @@
 #pragma once
 
-// It is somewhat unorthodox to use the Tensors namespace here, but I need some of theses enums also for BLAS 1 routines.
+// It is somewhat unorthodox to use the Tensors namespace here, but I need some of these enums also for BLAS 1 routines.
 
 namespace Tensors
 {

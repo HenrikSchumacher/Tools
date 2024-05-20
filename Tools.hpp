@@ -8,6 +8,11 @@
     #include <unistd.h>
 #endif
 
+// Compatibility with non-clang and non-gcc compilers.
+#ifndef __has_attribute
+  #define __has_attribute(x) 0
+#endif
+
 
 #include <deque>
 #include <vector>
@@ -64,12 +69,12 @@
 #define CONCAT3_IMPL(id1, id2, id3) id1##id2##id3
 #define CONCAT3(id1, id2, id3) CONCAT3_IMPL(id1, id2, id3)
 
-#if defined(TOOLS_AGGRESSIVE_INLINING)
+#ifdef TOOLS_AGGRESSIVE_INLINING
 
-    #if (defined(__GNUC__) || defined(__clang__))
-        #define force_inline inline __attribute__((always_inline))
+    #if __has_attribute(__always_inline__)
+        #define force_inline inline __attribute__((__always_inline__))
 
-        #define force_flattening __attribute__((flatten))
+        #define force_flattening __attribute__((__flatten__))
     #else
         #define force_inline inline
 
@@ -85,7 +90,7 @@
 #endif
 
 // Define loop unrolling depending on the compiler
-#if defined(TOOLS_AGGRESSIVE_UNROLLING)
+#ifdef TOOLS_AGGRESSIVE_UNROLLING
 
     #if defined(__ICC) || defined(__ICL)
 

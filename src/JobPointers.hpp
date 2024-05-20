@@ -153,7 +153,6 @@ namespace Tools
             const T total_cost = acc_costs[job_count];
             
             const T per_thread_cost = (total_cost + thread_count - 1) / thread_count;
-            
 
             // binary search for best work load distribution
             
@@ -162,6 +161,7 @@ namespace Tools
             {
                 // each thread (other than the last one) is required to have at least this accumulated cost
                 T target = Min( total_cost, static_cast<T>(per_thread_cost * (thread + 1)) );
+                
                 Int pos;
                 // find an index a such that b_row_acc_costs[ a ] < target;
                 // taking naive_chunk_size * thread as initial guess, because that might be nearly correct for costs that are evenly distributed over the block rows
@@ -182,7 +182,7 @@ namespace Tools
                     ++pos;
                     b = Min(job_count, static_cast<Int>(naive_chunk_size * pos) );
                 };
-
+                
                 // binary search
                 while( b > a + 1 )
                 {
@@ -196,6 +196,7 @@ namespace Tools
                         a = c;
                     }
                 }
+
                 job_ptr[thread + 1] = b;
             }
             
@@ -206,6 +207,12 @@ namespace Tools
             }
             
             ptoc("BalanceWorkLoad");
+        }
+        
+        template<typename I>
+        void LoadFromBuffer( cptr<I> buffer )
+        {
+            std::copy_n( buffer, ThreadCount() + 1, &job_ptr[0] );
         }
         
 
