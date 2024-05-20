@@ -261,36 +261,34 @@ using Tensors::AddTo;
 
     //https://stackoverflow.com/a/43587319/8248900
     
-#define __ADD_CLONE_CODE_FOR_BASE_CLASS__(BASE)                                 \
-public:                                                                         \
-    [[nodiscard]] std::shared_ptr<BASE> Clone () const                          \
-    {                                                                           \
-        return std::shared_ptr<BASE>(CloneImplementation());                    \
-    }                                                                           \
-private:                                                                        \
-    [[nodiscard]] virtual BASE * CloneImplementation() const = 0;
-    
-#define __ADD_CLONE_CODE_FOR_ABSTRACT_CLASS__(CLASS)                            \
-public:                                                                         \
-    [[nodiscard]] std::shared_ptr<CLASS> Clone () const                         \
-    {                                                                           \
-        return std::shared_ptr<CLASS>(CloneImplementation());                   \
-    }                                                                           \
-private:                                                                        \
-    [[nodiscard]] virtual CLASS * CloneImplementation() const override = 0;
-    
-    
-#define __ADD_CLONE_CODE__(DERIVED)                                             \
-public:                                                                         \
-    [[nodiscard]] std::shared_ptr<DERIVED> Clone () const                       \
-    {                                                                           \
-        return std::shared_ptr<DERIVED>(CloneImplementation());                 \
-    }                                                                           \
-                                                                                \
-private:                                                                        \
-    [[nodiscard]] virtual DERIVED * CloneImplementation() const override        \
-    {                                                                           \
-        return new DERIVED(*this);                                              \
-    }
-
-
+//#define __ADD_CLONE_CODE_FOR_BASE_CLASS__(BASE)                                 \
+//public:                                                                         \
+//    [[nodiscard]] std::shared_ptr<BASE> Clone () const                          \
+//    {                                                                           \
+//        return std::shared_ptr<BASE>(CloneImplementation());                    \
+//    }                                                                           \
+//private:                                                                        \
+//    [[nodiscard]] virtual BASE * CloneImplementation() const = 0;
+//    
+//#define __ADD_CLONE_CODE_FOR_ABSTRACT_CLASS__(CLASS)                            \
+//public:                                                                         \
+//    [[nodiscard]] std::shared_ptr<CLASS> Clone () const                         \
+//    {                                                                           \
+//        return std::shared_ptr<CLASS>(CloneImplementation());                   \
+//    }                                                                           \
+//private:                                                                        \
+//    [[nodiscard]] virtual CLASS * CloneImplementation() const override = 0;
+//    
+//    
+//#define __ADD_CLONE_CODE__(DERIVED)                                             \
+//public:                                                                         \
+//    [[nodiscard]] std::shared_ptr<DERIVED> Clone () const                       \
+//    {                                                                           \
+//        return std::shared_ptr<DERIVED>(CloneImplementation());                 \
+//    }                                                                           \
+//                                                                                \
+//private:                                                                        \
+//    [[nodiscard]] virtual DERIVED * CloneImplementation() const override        \
+//    {                                                                           \
+//        return new DERIVED(*this);                                              \
+//    }
