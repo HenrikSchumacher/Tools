@@ -50,7 +50,7 @@ namespace Tools
     template<typename Out_T = int, typename Real>
     force_inline Out_T DetSign2D_Corrected( const Real a, const Real b, const Real c, const Real d )
     {
-        ASSERT_FLOAT(Real);
+        static_assert(FloatQ<Real>,"");
         
         const auto [ad,ade] = TwoMulFMA(a,d);
         const auto [bc,bce] = TwoMulFMA(b,c);
@@ -70,7 +70,7 @@ namespace Tools
     template<typename Real>
     force_inline Real Det2D_Corrected( const Real a, const Real b, const Real c, const Real d )
     {
-        ASSERT_FLOAT(Real);
+        static_assert(FloatQ<Real>,"");
         
         const auto [ad,ade] = TwoMulFMA(a,d);
         const auto [bc,bce] = TwoMulFMA(b,c);

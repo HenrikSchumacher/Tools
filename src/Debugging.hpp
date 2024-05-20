@@ -1,16 +1,17 @@
 #pragma once
 
-namespace Tensors
+namespace Tools
 {
     // From https://stackoverflow.com/a/49658950/8248900.
     template<typename Int_1, typename Int_0>
     force_inline constexpr Int_1 int_cast( const Int_0 n )
     {
-        ASSERT_INT(Int_1);
-        ASSERT_INT(Int_0);
+        static_assert(IntQ<Int_0>,"");
+        static_assert(IntQ<Int_1>,"");
         
-        typedef std::numeric_limits<Int_1> Lim_1;
-        typedef std::numeric_limits<Int_0> Lim_0;
+        using Lim_0 = std::numeric_limits<Int_0>;
+        using Lim_1 = std::numeric_limits<Int_1>;
+        
         
         constexpr bool positive_overflow_possible = Lim_1::max() < Lim_0::max();
         constexpr bool negative_overflow_possible =
@@ -113,5 +114,5 @@ namespace Tensors
 #endif
     }
     
-} // namespace Tensors
+} // namespace Tools
 

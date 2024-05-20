@@ -121,7 +121,7 @@ namespace Tools
     template<typename Real, RoundingPolicy RP = RoundingPolicy::UseRoundingMode>
     class Rounding_T
     {
-        ASSERT_FLOAT(Real);
+        static_assert(FloatQ<Real>,"");
         
     protected:
 
@@ -178,7 +178,7 @@ namespace Tools
     template<typename Real_, RoundingPolicy RP_ = RoundingPolicy::UseRoundingMode>
     class Singleton : Rounding_T<Real_,RP_>
     {
-        ASSERT_FLOAT(Real_)
+        static_assert(FloatQ<Real_>,"");
         
     public:
         
@@ -348,7 +348,7 @@ namespace Tools
     template<typename Real_, RoundingPolicy RP_ = RoundingPolicy::UseRoundingMode>
     class Interval : Rounding_T<Real_,RP_>
     {
-        ASSERT_FLOAT(Real_)
+        static_assert(FloatQ<Real_>,"");
         
     public:
         

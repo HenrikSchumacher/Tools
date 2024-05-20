@@ -54,7 +54,7 @@ namespace Tools
     template<typename UInt>
     inline constexpr int MSB( const UInt n )
     {
-        ASSERT_UINT(UInt)
+        static_assert(UnsignedIntQ<UInt>,"");
         
         if( n <= static_cast<UInt>(0) )
         {
@@ -67,7 +67,7 @@ namespace Tools
     template<typename UInt>
     inline constexpr UInt PrevPow( const UInt n )
     {
-        ASSERT_UINT(UInt)
+        static_assert(UnsignedIntQ<UInt>,"");
         
         if( n <= static_cast<UInt>(0) )
         {
@@ -95,7 +95,7 @@ namespace Tools
     template<typename UInt>
     inline constexpr UInt NextPow( const UInt n )
     {
-        ASSERT_UINT(UInt)
+        static_assert(UnsignedIntQ<UInt>,"");
         
         constexpr UInt zero = 0;
         constexpr UInt one = 1;

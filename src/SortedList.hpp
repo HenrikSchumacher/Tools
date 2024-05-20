@@ -4,7 +4,7 @@ namespace Tools
     template<typename T, typename Int>
     class SortedList
     {
-        ASSERT_SIGNED_INT(Int)
+        static_assert(SignedIntQ<Int>,"");
         
         std::vector<T> list;
         

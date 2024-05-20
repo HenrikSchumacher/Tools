@@ -145,7 +145,7 @@ namespace Tools
     {
         using Real = Scalar::Real<Scal>;
      
-        ASSERT_FLOAT(Real);
+        static_assert(FloatQ<Real>,"");
         
         return Scalar::Half<Real> * (x + y);
     }
@@ -304,7 +304,7 @@ namespace Tools
         template<typename Real>
         Real constexpr SqrtNewtonRaphson( const Real x, const Real curr, const Real prev )
         {
-            ASSERT_REAL(Real)
+            static_assert(Scalar::RealQ<Real>,"");
             
             return curr == prev
                 ? curr
@@ -322,7 +322,7 @@ namespace Tools
     template<typename Real>
     Real constexpr cSqrt( const Real x)
     {
-        ASSERT_REAL(Real)
+        static_assert(Scalar::RealQ<Real>,"");
         
         return (x >= Scalar::Zero<Real> ) && (x < std::numeric_limits<Real>::infinity())
             ? Detail::SqrtNewtonRaphson(x, x, Scalar::Zero<Real> )
@@ -389,7 +389,7 @@ namespace Tools
     {
         // Computes Gamma(x+a)/Gamma(x) with considerably less risk of overflow than std::tgamma(x+a)/std::tgamma(x).
 
-        ASSERT_FLOAT(T);
+        static_assert(FloatQ<T>,"");
         
         static_assert( Scalar::RealQ<T>, "GammaQuotient is only implemented for real floating point types." );
         

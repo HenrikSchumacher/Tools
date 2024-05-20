@@ -69,8 +69,8 @@ namespace Tools
     >
     force_inline void Do( F && fun, const Int n = N, const Int_ thread_count_ = 1 )
     {
-        ASSERT_INT(Int);
-        ASSERT_INT(Int_);
+        static_assert(IntQ<Int>,"");
+        static_assert(IntQ<Int_>,"");
         
         
         const Int thread_count = static_cast<Int>(thread_count_);

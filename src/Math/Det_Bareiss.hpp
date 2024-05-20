@@ -6,8 +6,8 @@ namespace Tools
     template<typename Scal, typename Int>
     [[nodiscard]] Scal Det_Bareiss( const Int n, mptr<Scal> A_, const Int ldA )
     {
-        ASSERT_INT(Int);
-        
+        static_assert(IntQ<Int>,"");
+
         constexpr Scal zero ( 0 );
         
         auto A = [A_,ldA]( const Int i, const Int j) -> Scal &

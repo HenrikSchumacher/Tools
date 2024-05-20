@@ -6,7 +6,7 @@ namespace Tools
     template<typename Real, typename UInt>
     struct uniform_dist
     {
-        ASSERT_REAL(Real);
+        static_assert(Scalar::RealQ<Real>,"");
         
         const Real a     = 0;
         const Real b     = 1;
@@ -31,7 +31,7 @@ namespace Tools
     template<typename Real, typename UInt>
     struct fake_gaussian_dist
     {
-        ASSERT_REAL(Real);
+        static_assert(Scalar::RealQ<Real>,"");
         
         static constexpr Real scale = Scalar::One<Real> / (1ull << 20);
         
@@ -52,7 +52,7 @@ namespace Tools
     template<typename Real, typename UInt>
     struct BoxMuller
     {
-        ASSERT_REAL(Real);
+        static_assert(Scalar::RealQ<Real>,"");
         
         uniform_dist<Real,UInt64> r_dist { Scalar::One<Real>, Scalar::Zero<Real> };
         uniform_dist<Real,UInt64> phi_dist { -Scalar::Pi<Real>, Scalar::Pi<Real> };
@@ -105,7 +105,7 @@ namespace Tools
     template<typename Real, typename UInt>
     struct Gaussian
     {
-        ASSERT_REAL(Real);
+        static_assert(Scalar::RealQ<Real>,"");
         
         uniform_dist<Real,UInt64> dist { -Scalar::One<Real>, Scalar::One<Real> };
         

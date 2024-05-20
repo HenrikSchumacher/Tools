@@ -53,17 +53,16 @@
         }                                               \
     }())
 
-    
-#define STRINGIFY(a) #a
-#define STRINGIFY2(a) STRINGIFY(a)
-    
+#define STRINGIFY_IMPL(x) #x
+#define STRINGIFY(x) STRINGIFY_IMPL(x)
+
 #define TO_STD_STRING(x) std::string(STRINGIFY(x))
     
-#define CONCATT(id1, id2) id1##id2
-#define CONCAT(id1, id2) CONCATT(id1, id2)
+#define CONCAT_IMPL(id1, id2) id1##id2
+#define CONCAT(id1, id2) CONCAT_IMPL(id1, id2)
     
-#define CONCATT3(id1, id2, id3) id1##id2##id3
-#define CONCAT3(id1, id2, id3) CONCATT3(id1, id2, id3)
+#define CONCAT3_IMPL(id1, id2, id3) id1##id2##id3
+#define CONCAT3(id1, id2, id3) CONCAT3_IMPL(id1, id2, id3)
 
 #if defined(TOOLS_AGGRESSIVE_INLINING)
 
@@ -90,18 +89,18 @@
 
     #if defined(__ICC) || defined(__ICL)
 
-        #define LOOP_UNROLL_FULL    _Pragma(STRINGIFY2(unroll))
-        #define LOOP_UNROLL(n)      _Pragma(STRINGIFY2(unroll (n)))
+        #define LOOP_UNROLL_FULL    _Pragma(STRINGIFY(unroll))
+        #define LOOP_UNROLL(n)      _Pragma(STRINGIFY(unroll (n)))
 
     #elif defined(__clang__)
 
-        #define LOOP_UNROLL_FULL    _Pragma(STRINGIFY2(clang loop unroll(enable)))
-        #define LOOP_UNROLL(n)      _Pragma(STRINGIFY2(clang loop unroll_count(n)))
+        #define LOOP_UNROLL_FULL    _Pragma(STRINGIFY(clang loop unroll(enable)))
+        #define LOOP_UNROLL(n)      _Pragma(STRINGIFY(clang loop unroll_count(n)))
 
     #elif defined(__GNUC__) && !defined(__clang__)
 
         #define LOOP_UNROLL_FULL
-        #define LOOP_UNROLL(n)      _Pragma(STRINGIFY2(GCC unroll (n)))
+        #define LOOP_UNROLL(n)      _Pragma(STRINGIFY(GCC unroll (n)))
 
     #elif defined(_MSC_BUILD)
         //  #pragma message ("Microsoft Visual C++ (MSVC) detected: Loop unrolling not supported!")
@@ -122,27 +121,42 @@
 
 #endif
 
-#define IS_ARITHMETIC(T) class = typename std::enable_if_t<std::is_arithmetic_v<T>>
-#define IS_FLOAT(T)      class = typename std::enable_if_t<std::is_floating_point_v<T>>
-#define IS_INT(T)        class = typename std::enable_if_t<std::is_integral_v<T>>
-
-#define IS_POSITIVE(x)  class = typename std::enable_if_t<x>0>
-
-#define ASSERT_ARITHMETIC(T) static_assert( std::is_arithmetic_v<T>, "Template parameter " #T " must be arithmetic type." );
-
-#define ASSERT_INT(I) static_assert( std::is_integral_v<I>, "Template parameter " #I " must be an integral type." );
-
-#define ASSERT_SIGNED_INT(I) static_assert( std::is_signed_v<I> && std::is_integral_v<I>, "Template parameter " #I " must be a signed integral type." );
-
-#define ASSERT_UINT(I) static_assert( std::is_unsigned_v<I> && std::is_integral_v<I>, "Template parameter " #I " must be a unsigned integral type." );
-#define ASSERT_UINT(I) static_assert( std::is_unsigned_v<I> && std::is_integral_v<I>, "Template parameter " #I " must be a unsigned integral type." );
-
-#define ASSERT_FLOAT(type) static_assert( std::is_floating_point_v<type>, "Template parameter " #type " must be floating point type." );
+//#define IS_ARITHMETIC(T) class = typename std::enable_if_t<std::is_arithmetic_v<T>>
+//#define IS_FLOAT(T)      class = typename std::enable_if_t<std::is_floating_point_v<T>>
+//#define IS_INT(T)        class = typename std::enable_if_t<std::is_integral_v<T>>
+//
+//#define IS_POSITIVE(x)  class = typename std::enable_if_t<x>0>
+//
+//#define ASSERT_ARITHMETIC(T) static_assert( std::is_arithmetic_v<T>, "Template parameter " #T " must be arithmetic type." );
+//
+//#define ASSERT_INT(I) static_assert( std::is_integral_v<I>, "Template parameter " #I " must be an integral type." );
+//
+//#define ASSERT_SIGNED_INT(I) static_assert( std::is_signed_v<I> && std::is_integral_v<I>, "Template parameter " #I " must be a signed integral type." );
+//
+//#define ASSERT_UINT(I) static_assert( std::is_unsigned_v<I> && std::is_integral_v<I>, "Template parameter " #I " must be a unsigned integral type." );
+//
+//#define ASSERT_FLOAT(type) static_assert( std::is_floating_point_v<type>, "Template parameter " #type " must be floating point type." );
 
 namespace Tools
 {
     using Size_T = std::size_t;
-
+    
+    
+    template<typename T> 
+    constexpr bool IntQ = std::is_integral_v<T>;
+    
+    template<typename T> 
+    constexpr bool UnsignedIntQ = std::is_unsigned_v<T> && std::is_integral_v<T>;
+    
+    template<typename T> 
+    constexpr bool SignedIntQ = std::is_signed_v<T> && std::is_integral_v<T>;
+    
+    template<typename T> 
+    constexpr bool FloatQ = std::is_floating_point_v<T>;
+    
+    template<typename T>
+    constexpr bool ArithmeticQ = std::is_arithmetic_v<T>;
+    
 
     template <typename E>
     auto ToUnderlying( const E & e) noexcept
