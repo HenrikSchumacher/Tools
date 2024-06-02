@@ -10,6 +10,8 @@ namespace Tools
         const Real tol = 64 * Scalar::eps<Real>, const int max_iter = 64
     )
     {
+        (void)max_iter;
+        
         constexpr Real a = 0;
         constexpr Real b = 1;
         
@@ -37,6 +39,7 @@ namespace Tools
         
         auto Solve = [f,TOL]( const Real L, const Real R, const Real x_init )
         {
+            (void)x_init;
             return RegulaFalsi<0>( f, L, R, Scalar::Zero<Real>, TOL );
         };
      
@@ -166,6 +169,9 @@ namespace Tools
         
         auto Solve = [=]( const Real L, const Real R, const Real x_init )
         {
+            (void)L;
+            (void)R;
+            
             auto Newton = [=]( const Real x )
             {
                 return  Max(a,Min(b, x - f(x)/Df(x)));

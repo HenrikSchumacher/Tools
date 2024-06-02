@@ -43,10 +43,10 @@ namespace Tools
         static_assert(dynQ == Static, "This method ignores dynamic scheduling; it is always static.");
     }
     
-#ifdef TOOLS_DEBUG
     template<Parallel_T parQ, typename Int >
     void check_sequential( std::string tag, Int thread_count )
     {
+#ifdef TOOLS_DEBUG
         if constexpr ( parQ == Sequential )
         {
             if ( thread_count > Scalar::One<Int> )
@@ -54,15 +54,12 @@ namespace Tools
                 wprint(std::string("check_sequential: method ") + tag + " is marked as sequential, but more than 1 thread is requested.");
             }
         }
-    }
 #else
-    
-    template<Parallel_T parQ, typename Int >
-    void check_sequential( const char * tag, Int thread_count )
-    {}
+        (void)tag;
+        (void)thread_count;
 #endif
-    
-    
+    }
+
     
     // Executes the function `fun` of the form `[]( const Int i ) -> void {...}` on the range [begin,end[, parallelized over `thread_count` threads.
     // This allows also loops with constant trip counts `N`; if `N > 0`, then the loop will be unrolled and processed sequentially.
@@ -183,6 +180,7 @@ namespace Tools
                     // prototype reducer( thread, value, result ).
                     [&reducer]( const Int thread, cref<S> value, mref<T> result )
                     {
+                        (void)thread;
                         std::invoke( reducer, value, result );
                     },
                     init, zero, n, thread_count

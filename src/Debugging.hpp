@@ -111,6 +111,8 @@ namespace Tools
                 eprint(std::string("assert_positive failed in function in ") + std::string(__FILE__) + " at line "+ ToString(__LINE__)+".");
             }
         }
+#else
+        (void)x;
 #endif
     }
     

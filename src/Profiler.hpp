@@ -130,6 +130,8 @@ namespace Tools
 #ifdef TOOLS_ENABLE_PROFILER
         const std::lock_guard<std::mutex> lock( Profiler::log_mutex );
         Profiler::log << s << "\n" << std::endl;
+#else
+        (void)s;
 #endif
     }
 
@@ -170,6 +172,8 @@ namespace Tools
             << std::string( 2 * (Profiler::time_stack.size()), ' ' )
             << Profiler::tag_stack.back() << "\t started at \t" << start_time << "\n"
             << std::endl;
+#else
+        (void)tag;
 #endif
     }
     
@@ -216,6 +220,8 @@ namespace Tools
         {
             eprint( "Unmatched ptoc detected. Stack empty. Label =  " + tag + ".");
         }
+#else
+        (void)tag;
 #endif
     }
     
@@ -223,6 +229,8 @@ namespace Tools
     {
 #ifdef TOOLS_DEBUG
         ptic(tag);
+#else
+        (void)tag;
 #endif
     }
     
@@ -230,6 +238,8 @@ namespace Tools
     {
 #ifdef TOOLS_DEBUG
         ptoc(tag);
+#else
+        (void)tag;
 #endif
     }
 
@@ -237,6 +247,8 @@ namespace Tools
     {
 #ifdef TOOLS_DEBUG
         logprint(s);
+#else
+        (void)s;
 #endif
     }
     
@@ -247,6 +259,9 @@ namespace Tools
         {
             eprint(s);
         }
+#else
+        (void)condition;
+        (void)s;
 #endif
     }
 

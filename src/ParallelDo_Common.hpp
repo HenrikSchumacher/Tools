@@ -6,6 +6,8 @@ namespace Tools
     {
         void operator()( const Size_T thread, cref<bool> value, mref<bool> result )
         {
+            (void)thread;
+            
             result = result && value;
         }
     };
@@ -14,6 +16,8 @@ namespace Tools
     {
         void operator()( const Size_T thread, cref<bool> value, mref<bool> result )
         {
+            (void)thread;
+            
             result = result || value;
         }
     };
@@ -23,6 +27,8 @@ namespace Tools
     {
         void operator()( const Size_T thread, cref<Scal_in> value, mref<Scal_out> result )
         {
+            (void)thread;
+            
             result += value;
         }
     };
@@ -32,6 +38,8 @@ namespace Tools
     {
         void operator()( const Size_T thread, cref<Scal_in> value, mref<Scal_out> result )
         {
+            (void)thread;
+            
             result *= value;
         }
     };

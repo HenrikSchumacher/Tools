@@ -82,7 +82,10 @@ namespace Tools
      
         template<typename T,typename C = std::less<T>>
         void operator()( mptr<T> a, C comp = C() )
-        {}
+        {
+            (void)a;
+            (void)comp;
+        }
     };
     
     template<bool reverseQ>
