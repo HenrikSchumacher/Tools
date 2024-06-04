@@ -70,7 +70,7 @@ namespace Tools
         {
             {
                 const std::lock_guard<std::mutex> timer_lock( Tools::timer_mutex );
-                duration = Duration( Timer::time_stack.back(), Clock::now() );
+                duration = Tools::Duration( Timer::time_stack.back(), Clock::now() );
             }
                 print( std::to_string(duration) + " s.");
             {
