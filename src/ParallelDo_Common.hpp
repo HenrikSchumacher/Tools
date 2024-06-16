@@ -54,6 +54,8 @@ namespace Tools
         F && fun, cref<JobPointers<Int>> job_ptr
     )
     {
+        static_assert(IntQ<Int>,"");
+        
         ParallelDo(
             [&fun,&job_ptr]( const Int thread )
             {
@@ -75,6 +77,8 @@ namespace Tools
         F && fun, const Int begin, const Int end, const Int thread_count
     )
     {
+        static_assert(IntQ<Int>,"");
+        
         ParallelDo(
             [&fun,begin,end,thread_count]( const Int thread )
             {
@@ -97,6 +101,8 @@ namespace Tools
         F && fun, const Int n, const Int thread_count
     )
     {
+        static_assert(IntQ<Int>,"");
+        
         ParallelDo(
             [&fun,n,thread_count]( const Int thread )
             {
@@ -117,6 +123,8 @@ namespace Tools
         F && fun, R && reducer, cref<T> init, cref<JobPointers<Int>> job_ptr
     )
     {
+        static_assert(IntQ<Int>,"");
+        
         return ParallelDoReduce(
             [&fun,&reducer,&job_ptr,&init]( const Int thread ) -> T
             {
@@ -140,9 +148,12 @@ namespace Tools
     
     template<typename F, typename R, typename T, typename Int>
     force_inline T ParallelDoReduce(
-        F && fun, R && reducer, cref<T> init, const Int begin, const Int end, const Int thread_count
+        F && fun, R && reducer, cref<T> init, 
+        const Int begin, const Int end, const Int thread_count
     )
     {
+        static_assert(IntQ<Int>,"");
+        
         return ParallelDoReduce(
             [&fun,&reducer,begin,end,thread_count,&init]( const Int thread ) -> T
             {

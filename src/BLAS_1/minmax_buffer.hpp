@@ -149,7 +149,7 @@ namespace Tools
             {
                 const S f_i = f(i);
                 
-                return std::tie(i,f_i);
+                return std::pair(i,f_i);
             },
             []( cref<T> value, mref<T> result )
             {

@@ -125,6 +125,8 @@ namespace Tools
             case Tensors::Op::Trans:     return "Trans";
                 
             case Tensors::Op::ConjTrans: return "ConjTrans";
+                
+            default:                     return "Id";
         }
     }
 

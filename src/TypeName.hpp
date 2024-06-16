@@ -12,11 +12,15 @@ namespace Tools
     
     template<> constexpr const char * TypeName<bool> = "Bool";
     
+    template<> constexpr const char * TypeName<Int8> = "I8";
+    
     template<> constexpr const char * TypeName<Int16> = "I16";
     
     template<> constexpr const char * TypeName<Int32> = "I32";
     
     template<> constexpr const char * TypeName<Int64> = "I64";
+    
+    template<> constexpr const char * TypeName<UInt8> = "U8";
     
     template<> constexpr const char * TypeName<UInt16> = "U16";
     
@@ -33,7 +37,7 @@ namespace Tools
 
     
     // Microsoft's C compiler defines std::size_t as an alias onto unsigned long long and throws an error here.
-#if defined(__clang__) || (!defined(_MSC_VER) && !defined(__GNUC__))
+#if defined(__clang__) || defined(__GNUC__) || (!defined(_MSC_VER))
     template<> constexpr const char * TypeName<Size_T> = "Size_T";
 #endif
 

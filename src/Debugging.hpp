@@ -17,7 +17,8 @@ namespace Tools
         constexpr bool negative_overflow_possible =
         Lim_0::is_signed
         ||
-        (Lim_1::lowest() > Lim_0::lowest());
+        std::cmp_greater( Lim_1::lowest(), Lim_0::lowest() );
+        
         
         // unsigned <-- unsigned
         if constexpr ( (! Lim_1::is_signed) && (! Lim_0::is_signed) )

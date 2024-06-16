@@ -10,6 +10,8 @@ namespace Tools
     template<typename F, typename Int>
     force_inline void ParallelDo( F && fun, const Int thread_count )
     {
+        static_assert(IntQ<Int>,"");
+        
         constexpr Int zero = 0;
         constexpr Int one  = 1;
         
@@ -38,6 +40,8 @@ namespace Tools
     template<typename F, typename R, typename T, typename Int>
     force_inline T ParallelDoReduce( F && fun, R && reducer, cref<T> init, const Int thread_count )
     {
+        static_assert(IntQ<Int>,"");
+        
         T result (init);
         
         constexpr Int zero = 0;
@@ -69,16 +73,16 @@ namespace Tools
     
     // Executes the function `fun` of the form `[]( const Int thread, const Int i ) -> void {...}` parallelized over `thread_count` threads.
     template<typename F, typename Int>
-    force_inline void ParallelDo_Dynamic( F && fun, const Int begin, const Int end, const Int inc, const Int thread_count )
+    force_inline void ParallelDo_Dynamic( 
+        F && fun, const Int begin, const Int end, const Int inc, const Int thread_count
+    )
     {
-        
+        static_assert(IntQ<Int>,"");
         
         if( end <= begin )
         {
             return;
         }
-        
-//        ptic("ParallelDo_Dynamic (" + ToString(begin) + " , " + ToString(end) + " , " + ToString(inc) + " , " + ToString(thread_count) + " )");
         
         if( thread_count <= static_cast<Int>(1) )
         {
@@ -127,13 +131,9 @@ namespace Tools
                             
                             debug_print( "ParallelDo_Dynamic: " + ToString(thread) + " done." );
                             
-//                            ptoc("ParallelDo_Dynamic (" + ToString(begin) + " , " + ToString(end) + " , " + ToString(inc) + " , " + ToString(thread_count) + " )");
-                            
                             return;
                         }
                     }
-                    
-//                    print( ToString(thread) + "-> { " + ToString(i_begin) + ", " + ToString(i_end) + " }" );
                     
                     debug_print( "ParallelDo_Dynamic: thread " + ToString(thread) + " processes tasks [" + ToString(i_begin) + "," + ToString(i_end)  + "[." );
                     // Let the worker process its assigned chunk.
@@ -154,8 +154,6 @@ namespace Tools
                 future.get();
             }
         }
-        
-//        ptoc("ParallelDo_Dynamic (" + ToString(begin) + " , " + ToString(end) + " , " + ToString(inc) + " , " + ToString(thread_count) + " )");
     }
     
 }

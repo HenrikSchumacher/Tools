@@ -13,7 +13,7 @@
   #define __has_attribute(x) 0
 #endif
 
-
+#include <cstddef>
 #include <deque>
 #include <vector>
 #include <array>
@@ -83,7 +83,7 @@
 
 #else
 
-    #define force_inline
+    #define force_inline inline
 
     #define force_flattening
 
@@ -184,6 +184,13 @@ namespace Tools
         template<Size_T N, typename T>
         using vec_T = T __attribute__((__ext_vector_type__(N))) ;
     #endif
+//#elif defined(__GNUC__)
+//    #if ( __has_attribute(vector_size) )
+//        static constexpr bool vec_enabledQ = true;
+//
+//        template<Size_T N, typename T>
+//        using vec_T __attribute__((vector_size(N * sizeof(T)))) = T;
+//    #endif
 #else
     static constexpr bool vec_enabledQ = false;
 
@@ -258,37 +265,3 @@ using Tensors::AddTo;
 #include "src/Math/Det_Bareiss.hpp"
 
 #include "src/Debugging.hpp"
-
-    //https://stackoverflow.com/a/43587319/8248900
-    
-//#define __ADD_CLONE_CODE_FOR_BASE_CLASS__(BASE)                                 \
-//public:                                                                         \
-//    [[nodiscard]] std::shared_ptr<BASE> Clone () const                          \
-//    {                                                                           \
-//        return std::shared_ptr<BASE>(CloneImplementation());                    \
-//    }                                                                           \
-//private:                                                                        \
-//    [[nodiscard]] virtual BASE * CloneImplementation() const = 0;
-//    
-//#define __ADD_CLONE_CODE_FOR_ABSTRACT_CLASS__(CLASS)                            \
-//public:                                                                         \
-//    [[nodiscard]] std::shared_ptr<CLASS> Clone () const                         \
-//    {                                                                           \
-//        return std::shared_ptr<CLASS>(CloneImplementation());                   \
-//    }                                                                           \
-//private:                                                                        \
-//    [[nodiscard]] virtual CLASS * CloneImplementation() const override = 0;
-//    
-//    
-//#define __ADD_CLONE_CODE__(DERIVED)                                             \
-//public:                                                                         \
-//    [[nodiscard]] std::shared_ptr<DERIVED> Clone () const                       \
-//    {                                                                           \
-//        return std::shared_ptr<DERIVED>(CloneImplementation());                 \
-//    }                                                                           \
-//                                                                                \
-//private:                                                                        \
-//    [[nodiscard]] virtual DERIVED * CloneImplementation() const override        \
-//    {                                                                           \
-//        return new DERIVED(*this);                                              \
-//    }
