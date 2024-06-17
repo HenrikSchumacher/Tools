@@ -6,12 +6,13 @@ namespace Tools
 {
     namespace Profiler
     {
-        std::mutex prof_mutex;
         std::mutex log_mutex;
-        
-        
-        std::ofstream prof ("./Tools_Profile.tsv");
         std::ofstream log  ("./Tools_Log.txt");
+        
+#if defined(TOOLS_ENABLE_PROFILER)
+        std::mutex prof_mutex;
+        std::ofstream prof ("./Tools_Profile.tsv");
+        
 
         Time init_time = Clock::now();
         std::vector<Time> time_stack;
@@ -19,26 +20,13 @@ namespace Tools
         std::vector<int> parent_stack (1, -0);
         std::vector<int> id_stack (1,0);
         int id_counter = 0;
+#endif
         
         
         inline void Clear(const std::string & dir, const bool append = false)
         {
-            const std::lock_guard<std::mutex> prof_lock( prof_mutex );
-            const std::lock_guard<std::mutex> log_lock( log_mutex );
             
-            std::filesystem::path profile_filename = dir;
-            profile_filename /= "Tools_Profile.tsv";
-            Profiler::prof.close();
-            if( append )
-            {
-                Profiler::prof.open(profile_filename.string(), std::ios_base::app);
-            }
-            else
-            {
-                Profiler::prof.open(profile_filename.string());
-            }
-            
-            print( std::string("Profile will be written to ") + profile_filename.string() + ".");
+            const std::lock_guard<std::mutex> log_lock ( log_mutex  );
             
             
             Profiler::log << std::setprecision(16);
@@ -58,7 +46,26 @@ namespace Tools
 
             print( std::string("Log     will be written to ") + log_filename.string() + "." );
             Profiler::log << std::setprecision(16);
-    //        Profiler::prof << "ID" << "\t" << "Tag" << "\t" << "From" << "\t" << "Tic" << "\t" << "Toc" << "\t" << "Duration" << "\t" << "Depth" << "\n";
+            
+#if defined(TOOLS_ENABLE_PROFILER)
+            const std::lock_guard<std::mutex> prof_lock( prof_mutex );
+            std::filesystem::path profile_filename = dir;
+            profile_filename /= "Tools_Profile.tsv";
+            
+            
+            print( std::string("Profile will be written to ") + profile_filename.string() + ".");
+            
+            Profiler::prof.close();
+            
+            if( append )
+            {
+                Profiler::prof.open(profile_filename.string(), std::ios_base::app);
+            }
+            else
+            {
+                Profiler::prof.open(profile_filename.string());
+            }
+
             Profiler::init_time = Clock::now();
             Profiler::time_stack.clear();
             Profiler::parent_stack.push_back(0.);
@@ -69,6 +76,7 @@ namespace Tools
             Profiler::id_stack.clear();
             Profiler::id_stack.push_back(0);
             Profiler::id_counter = 0;
+#endif
         }
         
     } // namespace Profiler
