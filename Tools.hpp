@@ -134,11 +134,6 @@
 //
 //#define ASSERT_ARITHMETIC(T) static_assert( std::is_arithmetic_v<T>, "Template parameter " #T " must be arithmetic type." );
 //
-//#define ASSERT_INT(I) static_assert( std::is_integral_v<I>, "Template parameter " #I " must be an integral type." );
-//
-//#define ASSERT_SIGNED_INT(I) static_assert( std::is_signed_v<I> && std::is_integral_v<I>, "Template parameter " #I " must be a signed integral type." );
-//
-//#define ASSERT_UINT(I) static_assert( std::is_unsigned_v<I> && std::is_integral_v<I>, "Template parameter " #I " must be a unsigned integral type." );
 //
 //#define ASSERT_FLOAT(type) static_assert( std::is_floating_point_v<type>, "Template parameter " #type " must be floating point type." );
 
@@ -150,13 +145,19 @@ namespace Tools
     template<typename T> 
     constexpr bool IntQ = std::is_integral_v<T>;
     
+#define ASSERT_INT(I) static_assert( IntQ<I>, "Template parameter " #I " must be an integral type." );
+    
     template<typename T> 
     constexpr bool UnsignedIntQ = std::is_unsigned_v<T> && std::is_integral_v<T>;
     
-    template<typename T> 
+#define ASSERT_UINT(I) static_assert( UnsignedIntQ<I>, "Template parameter " #I " must be a unsigned integral type." );
+    
+    template<typename T>
     constexpr bool SignedIntQ = std::is_signed_v<T> && std::is_integral_v<T>;
     
-    template<typename T> 
+#define ASSERT_SIGNED_INT(I) static_assert( SignedIntQ<I>, "Template parameter " #I " must be a signed integral type." );
+    
+    template<typename T>
     constexpr bool FloatQ = std::is_floating_point_v<T>;
     
     template<typename T>
