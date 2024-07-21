@@ -453,9 +453,13 @@ namespace Tools
             // This works at least for Apple clang.
             return (x < std::numeric_limits<Scal>::lowest());
         }
-        else
+        else if constexpr ( Scalar::ComplexQ<Scal> )
         {
             return NaNQ( Re(x) ) || NaNQ( Im(x) );
+        }
+        else
+        {
+            return true;
         }
     }
     
