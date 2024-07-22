@@ -251,6 +251,7 @@ using Tensors::AddTo;
 #include "src/Do.hpp"
 
 #include "src/BLAS_1.hpp"
+#include "src/BLAS_2.hpp"
 
 #include "src/SortedList.hpp"
 

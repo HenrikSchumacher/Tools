@@ -179,7 +179,7 @@ namespace Tools
         if( wasallocated != 0 )
         {
 #ifdef SAFE_ALLOCATE_WARNINGS
-            wprint("safe_alloc: Pointer was not NULL. Calling safe_free to prevent memory leak.");
+            wprint("safe_alloc: Pointer was not nullptr. Calling safe_free to prevent memory leak.");
 #endif
             safe_free(ptr_);
         }
@@ -199,7 +199,7 @@ namespace Tools
         if( wasallocated != 0 )
         {
         #ifdef SAFE_ALLOCATE_WARNINGS
-            wprint("safe_alloc: Pointer was not NULL. Calling safe_free to prevent memory leak.");
+            wprint("safe_alloc: Pointer was not nullptr. Calling safe_free to prevent memory leak.");
         #endif
             safe_free(ptr_);
         }
