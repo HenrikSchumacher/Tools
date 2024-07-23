@@ -2,15 +2,6 @@
 
 namespace Tools
 {
-//    template <
-//        Size_T N = VarSize, Parallel_T parQ = Sequential,
-//        typename X_T, typename Y_T
-//    >
-//    force_inline constexpr void combine_matrices(
-//        cptr<X_T> X, const Size_T ldX,
-//        mptr<Y_T> Y, const Size_T ldY,
-//        const Size_T m, const Size_T n = N, const Size_T thread_count = 1
-//    )
     template<
         Scalar::Flag a_flag, Scalar::Flag b_flag,
         Size_T N = VarSize, Parallel_T parQ = Sequential,
