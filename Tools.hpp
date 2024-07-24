@@ -216,10 +216,12 @@ namespace Tools
 
 } // namespace Tools
 
-#include <complex>
+//#include <complex>
 #include "src/ToString.hpp"
+#include "src/combine_strings.hpp"
 #include "src/Print.hpp"
 #include "src/Profiler.hpp"
+#include "src/Integers.hpp"
 #include "src/Scalars.hpp"
 #include "src/BitFiddling.hpp"
 #include "src/Memory.hpp"
