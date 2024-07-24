@@ -115,7 +115,29 @@ namespace Tools
         template<> constexpr bool RealQ<UInt32>        = true;
         template<> constexpr bool RealQ<UInt64>        = true;
         
-        template<> constexpr bool RealQ<Size_T>        = true;
+        // For some compilers long int is just a typedef of another type.
+        // For some compilers it's not.
+        template<> constexpr std::enable_if<
+            !std::is_same<long int,Int64>::value
+            &&
+            !std::is_same<long int,Int32>::value
+            ,
+            bool
+        >::type RealQ<long int> = true;
+        
+        // For some compilers std::size_t is just a typedef of another type.
+        // For some compilers it's not.
+        template<> constexpr std::enable_if<
+            !std::is_same<Size_T,UInt64>::value
+            &&
+            !std::is_same<Size_T,UInt32>::value
+            &&
+            !std::is_same<Size_T,UInt16>::value
+            ,
+            bool
+        >::type RealQ<Size_T> = true;
+        
+        
         
         template<typename T> constexpr bool ScalarQ = false;
         

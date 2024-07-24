@@ -28,18 +28,30 @@ namespace Tools
     
     template<> constexpr const char * TypeName<UInt64> = "U64";
     
-    
-    // Apparently, GCC treats `long` as an alias (e.g. for `long long` on 64-bit systems).
-    // clang treats the types `long` and `long long` as incompatible, though.
-#if !defined(__GNUC__)
-    template<> constexpr const char * TypeName<long> = "long";
-#endif
 
+    // For some compilers long int is just a typedef of another type.
+    // For some compilers it's not.
+    template<> constexpr std::enable_if<
+        !std::is_same<long int,Int64>::value
+        &&
+        !std::is_same<long int,Int32>::value
+        ,
+        const char *
+    >::type TypeName<long int> = "L";
     
-    // Microsoft's C compiler defines std::size_t as an alias onto unsigned long long and throws an error here.
-#if defined(__clang__) || defined(__GNUC__) || (!defined(_MSC_VER))
-    template<> constexpr const char * TypeName<Size_T> = "Size_T";
-#endif
+    // For some compilers std::size_t is just a typedef of another type.
+    // For some compilers it's not.
+    template<> constexpr std::enable_if<
+        !std::is_same<Size_T,UInt64>::value
+        &&
+        !std::is_same<Size_T,UInt32>::value
+        &&
+        !std::is_same<Size_T,UInt16>::value
+        &&
+        !std::is_same<Size_T,UInt16>::value
+        ,
+        const char *
+    >::type TypeName<Size_T> = "Size_T";
 
     
     template<> constexpr const char * TypeName<Real32>  = "R32";
