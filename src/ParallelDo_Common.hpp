@@ -59,8 +59,8 @@ namespace Tools
         ParallelDo(
             [&fun,&job_ptr]( const Int thread )
             {
-                const Int i_begin = job_ptr[thread  ];
-                const Int i_end   = job_ptr[thread+1];
+                const Int i_begin = job_ptr[static_cast<Size_T>(thread)  ];
+                const Int i_end   = job_ptr[static_cast<Size_T>(thread)+1];
 
                 for( Int i = i_begin; i < i_end; ++i )
                 {

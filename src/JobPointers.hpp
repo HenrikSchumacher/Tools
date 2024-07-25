@@ -20,14 +20,22 @@ namespace Tools
         
         template<typename I>
         JobPointers( const Int job_count, const I thread_count )
-        :   job_ptr ( std::vector<Int>(thread_count+1, static_cast<Int>(0) ) )
+        :   job_ptr ( std::vector<Int>(
+                static_cast<Size_T>(thread_count+1),
+                static_cast<Int>(0) )
+            )
         {
             BalanceWorkLoad( job_count );
         }
         
         template<typename T, typename I>
         JobPointers( const Int job_count, cptr<T> costs, const I thread_count, bool accumulate = true )
-        :   job_ptr ( std::vector<Int>(thread_count+1, static_cast<Int>(0) ) )
+        :   job_ptr ( 
+                std::vector<Int>(
+                    static_cast<Size_T>(thread_count+1),
+                    static_cast<Int>(0)
+                )
+            )
         {
             if( accumulate )
             {
@@ -119,7 +127,7 @@ namespace Tools
             
             T * restrict acc_costs = nullptr;
             
-            safe_alloc( acc_costs, job_count + 1 );
+            safe_alloc( acc_costs, static_cast<Size_T>(job_count + 1) );
             
             acc_costs[0] = static_cast<Int>(0);
             parallel_accumulate( &costs[0], &acc_costs[1], job_count, thread_count );
