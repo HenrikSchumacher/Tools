@@ -8,13 +8,21 @@ namespace Tools
         const Size_T m, const Size_T n = N, const Size_T thread_count = 1
     )
     {
-        Do<VarSize,parQ,Static>(
-            [=]( const Size_T i )
-            {
-                zerofy_buffer<N,Sequential>( &X[ldX * i], n );
-            },
-            m, thread_count
-        );
+        if( (ldX == n) )
+        {
+            // Consecutive buffer. Do a standard zerofy. 
+            zerofy_buffer<VarSize,Parallel>( X, m * n, thread_count);
+        }
+        else
+        {
+            Do<VarSize,parQ,Static>(
+                [=]( const Size_T i )
+                {
+                    zerofy_buffer<N,Sequential>( &X[ldX * i], n );
+                },
+                m, thread_count
+            );
+        }
     }
 }
 

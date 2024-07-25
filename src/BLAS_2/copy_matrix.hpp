@@ -12,12 +12,20 @@ namespace Tools
         const Size_T m, const Size_T n = N, const Size_T thread_count = 1
     )
     {
-        Do<VarSize,parQ,Static>(
-            [=]( const Size_T i )
-            {
-                copy_buffer<N,Sequential>( &X[ldX * i], &Y[ldY * i], n );
-            },
-            m, thread_count
-        );
+        if( (ldX == n) && (ldY == n) )
+        {
+            // Consecutive buffer. Do a standard copy.
+            copy_buffer<VarSize,Parallel>( X, Y, m * n, thread_count);
+        }
+        else
+        {
+            Do<VarSize,parQ,Static>(
+                [=]( const Size_T i )
+                {
+                    copy_buffer<N,Sequential>( &X[ldX * i], &Y[ldY * i], n );
+                },
+                m, thread_count
+            );
+        }
     }
 }
