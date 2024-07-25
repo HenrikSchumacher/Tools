@@ -93,7 +93,7 @@ namespace Tools
     template<typename T, typename I>
     inline void parallel_accumulate( mptr<T> a, const I n, const I thread_count )
     {
-        std::vector<T> S_buffer ( thread_count+1 );
+        std::vector<T> S_buffer ( static_cast<Size_T>(thread_count+1) );
         
         mptr<T> S = &S_buffer[0];
         
@@ -160,7 +160,7 @@ namespace Tools
     template<typename T, typename I>
     inline void parallel_accumulate( cptr<T> a, mptr<T> b, const I n, const I thread_count )
     {
-        std::vector<T> S_buffer ( thread_count+1 );
+        std::vector<T> S_buffer ( static_cast<Size_T>(thread_count+1) );
         
         mptr<T> S = &S_buffer[0];
         
