@@ -21,7 +21,7 @@ namespace Tools
             {
                 const S f_i = f(i);
                 
-                return std::tie(f_i,f_i);
+                return T(f_i,f_i);
             },
             []( cref<T> value, mref<T> result )
             {
