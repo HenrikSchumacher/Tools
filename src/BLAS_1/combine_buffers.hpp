@@ -7,7 +7,7 @@ namespace Tools
         typename a_T, typename x_T, typename b_T, typename y_T
     >
     force_inline void combine_buffers_vec(
-        cref<a_T> a_, cptr<x_T> x, cref< b_T> b_, mptr<y_T> y
+        const a_T a_, cptr<x_T> x, cref<b_T> b_, mptr<y_T> y
     )
     {
         static_assert( VectorizableQ<y_T>, "combine_buffers_vec: type y_T must be allowable for clang's vector extension." );
@@ -128,8 +128,8 @@ namespace Tools
         typename a_T, typename x_T, typename b_T, typename y_T
     >
     force_inline void combine_buffers(
-        cref<a_T> a, cptr<x_T> x,
-        cref<b_T> b, mptr<y_T> y,
+        const a_T a, cptr<x_T> x,
+        const b_T b, mptr<y_T> y,
         const Size_T n = N,
         const Size_T thread_count = 1
     )
@@ -221,7 +221,7 @@ namespace Tools
         typename a_T, typename x_T, typename b_T, typename y_T, typename z_T
     >
     force_inline void combine_buffers_vec(
-        cref<a_T> a_, cptr<x_T> x, cref< b_T> b_, cptr<y_T> y, mptr<z_T> z
+        const a_T a_, cptr<x_T> x, cref< b_T> b_, cptr<y_T> y, mptr<z_T> z
     )
     {
         static_assert( VectorizableQ<z_T>, "combine_buffers_vec: type z_T be must allowable for clang's vector extension." );
@@ -346,7 +346,7 @@ namespace Tools
         typename a_T, typename x_T, typename b_T, typename y_T, typename z_T
     >
     force_inline void combine_buffers(
-        cref<a_T> a, cptr<x_T> x, cref< b_T> b, cptr<y_T> y, mptr<z_T> z,
+        const a_T a, cptr<x_T> x, cref< b_T> b, cptr<y_T> y, mptr<z_T> z,
         const Size_T n = N,
         const Size_T thread_count = 1
     )

@@ -9,8 +9,8 @@ namespace Tools
         typename b_T, typename y_T
     >
     constexpr force_inline void combine_scalars(
-        cref<a_T> a, cref<x_T> x,
-        cref<b_T> b, mref<y_T> y
+        const a_T a, cref<x_T> x,
+        const b_T b, mref<y_T> y
     )
     {
         // Computes y = a * opx( x ) + b * opy( y ).
@@ -171,8 +171,8 @@ namespace Tools
         typename b_T, typename y_T, typename z_T
     >
     constexpr force_inline void combine_scalars(
-        cref<a_T> a, cref<x_T> x,
-        cref<b_T> b, cref<y_T> y,
+        const a_T a, cref<x_T> x,
+        const b_T b, cref<y_T> y,
                      mref<z_T> z
     )
     {

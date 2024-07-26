@@ -9,8 +9,8 @@ namespace Tools
         typename a_T, typename x_T, typename b_T, typename y_T
     >
     force_inline void combine_matrices(
-        cref<a_T> a, cptr<x_T> X, const Size_T ldX,
-        cref<b_T> b, mptr<y_T> Y, const Size_T ldY,
+        const a_T a, cptr<x_T> X, const Size_T ldX,
+        const b_T b, mptr<y_T> Y, const Size_T ldY,
         const Size_T m, const Size_T n, const Size_T thread_count
     )
     {
@@ -33,8 +33,8 @@ namespace Tools
         typename a_T, typename x_T, typename b_T, typename y_T
     >
     force_inline void combine_matrices(
-        cref<a_T> a, cptr<x_T> X, const Size_T ldX,
-        cref<b_T> b, mptr<y_T> Y, const Size_T ldY
+        const a_T a, cptr<x_T> X, const Size_T ldX,
+        const b_T b, mptr<y_T> Y, const Size_T ldY
     )
     {
         static_assert( M > VarSize, "" );
@@ -55,8 +55,8 @@ namespace Tools
         typename a_T, typename x_T, typename b_T, typename y_T
     >
     force_inline void combine_matrices(
-        cref<a_T> a, cptr<x_T> X, const Size_T ldX,
-        cref<b_T> b, mptr<y_T> Y, const Size_T ldY,
+        const a_T a, cptr<x_T> X, const Size_T ldX,
+        const b_T b, mptr<y_T> Y, const Size_T ldY,
         const Size_T m, const Size_T n, const Size_T thread_count
     )
     {
@@ -75,8 +75,8 @@ namespace Tools
         typename a_T, typename x_T, typename b_T, typename y_T
     >
     force_inline void combine_matrices(
-        cref<a_T> a, cptr<x_T> X, const Size_T ldX,
-        cref<b_T> b, mptr<y_T> Y, const Size_T ldY,
+        const a_T a, cptr<x_T> X, const Size_T ldX,
+        const b_T b, mptr<y_T> Y, const Size_T ldY,
         const Size_T m, const Size_T n
     )
     {
