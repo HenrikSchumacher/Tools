@@ -3,23 +3,31 @@
 namespace Tools
 {
     template <
-        Size_T N = VarSize, Parallel_T parQ = Sequential,
+        Size_T M, Size_T N, Parallel_T parQ,
         typename X_T, typename Y_T
     >
     force_inline constexpr void copy_matrix(
         cptr<X_T> X, const Size_T ldX,
         mptr<Y_T> Y, const Size_T ldY,
-        const Size_T m, const Size_T n = N, const Size_T thread_count = 1
+        const Size_T m, const Size_T n, const Size_T thread_count
     )
     {
         if( (ldX == n) && (ldY == n) )
         {
             // Consecutive buffer. Do a standard copy.
-            copy_buffer<VarSize,Parallel>( X, Y, m * n, thread_count);
+            
+            if constexpr ( (M > VarSize) && (N > VarSize ) )
+            {
+                copy_buffer<M*N,Sequential>( X, Y );
+            }
+            else
+            {
+                copy_buffer<VarSize,Parallel>( X, Y, m * n, thread_count);
+            }
         }
         else
         {
-            Do<VarSize,parQ,Static>(
+            Do<M,parQ,Static>(
                 [=]( const Size_T i )
                 {
                     copy_buffer<N,Sequential>( &X[ldX * i], &Y[ldY * i], n );
@@ -28,7 +36,52 @@ namespace Tools
             );
         }
     }
-}
+    
+    // Overload for fixed sizes.
+    template <
+        Size_T M, Size_T N,
+        typename X_T, typename Y_T
+    >
+    force_inline constexpr void copy_matrix(
+        cptr<X_T> X, const Size_T ldX,
+        mptr<Y_T> Y, const Size_T ldY
+    )
+    {
+        static_assert( M > VarSize, "" );
+        static_assert( N > VarSize, "" );
+        
+        copy_matrix<M,N,Sequential>( X, ldX, Y, ldY, M, N, Size_T(1) );
+    }
+    
+    
+    // Overload for variable sizes, parallel evaluation.
+    template <
+        typename X_T, typename Y_T
+    >
+    force_inline constexpr void copy_matrix(
+        cptr<X_T> X, const Size_T ldX,
+        mptr<Y_T> Y, const Size_T ldY,
+        const Size_T m, const Size_T n, const Size_T thread_count
+    )
+    {
+        copy_matrix<VarSize,VarSize,Parallel>( X, ldX, Y, ldY, m, n, thread_count );
+    }
+    
+    
+    // Overload for variable sizes, sequential evaluation.
+    template <
+        typename X_T, typename Y_T
+    >
+    force_inline constexpr void copy_matrix(
+        cptr<X_T> X, const Size_T ldX,
+        mptr<Y_T> Y, const Size_T ldY,
+        const Size_T m, const Size_T n
+    )
+    {
+        copy_matrix<VarSize,VarSize,Parallel>( X, ldX, Y, ldY, m, n, Size_T(1) );
+    }
+    
+} // namespace Tools
 
 
 //namespace Tools

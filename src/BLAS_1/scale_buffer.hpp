@@ -2,7 +2,6 @@
 
 namespace Tools
 {
-    
     template <
         Size_T N = VarSize, Parallel_T parQ = Sequential,
         typename b_T, typename y_T
