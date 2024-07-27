@@ -2,8 +2,9 @@
 
 namespace Tools
 {
+    
     template<
-        Scalar::Flag a_flag, Scalar::Flag b_flag, Size_T N,
+        Scalar::Flag alpha_flag, Scalar::Flag beta_flag, Size_T N,
         typename a_T, typename x_T, typename b_T, typename y_T
     >
     force_inline void combine_buffers_vec(
@@ -22,7 +23,7 @@ namespace Tools
         V x_vec;
         V y_vec;
         
-        if constexpr ( a_flag != Flag::Zero  )
+        if constexpr ( alpha_flag != Flag::Zero  )
         {
             copy_buffer<N>( x, reinterpret_cast<y_T *>(&x_vec) );
             
@@ -30,88 +31,88 @@ namespace Tools
         }
         
         if constexpr (
-            (b_flag != Flag::Zero)
+            (beta_flag != Flag::Zero)
             &&
-            !( (a_flag == Flag::Zero) && ( b_flag == Flag::Plus ) ) )
+            !( (alpha_flag == Flag::Zero) && ( beta_flag == Flag::Plus ) ) )
         {
             copy_buffer<N>( y, reinterpret_cast<y_T *>(&y_vec) );
             
             b = static_cast<y_T>(b_);
         }
         
-        if constexpr ( a_flag == Flag::Zero  )
+        if constexpr ( alpha_flag == Flag::Zero  )
         {
-            if constexpr ( b_flag == Flag::Zero  )
+            if constexpr ( beta_flag == Flag::Zero  )
             {
                 zerofy_buffer<N>(y);
                 return;
             }
-            else if constexpr ( b_flag == Flag::Plus  )
+            else if constexpr ( beta_flag == Flag::Plus  )
             {
                 return;
             }
-            else if constexpr ( b_flag == Flag::Minus  )
+            else if constexpr ( beta_flag == Flag::Minus  )
             {
                 y_vec *= -Scalar::One<y_T>;
             }
-            else if constexpr ( b_flag == Flag::Generic  )
+            else if constexpr ( beta_flag == Flag::Generic  )
             {
                 y_vec *= b;
             }
         }
-        else if constexpr ( a_flag == Flag::Plus  )
+        else if constexpr ( alpha_flag == Flag::Plus  )
         {
-            if constexpr ( b_flag == Flag::Zero  )
+            if constexpr ( beta_flag == Flag::Zero  )
             {
                 copy_buffer<N>(x,y);
             }
-            else if constexpr ( b_flag == Flag::Plus  )
+            else if constexpr ( beta_flag == Flag::Plus  )
             {
                 y_vec += x_vec;
             }
-            else if constexpr ( b_flag == Flag::Minus  )
+            else if constexpr ( beta_flag == Flag::Minus  )
             {
                 y_vec = x_vec - y_vec;
             }
-            else if constexpr ( b_flag == Flag::Generic  )
+            else if constexpr ( beta_flag == Flag::Generic  )
             {
                 y_vec = x_vec + b * y_vec;
             }
         }
-        else if constexpr ( a_flag == Flag::Minus  )
+        else if constexpr ( alpha_flag == Flag::Minus  )
         {
-            if constexpr ( b_flag == Flag::Zero  )
+            if constexpr ( beta_flag == Flag::Zero  )
             {
                 y_vec = -x_vec;
             }
-            else if constexpr ( b_flag == Flag::Plus  )
+            else if constexpr ( beta_flag == Flag::Plus  )
             {
                 y_vec -= x_vec;
             }
-            else if constexpr ( b_flag == Flag::Minus  )
+            else if constexpr ( beta_flag == Flag::Minus  )
             {
                 y_vec = -x_vec - y_vec;
             }
-            else if constexpr ( b_flag == Flag::Generic  )
+            else if constexpr ( beta_flag == Flag::Generic  )
             {
                 y_vec = b * y_vec - x_vec ;
             }
         }
-        else if constexpr ( a_flag == Flag::Generic  )
+        else if constexpr ( alpha_flag == Flag::Generic  )
         {
-            if constexpr ( b_flag == Flag::Zero  )
+            if constexpr ( beta_flag == Flag::Zero  )
             {
                 y_vec = a * x_vec;
             }
-            else if constexpr ( b_flag == Flag::Plus  )
+            else if constexpr ( beta_flag == Flag::Plus  )
             {
                 y_vec += a * x_vec;
             }
-            else if constexpr ( b_flag == Flag::Minus  )
+            else if constexpr ( beta_flag == Flag::Minus  )
             {
                 y_vec = a * x_vec - y_vec;
             }
-            else if constexpr ( b_flag == Flag::Generic  )
+            else if constexpr ( beta_flag == Flag::Generic  )
             {
                 y_vec = a * x_vec + b * y_vec;
             }
@@ -121,31 +122,66 @@ namespace Tools
     }
     
     
+    /*!
+     * @brief Computes y = alpha * opx(x) + beta * opy(y), where `x` and `y`
+     * are vectors of size `n` and `alpha` and `beta` are scalars.
+     *
+     * @tparam alpha_flag Compile-time knowledge for the scalar `alpha`.
+     *
+     * @tparam beta_flag Compile-time knowledge for the scalar `beta`.
+     *
+     * @tparam N Compile-time knowledge of the number of columns.
+     *   `N > 0` : Use fixed-size loops that can be optimized by the compiler.
+     *   `N = 0` : Use variable the run-time column count specified by argument `n`.
+     *
+     * @tparam parQ Whether to parallelize or not.
+     *
+     * @tparam opx Apply a scalar transformation to `X`. Possible values:
+     *   `opx = Op::In`   : Apply the identity to the elements of `X`.
+     *   `opx = Op::Conj` : Apply `std::Conj` to the elements of `X`.
+     *
+     * @tparam opy Apply a scalar transformation to `Y`. Possible values:
+     *   `opy = Op::In`   : Apply the idenity to the elements of `Y`.
+     *   `opy = Op::Conj` : Apply `std::Conj` to the elements of `Y`.
+     *
+     * @param alpha A scalar.
+     *
+     * @param x A vector of size `n`.
+     *
+     * @param beta A scalar.
+     *
+     * @param y A vector of size `n`.
+     *
+     * @param n Number of entries.
+     *
+     * @param thread_count Number of threads to parallelize over.
+     */
+    
     template<
-        Scalar::Flag a_flag, Scalar::Flag b_flag,
+        Scalar::Flag alpha_flag, Scalar::Flag beta_flag,
         Size_T N = VarSize, Parallel_T parQ = Sequential,
         Op opx = Op::Id, Op opy = Op::Id,
         typename a_T, typename x_T, typename b_T, typename y_T
     >
     force_inline void combine_buffers(
-        const a_T a, cptr<x_T> x,
-        const b_T b, mptr<y_T> y,
+        const a_T alpha, cptr<x_T> x,
+        const b_T beta , mptr<y_T> y,
         const Size_T n = N,
         const Size_T thread_count = 1
     )
     {
-        // This routine computes y[i] = a * x[i] + b * y[i].
+        // This routine computes y[i] = alpha * x[i] + beta * y[i].
         //
-        // Depending on the values of a_flag and b_flag, it takes several short cuts:
-        // If a_flag == Flag::Zero,  then it assumes a = 0.
-        // If a_flag == Flag::Plus,  then it assumes a = 1.
-        // If a_flag == Flag::Minus, then it assumes a = -1.
-        // If a_flag == Flag::Generic, then it assumes generic values for a.
+        // Depending on the values of alpha_flag and beta_flag, it takes several short cuts:
+        // If alpha_flag == Flag::Zero,  then it assumes alpha = 0.
+        // If alpha_flag == Flag::Plus,  then it assumes alpha = 1.
+        // If alpha_flag == Flag::Minus, then it assumes alpha = -1.
+        // If alpha_flag == Flag::Generic, then it assumes generic values for `alpha`.
         
-        // If b_flag == Flag::Zero,  then it assumes b = 0.
-        // If b_flag == Flag::Plus,  then it assumes b = 1.
-        // If b_flag == Flag::Minus, then it assumes b = -1.
-        // If b_flag == Flag::Generic, then it assumes generic values for b.
+        // If beta_flag == Flag::Zero,  then it assumes beta = 0.
+        // If beta_flag == Flag::Plus,  then it assumes beta = 1.
+        // If beta_flag == Flag::Minus, then it assumes beta = -1.
+        // If beta_flag == Flag::Generic, then it assumes generic values for `beta`.
         
         using namespace Scalar;
         
@@ -163,7 +199,7 @@ namespace Tools
             "Fourth argument is real, but some of the other arguments are complex."
         );
         
-        // We refrain from automagically casting `a` and `b` to the right precision because this is better done once before any loop that calls `combine_buffers`. Hence we prefer a compile error here.
+        // We refrain from automagically casting `alpha` and `beta` to the right precision because this is better done once before any loop that calls `combine_buffers`. Hence we prefer a compile error here.
         
         static_assert(
             Prec<a_T> == Prec<y_T>,
@@ -179,29 +215,29 @@ namespace Tools
         constexpr bool vectorizableQ =
             (N > VarSize)
             && VectorizableQ<y_T>
-            && ( (opx == Op::Id) || a_flag == Flag::Zero )
-            && ( (opy == Op::Id) || b_flag == Flag::Zero );
+            && ( (opx == Op::Id) || alpha_flag == Flag::Zero )
+            && ( (opy == Op::Id) || beta_flag == Flag::Zero );
         
-        if constexpr ( (a_flag == Flag::Zero) && (b_flag == Flag::Zero) )
+        if constexpr ( (alpha_flag == Flag::Zero) && (beta_flag == Flag::Zero) )
         {
             zerofy_buffer<N,parQ>(y,n,thread_count);
         }
         else if constexpr (
-            (b_flag == Flag::Zero) && (a_flag == Flag::Plus) && ( opx == Op::Id )
+            (beta_flag == Flag::Zero) && (alpha_flag == Flag::Plus) && ( opx == Op::Id )
         )
         {
             copy_buffer<N,parQ>(x,y,n,thread_count);
         }
         else if constexpr (
-            (a_flag == Flag::Zero) && (b_flag == Flag::Plus) && ( opx == Op::Id )
+            (alpha_flag == Flag::Zero) && (beta_flag == Flag::Plus) && ( opx == Op::Id )
         )
         {
             // Leave y as it is.
         }
         else if constexpr ( vectorizableQ )
         {
-            combine_buffers_vec<a_flag, b_flag, N>(
-                static_cast<y_T>(a), x, static_cast<y_T>(b), y
+            combine_buffers_vec<alpha_flag, beta_flag, N>(
+                static_cast<y_T>(alpha), x, static_cast<y_T>(beta), y
             );
         }
         else
@@ -209,7 +245,7 @@ namespace Tools
             Do<N,parQ,Static>(
                 [=]( const Size_T i )
                 {
-                    combine_scalars<a_flag,b_flag,opx,opy>( a, x[i], b, y[i] );
+                    combine_scalars<alpha_flag,beta_flag,opx,opy>( alpha, x[i], beta, y[i] );
                 },
                 n, thread_count
             );
@@ -217,11 +253,11 @@ namespace Tools
     }
     
     template<
-        Scalar::Flag a_flag, Scalar::Flag b_flag, Size_T N,
+        Scalar::Flag alpha_flag, Scalar::Flag beta_flag, Size_T N,
         typename a_T, typename x_T, typename b_T, typename y_T, typename z_T
     >
     force_inline void combine_buffers_vec(
-        const a_T a_, cptr<x_T> x, cref< b_T> b_, cptr<y_T> y, mptr<z_T> z
+        const a_T alpha_, cptr<x_T> x, cref< b_T> beta_, cptr<y_T> y, mptr<z_T> z
     )
     {
         static_assert( VectorizableQ<z_T>, "combine_buffers_vec: type z_T be must allowable for clang's vector extension." );
@@ -230,108 +266,108 @@ namespace Tools
         
         using V = vec_T<N,z_T>;
         
-        z_T a;
-        z_T b;
+        z_T alpha;
+        z_T beta;
         
         V x_vec;
         V y_vec;
         V z_vec;
         
-        if constexpr ( a_flag != Flag::Zero  )
+        if constexpr ( alpha_flag != Flag::Zero  )
         {
             copy_buffer<N>( x, reinterpret_cast<z_T *>(&x_vec) );
             
-            a = static_cast<z_T>(a_);
+            alpha = static_cast<z_T>(alpha_);
         }
         
-        if constexpr ( b_flag != Flag::Zero  )
+        if constexpr ( beta_flag != Flag::Zero  )
         {
             copy_buffer<N>( y, reinterpret_cast<z_T *>(&y_vec) );
             
-            b = static_cast<z_T>(b_);
+            beta = static_cast<z_T>(beta_);
         }
         
-        if constexpr ( a_flag == Flag::Zero  )
+        if constexpr ( alpha_flag == Flag::Zero  )
         {
-            if constexpr ( b_flag == Flag::Zero  )
+            if constexpr ( beta_flag == Flag::Zero  )
             {
 //                z_vec = Scalar::Zero<z_T>;
                 zerofy_buffer<N>(z);
                 return;
             }
-            else if constexpr ( b_flag == Flag::Plus  )
+            else if constexpr ( beta_flag == Flag::Plus  )
             {
 //                z_vec = y_vec;
                 
                 copy_buffer<N>(y,z);
                 return;
             }
-            else if constexpr ( b_flag == Flag::Minus  )
+            else if constexpr ( beta_flag == Flag::Minus  )
             {
                 z_vec = -y_vec;
             }
-            else if constexpr ( b_flag == Flag::Generic  )
+            else if constexpr ( beta_flag == Flag::Generic  )
             {
-                z_vec = b * y_vec;
+                z_vec = beta * y_vec;
             }
         }
-        else if constexpr ( a_flag == Flag::Plus  )
+        else if constexpr ( alpha_flag == Flag::Plus  )
         {
-            if constexpr ( b_flag == Flag::Zero  )
+            if constexpr ( beta_flag == Flag::Zero  )
             {
 //                z_vec = x_vec;
                 
                 copy_buffer<N>(x,z);
             }
-            else if constexpr ( b_flag == Flag::Plus  )
+            else if constexpr ( beta_flag == Flag::Plus  )
             {
                 z_vec = x_vec + y_vec;
             }
-            else if constexpr ( b_flag == Flag::Minus  )
+            else if constexpr ( beta_flag == Flag::Minus  )
             {
                 z_vec = x_vec - y_vec;
             }
-            else if constexpr ( b_flag == Flag::Generic  )
+            else if constexpr ( beta_flag == Flag::Generic  )
             {
-                z_vec = x_vec + b * y_vec;
+                z_vec = x_vec + beta * y_vec;
             }
         }
-        else if constexpr ( a_flag == Flag::Minus  )
+        else if constexpr ( alpha_flag == Flag::Minus  )
         {
-            if constexpr ( b_flag == Flag::Zero  )
+            if constexpr ( beta_flag == Flag::Zero  )
             {
                 z_vec = -x_vec;
             }
-            else if constexpr ( b_flag == Flag::Plus  )
+            else if constexpr ( beta_flag == Flag::Plus  )
             {
                 z_vec = y_vec - x_vec;
             }
-            else if constexpr ( b_flag == Flag::Minus  )
+            else if constexpr ( beta_flag == Flag::Minus  )
             {
                 z_vec = -x_vec - y_vec;
             }
-            else if constexpr ( b_flag == Flag::Generic  )
+            else if constexpr ( beta_flag == Flag::Generic  )
             {
-                z_vec = b * y_vec - x_vec ;
+                z_vec = beta * y_vec - x_vec ;
             }
         }
-        else if constexpr ( a_flag == Flag::Generic  )
+        else if constexpr ( alpha_flag == Flag::Generic  )
         {
-            if constexpr ( b_flag == Flag::Zero  )
+            if constexpr ( beta_flag == Flag::Zero  )
             {
-                z_vec = a * x_vec;
+                z_vec = alpha * x_vec;
             }
-            else if constexpr ( b_flag == Flag::Plus  )
+            else if constexpr ( beta_flag == Flag::Plus  )
             {
-                z_vec = a * x_vec + y_vec;
+                z_vec = alpha * x_vec + y_vec;
             }
-            else if constexpr ( b_flag == Flag::Minus  )
+            else if constexpr ( beta_flag == Flag::Minus  )
             {
-                z_vec = a * x_vec - y_vec;
+                z_vec = alpha * x_vec - y_vec;
             }
-            else if constexpr ( b_flag == Flag::Generic  )
+            else if constexpr ( beta_flag == Flag::Generic  )
             {
-                z_vec = a * x_vec + b * y_vec;
+                z_vec = alpha * x_vec + beta * y_vec;
             }
         }
         
@@ -340,7 +376,7 @@ namespace Tools
     
     
     template<
-        Scalar::Flag a_flag, Scalar::Flag b_flag,
+        Scalar::Flag alpha_flag, Scalar::Flag beta_flag,
         Size_T N = VarSize, Parallel_T parQ = Sequential,
         Op opx = Op::Id, Op opy = Op::Id,
         typename a_T, typename x_T, typename b_T, typename y_T, typename z_T
@@ -354,16 +390,16 @@ namespace Tools
         // This routine computes z[i] = a * x[i] + b * y[i].
         // Most importantly, this casts the result to the desired type.
         //
-        // Depending on the values of a_flag and b_flag, it takes several short cuts:
-        // If a_flag == Flag::Zero,  then it assumes a = 0.
-        // If a_flag == Flag::Plus,  then it assumes a = 1.
-        // If a_flag == Flag::Minus, then it assumes a = -1.
-        // If a_flag == Flag::Generic, then it assumes generic values for a.
+        // Depending on the values of alpha_flag and beta_flag, it takes several short cuts:
+        // If alpha_flag == Flag::Zero,  then it assumes a = 0.
+        // If alpha_flag == Flag::Plus,  then it assumes a = 1.
+        // If alpha_flag == Flag::Minus, then it assumes a = -1.
+        // If alpha_flag == Flag::Generic, then it assumes generic values for a.
         
-        // If b_flag == Flag::Zero,  then it assumes b = 0.
-        // If b_flag == Flag::Plus,  then it assumes b = 1.
-        // If b_flag == Flag::Minus, then it assumes b = -1.
-        // If b_flag == Flag::Generic, then it assumes generic values for b.
+        // If beta_flag == Flag::Zero,  then it assumes b = 0.
+        // If beta_flag == Flag::Plus,  then it assumes b = 1.
+        // If beta_flag == Flag::Minus, then it assumes b = -1.
+        // If beta_flag == Flag::Generic, then it assumes generic values for b.
         
         
         using namespace Scalar;
@@ -398,32 +434,32 @@ namespace Tools
         constexpr bool vectorizableQ =
             (N > VarSize)
             && VectorizableQ<z_T>
-            && ( (opx == Op::Id) || a_flag == Flag::Zero )
-            && ( (opy == Op::Id) || b_flag == Flag::Zero );
+            && ( (opx == Op::Id) || alpha_flag == Flag::Zero )
+            && ( (opy == Op::Id) || beta_flag == Flag::Zero );
         
-        if constexpr ( (a_flag == Flag::Zero) && (b_flag == Flag::Zero) )
+        if constexpr ( (alpha_flag == Flag::Zero) && (beta_flag == Flag::Zero) )
         {
             zerofy_buffer<N,parQ>( z, n, thread_count );
         }
         if constexpr ( vectorizableQ )
         {
-            combine_buffers_vec<a_flag, b_flag, N>(
+            combine_buffers_vec<alpha_flag, beta_flag, N>(
                 static_cast<z_T>(a), x, static_cast<z_T>(b), y, z
             );
         }
         else
         {
-            if constexpr ( (a_flag == Flag::Zero) && (b_flag == Flag::Zero) )
+            if constexpr ( (alpha_flag == Flag::Zero) && (beta_flag == Flag::Zero) )
             {
                 // In order to make it safe that x == nullptr and y == nullptr, we nead a special treatment here.
                 
                 zerofy_buffer<N,parQ>(z,n,thread_count);
             }
-            else if constexpr ( b_flag == Flag::Zero )
+            else if constexpr ( beta_flag == Flag::Zero )
             {
                 // In order to make it safe that y == nullptr, we nead a special treatment here.
                 
-                if constexpr ( (a_flag == Flag::Plus) && (opx == Op::Id) )
+                if constexpr ( (alpha_flag == Flag::Plus) && (opx == Op::Id) )
                 {
                     // We do a copy if we can.
                     copy_buffer<N,parQ>(x,z,n,thread_count);
@@ -447,11 +483,11 @@ namespace Tools
                 }
                 
             }
-            else if constexpr (a_flag == Flag::Zero)
+            else if constexpr (alpha_flag == Flag::Zero)
             {
                 // In order to make it safe that x == nullptr, we nead a special treatment here.
                 
-                if constexpr ( (b_flag == Flag::Plus) && (opy == Op::Id) )
+                if constexpr ( (beta_flag == Flag::Plus) && (opy == Op::Id) )
                 {
                     // We do a copy if we can.
                     
@@ -478,7 +514,7 @@ namespace Tools
                 Do<N,parQ,Static>(
                     [=]( const Size_T i )
                     {
-                        combine_scalars<a_flag,b_flag,opx,opy>( a, x[i], b, y[i], z[i] );
+                        combine_scalars<alpha_flag,beta_flag,opx,opy>( a, x[i], b, y[i], z[i] );
                     },
                     n, thread_count
                 );

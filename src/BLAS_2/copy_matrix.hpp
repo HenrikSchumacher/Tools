@@ -2,6 +2,34 @@
 
 namespace Tools
 {
+    /*!
+     * @brief Computes `Y = X`, where `X` and `Y` are matrices of size `m` x `n`.
+     *
+     * @tparam M Compile-time knowledge of the number of rows.
+     *   `M > 0` asks to use fixed-size loops that can be optimized by the compiler.
+     *   `M = 0` uses variable the run-time row count specified by argument `m`.
+     *
+     * @tparam N Compile-time knowledge of the number of columns.
+     *   `N > 0` : Use fixed-size loops that can be optimized by the compiler.
+     *   `N = 0` : Use variable the run-time column count specified by argument `n`.
+     *
+     * @tparam parQ Whether to parallelize or not.
+     *
+     * @param X A matrix of size `m` x `n`.
+     *
+     * @param ldX Leading dimension of `X`.
+     *
+     * @param Y A matrix of size `m` x `n`.
+     *
+     * @param ldY Leading dimension of `Y`.
+     *
+     * @param m Number of rows.
+     *
+     * @param n Number of columns.
+     *
+     * @param thread_count Number of threads to parallelize over.
+     */
+    
     template <
         Size_T M, Size_T N, Parallel_T parQ,
         typename X_T, typename Y_T
