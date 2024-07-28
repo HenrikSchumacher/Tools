@@ -2,8 +2,28 @@
 
 #include <mutex>
 
+#include <filesystem>
+
 namespace Tools
 {
+    const std::filesystem::path HomeDirectory()
+    {
+        const char * s = std::getenv("HOME");
+
+        if( s == nullptr )
+        {
+            std::filesystem::path home_dir {std::getenv("HOMEDRIVE")};
+            
+            home_dir /= std::getenv("HOMEPATH");
+            
+            return home_dir;
+        }
+        else
+        {
+            return std::filesystem::path { s };
+        }
+    }
+    
     namespace Profiler
     {
         std::mutex log_mutex;
@@ -23,7 +43,7 @@ namespace Tools
 #endif
         
         
-        inline void Clear(const std::string & dir, const bool append = false)
+        inline void Clear( const std::filesystem::path & dir, const bool appendQ = false)
         {
             
             const std::lock_guard<std::mutex> log_lock ( log_mutex  );
@@ -35,7 +55,7 @@ namespace Tools
             log_filename /= "Tools_Log.txt";
             Profiler::log.close();
 
-            if( append )
+            if( appendQ )
             {
                 Profiler::log.open(log_filename.string(), std::ios_base::app);
             }
@@ -57,7 +77,7 @@ namespace Tools
             
             Profiler::prof.close();
             
-            if( append )
+            if( appendQ )
             {
                 Profiler::prof.open(profile_filename.string(), std::ios_base::app);
             }
@@ -77,6 +97,11 @@ namespace Tools
             Profiler::id_stack.push_back(0);
             Profiler::id_counter = 0;
 #endif
+        }
+        
+        inline void Clear()
+        {
+            Clear( HomeDirectory() );
         }
         
     } // namespace Profiler
