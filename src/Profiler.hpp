@@ -26,12 +26,15 @@ namespace Tools
     
     namespace Profiler
     {
+        std::filesystem::path log_file  = HomeDirectory() / "Tools_Log.txt";
+        std::filesystem::path prof_file = HomeDirectory() / "Tools_Profile.tsv";
+        
         std::mutex log_mutex;
-        std::ofstream log  ("./Tools_Log.txt");
+        std::ofstream log  ( log_file );
         
 #if defined(TOOLS_ENABLE_PROFILER)
         std::mutex prof_mutex;
-        std::ofstream prof ("./Tools_Profile.tsv");
+        std::ofstream prof ( prof_file );
         
 
         Time init_time = Clock::now();
@@ -51,39 +54,39 @@ namespace Tools
             
             Profiler::log << std::setprecision(16);
             
-            std::filesystem::path log_filename = dir;
-            log_filename /= "Tools_Log.txt";
+            Profiler::log_file = dir / "Tools_Log.txt";
+            
             Profiler::log.close();
 
             if( appendQ )
             {
-                Profiler::log.open(log_filename.string(), std::ios_base::app);
+                Profiler::log.open( Profiler::log_file.string(), std::ios_base::app );
             }
             else
             {
-                Profiler::log.open(log_filename.string());
+                Profiler::log.open( Profiler::log_file.string() );
             }
 
-            print( std::string("Log     will be written to ") + log_filename.string() + "." );
+            print( std::string("Log     will be written to ") + Profiler::log_file.string() + "." );
             Profiler::log << std::setprecision(16);
             
 #if defined(TOOLS_ENABLE_PROFILER)
             const std::lock_guard<std::mutex> prof_lock( prof_mutex );
-            std::filesystem::path profile_filename = dir;
-            profile_filename /= "Tools_Profile.tsv";
             
+            Profiler::log_file = dir / "Tools_Profile.tsv";
+
             
-            print( std::string("Profile will be written to ") + profile_filename.string() + ".");
+            print( std::string("Profile will be written to ") + Profiler::log_file.string() + ".");
             
             Profiler::prof.close();
             
             if( appendQ )
             {
-                Profiler::prof.open(profile_filename.string(), std::ios_base::app);
+                Profiler::prof.open( Profiler::log_file.string(), std::ios_base::app );
             }
             else
             {
-                Profiler::prof.open(profile_filename.string());
+                Profiler::prof.open( Profiler::log_file.string() );
             }
 
             Profiler::init_time = Clock::now();
