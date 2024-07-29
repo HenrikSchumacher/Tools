@@ -160,6 +160,23 @@ namespace Tools
             
             const T total_cost = acc_costs[job_count];
             
+            
+            if( total_cost <=0 )
+            {
+                wprint("BalanceWorkLoad: Total cost is 0.");
+                
+                logdump(job_count);
+                logdump(thread_count);
+                
+                logvalprint( "acc_costs", ArrayToString( acc_costs, {job_count + 1} ) );
+                
+                std::fill( job_ptr.begin(), job_ptr.end(), static_cast<Int>(0));
+                            
+                ptoc("BalanceWorkLoad");
+                            
+                return;
+            }
+            
             const T per_thread_cost = (total_cost + thread_count - 1) / thread_count;
 
             // binary search for best work load distribution
@@ -206,12 +223,6 @@ namespace Tools
                 }
 
                 job_ptr[thread + 1] = b;
-            }
-            
-            if( total_cost <=0 )
-            {
-                wprint("BalanceWorkLoad: Total cost is 0.");
-                std::fill( job_ptr.begin(), job_ptr.end(), static_cast<Int>(0));
             }
             
             ptoc("BalanceWorkLoad");
