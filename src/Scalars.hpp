@@ -359,13 +359,31 @@ namespace Tools
 //
 //    }
     
+//    template<typename Scal>
+//    inline constexpr bool NaNQ( const Scal & x )
+//    {
+//        // TODO: Does not work with `-ffast-math` option.
+//        if constexpr ( Scalar::RealQ<Scal> )
+//        {
+//            return std::isnan(x);
+//        }
+//        else if constexpr ( Scalar::ComplexQ<Scal> )
+//        {
+//            return NaNQ( Re(x) ) || NaNQ( Im(x) );
+//        }
+//        else
+//        {
+//            return true;
+//        }
+//    }
+    
     template<typename Scal>
-    inline constexpr bool NaNQ( const Scal & x )
+    inline constexpr bool NaNQ( const Scal x )
     {
-        // TODO: Does not work with `-ffast-math` option.
-        if constexpr ( Scalar::RealQ<Scal> )
+        // Works also with `-ffast-math` option?
+        if constexpr ( FloatQ<Scal> && Scalar::RealQ<Scal> )
         {
-            return std::isnan(x);
+            return std::isnan(x) || (ToString(x) == "nan");
         }
         else if constexpr ( Scalar::ComplexQ<Scal> )
         {

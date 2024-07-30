@@ -205,25 +205,61 @@ namespace Tools
         
         auto job = [=]<F_T alpha_flag, F_T beta_flat>()
         {
-            combine_matrices<alpha_flag,beta_flat,VarSize,VarSize,Parallel,opx,opy>(
+
+            
+            combine_matrices<alpha_flag,beta_flat,M,N,parQ,opx,opy>(
                 alpha, X, ldX,
                 beta , Y, ldY,
                 m, n, thread_count
              );
+            
+            
+//            // DEBUGGING
+//            {
+//                Size_T X_count = 0;
+//                Size_T Y_count = 0;
+//                
+//                for( Size_T i = 0; i < m; ++i )
+//                {
+//                    for( Size_T j = 0; j < n; ++j )
+//                    {
+//                        X_count += NaNQ(X[ldX * i + j]);
+//                        Y_count += NaNQ(Y[ldY * i + j]);
+//                    }
+//                }
+//                
+//                if( X_count > 0 )
+//                {
+//                    eprint("combine_matrices_auto - X has nans");
+//                }
+//                if( Y_count > 0 )
+//                {
+//                    eprint("combine_matrices_auto - Y has nans");
+//                    dump(alpha);
+//                    dump(beta);
+//                    dump( ToString(alpha_flag) );
+//                    dump( ToString(beta_flat) );
+//                }
+//            }
         };
         
-        if( alpha == Scalar::One<alpha_T> )
+        if( alpha == alpha_T(1) )
         {
             constexpr F_T alpha_flag = F_T::Plus;
             
-            if( beta == Scalar::One<beta_T> )
+            if( beta == beta_T(1) )
             {
                 constexpr F_T beta_flag = F_T::Plus;
                 job.template operator()<alpha_flag,beta_flag>();
             }
-            else if ( beta == Scalar::Zero<beta_T> )
+            else if ( beta == beta_T(0) )
             {
                 constexpr F_T beta_flag = F_T::Zero;
+                job.template operator()<alpha_flag,beta_flag>();
+            }
+            else if ( beta == beta_T(-1) )
+            {
+                constexpr F_T beta_flag = F_T::Minus;
                 job.template operator()<alpha_flag,beta_flag>();
             }
             else
@@ -232,18 +268,48 @@ namespace Tools
                 job.template operator()<alpha_flag,beta_flag>();
             }
         }
-        else if ( alpha == Scalar::Zero<alpha_T> )
+        else if ( alpha == alpha_T(0) )
         {
             constexpr F_T alpha_flag = F_T::Zero;
             
-            if( beta == Scalar::One<beta_T> )
+            if( beta == beta_T(1) )
             {
                 constexpr F_T beta_flag = F_T::Plus;
                 job.template operator()<alpha_flag,beta_flag>();
             }
-            else if ( beta == Scalar::Zero<beta_T> )
+            else if ( beta == beta_T(0) )
             {
                 constexpr F_T beta_flag = F_T::Zero;
+                job.template operator()<alpha_flag,beta_flag>();
+            }
+            else if ( beta == beta_T(-1) )
+            {
+                constexpr F_T beta_flag = F_T::Minus;
+                job.template operator()<alpha_flag,beta_flag>();
+            }
+            else
+            {
+                constexpr F_T beta_flag = F_T::Generic;
+                job.template operator()<alpha_flag,beta_flag>();
+            }
+        }
+        else if ( alpha == alpha_T(-1) )
+        {
+            constexpr F_T alpha_flag = F_T::Minus;
+            
+            if( beta == beta_T(1) )
+            {
+                constexpr F_T beta_flag = F_T::Plus;
+                job.template operator()<alpha_flag,beta_flag>();
+            }
+            else if ( beta == beta_T(0) )
+            {
+                constexpr F_T beta_flag = F_T::Zero;
+                job.template operator()<alpha_flag,beta_flag>();
+            }
+            else if ( beta == beta_T(-1) )
+            {
+                constexpr F_T beta_flag = F_T::Minus;
                 job.template operator()<alpha_flag,beta_flag>();
             }
             else
@@ -256,14 +322,19 @@ namespace Tools
         {
             constexpr F_T alpha_flag = F_T::Generic;
             
-            if( beta == Scalar::One<beta_T> )
+            if( beta == beta_T(1) )
             {
                 constexpr F_T beta_flag = F_T::Plus;
                 job.template operator()<alpha_flag,beta_flag>();
             }
-            else if ( beta == Scalar::Zero<beta_T> )
+            else if ( beta == beta_T(0) )
             {
                 constexpr F_T beta_flag = F_T::Zero;
+                job.template operator()<alpha_flag,beta_flag>();
+            }
+            else if ( beta == beta_T(-1) )
+            {
+                constexpr F_T beta_flag = F_T::Minus;
                 job.template operator()<alpha_flag,beta_flag>();
             }
             else
