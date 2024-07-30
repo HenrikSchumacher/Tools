@@ -122,7 +122,7 @@ namespace Tools
     std::string ArrayToString(
         const Scal * const a,
         const Int  * const dims,
-        Int2 rank,
+        Int rank,
         int prec = 16
     )
     {
@@ -130,7 +130,7 @@ namespace Tools
         
         s << std::setprecision(prec);
         
-        (void)ArrayToStream<Scal,Int>( a, dims, static_cast<Size_T>(rank), s, std::string("") ).str();
+        (void)ArrayToStream<Scal,Int>( a, dims, rank, s, std::string("") ).str();
 
         return s.str();
     }
