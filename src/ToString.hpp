@@ -36,12 +36,12 @@ namespace Tools
         return sout.str();
     }
     
-    template<typename Scal, typename Int, class Stream_T>
+    template<typename Scal, typename Int, typename Int2, typename Int3, class Stream_T>
     Stream_T & ArrayToStream(
         const Scal * const a,
-        const Int * const dims,
-        const Int * const lds,
-        Int rank,
+        const Int  * const dims,
+        const Int2 * const lds,
+        Int3 rank,
         Stream_T & s,
         std::string line_prefix
     )
@@ -91,11 +91,11 @@ namespace Tools
     }
     
     
-    template<typename Scal, typename Int, class Stream_T>
+    template<typename Scal, typename Int, typename Int2, class Stream_T>
     Stream_T & ArrayToStream(
         const Scal * const a,
         const Int  * const dims,
-        Int rank,
+        Int2 rank,
         Stream_T & s,
         std::string line_prefix = std::string("")
     )
@@ -122,7 +122,7 @@ namespace Tools
     std::string ArrayToString(
         const Scal * const a,
         const Int  * const dims,
-        Int rank,
+        Int2 rank,
         int prec = 16
     )
     {

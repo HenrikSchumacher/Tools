@@ -36,7 +36,6 @@ namespace Tools
         std::mutex prof_mutex;
         std::ofstream prof ( prof_file );
         
-
         Time init_time = Clock::now();
         std::vector<Time> time_stack;
         std::vector<std::string> tag_stack(1,"root");
@@ -200,7 +199,7 @@ namespace Tools
         Profiler::tag_stack.push_back(tag);
         Profiler::id_stack.push_back(++Profiler::id_counter);
         
-        float start_time = Tools::Duration( Profiler::init_time, Profiler::time_stack.back() );
+        double start_time = Tools::Duration( Profiler::init_time, Profiler::time_stack.back() );
         
         const std::lock_guard<std::mutex> log_lock( Profiler::log_mutex );
         
@@ -221,8 +220,8 @@ namespace Tools
         {
             if( tag == Profiler::tag_stack.back() )
             {
-                float start_time = Tools::Duration( Profiler::init_time, Profiler::time_stack.back() );
-                float stop_time  = Tools::Duration( Profiler::init_time, Clock::now() );
+                double start_time = Tools::Duration( Profiler::init_time, Profiler::time_stack.back() );
+                double stop_time  = Tools::Duration( Profiler::init_time, Clock::now() );
                 
                 Profiler::prof
                     << Profiler::id_stack.back() <<  "\t"

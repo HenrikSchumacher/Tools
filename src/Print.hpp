@@ -9,9 +9,9 @@ namespace Tools
     using Clock = std::chrono::steady_clock;
     using Time  = std::chrono::time_point<Clock>;
     
-    force_inline float Duration( const Time & start_time, const Time & stop_time )
+    force_inline double Duration( const Time & start_time, const Time & stop_time )
     {
-        return std::chrono::duration<float>(stop_time - start_time).count();
+        return std::chrono::duration<double>(stop_time - start_time).count();
     }
     
     namespace Timer
@@ -61,9 +61,9 @@ namespace Tools
         print( s + "..." );
     }
 
-    inline float toc(const std::string & s)
+    inline double toc(const std::string & s)
     {
-        float duration (0);
+        double duration (0);
     
         
         if (!Timer::time_stack.empty())
