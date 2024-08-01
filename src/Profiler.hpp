@@ -246,7 +246,8 @@ namespace Tools
             }
             else
             {
-                eprint( "Unmatched ptoc detected. Stack empty. Label =  " + tag + ".");
+                eprint( "Unmatched ptoc detected. Tag requested =  " + tag + ". Tag found = " + Profiler::tag_stack.back() + ".");
+//                eprint( "Unmatched ptoc detected. Stack empty. Label =  " + tag + ".");
 //                    eprint(std::string("  Expected label =  ") + tag);
 //                    eprint(std::string("  Visited label  =  ") + Profiler::tag_stack.back());
             }
