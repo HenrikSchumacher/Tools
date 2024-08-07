@@ -3,7 +3,7 @@
 namespace Tools
 {
     /*!
-     * @brief Computes Y = beta * Y, where `X` is a matrix of size `m` x `n`.
+     * @brief Computes `Y = beta * Y`, where `X` is a matrix of size `m` x `n`.
      *
      * @tparam M Compile-time knowledge of the number of rows.
      *   `M > 0` asks to use fixed-size loops that can be optimized by the compiler.
@@ -33,7 +33,7 @@ namespace Tools
         typename b_T, typename Y_T
     >
     force_inline constexpr void scale_matrix(
-        const b_T beta, mptr<Y_T> Y, const Size_T ldY,
+        cref<b_T> beta, mptr<Y_T> Y, const Size_T ldY,
         const Size_T m, const Size_T n, const Size_T thread_count
     )
     {
@@ -70,7 +70,7 @@ namespace Tools
         typename b_T, typename Y_T
     >
     force_inline constexpr void scale_matrix(
-        const b_T beta, mptr<Y_T> Y, const Size_T ldY
+        cref<b_T> beta, mptr<Y_T> Y, const Size_T ldY
     )
     {
         static_assert( M > VarSize, "" );
@@ -85,7 +85,7 @@ namespace Tools
         typename b_T, typename Y_T
     >
     force_inline constexpr void scale_matrix(
-        const b_T beta, mptr<Y_T> Y, const Size_T ldY,
+        cref<b_T> beta, mptr<Y_T> Y, const Size_T ldY,
         const Size_T m, const Size_T n, const Size_T thread_count
     )
     {
@@ -97,7 +97,7 @@ namespace Tools
         typename b_T, typename Y_T
     >
     force_inline constexpr void scale_matrix(
-        const b_T beta, mptr<Y_T> Y, const Size_T ldY,
+        cref<b_T> beta, mptr<Y_T> Y, const Size_T ldY,
         const Size_T m, const Size_T n
     )
     {

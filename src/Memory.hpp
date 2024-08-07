@@ -2,21 +2,6 @@
 
 namespace Tools
 {
-    #if !defined(restrict)
-        #if defined(__GNUC__)
-            #define restrict __restrict__
-            #define COMPILER_IS_ANAL_ABOUT_RESTRICT 1
-        #elif defined(__clang__)
-            #define restrict __restrict
-            #define COMPILER_IS_ANAL_ABOUT_RESTRICT 0
-        #elif defined(_MSC_VER)
-            #define restrict __restrict
-            #define COMPILER_IS_ANAL_ABOUT_RESTRICT 0
-        #else
-            #define COMPILER_IS_ANAL_ABOUT_RESTRICT 0
-        #endif
-    #endif
-
     #if !defined(prefetch)
         #if defined(__GNUC__) || defined(__clang__)
             #define prefetch __builtin_prefetch
@@ -36,27 +21,6 @@ namespace Tools
     static constexpr Size_T ObjectAlignment = std::max( CacheLineWidth, Alignment );
 
     static constexpr Size_T PrefetchStride = 4 * CacheLineWidth;
-
-    
-//    // Only for backward compatibility. Better use cptr and mptr.
-//    // immutable, unaliased pointer to immutable type
-//    template<typename T> using ptr = const T * restrict const;
-//    
-//    // immutable, unaliased pointer to mutable type
-//    template<typename T> using mut =       T * restrict const;
-    
-    
-    // immutable, unaliased pointer to immutable type
-    template<typename T> using cptr = const T * restrict const;
-    
-    // immutable, unaliased pointer to mutable type
-    template<typename T> using mptr =       T * restrict const;
-    
-    // unaliased reference to immutable type
-    template<typename T> using cref = const T & restrict;
-    
-    // unaliased reference to immutable type
-    template<typename T> using mref =       T & restrict;
     
     
     template<typename Int>

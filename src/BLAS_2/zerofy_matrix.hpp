@@ -20,7 +20,7 @@ namespace Tools
             }
             else
             {
-                zerofy_buffer<VarSize,Parallel>( X, m * n, thread_count );
+                zerofy_buffer<VarSize,parQ>( X, m * n, thread_count );
             }
         }
         else

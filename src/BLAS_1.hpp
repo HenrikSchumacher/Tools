@@ -8,15 +8,17 @@
 #include "BLAS_1/zerofy_buffer.hpp"
 #include "BLAS_1/fill_buffer.hpp"
 
-
-#include "BLAS_1/add_to_buffer.hpp"
 #include "BLAS_1/zip_buffers.hpp"
+
+#include "BLAS_1/modify_buffer.hpp"
 #include "BLAS_1/scale_buffer.hpp"
-#include "BLAS_1/conjugate_buffer.hpp"
+//#include "BLAS_1/conjugate_buffer.hpp" // obsolete
 
+//#include "BLAS_1/combine_buffers_vec.hpp"
 #include "BLAS_1/combine_buffers.hpp"
-#include "BLAS_1/dot_buffers.hpp"
+#include "BLAS_1/add_to_buffer.hpp"
 
+#include "BLAS_1/dot_buffers.hpp"
 
 #include "BLAS_1/iamax_buffer.hpp"
 

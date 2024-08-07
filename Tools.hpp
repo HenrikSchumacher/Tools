@@ -137,12 +137,39 @@
 //
 //#define ASSERT_FLOAT(type) static_assert( std::is_floating_point_v<type>, "Template parameter " #type " must be floating point type." );
 
+
+#if !defined(restrict)
+    #if defined(__GNUC__)
+        #define restrict __restrict__
+        #define COMPILER_IS_ANAL_ABOUT_RESTRICT 1
+    #elif defined(__clang__)
+        #define restrict __restrict
+        #define COMPILER_IS_ANAL_ABOUT_RESTRICT 0
+    #elif defined(_MSC_VER)
+        #define restrict __restrict
+        #define COMPILER_IS_ANAL_ABOUT_RESTRICT 0
+    #else
+        #define COMPILER_IS_ANAL_ABOUT_RESTRICT 0
+    #endif
+#endif
+
 namespace Tools
 {
+    // immutable, unaliased pointer to immutable type
+    template<typename T> using cptr = const T * restrict const;
+
+    // immutable, unaliased pointer to mutable type
+    template<typename T> using mptr =       T * restrict const;
+
+    // unaliased reference to immutable type
+    template<typename T> using cref = const T & restrict;
+
+    // unaliased reference to immutable type
+    template<typename T> using mref =       T & restrict;
+    
     using Size_T = std::size_t;
     
-    
-    template<typename T> 
+    template<typename T>
     constexpr bool IntQ = std::is_integral_v<T>;
     
 #define ASSERT_INT(I) static_assert( IntQ<I>, "Template parameter " #I " must be an integral type." );
@@ -178,20 +205,12 @@ namespace Tools
     }
 
 
-#if defined(__clang__)
-    #if ( __has_attribute(ext_vector_type) )
-        static constexpr bool vec_enabledQ = true;
 
-        template<Size_T N, typename T>
-        using vec_T = T __attribute__((__ext_vector_type__(N))) ;
-    #endif
-//#elif defined(__GNUC__)
-//    #if ( __has_attribute(vector_size) )
-//        static constexpr bool vec_enabledQ = true;
-//
-//        template<Size_T N, typename T>
-//        using vec_T __attribute__((vector_size(N * sizeof(T)))) = T;
-//    #endif
+#if ( __has_attribute(ext_vector_type) )
+    static constexpr bool vec_enabledQ = true;
+
+    template<Size_T N, typename T>
+    using vec_T = T __attribute__((__ext_vector_type__(N))) ;
 #else
     static constexpr bool vec_enabledQ = false;
 
@@ -199,13 +218,11 @@ namespace Tools
     using vec_T = std::array<T,N>; //Just a dummy; will not be used, actually.
 #endif
 
-#if defined(__clang__)
-    #if ( __has_attribute(matrix_type) )
-        static constexpr bool mat_enabledQ = true;
+#if ( __has_attribute(matrix_type) )
+    static constexpr bool mat_enabledQ = true;
 
-        template<Size_T M, Size_T N, typename T>
-        using mat_T = T __attribute__((matrix_type(M,N))) ;
-    #endif
+    template<Size_T M, Size_T N, typename T>
+    using mat_T = T __attribute__((matrix_type(M,N))) ;
 #else
     static constexpr bool mat_enabledQ = false;
 
@@ -216,15 +233,20 @@ namespace Tools
 
 } // namespace Tools
 
-//#include <complex>
+#include <complex>
 #include "src/ToString.hpp"
 #include "src/combine_strings.hpp"
 #include "src/Print.hpp"
 #include "src/Profiler.hpp"
+#include "src/Memory.hpp"
+
+
+
 #include "src/Integers.hpp"
+#include "src/BLAS_Enums.hpp"
 #include "src/Scalars.hpp"
 #include "src/BitFiddling.hpp"
-#include "src/Memory.hpp"
+
 
 
 
@@ -236,10 +258,10 @@ namespace Tools
 #include "src/Math/RegulaFalsi.hpp"
 #include "src/Math/Kahan.hpp"
 
-#include "src/BLAS_Enums.hpp"
 
-using Tensors::Op;
-using Tensors::AddTo;
+
+//using Tensors::Op;
+//using Tensors::AddTo;
 
 #include "src/Scalars/combine_scalars.hpp"
 #include "src/TypeName.hpp"

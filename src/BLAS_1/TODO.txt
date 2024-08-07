@@ -1,6 +1,1 @@
-- add_buffers       -> use vec_T if possible
-- subtract_buffers  -> use vec_T if possible
-- multiply_buffers  -> use vec_T if possible
-- divide_buffers    -> use vec_T if possible
-
-- scalar version of add_to_buffer.
+- Remove copy instructions from fixed_dot_mm_vec.

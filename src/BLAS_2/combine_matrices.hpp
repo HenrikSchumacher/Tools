@@ -3,12 +3,12 @@
 namespace Tools
 {
     /*!
-     * @brief Computes Y = alpha * opx(X) + beta * opy(Y), where `X` and `Y`
-     * are matrices of size `m` x `n` and `alpha` and `beta` are scalars.
+     * @brief Computes Y = a * opx(X) + b * opy(Y), where `X` and `Y`
+     * are matrices of size `m` x `n` and `a` and `b` are scalars.
      *
-     * @tparam a_flag Specify code optimizations for the scalar `alpha`.
+     * @tparam a_flag Specify code optimizations for the scalar `a`.
      *
-     * @tparam b_flag Specify code optimizations for the scalar `beta`.
+     * @tparam b_flag Specify code optimizations for the scalar `b`.
      *
      * @tparam M Compile-time knowledge of the number of rows.
      *   `M > 0` asks to use fixed-size loops that can be optimized by the compiler.
@@ -28,13 +28,13 @@ namespace Tools
      *   `opy = Op::In`   : Apply the idenity to the elements of `Y`.
      *   `opy = Op::Conj` : Apply `std::Conj` to the elements of `Y`.
      *
-     * @param alpha A scalar.
+     * @param a A scalar.
      *
      * @param X A matrix of size `m` x `n`.
      *
      * @param ldX Leading dimension of `X`.
      *
-     * @param beta A scalar.
+     * @param b A scalar.
      *
      * @param Y A matrix of size `m` x `n`.
      *
@@ -51,23 +51,61 @@ namespace Tools
         Scalar::Flag a_flag, Scalar::Flag b_flag,
         Size_T M, Size_T N, Parallel_T parQ,
         Op opx = Op::Id, Op opy = Op::Id,
-        typename alpha_T, typename x_T, typename beta_T, typename y_T
+        typename a_T, typename X_T, typename b_T, typename Y_T
     >
     force_inline void combine_matrices(
-        const alpha_T alpha, cptr<x_T> X, const Size_T ldX,
-        const beta_T  beta , mptr<y_T> Y, const Size_T ldY,
+        cref<a_T> a, cptr<X_T> X, const Size_T ldX,
+        cref<b_T> b, mptr<Y_T> Y, const Size_T ldY,
         const Size_T m, const Size_T n, const Size_T thread_count
     )
     {
-        Do<M,parQ,Static>(
-            [=]( const Size_T i )
+        // It is safer to enforce the implicit assumptions explicitly here.
+        const Size_T m_ = (M > VarSize ? M : m);
+        const Size_T n_ = (N > VarSize ? N : n);
+        
+        // PROBLEM: If x == nullptr, which is allowed when a_flag = Zero,
+        // then we should better prevent dereferencing x.
+        // Otherwise, with optimizations turned off, it could happen that nullptr
+        // or some increment of it is dereferenced.
+        if constexpr ( a_flag == Scalar::Flag::Zero )
+        {
+            // PROBLEM: If y == nullptr, which is allowed when a_flag = One and
+            // b_flag = Zero, then we should better prevent dereferencing x.
+            // Otherwise, with optimizations turned off, it could happen that nullptr
+            // or some increment of is dereferenced.
+            if constexpr ( (b_flag == Scalar::Flag::Plus) && ( opy == Op::Id ) )
             {
-                combine_buffers<a_flag,b_flag,N,Sequential,opx,opy>(
-                    alpha, &X[ldX * i], beta, &Y[ldY * i], n
+                // Do nothing;
+            }
+            else
+            {
+                modify_matrix<b_flag,VarSize,N,parQ,opy>(
+                    b, Y, ldY, m_, n_, thread_count
                 );
-            },
-            m, thread_count
-        );
+            }
+        }
+        else
+        {
+            if( (ldX == n_) && (ldY == n_) )
+            {
+                combine_buffers<a_flag,b_flag,M*N,parQ,opx,opy>(
+                    a, X, b, Y, m_ * n_, thread_count
+                );
+            }
+            else
+            {
+                Do<M,parQ,Static>(
+                    [=]( const Size_T i )
+                    {
+                        combine_buffers<a_flag,b_flag,N,Sequential,opx,opy>(
+                            a, &X[ldX * i], b, &Y[ldY * i], n_, Size_T(1)
+                        );
+                    },
+                    m_, thread_count
+                );
+            }
+        }
+
     }
     
     /*!
@@ -78,19 +116,19 @@ namespace Tools
         Scalar::Flag a_flag, Scalar::Flag b_flag,
         Size_T M, Size_T N,
         Op opx = Op::Id, Op opy = Op::Id,
-        typename alpha_T, typename x_T, typename beta_T, typename y_T
+        typename a_T, typename X_T, typename b_T, typename Y_T
     >
     force_inline void combine_matrices(
-        const alpha_T alpha, cptr<x_T> X, const Size_T ldX,
-        const beta_T  beta , mptr<y_T> Y, const Size_T ldY
+        cref<a_T> a, cptr<X_T> X, const Size_T ldX,
+        cref<b_T> b, mptr<Y_T> Y, const Size_T ldY
     )
     {
         static_assert( M > VarSize, "" );
         static_assert( N > VarSize, "" );
         
         combine_matrices<a_flag,b_flag,M,N,Sequential,opx,opy>(
-            alpha, X, ldX,
-            beta , Y, ldY,
+            a, X, ldX,
+            b, Y, ldY,
             M, N, Size_T(1)
          );
     }
@@ -103,17 +141,17 @@ namespace Tools
     template<
         Scalar::Flag a_flag, Scalar::Flag b_flag,
         Op opx = Op::Id, Op opy = Op::Id,
-        typename alpha_T, typename x_T, typename beta_T, typename y_T
+        typename a_T, typename X_T, typename b_T, typename Y_T
     >
     force_inline void combine_matrices(
-        const alpha_T alpha, cptr<x_T> X, const Size_T ldX,
-        const beta_T  beta , mptr<y_T> Y, const Size_T ldY,
+        cref<a_T> a, cptr<X_T> X, const Size_T ldX,
+        cref<b_T> b, mptr<Y_T> Y, const Size_T ldY,
         const Size_T m, const Size_T n, const Size_T thread_count
     )
     {
         combine_matrices<a_flag,b_flag,VarSize,VarSize,Parallel,opx,opy>(
-            alpha, X, ldX,
-            beta , Y, ldY,
+            a, X, ldX,
+            b, Y, ldY,
             m, n, thread_count
          );
     }
@@ -126,17 +164,17 @@ namespace Tools
     template<
         Scalar::Flag a_flag, Scalar::Flag b_flag,
         Op opx = Op::Id, Op opy = Op::Id,
-        typename alpha_T, typename x_T, typename beta_T, typename y_T
+        typename a_T, typename X_T, typename b_T, typename Y_T
     >
     force_inline void combine_matrices(
-        const alpha_T alpha, cptr<x_T> X, const Size_T ldX,
-        const beta_T  beta , mptr<y_T> Y, const Size_T ldY,
+        cref<a_T> a, cptr<X_T> X, const Size_T ldX,
+        cref<b_T> b, mptr<Y_T> Y, const Size_T ldY,
         const Size_T m, const Size_T n
     )
     {
         combine_matrices<a_flag,b_flag,VarSize,VarSize,Sequential,opx,opy>(
-            alpha, X, ldX,
-            beta , Y, ldY,
+            a, X, ldX,
+            b, Y, ldY,
             m, n, Size_T(1)
          );
     }
@@ -149,7 +187,7 @@ namespace Tools
     
     
     /*!
-     * @brief Computes Y = alpha * opx(X) + beta * opy(Y), where `X` and `Y` are matrices of size `m` x `n` and `alpha` and `beta` are scalars. Automatic detection of `alpha_flag` and `beta_flag` at runtime.
+     * @brief Computes `Y = a * opx(X) + b * opy(Y)`, where `X` and `Y` are matrices of size `m` x `n` and `a` and `b` are scalars. Automatic detection of `a_flag` and `b_flag` at runtime.
      *
      * to different precompiled branches.
      *
@@ -171,13 +209,13 @@ namespace Tools
      *   `opy = Op::In`   : Apply the idenity to the elements of `Y`.
      *   `opy = Op::Conj` : Apply `std::Conj` to the elements of `Y`.
      *
-     * @param alpha A scalar.
+     * @param a A scalar.
      *
      * @param X A matrix of size `m` x `n`.
      *
      * @param ldX Leading dimension of `X`.
      *
-     * @param beta A scalar.
+     * @param b A scalar.
      *
      * @param Y A matrix of size `m` x `n`.
      *
@@ -193,221 +231,192 @@ namespace Tools
     template<
         Size_T M, Size_T N, Parallel_T parQ,
         Op opx = Op::Id, Op opy = Op::Id,
-        typename alpha_T, typename x_T, typename beta_T, typename y_T
+        typename a_T, typename X_T, typename b_T, typename Y_T
     >
     force_inline void combine_matrices_auto(
-        const alpha_T alpha, cptr<x_T> X, const Size_T ldX,
-        const beta_T  beta , mptr<y_T> Y, const Size_T ldY,
+        cref<a_T> a, cptr<X_T> X, const Size_T ldX,
+        cref<b_T> b, mptr<Y_T> Y, const Size_T ldY,
         const Size_T m, const Size_T n, const Size_T thread_count
     )
     {
         using F_T = Scalar::Flag;
         
-        auto job = [=]<F_T alpha_flag, F_T beta_flat>()
+        auto job = [=]<F_T a_flag, F_T b_flat>()
         {
-
-            
-            combine_matrices<alpha_flag,beta_flat,M,N,parQ,opx,opy>(
-                alpha, X, ldX,
-                beta , Y, ldY,
+            combine_matrices<a_flag,b_flat,M,N,parQ,opx,opy>(
+                a, X, ldX,
+                b, Y, ldY,
                 m, n, thread_count
              );
-            
-            
-//            // DEBUGGING
-//            {
-//                Size_T X_count = 0;
-//                Size_T Y_count = 0;
-//                
-//                for( Size_T i = 0; i < m; ++i )
-//                {
-//                    for( Size_T j = 0; j < n; ++j )
-//                    {
-//                        X_count += NaNQ(X[ldX * i + j]);
-//                        Y_count += NaNQ(Y[ldY * i + j]);
-//                    }
-//                }
-//                
-//                if( X_count > 0 )
-//                {
-//                    eprint("combine_matrices_auto - X has nans");
-//                }
-//                if( Y_count > 0 )
-//                {
-//                    eprint("combine_matrices_auto - Y has nans");
-//                    dump(alpha);
-//                    dump(beta);
-//                    dump( ToString(alpha_flag) );
-//                    dump( ToString(beta_flat) );
-//                }
-//            }
         };
         
-        if( alpha == alpha_T(1) )
+        if( a == a_T(1) )
         {
-            constexpr F_T alpha_flag = F_T::Plus;
+            constexpr F_T a_flag = F_T::Plus;
             
-            if( beta == beta_T(1) )
+            if( b == b_T(1) )
             {
-                constexpr F_T beta_flag = F_T::Plus;
-                job.template operator()<alpha_flag,beta_flag>();
+                constexpr F_T b_flag = F_T::Plus;
+                job.template operator()<a_flag,b_flag>();
             }
-            else if ( beta == beta_T(0) )
+            else if ( b == b_T(0) )
             {
-                constexpr F_T beta_flag = F_T::Zero;
-                job.template operator()<alpha_flag,beta_flag>();
+                constexpr F_T b_flag = F_T::Zero;
+                job.template operator()<a_flag,b_flag>();
             }
-            else if ( beta == beta_T(-1) )
+            else if ( b == b_T(-1) )
             {
-                constexpr F_T beta_flag = F_T::Minus;
-                job.template operator()<alpha_flag,beta_flag>();
+                constexpr F_T b_flag = F_T::Minus;
+                job.template operator()<a_flag,b_flag>();
             }
             else
             {
-                constexpr F_T beta_flag = F_T::Generic;
-                job.template operator()<alpha_flag,beta_flag>();
+                constexpr F_T b_flag = F_T::Generic;
+                job.template operator()<a_flag,b_flag>();
             }
         }
-        else if ( alpha == alpha_T(0) )
+        else if ( a == a_T(0) )
         {
-            constexpr F_T alpha_flag = F_T::Zero;
+            constexpr F_T a_flag = F_T::Zero;
             
-            if( beta == beta_T(1) )
+            if( b == b_T(1) )
             {
-                constexpr F_T beta_flag = F_T::Plus;
-                job.template operator()<alpha_flag,beta_flag>();
+
+                // Do nothing.
+//                constexpr F_T b_flag = F_T::Plus;
+//                job.template operator()<a_flag,b_flag>();
             }
-            else if ( beta == beta_T(0) )
+            else if ( b == b_T(0) )
             {
-                constexpr F_T beta_flag = F_T::Zero;
-                job.template operator()<alpha_flag,beta_flag>();
+                constexpr F_T b_flag = F_T::Zero;
+                job.template operator()<a_flag,b_flag>();
             }
-            else if ( beta == beta_T(-1) )
+            else if ( b == b_T(-1) )
             {
-                constexpr F_T beta_flag = F_T::Minus;
-                job.template operator()<alpha_flag,beta_flag>();
+                constexpr F_T b_flag = F_T::Minus;
+                job.template operator()<a_flag,b_flag>();
             }
             else
             {
-                constexpr F_T beta_flag = F_T::Generic;
-                job.template operator()<alpha_flag,beta_flag>();
+                constexpr F_T b_flag = F_T::Generic;
+                job.template operator()<a_flag,b_flag>();
             }
         }
-        else if ( alpha == alpha_T(-1) )
+        else if ( a == a_T(-1) )
         {
-            constexpr F_T alpha_flag = F_T::Minus;
+            constexpr F_T a_flag = F_T::Minus;
             
-            if( beta == beta_T(1) )
+            if( b == b_T(1) )
             {
-                constexpr F_T beta_flag = F_T::Plus;
-                job.template operator()<alpha_flag,beta_flag>();
+                constexpr F_T b_flag = F_T::Plus;
+                job.template operator()<a_flag,b_flag>();
             }
-            else if ( beta == beta_T(0) )
+            else if ( b == b_T(0) )
             {
-                constexpr F_T beta_flag = F_T::Zero;
-                job.template operator()<alpha_flag,beta_flag>();
+                constexpr F_T b_flag = F_T::Zero;
+                job.template operator()<a_flag,b_flag>();
             }
-            else if ( beta == beta_T(-1) )
+            else if ( b == b_T(-1) )
             {
-                constexpr F_T beta_flag = F_T::Minus;
-                job.template operator()<alpha_flag,beta_flag>();
+                constexpr F_T b_flag = F_T::Minus;
+                job.template operator()<a_flag,b_flag>();
             }
             else
             {
-                constexpr F_T beta_flag = F_T::Generic;
-                job.template operator()<alpha_flag,beta_flag>();
+                constexpr F_T b_flag = F_T::Generic;
+                job.template operator()<a_flag,b_flag>();
             }
         }
         else
         {
-            constexpr F_T alpha_flag = F_T::Generic;
+            constexpr F_T a_flag = F_T::Generic;
             
-            if( beta == beta_T(1) )
+            if( b == b_T(1) )
             {
-                constexpr F_T beta_flag = F_T::Plus;
-                job.template operator()<alpha_flag,beta_flag>();
+                constexpr F_T b_flag = F_T::Plus;
+                job.template operator()<a_flag,b_flag>();
             }
-            else if ( beta == beta_T(0) )
+            else if ( b == b_T(0) )
             {
-                constexpr F_T beta_flag = F_T::Zero;
-                job.template operator()<alpha_flag,beta_flag>();
+                constexpr F_T b_flag = F_T::Zero;
+                job.template operator()<a_flag,b_flag>();
             }
-            else if ( beta == beta_T(-1) )
+            else if ( b == b_T(-1) )
             {
-                constexpr F_T beta_flag = F_T::Minus;
-                job.template operator()<alpha_flag,beta_flag>();
+                constexpr F_T b_flag = F_T::Minus;
+                job.template operator()<a_flag,b_flag>();
             }
             else
             {
-                constexpr F_T beta_flag = F_T::Generic;
-                job.template operator()<alpha_flag,beta_flag>();
+                constexpr F_T b_flag = F_T::Generic;
+                job.template operator()<a_flag,b_flag>();
             }
         }
     }
     
     /*!
-     * @brief Overload for fixed sizes. Automatic detection of `alpha_flag` and `beta_flag` at runtime.
+     * @brief Overload for fixed sizes. Automatic detection of `a_flag` and `b_flag` at runtime.
      */
     
     template<
         Size_T M, Size_T N,
         Op opx = Op::Id, Op opy = Op::Id,
-        typename alpha_T, typename x_T, typename beta_T, typename y_T
+        typename a_T, typename X_T, typename b_T, typename Y_T
     >
     force_inline void combine_matrices(
-        const alpha_T alpha, cptr<x_T> X, const Size_T ldX,
-        const beta_T  beta , mptr<y_T> Y, const Size_T ldY
+        cref<a_T> a, cptr<X_T> X, const Size_T ldX,
+        cref<b_T> b, mptr<Y_T> Y, const Size_T ldY
     )
     {
         static_assert( M > VarSize, "" );
         static_assert( N > VarSize, "" );
         
         combine_matrices_auto<M,N,Sequential,opx,opy>(
-            alpha, X, ldX,
-            beta , Y, ldY,
+            a, X, ldX,
+            b, Y, ldY,
             M, N, Size_T(1)
          );
     }
     
     
     /*!
-     * @brief Overload for variable sizes, parallel evaluation. Automatic detection of `alpha_flag` and `beta_flag` at runtime.
+     * @brief Overload for variable sizes, parallel evaluation. Automatic detection of `a_flag` and `b_flag` at runtime.
      */
     template<
         Op opx = Op::Id, Op opy = Op::Id,
-        typename alpha_T, typename x_T, typename beta_T, typename y_T
+        typename a_T, typename X_T, typename b_T, typename Y_T
     >
     force_inline void combine_matrices(
-        const alpha_T alpha, cptr<x_T> X, const Size_T ldX,
-        const beta_T  beta , mptr<y_T> Y, const Size_T ldY,
+        cref<a_T> a, cptr<X_T> X, const Size_T ldX,
+        cref<b_T> b, mptr<Y_T> Y, const Size_T ldY,
         const Size_T m, const Size_T n, const Size_T thread_count
     )
     {
         combine_matrices_auto<VarSize,VarSize,Parallel,opx,opy>(
-            alpha, X, ldX,
-            beta , Y, ldY,
+            a, X, ldX,
+            b, Y, ldY,
             m, n, thread_count
          );
     }
     
     
     /*!
-     * @brief Overload for variable sizes, sequential evaluation. Automatic detection of `alpha_flag` and `beta_flag` at runtime.
+     * @brief Overload for variable sizes, sequential evaluation. Automatic detection of `a_flag` and `b_flag` at runtime.
      */
     
     template<
         Op opx = Op::Id, Op opy = Op::Id,
-        typename alpha_T, typename x_T, typename beta_T, typename y_T
+        typename a_T, typename X_T, typename b_T, typename Y_T
     >
     force_inline void combine_matrices(
-        const alpha_T alpha, cptr<x_T> X, const Size_T ldX,
-        const beta_T  beta , mptr<y_T> Y, const Size_T ldY,
+        cref<a_T> a, cptr<X_T> X, const Size_T ldX,
+        cref<b_T> b, mptr<Y_T> Y, const Size_T ldY,
         const Size_T m, const Size_T n
     )
     {
         combine_matrices_auto<VarSize,VarSize,Sequential,opx,opy>(
-            alpha, X, ldX,
-            beta , Y, ldY,
+            a, X, ldX,
+            b, Y, ldY,
             m, n, Size_T(1)
          );
     }

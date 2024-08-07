@@ -47,6 +47,27 @@ namespace Tools
             }
         }
         
+        template<typename T>
+        [[nodiscard]] std::string ToFlagString( const T x )
+        {
+            if( x == T(0) )
+            {
+                return "Tools::Scalar::Flag::Zero";
+            }
+            else if( x == T(1) )
+            {
+                return "Tools::Scalar::Flag::Plus";
+            }
+            else if( x == T(-1) )
+            {
+                return "Tools::Scalar::Flag::Minus";
+            }
+            else
+            {
+                return "Tools::Scalar::Flag::Generic";
+            }
+        }
+        
     } // namespace Scalar
     
     
@@ -164,7 +185,7 @@ namespace Tools
     } // namespace Scalar
     
     template<typename T>
-    force_inline constexpr T Conj( const T & z )
+    force_inline constexpr T Conj( cref<T> z )
     {
         if constexpr ( Scalar::ComplexQ<T> )
         {
@@ -177,14 +198,14 @@ namespace Tools
     }
     
     
-    template<typename T>
-    force_inline constexpr std::complex<T> Conj( const std::complex<T> & z )
-    {
-        return std::conj(z);
-    }
+//    template<typename T>
+//    force_inline constexpr std::complex<T> Conj( const std::complex<T> & z )
+//    {
+//        return std::conj(z);
+//    }
     
     template<typename T>
-    force_inline constexpr Scalar::Real<T> Re( const T & z )
+    force_inline constexpr Scalar::Real<T> Re( cref<T> z )
     {
         if constexpr ( Scalar::ComplexQ<T> )
         {
@@ -197,7 +218,7 @@ namespace Tools
     }
     
     template<typename T>
-    force_inline constexpr Scalar::Real<T> Im( const T & z )
+    force_inline constexpr Scalar::Real<T> Im( cref<T> z )
     {
         if constexpr ( Scalar::ComplexQ<T> )
         {
@@ -210,7 +231,7 @@ namespace Tools
     }
     
     template<typename T>
-    force_inline constexpr Scalar::Real<T> AbsSquared( const T & z )
+    force_inline constexpr Scalar::Real<T> AbsSquared( cref<T> z )
     {
         if constexpr ( Scalar::ComplexQ<T> )
         {
@@ -223,7 +244,7 @@ namespace Tools
     }
     
     template<typename T>
-    force_inline constexpr Scalar::Real<T> Abs( const T & z )
+    force_inline constexpr Scalar::Real<T> Abs( cref<T> z )
     {
         return std::abs(z);
     }
@@ -251,45 +272,23 @@ namespace Tools
         Scalar::ComplexQ<S>,
         typename Scalar::Complex<T>
     >
-    scalar_cast( const S & x )
+    scalar_cast( cref<S> x )
     {
         return static_cast<typename Scalar::Complex<T>>(x);
     }
     
     // First converts to Real<R> and then compute the reciprocal.
     template<typename S, typename R = S>
-    force_inline constexpr R Inv( const S & a )
+    force_inline constexpr R Inv( cref<S> a )
     {
         return Scalar::One<R> / scalar_cast<R>(a);
     }
 
     template<typename S, typename T, typename R = decltype( S(1)*T(1) )>
-    force_inline constexpr R Frac( const S & a, const T & b )
+    force_inline constexpr R Frac( cref<S> a, cref<T> b )
     {
         return scalar_cast<R>(a) / scalar_cast<R>(b);
     }
-    
-    
-    template<Scalar::Flag a_flag, typename S, typename T, typename R = decltype( S(1) * T(1) ) >
-    force_inline constexpr R Mult( const S a, const T x )
-    {
-        if constexpr ( a_flag == Scalar::Flag::Generic )
-        {
-            return a * x;
-        }
-        else if constexpr ( a_flag == Scalar::Flag::Plus )
-        {
-            return x;
-        }
-        else if constexpr ( a_flag == Scalar::Flag::Minus )
-        {
-            return -x;
-        }
-        else if constexpr ( a_flag == Scalar::Flag::Zero )
-        {
-            return static_cast<R>(0);
-        }
-    };
 
     
 //    // lo_prec_cast<S,T>(x) casts x to the lower precision of S and T, but preserves Real/Complex
@@ -360,7 +359,7 @@ namespace Tools
 //    }
     
 //    template<typename Scal>
-//    inline constexpr bool NaNQ( const Scal & x )
+//    inline constexpr bool NaNQ( cref<Scal> x )
 //    {
 //        // TODO: Does not work with `-ffast-math` option.
 //        if constexpr ( Scalar::RealQ<Scal> )
@@ -378,7 +377,7 @@ namespace Tools
 //    }
     
     template<typename Scal>
-    inline constexpr bool NaNQ( const Scal x )
+    inline constexpr bool NaNQ( cref<Scal> x )
     {
         // Works also with `-ffast-math` option?
         if constexpr ( FloatQ<Scal> && Scalar::RealQ<Scal> )
@@ -396,7 +395,7 @@ namespace Tools
     }
     
 //    template<typename Scal>
-//    inline constexpr bool NaNQ( const Scal & x )
+//    inline constexpr bool NaNQ( cref<Scal> x )
 //    {
 //        // This is a work-around to detect NaNs under -ffast-math option.
 //        // Not sure whether this is portable.
@@ -424,4 +423,114 @@ namespace Tools
 #define ASSERT_REAL(R) static_assert( Scalar::RealQ<R>, "Template parameter " #R " must be a real-valued type." );
     
 #define ASSERT_COMPLEX(C) static_assert( Scalar::ComplexQ<C>, "Template parameter " #C " must be a complex-valued type." );
+    
+    
+    namespace Scalar
+    {
+//        template<Op op, typename T>
+//        T Operator( cref<T> x )
+//        {
+//            if constexpr ( op == Op::Id )
+//            {
+//                return x;
+//            }
+//            else if constexpr ( op == Op::Trans )
+//            {
+//                return x;
+//            }
+//            else if constexpr ( op == Op::Conj )
+//            {
+//                return Conj(x);
+//            }
+//            else if constexpr ( op == Op::ConjTrans )
+//            {
+//                return Conj(x);
+//            }
+//    //        else if constexpr ( op == Op::Re )
+//    //        {
+//    //            return Re(x);
+//    //        }
+//    //        else if constexpr ( op == Op::ReTrans )
+//    //        {
+//    //            return Re(x);
+//    //        }
+//    //        else if constexpr ( op == Op::Im )
+//    //        {
+//    //            return Im(x);
+//    //        }
+//    //        else if constexpr ( op == Op::ImTrans )
+//    //        {
+//    //            return Im(x);
+//    //        }
+//        };
+        
+        
+        template<
+            Tools::Op op, typename x_T,
+            typename Return_T =
+            std::conditional_t<
+                op == Tools::Op::Re || op == Tools::Op::ReTrans
+                ||
+                op == Tools::Op::Im || op == Tools::Op::ImTrans
+                ,
+                Scalar::Real<x_T>,
+                x_T
+            >
+        >
+        force_inline constexpr Return_T Op( cref<x_T> x )
+        {
+            if constexpr ( (op == Tools::Op::Id) || (op == Tools::Op::Trans) )
+            {
+                return x;
+            }
+            else if constexpr ( (op == Tools::Op::Conj) || (op == Tools::Op::ConjTrans) )
+            {
+                return Conj(x);
+            }
+            else if constexpr ( (op == Tools::Op::Re) || (op == Tools::Op::ReTrans) )
+            {
+                return Re(x);
+            }
+            else if constexpr ( (op == Tools::Op::Im) || (op == Tools::Op::ImTrans) )
+            {
+                return Im(x);
+            }
+        }
+        
+        
+        
+        template<
+            Scalar::Flag a_flag, typename a_T, typename x_T,
+            typename Return_T = decltype( a_T(0) * x_T(0) )
+        >
+        force_inline constexpr Return_T Op( cref<a_T> a, cref<x_T> x )
+        {
+            if constexpr ( a_flag == Scalar::Flag::Generic )
+            {
+                return a * x;
+            }
+            else if constexpr ( a_flag == Scalar::Flag::Plus )
+            {
+                return x;
+            }
+            else if constexpr ( a_flag == Scalar::Flag::Minus )
+            {
+                return -x;
+            }
+            else if constexpr ( a_flag == Scalar::Flag::Zero )
+            {
+                return static_cast<Return_T>(0);
+            }
+        };
+        
+        template<
+            Scalar::Flag a_flag,Tools::Op op,
+            typename a_T, typename x_T,
+            typename Return_T = decltype( a_T(0) * Op<op>(x_T(0)) )
+        >
+        force_inline constexpr Return_T Op( cref<a_T> a, cref<x_T> x )
+        {
+            return Op<a_flag>( a, Op<op>(x) );
+        }
+    }
 }

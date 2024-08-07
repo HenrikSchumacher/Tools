@@ -2,7 +2,7 @@
 
 // It is somewhat unorthodox to use the Tensors namespace here, but I need some of these enums also for BLAS 1 routines.
 
-namespace Tensors
+namespace Tools
 {
     // cf. CBLAS_TRANSPOSE
     enum class Op: unsigned char
@@ -10,17 +10,24 @@ namespace Tensors
         Id           = 111,
         Trans        = 112,
         ConjTrans    = 113,
-        Conj         = 114
+        Conj         = 114,
+        
+        // Non standard
+        
+        Re           = 115,
+        ReTrans      = 116,
+        ImTrans      = 117,
+        Im           = 118,
     };
     
     constexpr bool TransposedQ( const Op op )
     {
-        return (op == Op::Trans) || (op == Op::ConjTrans);
+        return (op == Op::Trans) || (op == Op::ConjTrans) || (op == Op::ReTrans) || (op == Op::ImTrans);
     }
     
     constexpr bool NotTransposedQ( const Op op )
     {
-        return (op == Op::Id) || (op == Op::Conj);
+        return (op == Op::Id) || (op == Op::Conj) || (op == Op::Re) || (op == Op::Im);
     }
     
     constexpr bool ConjugatedQ( const Op op )
@@ -28,31 +35,47 @@ namespace Tensors
         return (op == Op::Conj) || (op == Op::ConjTrans);
     }
     
-    template<Tools::Scalar::Flag a_flag, Op opx, typename S, typename T, typename R = decltype( S(1) * T(1) ) >
-    force_inline constexpr R ScalarOperator( const S a, const T x )
-    {
-        if constexpr ( (opx == Op::Id) || (opx == Op::Trans) )
-        {
-            return Mult<a_flag>(a,x);
-        }
-        else
-        {
-            return Mult<a_flag>(a,Conj(x));
-        }
-    }
-    
-    
     [[nodiscard]] constexpr Op Transpose( const Op op )
     {
         switch( op )
         {
-            case Tensors::Op::Id:        return Tensors::Op::Trans;
+            case Op::Id:        return Op::Trans;
                 
-            case Tensors::Op::Conj:      return Tensors::Op::ConjTrans;
+            case Op::Conj:      return Op::ConjTrans;
                 
-            case Tensors::Op::Trans:     return Tensors::Op::Id;
+            case Op::Trans:     return Op::Id;
                 
-            case Tensors::Op::ConjTrans: return Tensors::Op::Conj;
+            case Op::ConjTrans: return Op::Conj;
+                
+            case Op::Re:        return Op::ReTrans;
+                
+            case Op::ReTrans:   return Op::Re;
+                
+            case Op::Im:        return Op::ImTrans;
+                
+            case Op::ImTrans:   return Op::Im;
+        }
+    }
+    
+    [[nodiscard]] constexpr Op DropTranspose( const Op op )
+    {
+        switch( op )
+        {
+            case Op::Id:        return Op::Id;
+                
+            case Op::Conj:      return Op::Conj;
+                
+            case Op::Trans:     return Op::Id;
+                
+            case Op::ConjTrans: return Op::Conj;
+                
+            case Op::Re:        return Op::Re;
+                
+            case Op::ReTrans:   return Op::Re;
+                
+            case Op::Im:        return Op::Im;
+                
+            case Op::ImTrans:   return Op::Im;
         }
     }
     
@@ -60,13 +83,66 @@ namespace Tensors
     {
         switch( op )
         {
-            case Tensors::Op::Id:        return Tensors::Op::Conj;
+            case Op::Id:        return Op::Conj;
                 
-            case Tensors::Op::Conj:      return Tensors::Op::Id;
+            case Op::Conj:      return Op::Id;
                 
-            case Tensors::Op::Trans:     return Tensors::Op::ConjTrans;
+            case Op::Trans:     return Op::ConjTrans;
                 
-            case Tensors::Op::ConjTrans: return Tensors::Op::Trans;
+            case Op::ConjTrans: return Op::Trans;
+                
+            case Op::Re:        return Op::Re;
+                
+            case Op::ReTrans:   return Op::ReTrans;
+                
+            case Op::Im:        return Op::Im;
+                
+            case Op::ImTrans:   return Op::ImTrans;
+        }
+    }
+    
+    [[nodiscard]] std::string ToString( const Op op )
+    {
+        switch( op )
+        {
+            case Op::Id:        return "Id";
+                
+            case Op::Conj:      return "Conj";
+                
+            case Op::Trans:     return "Trans";
+                
+            case Op::ConjTrans: return "ConjTrans";
+                
+            case Op::Re:        return "Re";
+                
+            case Op::ReTrans:   return "ReTrans";
+                
+            case Op::Im:        return "Im";
+                
+            case Op::ImTrans:   return "ImTrans";
+        }
+    }
+    
+    // A string that can be used for string code generation.
+    [[nodiscard]] std::string ToOpString( const Op op )
+    {
+        switch( op )
+        {
+            case Op::Id:        return "Tools::Op::Id";
+                
+            case Op::Conj:      return "Tools::Op::Conj";
+                
+            case Op::Trans:     return "Tools::Op::Trans";
+                
+            case Op::ConjTrans: return "Tools::Op::ConjTrans";
+                
+            case Op::Re:        return "Tools::Op::Re";
+                
+            case Op::ReTrans:   return "Tools::Op::ReTrans";
+                
+            case Op::Im:        return "Tools::Op::Im";
+                
+            case Op::ImTrans:   return "Tools::Op::ImTrans";
         }
     }
     
@@ -108,26 +184,4 @@ namespace Tensors
     
     static constexpr AddTo_T AddTo     = AddTo_T::True;
     static constexpr AddTo_T Overwrite = AddTo_T::False;
-}
-
-
-
-namespace Tools
-{
-    [[nodiscard]] std::string ToString( const Tensors::Op op )
-    {
-        switch( op )
-        {
-            case Tensors::Op::Id:        return "Id";
-                
-            case Tensors::Op::Conj:      return "Conj";
-                
-            case Tensors::Op::Trans:     return "Trans";
-                
-            case Tensors::Op::ConjTrans: return "ConjTrans";
-                
-            default:                     return "Id";
-        }
-    }
-
 }
