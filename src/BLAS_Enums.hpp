@@ -17,7 +17,7 @@ namespace Tools
         Re           = 115,
         ReTrans      = 116,
         ImTrans      = 117,
-        Im           = 118,
+        Im           = 118
     };
     
     constexpr bool TransposedQ( const Op op )

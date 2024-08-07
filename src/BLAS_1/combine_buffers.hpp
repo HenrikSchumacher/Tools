@@ -87,14 +87,9 @@ namespace Tools
         // We refrain from automagically casting `a` and `b` to the right precision because this is better done once before any loop that calls `combine_buffers`. Hence we prefer a compile error here.
         
         static_assert(
-            Prec<a_T> == Prec<y_T>,
-            "Precisions of first and fourth argument do not coincide."
+            Prec<a_T> == Prec<x_T>,
+            "Precisions of first and second argument do not coincide."
         );
-        
-//        static_assert(
-//            Prec<x_T> == Prec<y_T>,
-//            "Precisions of second and fourth argument do not coincide."
-//        );
         
         static_assert(
             Prec<b_T> == Prec<y_T>,
@@ -217,13 +212,13 @@ namespace Tools
         // We refrain from automagically casting `a` and `b` to the right precision because this is better done once before any loop that calls `combine_buffers`. Hence we prefer a compile error here.
         
         static_assert(
-            Prec<a_T> == Prec<z_T>,
-            "Precisions of first and last argument do not coincide."
+            Prec<a_T> == Prec<x_T>,
+            "Precisions of first and second argument do not coincide."
         );
         
         static_assert(
-            Prec<b_T> == Prec<z_T>,
-            "Precisions of third and last argument do not coincide."
+            Prec<b_T> == Prec<y_T>,
+            "Precisions of third and fourth argument do not coincide."
         );
   
         // PROBLEM: If x == nullptr, which is allowed when a_flag = Zero,

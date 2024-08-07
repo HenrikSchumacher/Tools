@@ -469,9 +469,9 @@ namespace Tools
             Tools::Op op, typename x_T,
             typename Return_T =
             std::conditional_t<
-                op == Tools::Op::Re || op == Tools::Op::ReTrans
+                (op == Tools::Op::Re) || (op == Tools::Op::ReTrans)
                 ||
-                op == Tools::Op::Im || op == Tools::Op::ImTrans
+                (op == Tools::Op::Im) || (op == Tools::Op::ImTrans)
                 ,
                 Scalar::Real<x_T>,
                 x_T
@@ -501,7 +501,7 @@ namespace Tools
         
         template<
             Scalar::Flag a_flag, typename a_T, typename x_T,
-            typename Return_T = decltype( a_T(0) * x_T(0) )
+            typename Return_T = decltype( scalar_cast<x_T>(a_T(0)) * x_T(0) )
         >
         force_inline constexpr Return_T Op( cref<a_T> a, cref<x_T> x )
         {
@@ -526,11 +526,12 @@ namespace Tools
         template<
             Scalar::Flag a_flag,Tools::Op op,
             typename a_T, typename x_T,
-            typename Return_T = decltype( a_T(0) * Op<op>(x_T(0)) )
+            typename Return_T = decltype( Op<a_flag>( a_T(0), Op<op>(x_T(0)) ) )
         >
         force_inline constexpr Return_T Op( cref<a_T> a, cref<x_T> x )
         {
-            return Op<a_flag>( a, Op<op>(x) );
+            return Op<a_flag,Return_T>( a, Op<op>(x) );
         }
     }
 }
+
