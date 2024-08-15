@@ -153,6 +153,15 @@ namespace Tools
         ColMajor = 102
     };
     
+    std::string ToString( const Layout & layout )
+    {
+        switch( layout )
+        {
+            case Layout::RowMajor: return "RM";
+                
+            case Layout::ColMajor: return "CM";
+        }
+    }
     
     // cf. CBLAS_UPLO
     enum class UpLo : unsigned char
@@ -160,6 +169,27 @@ namespace Tools
         Upper = 121,
         Lower = 122
     };
+    
+    
+    std::string ToString( const UpLo & uplo )
+    {
+        switch( uplo )
+        {
+            case UpLo::Upper: return "U";
+                
+            case UpLo::Lower: return "L";
+        }
+    }
+    
+    [[nodiscard]] constexpr UpLo Transpose( const UpLo uplo )
+    {
+        switch( uplo )
+        {
+            case UpLo::Lower:   return UpLo::Upper;
+                
+            case UpLo::Upper:   return UpLo::Lower;
+        }
+    }
     
     // cf. CBLAS_DIAG
     enum class Diag : unsigned char
