@@ -20,17 +20,17 @@ namespace Tools
         Im           = 118
     };
     
-    constexpr bool TransposedQ( const Op op )
+    [[nodiscard]] constexpr bool TransposedQ( const Op op )
     {
         return (op == Op::Trans) || (op == Op::ConjTrans) || (op == Op::ReTrans) || (op == Op::ImTrans);
     }
     
-    constexpr bool NotTransposedQ( const Op op )
+    [[nodiscard]] constexpr bool NotTransposedQ( const Op op )
     {
         return (op == Op::Id) || (op == Op::Conj) || (op == Op::Re) || (op == Op::Im);
     }
     
-    constexpr bool ConjugatedQ( const Op op )
+    [[nodiscard]] constexpr bool ConjugatedQ( const Op op )
     {
         return (op == Op::Conj) || (op == Op::ConjTrans);
     }
@@ -153,7 +153,7 @@ namespace Tools
         ColMajor = 102
     };
     
-    std::string ToString( const Layout & layout )
+    [[nodiscard]] std::string ToString( const Layout & layout )
     {
         switch( layout )
         {
@@ -171,7 +171,7 @@ namespace Tools
     };
     
     
-    std::string ToString( const UpLo & uplo )
+    [[nodiscard]] std::string ToString( const UpLo & uplo )
     {
         switch( uplo )
         {
