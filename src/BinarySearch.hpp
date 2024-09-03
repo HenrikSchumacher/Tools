@@ -3,55 +3,50 @@
 namespace Tools
 {
     
-    template<int return_lower = true, typename T>
-    force_inline bool BinarySearch( cptr<T> sorted_list, const Size_T n, cref<T> value, mref<Size_T> pos )
+    template<typename T>
+    force_inline bool BinarySearch(
+        cptr<T> sorted_list, const Size_T n,
+        cref<T> value,
+        mref<Size_T> pos
+    )
     {
-        Size_T a = 0;
-        Size_T b = n;
-        
-        T f_a = sorted_list[a];
-        T f_b = sorted_list[b];
-        
-        if( value < f_a )
+        if( n == 0 )
         {
-            pos = a;
+            pos = 0;
             return false;
         }
         
-        if( value >= f_b )
+        Size_T L = 0;
+        Size_T R = n-1;
+        
+        if( value < sorted_list[L] )
         {
-            pos = b;
+            pos = L;
             return false;
         }
         
-        while( b > a + 1 )
+        if( value > sorted_list[R] )
         {
-            const Real c = a + (b-a) / 2;
+            pos = R;
+            return false;
+        }
+        
+        while( L < R )
+        {
+            const Size_T C = R - (R-L)/static_cast<Size_T>(2);
             
-            const Real f_c = sorted_list[c];
-            
-            if( f_c > value )
+            if( value < sorted_list[C] )
             {
-                b   = c;
-                f_b = f_c;
+                R = C - 1;
             }
             else
             {
-                a   = c;
-                f_a = f_c;
+                L = C;
             }
         }
         
-        if constexpr ( return_lower )
-        {
-            pos = a;
-        }
-        else
-        {
-            pos = b;
-        }
-        
-        return true;
+        pos = L;
+        return sorted_list[L] == value;
         
     } // BinarySearch
     
