@@ -47,9 +47,7 @@ namespace Tools
         
         inline void Clear( const std::filesystem::path & dir, const bool appendQ = false)
         {
-            
             const std::lock_guard<std::mutex> log_lock ( log_mutex  );
-            
             
             Profiler::log << std::setprecision(16);
             
@@ -72,20 +70,19 @@ namespace Tools
 #if defined(TOOLS_ENABLE_PROFILER)
             const std::lock_guard<std::mutex> prof_lock( prof_mutex );
             
-            Profiler::log_file = dir / "Tools_Profile.tsv";
+            Profiler::prof_file = dir / "Tools_Profile.tsv";
 
-            
-            print( std::string("Profile will be written to ") + Profiler::log_file.string() + ".");
+            print( std::string("Profile will be written to ") + Profiler::prof_file.string() + ".");
             
             Profiler::prof.close();
             
             if( appendQ )
             {
-                Profiler::prof.open( Profiler::log_file.string(), std::ios_base::app );
+                Profiler::prof.open( Profiler::prof_file.string(), std::ios_base::app );
             }
             else
             {
-                Profiler::prof.open( Profiler::log_file.string() );
+                Profiler::prof.open( Profiler::prof_file.string() );
             }
 
             Profiler::init_time = Clock::now();
