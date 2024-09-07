@@ -14,59 +14,126 @@ namespace Tools
         
         using Container_T = std::unordered_map<std::string,std::any>;
         
+        
+// For move semantics for mutex-locked classes see here:
+// https://stackoverflow.com/a/29988626/8248900
+        
+        using Mutex_T     = std::mutex;
+        using ReadLock_T  = std::unique_lock<Mutex_T>;
+        using WriteLock_T = std::unique_lock<Mutex_T>;
+        
         CachedObject() = default;
         
-        ~CachedObject() = default;
-        
-        // TODO: We might have to do deep copies in the following 4 if we store pointers...
+        virtual ~CachedObject() = default;
         
         /* Copy constructor */
-        CachedObject(const CachedObject & rhs)
-        :     cache( rhs.cache )
-        ,   p_cache( rhs.p_cache )
-        {}
+        CachedObject( const CachedObject & other ) noexcept
+        {
+            {
+                ReadLock_T  rhs_lk( other.cache_mutex );
+                this->cache   = other.cache;
+            }
+            {
+                ReadLock_T  rhs_lk( other.p_cache_mutex );
+                this->p_cache = other.p_cache;
+            }
+        }
         
         /* Move constructor */
-        CachedObject( CachedObject && rhs) noexcept
-        :   cache   ( std::move(rhs.cache   ) )
-        ,   p_cache ( std::move(rhs.p_cache ) )
-        {}
+        CachedObject( CachedObject && other) noexcept
+        {
+            {
+                WriteLock_T rhs_lk ( other.cache_mutex   );
+                this->cache   = std::move( other.cache   );
+            }
+            
+            {
+                WriteLock_T rhs_lk ( other.p_cache_mutex );
+                this->p_cache = std::move( other.p_cache );
+            }
+        }
         
-        // TODO: Why return a const reference here?
         /* Copy assignment */
-        const CachedObject & operator=( const CachedObject & rhs)
+        CachedObject & operator=(const CachedObject & other ) noexcept
         {
-            cache   = rhs.cache;
-            p_cache = rhs.p_cache;
-            
+            if( this != &other )
+            {
+                {
+                    WriteLock_T lhs_lk( this->cache_mutex, std::defer_lock );
+                    ReadLock_T  rhs_lk( other.cache_mutex, std::defer_lock );
+                    std::lock( lhs_lk, rhs_lk );
+                    this->cache = other.cache;
+                }
+                
+                {
+                    WriteLock_T lhs_lk( this->p_cache_mutex, std::defer_lock );
+                    ReadLock_T  rhs_lk( other.p_cache_mutex, std::defer_lock );
+                    std::lock( lhs_lk, rhs_lk );
+                    this->p_cache = other.p_cache;
+                }
+            }
             return *this;
-        };
-
-        // TODO: Why return a const reference here?
+        }
+        
         /* Move assignment */
-        const CachedObject & operator=( CachedObject && rhs) noexcept
+        CachedObject & operator=( CachedObject && other ) noexcept
         {
-            cache   = std::move(rhs.cache);
-            p_cache = std::move(rhs.p_cache);
-            
+            if (this != &other)
+            {
+                {
+                    WriteLock_T lhs_lk ( this->cache_mutex, std::defer_lock );
+                    WriteLock_T rhs_lk ( other.cache_mutex, std::defer_lock );
+                    std::lock ( lhs_lk, rhs_lk );
+                    this->cache = std::move( other.cache   );
+                }
+                
+                {
+                    WriteLock_T lhs_lk ( this->p_cache_mutex, std::defer_lock );
+                    WriteLock_T rhs_lk ( other.p_cache_mutex, std::defer_lock );
+                    std::lock ( lhs_lk, rhs_lk );
+                    this->p_cache = std::move( other.p_cache   );
+                }
+            }
             return *this;
-        };
+        }
+        
+        friend void swap( CachedObject & x, CachedObject & y ) noexcept
+            {
+                if( &x != &y )
+                {
+                    {
+                        WriteLock_T lhs_lk( x.cache_mutex, std::defer_lock );
+                        WriteLock_T rhs_lk( y.cache_mutex, std::defer_lock );
+                        std::lock( lhs_lk, rhs_lk );
+                        using std::swap;
+                        swap( x.cache, y.cache );
+                    }
+                    
+                    {
+                        WriteLock_T lhs_lk( x.p_cache_mutex, std::defer_lock );
+                        WriteLock_T rhs_lk( y.p_cache_mutex, std::defer_lock );
+                        std::lock( lhs_lk, rhs_lk );
+                        using std::swap;
+                        swap( x.p_cache, y.p_cache );
+                    }
+                }
+            }
         
     protected:
             
         mutable Container_T cache;
         
-        mutable std::mutex cache_mutex;
+        mutable Mutex_T cache_mutex;
         
         mutable Container_T p_cache;
         
-        mutable std::mutex p_cache_mutex;
+        mutable Mutex_T p_cache_mutex;
         
     public:
         
-//##########################################################################################
+//########################################################################
 //      Cache
-//##########################################################################################
+//########################################################################
         
         bool InCacheQ( cref<std::string> key ) const
         {
@@ -168,9 +235,9 @@ namespace Tools
         }
         
         
-//##########################################################################################
+//########################################################################
 //      PersistentCache
-//##########################################################################################
+//########################################################################
         
         bool InPersistentCacheQ( cref<std::string> key ) const
         {
@@ -266,9 +333,9 @@ namespace Tools
         
         
         
-//##########################################################################################
+//########################################################################
 //      Misc
-//##########################################################################################
+//########################################################################
         
         void ClearAllCache() const
         {
