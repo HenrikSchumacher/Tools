@@ -6,6 +6,11 @@
 
 namespace Tools
 {
+    
+    /*!
+     * @brief Return user's home directory.
+     */
+    
     const std::filesystem::path HomeDirectory()
     {
         const char * s = std::getenv("HOME");
@@ -108,23 +113,39 @@ namespace Tools
     
 // Print functions that are always active and print to the log file.
     
+    /*!
+     * @brief Print to log file specified in `Profiler::log_file`.
+     */
+    
     inline void logprint( const std::string & s )
     {
         const std::lock_guard<std::mutex> lock( Profiler::log_mutex );
         Profiler::log << s << "\n" << std::endl;
     }
 
+    /*!
+     * @brief Print to log file specified in `Profiler::log_file`.
+     */
+    
     template<typename T>
     inline void logvalprint( const std::string & s, const T & value)
     {
         logprint( s + " = " + ToString(value) );
     }
 
+    /*!
+     * @brief Print to log file specified in `Profiler::log_file`.
+     */
+    
     template<typename T>
     inline void logvalprint( const std::string & s, const T & value, const int p)
     {
         logprint( s + " = " + ToString(value, p) );
     }
+    
+    /*!
+     * @brief Print to log file specified in `Profiler::log_file`.
+     */
     
     inline void logvalprint( const std::string & s, const std::string & value)
     {
@@ -135,6 +156,9 @@ namespace Tools
 #define logdump(x) logvalprint( std::string(#x), x );
 
     
+    /*!
+     * @brief Print an error to `std::cout`.
+     */
     
     inline void eprint( const std::string & s )
     {
@@ -149,13 +173,21 @@ namespace Tools
         logprint( msg );
     }
 
+    
+    /*!
+     * @brief Print a warning to `std::cout`.
+     */
+    
     inline void wprint( const std::string & s )
     {
         print(    std::string("WARNING: ") + s );
         logprint( std::string("WARNING: ") + s );
     }
     
-// Print functions that are only active if macro TOOLS_ENABLE_PROFILER is defined.
+    /*!
+     * @brief This print function is only active if macro `TOOLS_ENABLE_PROFILER` is defined.
+     * It prints to the log file specified in `Profiler::log_file`.
+     */
     
     inline void pprint( const std::string & s )
     {
@@ -167,17 +199,32 @@ namespace Tools
 #endif
     }
 
+    /*!
+     * @brief This print function is only active if macro `TOOLS_ENABLE_PROFILER` is defined.
+     * It prints to the log file specified in `Profiler::log_file`.
+     */
+    
     template<typename T>
     inline void pvalprint( const std::string & s, const T & value)
     {
         pprint( s + " = " + ToString(value) );
     }
 
+    /*!
+     * @brief This print function is only active if macro `TOOLS_ENABLE_PROFILER` is defined.
+     * It prints to the log file specified in `Profiler::log_file`.
+     */
+    
     template<typename T>
     inline void pvalprint( const std::string & s, const T & value, const int p)
     {
         pprint( s + " = " + ToString(value, p) );
     }
+    
+    /*!
+     * @brief This print function is only active if macro `TOOLS_ENABLE_PROFILER` is defined.
+     * It prints to the log file specified in `Profiler::log_file`.
+     */
     
     inline void pvalprint( const std::string & s, const std::string & value)
     {
