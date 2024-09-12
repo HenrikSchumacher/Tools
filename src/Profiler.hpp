@@ -122,6 +122,12 @@ namespace Tools
         const std::lock_guard<std::mutex> lock( Profiler::log_mutex );
         Profiler::log << s << "\n" << std::endl;
     }
+    
+    template<Size_T N>
+    inline void logprint( const ct_string<N> & s )
+    {
+        logprint( s.data() );
+    }
 
     /*!
      * @brief Print to log file specified in `Profiler::log_file`.
@@ -131,6 +137,12 @@ namespace Tools
     inline void logvalprint( const std::string & s, const T & value)
     {
         logprint( s + " = " + ToString(value) );
+    }
+    
+    template<Size_T N, typename T>
+    inline void logvalprint( const ct_string<N> & s, const T & value)
+    {
+        logvalprint( s.data(), value );
     }
 
     /*!
@@ -143,6 +155,12 @@ namespace Tools
         logprint( s + " = " + ToString(value, p) );
     }
     
+    template<Size_T N, typename T>
+    inline void logvalprint( const ct_string<N> & s, const T & value, const int p)
+    {
+        logvalprint( s.data(), value, p  );
+    }
+    
     /*!
      * @brief Print to log file specified in `Profiler::log_file`.
      */
@@ -150,6 +168,12 @@ namespace Tools
     inline void logvalprint( const std::string & s, const std::string & value)
     {
         logprint( s + " = " + value );
+    }
+    
+    template<Size_T N>
+    inline void logvalprint( const ct_string<N> & s, const std::string & value)
+    {
+        logvalprint( s.data(), value  );
     }
     
     
@@ -172,6 +196,12 @@ namespace Tools
         std::cerr << msg << std::endl;
         logprint( msg );
     }
+    
+    template<Size_T N>
+    inline void eprint( const ct_string<N> & s )
+    {
+        eprint( s.data() );
+    }
 
     
     /*!
@@ -182,6 +212,12 @@ namespace Tools
     {
         print(    std::string("WARNING: ") + s );
         logprint( std::string("WARNING: ") + s );
+    }
+    
+    template<Size_T N>
+    inline void wprint( const ct_string<N> & s )
+    {
+        wprint(s.data());
     }
     
     /*!
@@ -207,7 +243,12 @@ namespace Tools
     template<typename T>
     inline void pvalprint( const std::string & s, const T & value)
     {
+#ifdef TOOLS_ENABLE_PROFILER
         pprint( s + " = " + ToString(value) );
+#else
+        (void)s;
+        (void)value;
+#endif
     }
 
     /*!
@@ -218,7 +259,13 @@ namespace Tools
     template<typename T>
     inline void pvalprint( const std::string & s, const T & value, const int p)
     {
+#ifdef TOOLS_ENABLE_PROFILER
         pprint( s + " = " + ToString(value, p) );
+#else
+        (void)s;
+        (void)value;
+        (void)p;
+#endif
     }
     
     /*!
@@ -228,12 +275,33 @@ namespace Tools
     
     inline void pvalprint( const std::string & s, const std::string & value)
     {
+#ifdef TOOLS_ENABLE_PROFILER
         pprint( s + " = " + value );
+#else
+        (void)s;
+        (void)value;
+#endif
     }
     
 #define pdump(x) pvalprint( std::string(#x), x );
+
     
-    inline void ptic(const std::string & tag)
+#ifdef TOOLS_ENABLE_PROFILER
+    #define ptic( s ) ptic_impl(s)
+#else
+    #define ptic( s )
+#endif
+    
+#ifdef TOOLS_ENABLE_PROFILER
+    #define ptoc( s ) ptoc_impl(s)
+#else
+    #define ptoc( s )
+#endif
+    
+//#define ptic( s ) ptic_impl(s)
+//#define ptoc( s ) ptoc_impl(s)
+    
+    inline void ptic_impl(const std::string & tag)
     {
 #ifdef TOOLS_ENABLE_PROFILER
         const std::lock_guard<std::mutex> prof_lock( Profiler::prof_mutex );
@@ -256,7 +324,17 @@ namespace Tools
 #endif
     }
     
-    inline void ptoc(const std::string & tag)
+    template<Size_T N>
+    inline void ptic_impl( const ct_string<N> & tag )
+    {
+#ifdef TOOLS_ENABLE_PROFILER
+        ptic(tag.data());
+#else
+        (void)tag;
+#endif
+    }
+    
+    inline void ptoc_impl(const std::string & tag)
     {
 #ifdef TOOLS_ENABLE_PROFILER
         const std::lock_guard<std::mutex> prof_lock( Profiler::prof_mutex );
@@ -305,47 +383,39 @@ namespace Tools
 #endif
     }
     
-    inline void debug_tic(const std::string & tag)
+    template<Size_T N>
+    inline void ptoc_impl( const ct_string<N> & tag )
     {
-#ifdef TOOLS_DEBUG
-        ptic(tag);
+#ifdef TOOLS_ENABLE_PROFILER
+        ptoc(tag.data());
 #else
         (void)tag;
 #endif
     }
     
-    inline void debug_toc(const std::string & tag)
-    {
-#ifdef TOOLS_DEBUG
-        ptoc(tag);
-#else
-        (void)tag;
-#endif
-    }
-
-    inline void debug_print( std:: string s)
-    {
-#ifdef TOOLS_DEBUG
-        logprint(s);
-#else
-        (void)s;
-#endif
-    }
     
-    inline void debug_assert( bool condition, std:: string s )
-    {
 #ifdef TOOLS_DEBUG
-        if( ! condition )
-        {
-            eprint(s);
-        }
+    #define TOOLS_DEBUG_TIC(tag) ptic(tag);
 #else
-        (void)condition;
-        (void)s;
+    #define TOOLS_DEBUG_TIC(tag)
 #endif
-    }
-
-
-
+    
+#ifdef TOOLS_DEBUG
+    #define TOOLS_DEBUG_TOC(tag) ptoc(tag);
+#else
+    #define TOOLS_DEBUG_TOC(tag)
+#endif
+    
+#ifdef TOOLS_DEBUG
+    #define TOOLS_DEBUG_PRINT(s) logprint(s);
+#else
+    #define TOOLS_DEBUG_PRINT(s)
+#endif
+    
+#ifdef TOOLS_DEBUG
+    #define TOOLS_DEBUG_ASSERT(condition, s) if( ! condition ) { eprint(s); }
+#else
+    #define TOOLS_DEBUG_ASSERT(condition, s)
+#endif
 
 } // namespace Tools
