@@ -234,6 +234,7 @@ namespace Tools
 } // namespace Tools
 
 #include <complex>
+#include "src/ct_string.hpp"
 #include "src/ToString.hpp"
 #include "src/combine_strings.hpp"
 #include "src/Print.hpp"

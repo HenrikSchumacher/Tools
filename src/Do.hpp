@@ -84,11 +84,11 @@ namespace Tools
 #ifdef TOOLS_DEBUG
         if constexpr ( N == VarSize )
         {
-            if( n == VarSize )
-            {
-                wprint("Do: Input length n = 0 although N = VarSize.");
-                return;
-            }
+//            if( n == VarSize )
+//            {
+//                wprint("Do: Input length n = 0 although N = VarSize.");
+//                return;
+//            }
         }
         else
         {

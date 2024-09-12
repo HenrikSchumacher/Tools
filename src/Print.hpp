@@ -33,6 +33,12 @@ namespace Tools
 #endif
     }
     
+    template<Size_T N>
+    inline void print( const ct_string<N> & s )
+    {
+        print( s.data() );
+    }
+    
     template<typename T>
     inline void valprint( const std::string & s, const T & value)
     {

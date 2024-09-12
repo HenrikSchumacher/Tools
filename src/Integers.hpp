@@ -229,7 +229,7 @@ namespace Tools
         {
             static constexpr bool       realQ       = true;
             static constexpr bool       complexQ    = false;
-            static constexpr const char type_name[] = "short int";
+            static constexpr const char * type_name = "short int";
             static constexpr const char * full_name = "short int";
         };
         

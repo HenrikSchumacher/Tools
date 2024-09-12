@@ -129,13 +129,13 @@ namespace Tools
                             // Nothing left to do. Stop here.
                             done = true;
                             
-                            debug_print( "ParallelDo_Dynamic: " + ToString(thread) + " done." );
+                            TOOLS_DEBUG_PRINT( "ParallelDo_Dynamic: " + ToString(thread) + " done." );
                             
                             return;
                         }
                     }
                     
-                    debug_print( "ParallelDo_Dynamic: thread " + ToString(thread) + " processes tasks [" + ToString(i_begin) + "," + ToString(i_end)  + "[." );
+                    TOOLS_DEBUG_PRINT( "ParallelDo_Dynamic: thread " + ToString(thread) + " processes tasks [" + ToString(i_begin) + "," + ToString(i_end)  + "[." );
                     // Let the worker process its assigned chunk.
                     for( Int i = i_begin; i < i_end; ++i )
                     {
