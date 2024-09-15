@@ -298,9 +298,6 @@ namespace Tools
     #define ptoc( s )
 #endif
     
-//#define ptic( s ) ptic_impl(s)
-//#define ptoc( s ) ptoc_impl(s)
-    
     inline void ptic_impl(const std::string & tag)
     {
 #ifdef TOOLS_ENABLE_PROFILER
