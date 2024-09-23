@@ -8,7 +8,7 @@
 namespace Tools
 {
     
-    class CachedObject
+    class alignas( ObjectAlignment ) CachedObject
     {
     public:
         
