@@ -293,8 +293,3 @@ namespace Tools
 
 #include "src/Debugging.hpp"
 
-
-// Experimental
-#include "src/Sort/SortNet2.hpp"
-#include "src/Sort/Sort2.hpp"
-
