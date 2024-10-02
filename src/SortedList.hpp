@@ -100,6 +100,11 @@ namespace Tools
             
         }
         
+        bool Push( cref<T> X )
+        {
+            return Insert(X);
+        }
+        
         bool Drop( cref<T> X )
         {
             Int i = Find(X);
@@ -112,6 +117,15 @@ namespace Tools
             {
                 return false;
             }
+        }
+        
+        T Pop()
+        {
+            const T r = list.back();
+            
+            list.pop_back();
+            
+            return r;
         }
         
         Int Size() const
