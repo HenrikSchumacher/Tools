@@ -5,8 +5,8 @@ namespace Tools
     std::mutex cout_mutex;
     std::mutex cerr_mutex;
     std::mutex timer_mutex;
-    
-    using Clock = std::chrono::steady_clock;
+
+    using Clock = std::chrono::high_resolution_clock;
     using Time  = std::chrono::time_point<Clock>;
     
     force_inline double Duration( const Time & start_time, const Time & stop_time )
