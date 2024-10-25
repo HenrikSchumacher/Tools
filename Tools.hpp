@@ -291,5 +291,7 @@ namespace Tools
 #include "src/Math/RealCubicSolve.hpp"
 #include "src/Math/Det_Bareiss.hpp"
 
+#include "src/Hashing.hpp"
+
 #include "src/Debugging.hpp"
 
