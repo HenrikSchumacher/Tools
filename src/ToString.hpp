@@ -19,6 +19,13 @@ namespace Tools
         return sout;
     }
     
+//    template <typename T>
+//    std::ostream & operator<<( std::ostream & sout, const T & val )
+//    {
+//        return (sout << ToUnderlying(val));
+//    }
+    
+    
     template <typename T>
     [[nodiscard]] std::string ToString( const std::complex<T> & z, const int p = 16)
     {
@@ -36,6 +43,14 @@ namespace Tools
         return sout.str();
     }
     
+    template <typename T>
+    [[nodiscard]] std::string ToString( const unsigned char & z )
+    {
+        std::stringstream sout;
+        sout << static_cast<unsigned int>(z);
+        return sout.str();
+    }
+    
     template<typename Scal, typename Int, typename Int2, typename Int3, class Stream_T>
     Stream_T & ArrayToStream(
         const Scal * const a,
@@ -48,7 +63,7 @@ namespace Tools
     {
         if( rank <= 0 )
         {
-            s << ToUnderlying(a[0]);
+            s << a[0];
         }
         else if( rank == 1 )
         {
@@ -56,12 +71,12 @@ namespace Tools
             
             if( dims[0] > 0 )
             {
-                s << ToUnderlying(a[0]);
+                s << a[0];
             }
             
             for( Int i = 1; i < dims[0]; ++i )
             {
-                s << ", " << ToUnderlying(a[i]);
+                s << ", " << a[i];
             }
             
             s << " }";
@@ -113,15 +128,16 @@ namespace Tools
                     lds[i] = lds[i+1] * dims[i+1];
                 }
             }
+            
             ArrayToStream( a, dims, lds.data(), rank, s, line_prefix );
         }
         return s;
     }
     
-    template<typename Scal, typename Int, typename Int2>
+    template<typename T, typename Int, typename Int2>
     std::string ArrayToString(
-        const Scal * const a,
-        const Int  * const dims,
+        const T   * const a,
+        const Int * const dims,
         Int2 rank,
         int prec = 16
     )
@@ -130,7 +146,7 @@ namespace Tools
         
         s << std::setprecision(prec);
         
-        (void)ArrayToStream<Scal,Int>( a, dims, rank, s, std::string("") ).str();
+        (void)ArrayToStream<T,Int>( a, dims, rank, s, std::string("") ).str();
 
         return s.str();
     }
