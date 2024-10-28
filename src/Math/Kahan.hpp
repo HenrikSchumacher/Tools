@@ -118,14 +118,14 @@ namespace Tools
             Oriented2D_Kahan<Sint>( x_0, x_1, y_0 )
         };
         
-        if( (signs[0] == 0) || (signs[1] == 0) || (signs[2] == 0) || (signs[3] == 0) )
-        {
-            eprint(std::string("LineSegmentsIntersectQ_Kahan detected degenerate configuration. \n")
-            + "\tx_0 = " + ArrayToString(x_0,{2}) + "\n"
-            + "\tx_1 = " + ArrayToString(x_1,{2}) + "\n"
-            + "\ty_0 = " + ArrayToString(y_0,{2}) + "\n"
-            + "\ty_1 = " + ArrayToString(y_1,{2}) );
-        }
+//        if( (signs[0] == 0) || (signs[1] == 0) || (signs[2] == 0) || (signs[3] == 0) )
+//        {
+//            eprint(std::string("LineSegmentsIntersectQ_Kahan detected degenerate configuration. \n")
+//            + "\tx_0 = " + ArrayToString(x_0,{2}) + "\n"
+//            + "\tx_1 = " + ArrayToString(x_1,{2}) + "\n"
+//            + "\ty_0 = " + ArrayToString(y_0,{2}) + "\n"
+//            + "\ty_1 = " + ArrayToString(y_1,{2}) );
+//        }
         
         return (
             ( signs[0] != Sint(0)  )
