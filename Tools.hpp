@@ -190,6 +190,8 @@ namespace Tools
     template<typename T>
     constexpr bool ArithmeticQ = std::is_arithmetic_v<T>;
     
+    template<> constexpr bool ArithmeticQ<std::complex<float>>  = true;
+    template<> constexpr bool ArithmeticQ<std::complex<double>> = true;
 
     template <typename E>
     auto ToUnderlying( const E & e) noexcept
@@ -290,6 +292,7 @@ namespace Tools
 
 #include "src/Math/RealCubicSolve.hpp"
 #include "src/Math/Det_Bareiss.hpp"
+#include "src/Math/ProductAccumulator.hpp"
 
 #include "src/Hashing.hpp"
 
