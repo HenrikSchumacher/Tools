@@ -132,9 +132,9 @@ namespace Tools
 //            constexpr Real conversion_factor = std::log(Real(2)) / std::log(Real(10));
             constexpr Real conversion_factor = 0.3010299956639812;
             
-            auto exp10 = []( const Real x )
+            auto exp10 = []( const Real x_ )
             {
-                return std::pow( Real(10), x );
+                return std::pow( Real(10), x_ );
             };
             
             if constexpr ( Scalar::RealQ<Scal> )
