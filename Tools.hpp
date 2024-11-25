@@ -126,6 +126,8 @@
 
 #endif
 
+
+
 //#define IS_ARITHMETIC(T) class = typename std::enable_if_t<std::is_arithmetic_v<T>>
 //#define IS_FLOAT(T)      class = typename std::enable_if_t<std::is_floating_point_v<T>>
 //#define IS_INT(T)        class = typename std::enable_if_t<std::is_integral_v<T>>
@@ -260,6 +262,7 @@ namespace Tools
 #include "src/Math/BisectionSearch.hpp"
 #include "src/Math/RegulaFalsi.hpp"
 #include "src/Math/Kahan.hpp"
+//#include "src/Math/CompensatedSummation.hpp"
 
 
 

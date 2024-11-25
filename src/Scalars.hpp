@@ -172,8 +172,13 @@ namespace Tools
         template<typename T> constexpr Scalar::Real<T> TwoPiInv = Scalar::One<T> / ( Scalar::Two<T> * Scalar::Pi<T> );
         
         template<typename T> constexpr Scalar::Real<T> eps      = std::numeric_limits<Scalar::Real<T>>::epsilon();
+        
+        template<typename T> constexpr Scalar::Real<T> eta      = std::numeric_limits<Scalar::Real<T>>::min();
+        
         template<typename T> constexpr Scalar::Real<T> Max      = std::numeric_limits<Scalar::Real<T>>::max();
+        
         template<typename T> constexpr Scalar::Real<T> Infty    = std::numeric_limits<Scalar::Real<T>>::has_infinity ? std::numeric_limits<Scalar::Real<T>>::infinity() : std::numeric_limits<Scalar::Real<T>>::max();
+        
         template<typename T> constexpr Scalar::Real<T> Min      = std::numeric_limits<Scalar::Real<T>>::lowest();
         
     } // namespace Scalar
@@ -240,7 +245,16 @@ namespace Tools
     template<typename T>
     force_inline constexpr Scalar::Real<T> Abs( cref<T> z )
     {
-        return std::abs(z);
+        using std::abs;
+        
+        if constexpr ( std::is_floating_point_v<T> )
+        {
+            return std::fabs(z);
+        }
+        else
+        {
+            return abs(z);
+        }
     }
     
     

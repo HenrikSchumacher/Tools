@@ -121,7 +121,7 @@ namespace Tools
         // It returns true for ( -1 ^ 0 ) < 0.
 //        return (x ^ y) < 0;
         
-        return x * y < 0;
+        return (x * y < 0);
     }
     
     
@@ -153,26 +153,60 @@ namespace Tools
     template<typename Real>
     force_inline constexpr Real Max( const Real & x, const Real & y )
     {
+        using std::max;
+        
         if constexpr ( std::is_floating_point_v<Real> )
         {
             return std::fmax(x,y);
         }
         else
         {
-            return std::max(x,y);
+            return max(x,y);
+        }
+    }
+    
+    template<typename Real>
+    force_inline constexpr Real Max( const Real & x, const Real & y, const Real & z )
+    {
+        using std::max;
+        
+        if constexpr ( std::is_floating_point_v<Real> )
+        {
+            return std::fmax(std::fmax(x,y),z);
+        }
+        else
+        {
+            return max({x,y,z});
         }
     }
     
     template<typename Real>
     force_inline constexpr Real Min( const Real & x, const Real & y )
     {
+        using std::min;
+        
         if constexpr ( std::is_floating_point_v<Real> )
         {
             return std::fmin(x,y);
         }
         else
         {
-            return std::min(x,y);
+            return min(x,y);
+        }
+    }
+    
+    template<typename Real>
+    force_inline constexpr Real Min( const Real & x, const Real & y, const Real & z )
+    {
+        using std::min;
+        
+        if constexpr ( std::is_floating_point_v<Real> )
+        {
+            return std::fmin(std::fmin(x,y),z);
+        }
+        else
+        {
+            return min({x,y,z});
         }
     }
     
@@ -180,13 +214,35 @@ namespace Tools
     template<typename Real>
     force_inline constexpr std::pair<Real,Real> MinMax( const Real & x, const Real & y )
     {
+        using std::minmax;
+        
         if constexpr ( std::is_floating_point_v<Real> )
         {
             return std::pair<Real,Real>( std::fmin(x,y), std::fmax(x,y) );
         }
         else
         {
-            return std::minmax(x,y);
+            return minmax(x,y);
+        }
+    }
+    
+    template<typename Real>
+    force_inline constexpr std::pair<Real,Real> MinMax(
+        const Real & x, const Real & y, const Real & z
+    )
+    {
+        using std::minmax;
+        
+        if constexpr ( std::is_floating_point_v<Real> )
+        {
+            return std::pair<Real,Real>(
+                std::fmin(std::fmin(x,y),z),
+                std::fmax(std::fmax(x,y),z)
+            );
+        }
+        else
+        {
+            return minmax({x,y,z});
         }
     }
     

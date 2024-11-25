@@ -29,7 +29,7 @@ namespace Tools
     template<typename I, typename J >
     inline constexpr void deactivate_bit( I & x, const J pos )
     {
-        x &= ~(static_cast<I>(1)<<pos);
+        x &= ~(static_cast<I>(1) << pos);
     }
     
     
