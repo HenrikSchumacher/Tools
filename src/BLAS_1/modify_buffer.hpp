@@ -80,6 +80,8 @@ namespace Tools
         }
         else
         {
+            #pragma float_control(precise, off)
+            
             Do<N,parQ,Static>(
                 [=]( const Size_T i )
                 {

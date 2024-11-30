@@ -50,7 +50,9 @@ namespace Tools
             zerofy_buffer<N,parQ>( y, n, thread_count );
         }
         else
-        {            
+        {
+            #pragma float_control(precise, off)
+            
             Do<N,parQ>(
                 [=]( const Size_T k )
                 {

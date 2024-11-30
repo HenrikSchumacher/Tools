@@ -45,8 +45,7 @@ namespace Tools
         typename a_T, typename x_T, typename b_T, typename y_T
     >
     force_inline void combine_buffers(
-        cref<a_T> a, cptr<x_T> x,
-        cref<b_T> b, mptr<y_T> y,
+        cref<a_T> a, cptr<x_T> x, cref<b_T> b, mptr<y_T> y,
         const Size_T n = N,
         const Size_T thread_count = 1
     )
@@ -103,8 +102,7 @@ namespace Tools
         // is dereferenced.
         if constexpr ( a_flag == Scalar::Flag::Zero )
         {
-            // PROBLEM: If y == nullptr, which is allowed when (a_flag = One,
-            // b_flag = Zero, and opy == Op::Id), then we should prevent dereferencing y.
+            // PROBLEM: If x == nullptr, which is allowed when a_flag = Zero, then we should prevent dereferencing x.
             // Otherwise, with optimizations turned off, it could happen that nullptr
             // is dereferenced.
             if constexpr ( (b_flag == Scalar::Flag::Plus) && (opy == Op::Id) )
@@ -116,8 +114,14 @@ namespace Tools
                 modify_buffer<b_flag,N,parQ,opy>( b, y, n, thread_count );
             }
         }
+        if constexpr ( (a_flag == Scalar::Flag::Plus) && (b_flag == Scalar::Flag::Zero) && (opx == Op::Id) )
+        {
+            copy_buffer<N,parQ>( x, y, n, thread_count );
+        }
         else
         {
+            #pragma float_control(precise, off)
+
             Do<N,parQ,Static>(
                 [=]( const Size_T i )
                 {
@@ -192,7 +196,6 @@ namespace Tools
         // If b_flag == Flag::Minus, then it assumes b = -1.
         // If b_flag == Flag::Generic, then it assumes generic values for b.
         
-        
         using namespace Scalar;
         
         check_sequential<parQ>( "combine_buffers", thread_count );
@@ -241,24 +244,25 @@ namespace Tools
             else
             {
                 // z = b * opy(y);
-                combine_buffer<b_flag,Scalar::Flag::Zero,N,parQ,opy>(
+                combine_buffers<b_flag,Scalar::Flag::Zero,N,parQ,opy,Op::Id>(
                     b, y, Scalar::Zero<z_T>, z, n, thread_count
                 );
             }
         }
         else
         {
-            
             if constexpr ( (b_flag == Scalar::Flag::Zero) )
             {
                 // z = a * opx(x);
                 
-                combine_buffer<a_flag,Scalar::Flag::Zero,N,parQ,opx>(
+                combine_buffers<a_flag,Scalar::Flag::Zero,N,parQ,opx,Op::Id>(
                     a, x, Scalar::Zero<z_T>, z, n, thread_count
                 );
             }
             else
             {
+                #pragma float_control(precise, off)
+                
                 // z = a * opx(x) + b * opx(y);
                 Do<N,parQ,Static>(
                     [=]( const Size_T i )
@@ -269,106 +273,6 @@ namespace Tools
                 );
             }
         }
-        
-//        // Already on -O2 clang seems to be able to generate as good code
-//        // for this loop as the complicated `if`s below.
-//        Do<N,parQ,Static>(
-//            [=]( const Size_T i )
-//            {
-//                combine_scalars<a_flag,b_flag,opx,opy>( a, x[i], b, y[i], z[i] );
-//            },
-//            n, thread_count
-//        );
-        
-//        constexpr bool vectorizableQ =
-//            (N > VarSize)
-//            && VectorizableQ<z_T>
-//            && ( (opx == Op::Id) || a_flag == Flag::Zero )
-//            && ( (opy == Op::Id) || b_flag == Flag::Zero );
-//        
-//        if constexpr ( (a_flag == Flag::Zero) && (b_flag == Flag::Zero) )
-//        {
-//            zerofy_buffer<N,parQ>( z, n, thread_count );
-//        }
-//        if constexpr ( vectorizableQ )
-//        {
-//            combine_buffers_vec<a_flag, b_flag, N>(
-//                static_cast<z_T>(a), x, static_cast<z_T>(b), y, z
-//            );
-//        }
-//        else
-//        {
-//            if constexpr ( (a_flag == Flag::Zero) && (b_flag == Flag::Zero) )
-//            {
-//                // In order to make it safe that x == nullptr and y == nullptr, we nead a special treatment here.
-//                
-//                zerofy_buffer<N,parQ>(z,n,thread_count);
-//            }
-//            else if constexpr ( b_flag == Flag::Zero )
-//            {
-//                // In order to make it safe that y == nullptr, we nead a special treatment here.
-//                
-//                if constexpr ( (a_flag == Flag::Plus) && (opx == Op::Id) )
-//                {
-//                    // We do a copy if we can.
-//                    copy_buffer<N,parQ>(x,z,n,thread_count);
-//                }
-//                else
-//                {
-//                    // Fallback / most general routine.
-//                    
-//                    Do<N,parQ,Static>(
-//                        [=]( const Size_T i )
-//                        {
-//                            constexpr auto ox = ( opx == Op::Conj ?
-//                                []( const x_T & X ){ return scalar_cast<z_T>( Conj(X) ); } :
-//                                []( const x_T & X ){ return scalar_cast<z_T>( X ); }
-//                            );
-//                            
-//                            z[i] = a * ox ( x[i] );
-//                        },
-//                        n, thread_count
-//                    );
-//                }
-//                
-//            }
-//            else if constexpr (a_flag == Flag::Zero)
-//            {
-//                // In order to make it safe that x == nullptr, we nead a special treatment here.
-//                
-//                if constexpr ( (b_flag == Flag::Plus) && (opy == Op::Id) )
-//                {
-//                    // We do a copy if we can.
-//                    
-//                    copy_buffer<N,parQ>(y,z,n,thread_count);
-//                }
-//                else
-//                {
-//                    Do<N,parQ,Static>(
-//                        [=]( const Size_T i )
-//                        {
-//                            constexpr auto oy = ( opy == Op::Conj ?
-//                                []( const y_T & Y ){ return scalar_cast<y_T>( Conj(Y) ); } :
-//                                []( const y_T & Y ){ return scalar_cast<y_T>( Y ); }
-//                            );
-//                            
-//                            z[i] = b * oy( y[i] );
-//                        },
-//                        n, thread_count
-//                    );
-//                }
-//            }
-//            else
-//            {
-//                Do<N,parQ,Static>(
-//                    [=]( const Size_T i )
-//                    {
-//                        combine_scalars<a_flag,b_flag,opx,opy>( a, x[i], b, y[i], z[i] );
-//                    },
-//                    n, thread_count
-//                );
-//            }
-//        }
     }
 
 } // namespace Tools

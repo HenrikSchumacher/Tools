@@ -44,14 +44,18 @@ namespace Tools
             Prec<b_T> == Prec<y_T>,
             "Precisions of third and fourth argument do not coincide."
         );
+    
+        {
+            #pragma float_control(precise, off)
         
-        Do<N,parQ,Static>(
-            [=]( const Size_T k )
-            {
-                combine_scalars<a_flag,b_flag>( a, x[k], b, y[idx[k]] );
-            },
-            n, thread_count
-        );
+            Do<N,parQ,Static>(
+                [=]( const Size_T k )
+                {
+                    combine_scalars<a_flag,b_flag>( a, x[k], b, y[idx[k]] );
+                },
+                n, thread_count
+            );
+        }
     }
 
 } // namespace Tools

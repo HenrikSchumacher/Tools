@@ -71,13 +71,17 @@ namespace Tools
     {
         check_sequential<parQ>( "zip_buffers", thread_count );
         
-        Do<N,parQ>(
-            [=]( const Size_T i )
-            {
-                zip( a[i], b[i], c[i] );
-            },
-            n, thread_count
-        );
+        {
+            #pragma float_control(precise, off)
+            
+            Do<N,parQ>(
+                [=]( const Size_T i )
+                {
+                    zip( a[i], b[i], c[i] );
+                },
+                n, thread_count
+            );
+        }
     }
     
 } // namespace Tools

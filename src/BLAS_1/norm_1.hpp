@@ -10,17 +10,21 @@ namespace Tools
     {
         using T = Scalar::Real<S>;
         
-        return DoReduce<N,parQ>(
-            [x]( const Size_T i )
-            {
-                return Abs(x[i]);
-            },
-            []( const T & value, T & result )
-            {
-                result += value;
-            },
-            Scalar::Zero<T>, n, thread_count
-        );
+        {
+            #pragma float_control(precise, off)
+            
+            return DoReduce<N,parQ>(
+                [x]( const Size_T i )
+                {
+                    return Abs(x[i]);
+                },
+                []( const T & value, T & result )
+                {
+                    result += value;
+                },
+                Scalar::Zero<T>, n, thread_count
+            );
+        }
     }
     
 } // namespace Tools

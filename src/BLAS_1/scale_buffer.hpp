@@ -10,7 +10,11 @@ namespace Tools
         cref<a_T> a, mptr<x_T> x, const Size_T n = N, const Size_T thread_count = 1
     )
     {
-        modify_buffer<Scalar::Flag::Generic,N,parQ,Op::Id>(a,x,n,thread_count);
+        {
+            #pragma float_control(precise, off)
+            
+            modify_buffer<Scalar::Flag::Generic,N,parQ,Op::Id>(a,x,n,thread_count);
+        }
     }
     
 //    template <

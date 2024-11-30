@@ -11,14 +11,49 @@ namespace Tools
     using Complex64  = std::complex<Real64>;
 //    using Complex128 = std::complex<Real128>;
     
+    template<typename R> using Cplx = std::complex<R>;
+    
+    template<typename R>
+    force_inline constexpr vec_T<2,R> to_vec_T( cref<Cplx<R>> z )
+    {
+        vec_T<2,R> Z = *reinterpret_cast<const vec_T<2,R> *>(&z);
+        
+        return Z;
+    }
+    
+    template<typename R>
+    force_inline constexpr Cplx<R> to_Cplx( cref<vec_T<2,R>> Z )
+    {
+        Cplx<R> z;
+        
+        *reinterpret_cast<vec_T<2,R> *>(&z) = Z;
+    
+        return z;
+    }
+    
+    
     using std::conj;
     using std::real;
     using std::imag;
     
+    template<typename S, typename T>
+    static constexpr bool SameQ = std::is_same_v<S,T>;
+    
+    template<typename T>
+    static constexpr bool VectorizableQ = vec_enabledQ && ( SameQ<T,Real32> || SameQ<T,Real64> || SameQ<T,Int16> || SameQ<T, Int32> || SameQ<T,Int64> || SameQ<T,UInt16> ||SameQ<T,UInt32> || SameQ<T,UInt64> );
+    
+    template<typename T>
+    static constexpr bool MatrixizableQ = mat_enabledQ
+        && (
+            SameQ<T,Real32> || SameQ<T,Real64>
+            || SameQ<T, Int16> || SameQ<T, Int32> || SameQ<T, Int64>
+            || SameQ<T,UInt16> || SameQ<T,UInt32> || SameQ<T,UInt64>
+        );
+    
     namespace Scalar
     {
         
-        enum class Flag : char
+        enum class Flag : signed char
         {
             Generic =  2,
             Plus    =  1,
@@ -27,23 +62,23 @@ namespace Tools
         };
         
         template<typename T>
-        [[nodiscard]] constexpr Scalar::Flag ToFlag( const T x )
+        [[nodiscard]] constexpr Flag ToFlag( const T x )
         {
             if( x == T(0) )
             {
-                return Scalar::Flag::Zero;
+                return Flag::Zero;
             }
             else if( x == T(1) )
             {
-                return Scalar::Flag::Plus;
+                return Flag::Plus;
             }
             else if( x == T(-1) )
             {
-                return Scalar::Flag::Minus;
+                return Flag::Minus;
             }
             else
             {
-                return Scalar::Flag::Generic;
+                return Flag::Generic;
             }
         }
         
@@ -365,16 +400,35 @@ namespace Tools
 #define ASSERT_COMPLEX(C) static_assert( Scalar::ComplexQ<C>, "Template parameter " #C " must be a complex-valued type." );
     
     
+
     namespace Scalar
     {
+        template<const Scalar::Flag flag, Tools::Op op, typename a_T, typename x_T>
+        [[nodiscard]] constexpr bool OpReturnRealQ()
+        {
+            if constexpr ( flag == Flag::Zero )
+            {
+                return true;
+            }
+            
+            if constexpr ( RealQ<x_T> && (op == Tools::Op::Im) )
+            {
+                return true;
+            }
+            
+            constexpr bool a_Real_Q = RealQ<a_T> || ( ComplexQ<a_T> && RealQ<x_T> );
+            
+            constexpr bool x_Real_Q = RealQ<x_T>|| (op == Tools::Op::Re) || (op == Tools::Op::Im) || (op == Tools::Op::ReTrans) || (op == Tools::Op::ImTrans);
+            
+            return a_Real_Q && x_Real_Q;
+        }
+
+        
         template<
             Tools::Op op, typename x_T,
             typename Return_T =
             std::conditional_t<
-                (op == Tools::Op::Re) || (op == Tools::Op::ReTrans)
-                ||
-                (op == Tools::Op::Im) || (op == Tools::Op::ImTrans)
-                ,
+                OpReturnRealQ<Flag::Plus,op,x_T,x_T>(),
                 Scalar::Real<x_T>,
                 x_T
             >
@@ -400,33 +454,63 @@ namespace Tools
         }
         
         
-        
         template<
-            Scalar::Flag a_flag, typename a_T, typename x_T,
-            typename Return_T = decltype( scalar_cast<x_T>(a_T(0)) * x_T(0) )
+            Flag a_flag, typename a_T, typename x_T,
+            typename Return_T =
+            std::conditional_t<
+                OpReturnRealQ<a_flag,Tools::Op::Id,a_T,x_T>(),
+                decltype( Real<a_T>(0) * Real<x_T>(0) ),
+                decltype( a_T(0) * x_T(0) )
+            >
         >
         force_inline constexpr Return_T Op( cref<a_T> a, cref<x_T> x )
         {
-            if constexpr ( a_flag == Scalar::Flag::Generic )
+            if constexpr ( a_flag == Flag::Generic )
             {
                 return a * x;
             }
-            else if constexpr ( a_flag == Scalar::Flag::Plus )
+            else if constexpr ( a_flag == Flag::Plus )
             {
                 return x;
             }
-            else if constexpr ( a_flag == Scalar::Flag::Minus )
+            else if constexpr ( a_flag == Flag::Minus )
             {
                 return -x;
             }
-            else if constexpr ( a_flag == Scalar::Flag::Zero )
+            else if constexpr ( a_flag == Flag::Zero )
             {
                 return static_cast<Return_T>(0);
             }
         }
         
+        
+        
+//        template<
+//            Scalar::Flag a_flag, typename a_T, typename x_T,
+//            typename Return_T = decltype( scalar_cast<x_T>(a_T(0)) * x_T(0) )
+//        >
+//        force_inline constexpr Return_T Op( cref<a_T> a, cref<x_T> x )
+//        {
+//            if constexpr ( a_flag == Scalar::Flag::Generic )
+//            {
+//                return a * x;
+//            }
+//            else if constexpr ( a_flag == Scalar::Flag::Plus )
+//            {
+//                return x;
+//            }
+//            else if constexpr ( a_flag == Scalar::Flag::Minus )
+//            {
+//                return -x;
+//            }
+//            else if constexpr ( a_flag == Flag::Zero )
+//            {
+//                return static_cast<Return_T>(0);
+//            }
+//        }
+        
         template<
-            Scalar::Flag a_flag, Tools::Op op,
+            Flag a_flag, Tools::Op op,
             typename a_T, typename x_T,
             typename Return_T = decltype( Op<a_flag>( a_T(0), Op<op>(x_T(0)) ) )
         >

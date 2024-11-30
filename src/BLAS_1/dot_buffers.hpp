@@ -26,20 +26,24 @@ namespace Tools
         
         using T = decltype( x_T(1) * y_T(1) );
         
-        return DoReduce<N,parQ>(
-            [x,y]( const Size_T i ) -> T
-            {
-                return
+        {
+            #pragma float_control(precise, off)
+            
+            return DoReduce<N,parQ>(
+                [x,y]( const Size_T i ) -> T
+                {
+                    return
                     scalar_cast<T>( opx == Op::Conj ? Conj(x[i]) : x[i] )
                     *
                     scalar_cast<T>( opy == Op::Conj ? Conj(y[i]) : y[i] );
-            },
-            []( const T & value, T & result )
-            {
-                result += value;
-            },
-            T(0), n, thread_count
-        );
+                },
+                []( const T & value, T & result )
+                {
+                    result += value;
+                },
+                T(0), n, thread_count
+            );
+        }
     }
     
 } // namespace Tools

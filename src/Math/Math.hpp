@@ -386,14 +386,6 @@ namespace Tools
     }
     
     
-    
-    template<typename S, typename T>
-    static constexpr bool SameQ = std::is_same_v<S,T>;
-    
-    template<typename T>
-    static constexpr bool VectorizableQ = vec_enabledQ && ( SameQ<T,Real32> || SameQ<T,Real64> || SameQ<T,Int16> ||SameQ<T,Int32> || SameQ<T,Int64> || SameQ<T,UInt16> ||SameQ<T,UInt32> || SameQ<T,UInt64> );
-    
-    
     template < typename T >
     inline static constexpr T SphereVolume ( const Size_T n )
     {

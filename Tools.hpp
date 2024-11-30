@@ -269,9 +269,23 @@ namespace Tools
 //using Tensors::Op;
 //using Tensors::AddTo;
 
-#include "src/Scalars/combine_scalars.hpp"
-#include "src/TypeName.hpp"
 
+
+#include "src/Scalars/combine_scalars.hpp"
+
+// Common dependencies for combine_scalars_vec and combine_buffers_vec.
+#include "src/Scalars/Op_vec.hpp"
+
+// Overloads of Scalar::Op for complex types; uses vec_T.
+//#include "src/Scalars/Op_complex.hpp.hpp"
+
+// Overloads of combine_scalars for complex types; uses vec_T.
+#include "src/Scalars/combine_scalars_vec.hpp"
+
+// Overloads of combine_scalars for complex types; uses mat_T.
+//#include "src/Scalars/combine_scalars_mat.hpp"
+
+#include "src/TypeName.hpp"
 
 #include "src/ParallelDo_Thread.hpp"
 
