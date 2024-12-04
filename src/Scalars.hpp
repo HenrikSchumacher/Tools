@@ -403,20 +403,26 @@ namespace Tools
 
     namespace Scalar
     {
-        template<const Scalar::Flag flag, Tools::Op op, typename a_T, typename x_T>
+        template<const Scalar::Flag a_flag, Tools::Op op, typename a_T, typename x_T>
         [[nodiscard]] constexpr bool OpReturnRealQ()
         {
-            if constexpr ( flag == Flag::Zero )
+            // This function returns `true` of it can be guaranteed at compile time that `Op<a_flag,op>(a,x)` can be represented by a type `R` satisfying `Scalar::RealQ<R> == true`.
+            
+            if constexpr ( a_flag == Flag::Zero )
             {
+                // The result would be 0, which is real.
                 return true;
             }
             
-            if constexpr ( RealQ<x_T> && (op == Tools::Op::Im) )
+            if constexpr ( RealQ<x_T> && ( (op == Tools::Op::Im) || (op == Tools::Op::ImTrans) ) )
             {
+                // The result would be 0, which is real.
                 return true;
             }
             
-            constexpr bool a_Real_Q = RealQ<a_T> || ( ComplexQ<a_T> && RealQ<x_T> );
+//            constexpr bool a_Real_Q = RealQ<a_T> || ( ComplexQ<a_T> && RealQ<x_T> );
+            
+            constexpr bool a_Real_Q = RealQ<a_T> || (a_flag == Flag::Plus) || (a_flag == Flag::Minus);
             
             constexpr bool x_Real_Q = RealQ<x_T>|| (op == Tools::Op::Re) || (op == Tools::Op::Im) || (op == Tools::Op::ReTrans) || (op == Tools::Op::ImTrans);
             

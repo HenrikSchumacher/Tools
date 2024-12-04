@@ -17,7 +17,10 @@ namespace Tools
         >
         Op_vec( cref<Cplx<R>> a, cref<R> x )
         {
-            if constexpr ( (a_flag == Flag::Zero) || (op == Tools::Op::Im) )
+            // It vectorizable, then real, right?
+            static_assert(RealQ<R>,"");
+            
+            if constexpr ( (a_flag == Flag::Zero) || (op == Tools::Op::Im) || (op == Tools::Op::Im) )
             {
                 return 0;
             }
@@ -29,8 +32,11 @@ namespace Tools
             {
                 return -x;
             }
-            else
+            else // if constexpr ( (a_flag == Flag::Generic) )
             {
+                // If we land here, then `a` is complex and `x` is real.
+                // Moreover, `a` is neither `0`, `-1`, or `-1` (or rather: we cannot tell this at compile time).
+                // And we cannot tell whether `op(x)` is zero; surely, we op is
                 static_assert(false,"");
             }
         }
@@ -43,6 +49,9 @@ namespace Tools
         >
         Op_vec( cref<Cplx<R>> a, cref<R> x )
         {
+            // It vectorizable, then real, right?
+            static_assert(RealQ<R>,"");
+            
             using V_T = vec_T<2,R>;
             
             if constexpr ( a_flag == Flag::Generic )
@@ -50,8 +59,9 @@ namespace Tools
                 V_T & A = *reinterpret_cast<const V_T *>(&a);
                 return A * x;
             }
-            else
+            else // if constexpr ( a_flag != Flag::Generic )
             {
+                // If we land here, then `x` is real and `a` must be either `0`, `1`, or `-1`. So, OpReturnRealQ should have returned `true`.
                 static_assert(false,"");
             }
         }
@@ -82,6 +92,7 @@ namespace Tools
             }
             else
             {
+                // If we land here, then we cannot certify at compile time that op(x) is real and `a != 0`. So we cannot guarantee that `a * op(x)` is real -- and OpReturnRealQ should have returned false. So this should be impossible.
                 static_assert(false,"");
             }
         }
@@ -110,6 +121,8 @@ namespace Tools
                 }
                 else
                 {
+                    // If we land here, then op(x) is guaranteed to be real.
+                    // And since `a` is real as well, `OpReturnRealQ` should have returned true. So this is impossible.
                     static_assert(false,"");
                 }
             }
@@ -121,9 +134,12 @@ namespace Tools
                 }
                 else if constexpr ( op == Tools::Op::Conj )
                 {
+                    return V_T{-Re(x),Im(x)};
                 }
                 else
                 {
+                    // If we land here, then op(x) is guaranteed to be real.
+                    // And since `a` is real as well, `OpReturnRealQ` should have returned true. So this is impossible.
                     static_assert(false,"");
                 }
             }
@@ -145,11 +161,15 @@ namespace Tools
                 }
                 else
                 {
+                    // If we land here, then op(x) is guaranteed to be real.
+                    // And since `a` is real as well, `OpReturnRealQ` should have returned true. So this is impossible.
+                    
                     static_assert(false,"");
                 }
             }
-            else
+            else // if constexpr ( a_flag == Flag::Zero )
             {
+                // If we land here, then `a == 0`, so `a * op(x) == 0` and `OpReturnRealQ` should have returned true. So this is impossible.
                 static_assert(false,"");
             }
         }
@@ -180,6 +200,7 @@ namespace Tools
             }
             else
             {
+                // If we land here, then `op(x)` cannot be certified to be real at compile time, and `a != 0`. So we have no certificate for `a * op(x)` being real, and OpReturnRealQ should have returned `false`. So this is impossible.
                 static_assert(false,"");
             }
         }
@@ -196,12 +217,15 @@ namespace Tools
             
             if constexpr ( (op == Tools::Op::Re) || (op == Tools::Op::ReTrans) )
             {
+                // First case that op(x) is real.
                 return Op_vec<a_flag,Tools::Op::Id>(a,Re(x));
             }
             else if constexpr ( (op == Tools::Op::Im) || (op == Tools::Op::ImTrans) )
             {
+                // Second case that op(x) is real.
                 return Op_vec<a_flag,Tools::Op::Id>(a,Im(x));
             }
+            // From here one, we must assume that op(x) is complex.
             else if constexpr ( a_flag == Flag::Plus )
             {
                 return Op_vec<Flag::Plus,op>(R(1),x);
@@ -228,11 +252,13 @@ namespace Tools
                 }
                 else
                 {
+                    // We cannot arrive here because otherwise `op` where one of `Op::Re`, `Op::ReTrans`, `Op::Im`, or `Op::ImTrans`, and these cases have been seeved out above.
                     static_assert(false,"");
                 }
             }
             else
             {
+                // Only a_flag == Flag::Zero is possible here. But then `OpReturnRealQ` would have returned true, so which contradicts the assumptions in the template.
                 static_assert(false,"");
             }
         }
