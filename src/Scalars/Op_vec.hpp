@@ -37,7 +37,7 @@ namespace Tools
                 // If we land here, then `a` is complex and `x` is real.
                 // Moreover, `a` is neither `0`, `-1`, or `-1` (or rather: we cannot tell this at compile time).
                 // And we cannot tell whether `op(x)` is zero; surely, we op is
-                static_assert(false,"");
+                static_assert(Tools::DependentFalse<R>,"");
             }
         }
         
@@ -62,7 +62,7 @@ namespace Tools
             else // if constexpr ( a_flag != Flag::Generic )
             {
                 // If we land here, then `x` is real and `a` must be either `0`, `1`, or `-1`. So, OpReturnRealQ should have returned `true`.
-                static_assert(false,"");
+                static_assert(Tools::DependentFalse<R>,"");
             }
         }
     
@@ -93,7 +93,7 @@ namespace Tools
             else
             {
                 // If we land here, then we cannot certify at compile time that op(x) is real and `a != 0`. So we cannot guarantee that `a * op(x)` is real -- and OpReturnRealQ should have returned false. So this should be impossible.
-                static_assert(false,"");
+                static_assert(Tools::DependentFalse<R>,"");
             }
         }
 
@@ -123,7 +123,7 @@ namespace Tools
                 {
                     // If we land here, then op(x) is guaranteed to be real.
                     // And since `a` is real as well, `OpReturnRealQ` should have returned true. So this is impossible.
-                    static_assert(false,"");
+                    static_assert(Tools::DependentFalse<R>,"");
                 }
             }
             else if constexpr ( a_flag == Flag::Minus )
@@ -140,7 +140,7 @@ namespace Tools
                 {
                     // If we land here, then op(x) is guaranteed to be real.
                     // And since `a` is real as well, `OpReturnRealQ` should have returned true. So this is impossible.
-                    static_assert(false,"");
+                    static_assert(Tools::DependentFalse<R>,"");
                 }
             }
             else if constexpr ( a_flag == Flag::Generic )
@@ -164,13 +164,13 @@ namespace Tools
                     // If we land here, then op(x) is guaranteed to be real.
                     // And since `a` is real as well, `OpReturnRealQ` should have returned true. So this is impossible.
                     
-                    static_assert(false,"");
+                    static_assert(Tools::DependentFalse<R>,"");
                 }
             }
             else // if constexpr ( a_flag == Flag::Zero )
             {
                 // If we land here, then `a == 0`, so `a * op(x) == 0` and `OpReturnRealQ` should have returned true. So this is impossible.
-                static_assert(false,"");
+                static_assert(Tools::DependentFalse<R>,"");
             }
         }
     
@@ -201,7 +201,7 @@ namespace Tools
             else
             {
                 // If we land here, then `op(x)` cannot be certified to be real at compile time, and `a != 0`. So we have no certificate for `a * op(x)` being real, and OpReturnRealQ should have returned `false`. So this is impossible.
-                static_assert(false,"");
+                static_assert(Tools::DependentFalse<R>,"");
             }
         }
 
@@ -253,13 +253,13 @@ namespace Tools
                 else
                 {
                     // We cannot arrive here because otherwise `op` where one of `Op::Re`, `Op::ReTrans`, `Op::Im`, or `Op::ImTrans`, and these cases have been seeved out above.
-                    static_assert(false,"");
+                    static_assert(Tools::DependentFalse<R>,"");
                 }
             }
             else
             {
                 // Only a_flag == Flag::Zero is possible here. But then `OpReturnRealQ` would have returned true, so which contradicts the assumptions in the template.
-                static_assert(false,"");
+                static_assert(Tools::DependentFalse<R>,"");
             }
         }
 

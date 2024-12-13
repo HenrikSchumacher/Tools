@@ -45,7 +45,6 @@
 #endif
 
 
-
 // constexpr version of conditional ?-operator
 #define COND( condition, case1, case2 ) ([&]{           \
         if constexpr ( condition )                      \
@@ -208,7 +207,11 @@ namespace Tools
         }
     }
 
-
+    
+//    // Workaround for static_assert(false,"") within constexpr if.
+    template <typename>
+    inline constexpr bool DependentFalse = false;
+    
 
 #if ( __has_attribute(ext_vector_type) )
     static constexpr bool vec_enabledQ = true;
