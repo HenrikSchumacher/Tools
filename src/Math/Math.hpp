@@ -104,7 +104,7 @@ namespace Tools
     {
         constexpr T zero = 0;
         
-        return static_cast<R>( (x > zero) - (x < zero) );
+        return static_cast<R>(x > zero) - static_cast<R>(x < zero);
     }
     
     template<typename R = int, typename S, typename T>
@@ -112,8 +112,19 @@ namespace Tools
     {
         // Returns the sign of x - y.
         
-        return static_cast<R>( (x > y) - (x < y) );
+        return static_cast<R>(x > y) - static_cast<R>(x < y);
     }
+    
+    template<Size_T n, typename T>
+    force_inline constexpr
+    std::enable_if_t<VectorizableQ<T>,decltype(vec_T<n,T>{} > vec_T<n,T>{})>
+    DifferenceSign( cref<vec_T<n,T>> x, cref<vec_T<n,T>> y )
+    {
+        // Returns the sign of x - y.
+        
+        return (x > y) - (x < y);
+    }
+    
     
     force_inline constexpr bool OppositeSignQ( const int x, const int y )
     {

@@ -165,6 +165,13 @@ namespace Tools
     [[nodiscard]] std::string ToString( const std::vector<T> & v )
     {
         const Size_T dim = v.size();
-        return ArrayToString( &v[0], &dim, 1);
+        return ArrayToString( &v[0], &dim, 1 );
+    }
+    
+    template<Size_T n, typename T>
+    [[nodiscard]] std::string ToString( const std::array<T,n> & v )
+    {
+        const Size_T dim = n;
+        return ArrayToString( &v[0], &dim, 1 );
     }
 } // namespace Tools

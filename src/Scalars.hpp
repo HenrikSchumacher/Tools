@@ -53,7 +53,7 @@ namespace Tools
     namespace Scalar
     {
         
-        enum class Flag : signed char
+        enum class Flag : Int8
         {
             Generic =  2,
             Plus    =  1,

@@ -46,7 +46,7 @@ namespace Tools
         
         if( n > 3 )
         {
-            signed char sign ( 1 );
+            Int8 sign ( 1 );
             
             for(Int k = 0; k < n - 1; ++k )
             {
