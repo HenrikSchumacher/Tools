@@ -2,7 +2,7 @@
 
 namespace Tools
 {
-    template<typename Scal_, typename Int_>
+    template<typename Scal_, typename Int_ = Int64>
     class ProductAccumulator
     {
         using Scal    = Scal_;
@@ -26,7 +26,21 @@ namespace Tools
         
         ProductAccumulator() = default;
         
-        ProductAccumulator( const Scal init )
+//        ProductAccumulator( const Scal init, Int shift )
+//        {
+//            if constexpr ( Scalar::RealQ<Scal> )
+//            {
+//                std::tie(x,e)   = mantissa_exponent( init );
+//            }
+//            else
+//            {
+//                std::tie(x,y,e) = mantissa_exponent( init );
+//            }
+//            
+//            e += shift;
+//        }
+        
+        ProductAccumulator( cref<Scal> init )
         {
             if constexpr ( Scalar::RealQ<Scal> )
             {
@@ -38,6 +52,12 @@ namespace Tools
             }
         }
         
+        ProductAccumulator( cref<Scal>  mantissa_init, cref<Int> exponent_init )
+        :   ProductAccumulator( mantissa_init )
+        {
+            e += exponent_init;
+        }
+
         ~ProductAccumulator() = default;
         
         
@@ -56,19 +76,21 @@ namespace Tools
             auto [u,e_u] = mantissa_exponent( Re(z) );
             auto [v,e_v] = mantissa_exponent( Im(z) );
             
-            Int d = e_u - e_v;
+            const Int d = e_u - e_v;
             
             Int exponent;
             
-            if( d >= 0 )
+            const bool use_u_e = ((d >= 0) && (u != 0)) || (v == 0);
+            
+            if( use_u_e )
             {
                 exponent = e_u;
-                v = v * Power(Real(2),-d);
+                v = v * Tools::Power(Real(2),-d);
             }
             else
             {
                 exponent = e_v;
-                u = u * Power(Real(2),d);
+                u = u * Tools::Power(Real(2),d);
             }
             
             return std::tuple<Real,Real,Int>(u,v,exponent);
@@ -78,7 +100,7 @@ namespace Tools
         
         ProductAccumulator & operator*=( const Scal z )
         {
-            Int shift = 0;
+            Int shift;
             
             if constexpr ( Scalar::RealQ<Scal> )
             {
@@ -94,10 +116,139 @@ namespace Tools
             return *this;
         }
         
+        ProductAccumulator & operator*=( const ProductAccumulator & z )
+        {
+            e += z.e;
+            
+            if constexpr ( Scalar::RealQ<Scal> )
+            {
+                return (*this) *= z.x;
+            }
+            else
+            {
+                return (*this) *= Complex(z.x,z.y);
+            }
+        }
+        
+        
+        friend ProductAccumulator operator*(
+            const ProductAccumulator & a, const ProductAccumulator & b
+        )
+        {
+            ProductAccumulator c (a);
+            
+            c *= b;
+            
+            return c;
+        }
+        
+        ProductAccumulator & operator/=( const Scal z )
+        {
+            Int shift = 0;
+            
+            if constexpr ( Scalar::RealQ<Scal> )
+            {
+                std::tie(x,shift) = mantissa_exponent( x / Re(z) );
+                e += shift;
+            }
+            else
+            {
+                std::tie(x,y,shift) = mantissa_exponent( Complex(x,y) / z );
+                e += shift;
+            }
+            
+            return *this;
+        }
+        
+        ProductAccumulator & operator/=( const ProductAccumulator & z )
+        {
+            e -= z.Exponent2();
+            
+            return (*this) /= z.Mantissa2();
+        }
+
+        
+        friend ProductAccumulator operator/(
+            const ProductAccumulator & a, const ProductAccumulator & b
+        )
+        {
+            ProductAccumulator c (a);
+            
+            c /= b;
+            
+            return c;
+        }
+        
+        friend ProductAccumulator<Real,Int> Abs( const ProductAccumulator<Scal,Int> z )
+        {
+            return Abs(z.Mantissa2()) * ProductAccumulator<Real,Int>::Power(Real(2),z.Exponent2());
+        }
+        
+        ProductAccumulator Power( const Int exponent ) const
+        {
+            if constexpr ( Scalar::RealQ<Scal> )
+            {
+                Real log2_bx = std::log2(x) * exponent;
+                
+                Int q = std::trunc(log2_bx);
+
+                ProductAccumulator<Real,Int> b;
+                b.x = std::exp2(log2_bx - q);
+                b.e = e * exponent + q;
+                
+                // Normalization step. Maybe obsolete.
+                int delta;
+                
+                b.x  = std::frexp( b.x, &delta );
+                b.e += delta;
+                
+                return b;
+                
+            }
+            else
+            {
+                // magnitude of mantissa
+                ProductAccumulator<Real,Int> r = Abs(*this);
+                
+                if( r.Mantissa2() == Real(0) )
+                {
+                    return ProductAccumulator<Complex,Int>(0);
+                }
+                
+                // magnitude of mantissa^exponent
+                ProductAccumulator<Real,Int> R = r.Power(exponent);
+                
+                // argument of mantissa^exponent
+                Real Theta = exponent * std::atan2(y,x);
+                
+                ProductAccumulator<Complex,Int> b;
+                
+                b.x = R.Mantissa2() * std::cos( Theta );
+                b.y = R.Mantissa2() * std::sin( Theta );
+                b.e = R.Exponent2();
+                
+                return b;
+            }
+            
+        }
+        
+        static ProductAccumulator Power( const Scal & base, Int e )
+        {
+            ProductAccumulator b (base);
+            
+            return b.Power(e);
+        }
         
         Scal Mantissa2() const
         {
-            return Complex(x,y);
+            if constexpr ( Scalar::RealQ<Scal> )
+            {
+                return x;
+            }
+            else
+            {
+                return Complex(x,y);
+            }
         }
         
         Int Exponent2() const
@@ -129,6 +280,11 @@ namespace Tools
         
         std::pair<Scal,Int> MantissaExponent10()  const
         {
+            if( x == Scal(0) )
+            {
+                return std::pair(Scal(0),Int(0));
+            }
+            
 //            constexpr Real conversion_factor = std::log(Real(2)) / std::log(Real(10));
             constexpr Real conversion_factor = 0.3010299956639812;
             
@@ -178,6 +334,20 @@ namespace Tools
                 return std::pair<Complex,Int>( z10, e10 );
             }
         }
+
+
+        [[nodiscard]] friend std::string ToString( cref<ProductAccumulator> a ) 
+        {
+            if constexpr ( Scalar::RealQ<Scal> )
+            {
+                return std::string("{ ") + ToString(a.x) + ", " + ToString(a.e) + " } ";
+            }
+            else
+            {
+                return std::string("{ ") + ToString(a.x) + ", " + ToString(a.y) + ", " + ToString(a.e) + " } ";
+            }
+        }
+        
     }; // class ProduceAccumulator
     
 } // namespace Tools
