@@ -38,12 +38,12 @@ namespace Tools
         mptr<z_T> z,  const Size_T ldz, R_z_T && z_reducer
     )
     {
-        if constexpr ( N <= 0 )
+        if constexpr ( M <= 0 )
         {
             return;
         }
         
-        static_assert(M > 0,"");
+        static_assert(N > 0,"");
 
         using V_T = vec_T<N,X_T>;
         
