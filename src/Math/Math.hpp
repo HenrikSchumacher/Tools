@@ -238,6 +238,12 @@ namespace Tools
     }
     
     template<typename Real>
+    force_inline constexpr std::pair<Real,Real> MinMax( const std::pair<Real,Real> & p )
+    {
+        return MinMax( p.first, p.second );
+    }
+    
+    template<typename Real>
     force_inline constexpr std::pair<Real,Real> MinMax(
         const Real & x, const Real & y, const Real & z
     )

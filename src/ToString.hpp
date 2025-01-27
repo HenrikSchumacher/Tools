@@ -51,6 +51,14 @@ namespace Tools
         return sout.str();
     }
     
+    template <typename S, typename T>
+    [[nodiscard]] std::string ToString( const std::pair<S,T> & p )
+    {
+        std::stringstream sout;
+        sout << "{ " << p.first << ", " << p.second << " } ";
+        return sout.str();
+    }
+    
     template<typename Scal, typename Int, typename Int2, typename Int3, class Stream_T>
     Stream_T & ArrayToStream(
         const Scal * const a,
