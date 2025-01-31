@@ -195,7 +195,7 @@ namespace Tools
     template<> constexpr bool ArithmeticQ<std::complex<double>> = true;
 
     template <typename E>
-    auto ToUnderlying( const E & e) noexcept
+    auto constexpr ToUnderlying( const E & e) noexcept
     {
         if constexpr( std::is_enum_v<E> )
         {

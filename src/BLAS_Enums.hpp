@@ -54,6 +54,12 @@ namespace Tools
             case Op::Im:        return Op::ImTrans;
                 
             case Op::ImTrans:   return Op::Im;
+                
+            default:
+            {
+                eprint( "Transpose: Argument op = " + ToString(op) + " is invalid." );
+                return Op::Trans;
+            }
         }
     }
     
@@ -76,6 +82,12 @@ namespace Tools
             case Op::Im:        return Op::Im;
                 
             case Op::ImTrans:   return Op::Im;
+                
+            default:
+            {
+                eprint( "DropTranspose: Argument op = " + ToString(op) + " is invalid." );
+                return Op::Id;
+            }
         }
     }
     
@@ -98,6 +110,12 @@ namespace Tools
             case Op::Im:        return Op::Im;
                 
             case Op::ImTrans:   return Op::ImTrans;
+                
+            default:
+            {
+                eprint( "Conjugate: Argument op = " + ToString(op) + " is invalid." );
+                return Op::Conj;
+            }
         }
     }
     
@@ -120,6 +138,12 @@ namespace Tools
             case Op::Im:        return "Im";
                 
             case Op::ImTrans:   return "ImTrans";
+                
+            default:
+            {
+                eprint( "ToString: Argument op = " + ToString(op) + " is invalid." );
+                return "Id";
+            }
         }
     }
     
@@ -143,6 +167,12 @@ namespace Tools
             case Op::Im:        return "Tools::Op::Im";
                 
             case Op::ImTrans:   return "Tools::Op::ImTrans";
+                
+            default:
+            {
+                eprint( "ToOpString: Argument op = " + ToString(op) + " is invalid." );
+                return "Tools::Op::Id";
+            }
         }
     }
     
@@ -160,6 +190,12 @@ namespace Tools
             case Layout::RowMajor: return "RM";
                 
             case Layout::ColMajor: return "CM";
+                
+            default:
+            {
+                eprint( "ToString: Argument layout = " + ToString(layout) + " is invalid." );
+                return "RM";
+            }
         }
     }
     
@@ -178,6 +214,12 @@ namespace Tools
             case UpLo::Upper: return "U";
                 
             case UpLo::Lower: return "L";
+                
+            default:
+            {
+                eprint( "ToString: Argument uplo = " + ToString(uplo) + " is invalid." );
+                return "U";
+            }
         }
     }
     
@@ -188,6 +230,12 @@ namespace Tools
             case UpLo::Lower:   return UpLo::Upper;
                 
             case UpLo::Upper:   return UpLo::Lower;
+                
+            default:
+            {
+                eprint( "Transpose: Argument uplo = " + ToString(uplo) + " is invalid." );
+                return UpLo::Upper;
+            }
         }
     }
     
