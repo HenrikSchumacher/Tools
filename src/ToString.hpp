@@ -73,7 +73,7 @@ namespace Tools
     {
         if( rank <= 0 )
         {
-            s << boost::lexical_cast<std::string>(a[0]);
+            s << a[0];
         }
         else if( rank == 1 )
         {
@@ -81,12 +81,12 @@ namespace Tools
             
             if( dims[0] > 0 )
             {
-                s << boost::lexical_cast<std::string>(a[0]);
+                s << a[0];
             }
             
             for( Int i = 1; i < dims[0]; ++i )
             {
-                s << ", " << boost::lexical_cast<std::string>(a[i]);
+                s << ", " << a[i];
             }
             
             s << " }";
