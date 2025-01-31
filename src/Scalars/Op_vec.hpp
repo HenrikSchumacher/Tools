@@ -36,7 +36,10 @@ namespace Tools
             {
                 // If we land here, then `a` is complex and `x` is real.
                 // Moreover, `a` is neither `0`, `-1`, or `-1` (or rather: we cannot tell this at compile time).
-                // And we cannot tell whether `op(x)` is zero; surely, we op is
+                // And we cannot tell whether `op(x)` is zero.
+                
+                (void)a;
+                
                 static_assert(Tools::DependentFalse<R>,"");
             }
         }

@@ -23,6 +23,7 @@
 
 #include "BLAS_1/iamax_buffer.hpp"
 
+#include "BLAS_1/total_buffer.hpp"
 #include "BLAS_1/norm_1.hpp"
 #include "BLAS_1/norm_2.hpp"
 #include "BLAS_1/norm_max.hpp"
