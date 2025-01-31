@@ -3,12 +3,13 @@
 namespace Tools
 {
     template <typename T>
-    [[nodiscard]] std::string ToString( const T & a_value, const int p = 16 )
+    [[nodiscard]] std::string ToString( const T & a_value, const int prec = 17 )
     {
-        std::stringstream sout;
-        sout.precision(p);
-        sout << ToUnderlying(a_value);
-        return sout.str();
+        std::stringstream s;
+        s << std::setprecision(prec);
+        s << std::showpoint;
+        s << ToUnderlying(a_value);
+        return s.str();
     }
 
     template <typename T>
@@ -27,12 +28,13 @@ namespace Tools
     
     
     template <typename T>
-    [[nodiscard]] std::string ToString( const std::complex<T> & z, const int p = 16)
+    [[nodiscard]] std::string ToString( const std::complex<T> & z, const int prec = 17 )
     {
-        std::stringstream sout;
-        sout.precision(p);
-        sout << z;
-        return sout.str();
+        std::stringstream s;
+        s << std::setprecision(prec);
+        s << std::showpoint;
+        s << z;
+        return s.str();
     }
     
     template <typename T>
@@ -71,7 +73,7 @@ namespace Tools
     {
         if( rank <= 0 )
         {
-            s << a[0];
+            s << boost::lexical_cast<std::string>(a[0]);
         }
         else if( rank == 1 )
         {
@@ -79,12 +81,12 @@ namespace Tools
             
             if( dims[0] > 0 )
             {
-                s << a[0];
+                s << boost::lexical_cast<std::string>(a[0]);
             }
             
             for( Int i = 1; i < dims[0]; ++i )
             {
-                s << ", " << a[i];
+                s << ", " << boost::lexical_cast<std::string>(a[i]);
             }
             
             s << " }";
@@ -147,14 +149,16 @@ namespace Tools
         const T   * const a,
         const Int * const dims,
         Int2 rank,
-        int prec = 16
+        int prec = 17,
+        std::string line_prefix = ""
     )
     {
         std::stringstream s;
         
         s << std::setprecision(prec);
+        s << std::showpoint;
         
-        (void)ArrayToStream<T,Int>( a, dims, rank, s, std::string("") ).str();
+        (void)ArrayToStream<T,Int>( a, dims, rank, s, line_prefix ).str();
 
         return s.str();
     }
@@ -163,10 +167,11 @@ namespace Tools
     std::string ArrayToString(
         const Scal * const a,
         std::initializer_list<Int> dims,
-        int prec = 16
+        int prec = 17,
+        std::string line_prefix = ""
     )
     {
-        return ArrayToString( a, &*dims.begin(), dims.size(), prec );
+        return ArrayToString( a, &*dims.begin(), dims.size(), prec, line_prefix );
     }
     
     template<typename T>
@@ -182,4 +187,83 @@ namespace Tools
         const Size_T dim = n;
         return ArrayToString( &v[0], &dim, 1 );
     }
+    
+    
+    template<typename T>
+    [[nodiscard]] std::string MatrixString(
+        const Size_T m, const Size_T n, cref<T> A, const Size_T ldA,
+        cref<std::string> header,
+        cref<std::string> row_prefix,
+        cref<std::string> row_infix,
+        cref<std::string> row_suffix,
+        cref<std::string> linesep,
+        cref<std::string> footer,
+        const int prec = 17
+    )
+    {
+        std::stringstream s;
+        
+        s << std::setprecision(prec);
+        s << std::showpoint;
+
+        s << header;
+
+        for( Size_T i = 0; i < (m-1); i++)
+        {
+            s << row_prefix;
+
+            for( Size_T j = 0; j < n-1; j++)
+            {
+                s << A[ldA * i + j] << row_infix;
+            }
+
+            s     << A[ldA * i + (n-1)] << row_suffix;
+            
+            s << linesep;
+        }
+        {
+            s << row_prefix;
+
+            for( Size_T j = 0; j < n-1; j++)
+            {
+                s << A[ldA * (m-1) + j] << row_infix;
+            }
+            s     << A[ldA * (m-1) + (n-1)] << row_suffix;
+        }
+
+        s << footer;
+
+        return s.str();
+    }
+    
+    template<typename T>
+    [[nodiscard]] std::string MatrixStringTSV(
+        const Size_T m, const Size_T n, cref<T> A, const Size_T ldA,
+        int prec = 17
+    )
+    {
+        return MatrixString( m, n, A, ldA, "", "", "\t", "", "\n", "", prec );
+    }
+    
+    template<typename T>
+    [[nodiscard]] std::string MatrixStringCSV(
+        const Size_T m, const Size_T n, cref<T> A, const Size_T ldA,
+        int prec = 17
+    )
+    {
+        return MatrixString( m, n, A, ldA, "", "", ",", "", "\n", "", prec );
+    }
+    
+    
+    template<typename T>
+    [[nodiscard]] std::string StringWithLeadingZeroes(
+        const T val, const int width
+    )
+    {
+        std::stringstream s;
+        s << std::setw(width) << std::setfill('0') << val;
+        return s.str();
+    }
+
+    
 } // namespace Tools
