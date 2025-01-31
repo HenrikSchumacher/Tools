@@ -84,7 +84,7 @@ namespace Tools
                 r_y = y_reducer( r_y, X[ldX * i + j] );
             }
             
-            y[i] = static_cast<y_T>(r_y);
+            y[ldy * i] = static_cast<y_T>(r_y);
         }
     }
     
@@ -115,11 +115,11 @@ namespace Tools
                 X_T x = X[ldX * i + j];
                 
                 r_y = y_reducer( r_y, x );
-                r_z = y_reducer( r_z, x );
+                r_z = z_reducer( r_z, x );
             }
             
-            y[i] = static_cast<y_T>(r_y);
-            z[i] = static_cast<z_T>(r_z);
+            y[ldy * i] = static_cast<y_T>(r_y);
+            z[ldz *     i] = static_cast<z_T>(r_z);
         }
     }
     
