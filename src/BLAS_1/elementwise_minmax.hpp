@@ -20,10 +20,15 @@ namespace Tools
         {
             using V_T = vec_T<N,x_T>;
             
-            *reinterpret_cast<V_T *>(up) = __builtin_elementwise_min(
-                *reinterpret_cast<const V_T *>(x),
-                *reinterpret_cast<const V_T *>(y)
-            );
+            V_T x_vec;
+            V_T y_vec;
+            
+            copy_buffer<N>(x,&x_vec);
+            copy_buffer<N>(y,&y_vec);
+            
+            V_T z_vec = __builtin_elementwise_min(x_vec,y_vec);
+            
+            copy_buffer<N>(&z_vec,up);
         }
         else
         {
@@ -55,10 +60,16 @@ namespace Tools
         {
             using V_T = vec_T<N,x_T>;
             
-            *reinterpret_cast<V_T *>(lo) = __builtin_elementwise_min(
-                *reinterpret_cast<const V_T *>(x),
-                *reinterpret_cast<const V_T *>(lo)
-            );
+            V_T x_vec;
+            V_T y_vec;
+            
+            copy_buffer<N>(x ,&x_vec);
+            copy_buffer<N>(lo,&y_vec);
+            
+            V_T z_vec = __builtin_elementwise_min(x_vec,y_vec);
+            
+            copy_buffer<N>(&z_vec,lo);
+            
         }
         else
         {
@@ -90,10 +101,15 @@ namespace Tools
         {
             using V_T = vec_T<N,x_T>;
             
-            *reinterpret_cast<V_T *>(up) = __builtin_elementwise_max(
-                *reinterpret_cast<const V_T *>(x),
-                *reinterpret_cast<const V_T *>(y)
-            );
+            V_T x_vec;
+            V_T y_vec;
+            
+            copy_buffer<N>(x,&x_vec);
+            copy_buffer<N>(y,&y_vec);
+            
+            V_T z_vec = __builtin_elementwise_max(x_vec,y_vec);
+            
+            copy_buffer<N>(&z_vec,up);
         }
         else
         {
@@ -125,10 +141,15 @@ namespace Tools
         {
             using V_T = vec_T<N,x_T>;
             
-            *reinterpret_cast<V_T *>(hi) = __builtin_elementwise_max(
-                *reinterpret_cast<const V_T *>(x),
-                *reinterpret_cast<const V_T *>(hi)
-            );
+            V_T x_vec;
+            V_T y_vec;
+            
+            copy_buffer<N>(x,&x_vec);
+            copy_buffer<N>(hi,&y_vec);
+            
+            V_T z_vec = __builtin_elementwise_max(x_vec,y_vec);
+            
+            copy_buffer<N>(&z_vec,hi);
         }
         else
         {
@@ -161,15 +182,17 @@ namespace Tools
         {
             using V_T = vec_T<N,x_T>;
             
-            *reinterpret_cast<V_T *>(lo) = __builtin_elementwise_min(
-                *reinterpret_cast<const V_T *>(x),
-                *reinterpret_cast<const V_T *>(y)
-            );
+            V_T x_vec;
+            V_T y_vec;
             
-            *reinterpret_cast<V_T *>(up) = __builtin_elementwise_max(
-                *reinterpret_cast<const V_T *>(x),
-                *reinterpret_cast<const V_T *>(y)
-            );
+            copy_buffer<N>(x,&x_vec);
+            copy_buffer<N>(y,&y_vec);
+            
+            V_T lo_vec = __builtin_elementwise_min(x_vec,y_vec);
+            V_T up_vec = __builtin_elementwise_max(x_vec,y_vec);
+            
+            copy_buffer<N>(&lo_vec,lo);
+            copy_buffer<N>(&up_vec,up);
         }
         else
         {
@@ -201,15 +224,19 @@ namespace Tools
         {
             using V_T = vec_T<N,x_T>;
             
-            *reinterpret_cast<V_T *>(lo) = __builtin_elementwise_min(
-                *reinterpret_cast<const V_T *>(x),
-                *reinterpret_cast<const V_T *>(lo)
-            );
+            V_T x_vec;
+            V_T lo_vec;
+            V_T up_vec;
             
-            *reinterpret_cast<V_T *>(up) = __builtin_elementwise_max(
-                *reinterpret_cast<const V_T *>(x),
-                *reinterpret_cast<const V_T *>(up)
-            );
+            copy_buffer<N>(x,&x_vec);
+            copy_buffer<N>(&lo_vec,lo);
+            copy_buffer<N>(&up_vec,up);
+            
+            lo_vec = __builtin_elementwise_min(x_vec,lo_vec);
+            up_vec = __builtin_elementwise_max(x_vec,up_vec);
+            
+            copy_buffer<N>(&lo_vec,lo);
+            copy_buffer<N>(&up_vec,up);
         }
         else
         {

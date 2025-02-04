@@ -13,15 +13,13 @@ namespace Tools
             using V_T = vec_T<N,X_T>;
             
             columnwise_reduction_vec<M,N>(
-                X, ldX,
-                y, ldy, []( cref<V_T> a, cref<V_T> b ) { return a + b; }
+                X, ldX, y, ldy, []( cref<V_T> a, cref<V_T> b ) { return a + b; }
             );
         }
         else
         {
             columnwise_reduction<M,N>(
-                X, ldX,
-                y, ldy, []( cref<X_T> a, cref<X_T> b ) { return a + b; }
+                X, ldX, y, ldy, []( cref<X_T> a, cref<X_T> b ) { return a + b; }
             );
         }
     }

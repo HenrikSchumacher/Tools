@@ -22,13 +22,16 @@ namespace Tools
                 
                 constexpr Size_T v_count = m / v_size;
                 
-                using V = vec_T<v_size,T>;
+                using V_T = vec_T<v_size,T>;
+                                
+                V_T A;
+                V_T B;
                 
-                V * A = reinterpret_cast<V*>(&a[0]);
-                V * B = reinterpret_cast<V*>(&a[m]);
+                copy_buffer<v_size>( &a[0], get_ptr(A) );
+                copy_buffer<v_size>( &a[m], get_ptr(B) );
                 
-                V lo;
-                V hi;
+                V_T lo;
+                V_T hi;
                 
                 for( Size_T i = 0; i < v_count; ++i )
                 {
@@ -46,6 +49,9 @@ namespace Tools
                     A[i] = lo;
                     B[i] = hi;
                 }
+                
+                copy_buffer<v_size>( get_ptr(A), &a[0] );
+                copy_buffer<v_size>( get_ptr(B), &a[m] );
             }
             else
             {

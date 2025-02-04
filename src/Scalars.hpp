@@ -14,16 +14,26 @@ namespace Tools
     template<typename R> using Cplx = std::complex<R>;
     
     template<typename R>
-    force_inline constexpr vec_T<2,R> to_vec_T( cref<Cplx<R>> z )
+    force_inline constexpr vec_T<2,R> & to_vec_T( cref<Cplx<R>> z )
     {
-        vec_T<2,R> Z = *reinterpret_cast<const vec_T<2,R> *>(&z);
+        static_assert(sizeof(vec_T<2,R>) == sizeof(Cplx<R>), "");
         
-        return Z;
+        return *reinterpret_cast<const vec_T<2,R> *>(&z);
+    }
+    
+    template<typename R>
+    force_inline vec_T<2,R> & to_vec_T( mref<Cplx<R>> z )
+    {
+        static_assert(sizeof(vec_T<2,R>) == sizeof(Cplx<R>), "");
+        
+        return *reinterpret_cast<const vec_T<2,R> *>(&z);
     }
     
     template<typename R>
     force_inline constexpr Cplx<R> to_Cplx( cref<vec_T<2,R>> Z )
     {
+        static_assert(sizeof(vec_T<2,R>) == sizeof(Cplx<R>), "");
+        
         Cplx<R> z;
         
         *reinterpret_cast<vec_T<2,R> *>(&z) = Z;

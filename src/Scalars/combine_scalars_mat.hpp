@@ -98,9 +98,12 @@ namespace Tools
         );
         
         using V_T = mat_T<2,1,Real>;
-        const V_T & X = *reinterpret_cast<const V_T *>(&x);
-        const V_T & Y = *reinterpret_cast<const V_T *>(&y);
-              V_T & Z = *reinterpret_cast<      V_T *>(&z);
+        
+        // to_vec_T is safe because x, y, z are guaranteed to be complex.
+        
+        const V_T & X = to_vec_T(x);
+        const V_T & Y = to_vec_T(y);
+              V_T & Z = to_vec_T(z);
         
         // WARNING: Currently, this always uses generic case.
         // TODO: Improve implementation for opx == Op::Re, opx == Op::Im, opy == Op::Re, opy == Op::Im
@@ -144,9 +147,11 @@ namespace Tools
         
         using V_T = mat_T<1,2,Real>;
         
-        const V_T & X = *reinterpret_cast<const V_T *>(&x);
-        const V_T & Y = *reinterpret_cast<const V_T *>(&y);
-              V_T & Z = *reinterpret_cast<      V_T *>(&z);
+        // to_vec_T is safe because x, y, z are guaranteed to be complex.
+        
+        const V_T & X = to_vec_T(x);
+        const V_T & Y = to_vec_T(y);
+              V_T & Z = to_vec_T(z);
         
         // WARNING: Currently, this always uses generic case.
         // TODO: Improve implementation for opx == Op::Re, opx == Op::Im, opy == Op::Re, opy == Op::Im
@@ -212,8 +217,11 @@ namespace Tools
             
             Real XY_buf [4] { Re(x), Im(x), Re(y), Im(y) };
             
+            // TODO: This is unsafe.
+            
             const W_T & XY = *reinterpret_cast<const W_T *>(&XY_buf[0]   );
-                  V_T &  Z = *reinterpret_cast<V_T *>(&z);
+            
+                  V_T &  Z = get_vec_T(&z);
             
             Z = AB * XY;
         }
@@ -256,8 +264,11 @@ namespace Tools
             
             Real XY_buf [4] { Re(x), Re(y), Im(x), Im(y) };
             
+            // TODO: This is unsafe.
+            
             const W_T & XY = *reinterpret_cast<const W_T *>(&XY_buf[0]   );
-                  V_T &  Z = *reinterpret_cast<V_T *>(&z);
+            
+                  V_T &  Z = get_vec_T(&z);
             
             Z = AB * XY;
         }

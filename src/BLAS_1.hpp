@@ -14,8 +14,6 @@
 #include "BLAS_1/scale_buffer.hpp"
 //#include "BLAS_1/conjugate_buffer.hpp" // obsolete
 #include "BLAS_1/combine_buffers.hpp"
-// Variants that try to use clang vector extensions; apparently not faster.
-//#include "BLAS_1/combine_buffers_vec.hpp"
 
 #include "BLAS_1/add_to_buffer.hpp"
 

@@ -14,8 +14,7 @@ namespace Tools
             
             columnwise_reduction_vec<M,N>(
                 X, ldX,
-                y, ldy,
-                [](cref<V_T> a,cref<V_T> b){ return __builtin_elementwise_min(a,b); }
+                y, ldy, [](cref<V_T> a,cref<V_T> b){ return __builtin_elementwise_min(a,b); }
             );
         }
         else
@@ -39,8 +38,7 @@ namespace Tools
             
             columnwise_reduction_vec<M,N>(
                 X, ldX,
-                y, ldy,
-                [](cref<V_T> a,cref<V_T> b){ return __builtin_elementwise_max(a,b);}
+                y, ldy, [](cref<V_T> a,cref<V_T> b){ return __builtin_elementwise_max(a,b);}
             );
         }
         else

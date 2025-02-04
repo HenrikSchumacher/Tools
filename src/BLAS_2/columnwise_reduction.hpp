@@ -20,14 +20,18 @@ namespace Tools
 
         using V_T = vec_T<N,X_T>;
         
-        V_T y_vec = *reinterpret_cast<const V_T *>(X);
+        V_T x_vec;
+        V_T y_vec;
+        
+        copy_buffer<N>( X, get_ptr(y_vec) );
         
         for( Size_T i = 1; i < M; ++i )
         {
-            y_vec = y_reducer( y_vec, *reinterpret_cast<const V_T *>(&X[ldX * i]) );
+            copy_buffer<N>( &X[ldX * i], get_ptr(x_vec));
+            y_vec = y_reducer( y_vec, x_vec );
         }
         
-        copy_matrix<N,1>( reinterpret_cast<X_T *>(&y_vec), Size_T(1), y, ldy );
+        copy_matrix<N,1>( get_ptr(y_vec), Size_T(1), y, ldy );
     }
     
     template<
@@ -49,17 +53,26 @@ namespace Tools
         
         using V_T = vec_T<N,X_T>;
         
-        V_T y_vec = *reinterpret_cast<const V_T *>(X);
-        V_T z_vec = *reinterpret_cast<const V_T *>(X);
+        V_T x_vec;
+        V_T y_vec;
+        V_T z_vec;
+        
+        
+        copy_buffer<N>( X, get_ptr(x_vec) );
+        
+        y_vec = x_vec;
+        z_vec = x_vec;
         
         for( Size_T i = 1; i < M; ++i )
         {
-            y_vec = y_reducer( y_vec, *reinterpret_cast<const V_T *>(&X[ldX * i]) );
-            z_vec = z_reducer( z_vec, *reinterpret_cast<const V_T *>(&X[ldX * i]) );
+            copy_buffer<N>( &X[ldX * i], get_ptr(x_vec) );
+            
+            y_vec = y_reducer( y_vec, x_vec );
+            z_vec = z_reducer( z_vec, x_vec );
         }
         
-        copy_matrix<N,1>( reinterpret_cast<X_T *>(&y_vec), Size_T(1), y, ldy );
-        copy_matrix<N,1>( reinterpret_cast<X_T *>(&z_vec), Size_T(1), z, ldz );
+        copy_matrix<N,1>( get_ptr(y_vec), Size_T(1), y, ldy );
+        copy_matrix<N,1>( get_ptr(z_vec), Size_T(1), z, ldz );
     }
     
     template<

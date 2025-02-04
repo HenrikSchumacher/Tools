@@ -213,11 +213,25 @@ namespace Tools
     inline constexpr bool DependentFalse = false;
     
 
-#if ( __has_attribute(ext_vector_type) )
+#if ( (!(defined TOOLS_DEACTIVATE_VECTOR_EXTENSIONS)) && (__has_attribute(__ext_vector_type__)) )
+    
     static constexpr bool vec_enabledQ = true;
-
+    
     template<Size_T N, typename T>
     using vec_T = T __attribute__((__ext_vector_type__(N))) ;
+
+    template<Size_T N, typename T>
+    const T * get_ptr( const vec_T<N,T> & vec )
+    {
+        return reinterpret_cast<const T *>(&vec);
+    }
+    
+    template<Size_T N, typename T>
+    T * get_ptr( vec_T<N,T> & vec )
+    {
+        return reinterpret_cast<T *>(&vec);
+    }
+    
 #else
     static constexpr bool vec_enabledQ = false;
 
@@ -225,11 +239,25 @@ namespace Tools
     using vec_T = std::array<T,N>; //Just a dummy; will not be used, actually.
 #endif
 
-#if ( __has_attribute(matrix_type) )
+#if ( (!(defined TOOLS_DEACTIVATE_MATRIX_EXTENSIONS)) && (__has_attribute(__matrix_type__)) )
+    
     static constexpr bool mat_enabledQ = true;
 
     template<Size_T M, Size_T N, typename T>
-    using mat_T = T __attribute__((matrix_type(M,N))) ;
+    using mat_T = T __attribute__((__matrix_type__(M,N))) ;
+    
+    template<Size_T M, Size_T N, typename T>
+    const T * get_ptr( const mat_T<M,N,T> & mat )
+    {
+        return reinterpret_cast<const T *>(&mat);
+    }
+    
+    template<Size_T M, Size_T N, typename T>
+    T * get_ptr( mat_T<M,N,T> & mat )
+    {
+        return reinterpret_cast<T *>(&mat);
+    }
+    
 #else
     static constexpr bool mat_enabledQ = false;
 
@@ -306,8 +334,8 @@ namespace Tools
 #include "src/CachedObject.hpp"
 
 #include "src/Sort/SortNet.hpp"
-#include "src/Sort/BitonicSort.hpp"
-//    #include "src/Sort/BitonicMergeSort.hpp"
+//#include "src/Sort/BitonicSort.hpp"
+//#include "src/Sort/BitonicMergeSort.hpp"
 #include "src/Sort/Sort.hpp"
 
 #include "src/Math/RealCubicSolve.hpp"

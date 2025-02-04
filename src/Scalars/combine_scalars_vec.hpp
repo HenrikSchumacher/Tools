@@ -38,7 +38,7 @@ namespace Tools
         
         using V_T = vec_T<2,R>;
             
-        V_T & Z = *reinterpret_cast<V_T *>(&z);
+        V_T & Z = to_vec_T(z);
         
         {
             #pragma float_control(precise, off)
