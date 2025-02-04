@@ -379,7 +379,7 @@ namespace Tools
         {
             static_assert(Scalar::RealQ<Real>,"");
             
-            return curr == prev
+            return (curr == prev)
                 ? curr
                 : SqrtNewtonRaphson(x, Scalar::Half<Real> * (curr + x / curr), curr);
         }
@@ -397,7 +397,7 @@ namespace Tools
     {
         static_assert(Scalar::RealQ<Real>,"");
         
-        return (x >= Scalar::Zero<Real> ) && (x < std::numeric_limits<Real>::infinity())
+        return (x >= Scalar::Zero<Real> ) && (x <= std::numeric_limits<Real>::max())
             ? Detail::SqrtNewtonRaphson(x, x, Scalar::Zero<Real> )
             : std::numeric_limits<Real>::quiet_NaN();
     }

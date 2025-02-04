@@ -2,9 +2,9 @@
 
 namespace Tools
 {
-    std::mutex cout_mutex;
-    std::mutex cerr_mutex;
-    std::mutex timer_mutex;
+    static std::mutex cout_mutex;
+    static std::mutex cerr_mutex;
+    static std::mutex timer_mutex;
 
     using Clock = std::chrono::high_resolution_clock;
     using Time  = std::chrono::time_point<Clock>;
@@ -16,7 +16,7 @@ namespace Tools
     
     namespace Timer
     {
-        std::vector<Time> time_stack;
+        static std::vector<Time> time_stack;
     }
 
 

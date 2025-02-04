@@ -20,22 +20,22 @@ namespace Tools
         Im           = 118
     };
     
-    [[nodiscard]] constexpr bool TransposedQ( const Op op )
+    [[nodiscard]] inline constexpr bool TransposedQ( const Op op )
     {
         return (op == Op::Trans) || (op == Op::ConjTrans) || (op == Op::ReTrans) || (op == Op::ImTrans);
     }
     
-    [[nodiscard]] constexpr bool NotTransposedQ( const Op op )
+    [[nodiscard]] inline constexpr bool NotTransposedQ( const Op op )
     {
         return (op == Op::Id) || (op == Op::Conj) || (op == Op::Re) || (op == Op::Im);
     }
     
-    [[nodiscard]] constexpr bool ConjugatedQ( const Op op )
+    [[nodiscard]] inline constexpr bool ConjugatedQ( const Op op )
     {
         return (op == Op::Conj) || (op == Op::ConjTrans);
     }
     
-    [[nodiscard]] constexpr Op Transpose( const Op op )
+    [[nodiscard]] inline constexpr Op Transpose( const Op op )
     {
         switch( op )
         {
@@ -63,7 +63,7 @@ namespace Tools
         }
     }
     
-    [[nodiscard]] constexpr Op DropTranspose( const Op op )
+    [[nodiscard]] inline constexpr Op DropTranspose( const Op op )
     {
         switch( op )
         {
@@ -91,7 +91,7 @@ namespace Tools
         }
     }
     
-    [[nodiscard]] constexpr Op Conjugate( const Op op )
+    [[nodiscard]] inline constexpr Op Conjugate( const Op op )
     {
         switch( op )
         {
@@ -119,7 +119,7 @@ namespace Tools
         }
     }
     
-    [[nodiscard]] std::string ToString( const Op op )
+    [[nodiscard]] inline std::string ToString( const Op op )
     {
         switch( op )
         {
@@ -148,7 +148,7 @@ namespace Tools
     }
     
     // A string that can be used for string code generation.
-    [[nodiscard]] std::string ToOpString( const Op op )
+    [[nodiscard]] inline std::string ToOpString( const Op op )
     {
         switch( op )
         {
@@ -183,7 +183,7 @@ namespace Tools
         ColMajor = 102
     };
     
-    [[nodiscard]] std::string ToString( const Layout & layout )
+    [[nodiscard]] inline std::string ToString( const Layout & layout )
     {
         switch( layout )
         {
@@ -207,7 +207,7 @@ namespace Tools
     };
     
     
-    [[nodiscard]] std::string ToString( const UpLo & uplo )
+    [[nodiscard]] inline std::string ToString( const UpLo & uplo )
     {
         switch( uplo )
         {
@@ -223,7 +223,7 @@ namespace Tools
         }
     }
     
-    [[nodiscard]] constexpr UpLo Transpose( const UpLo uplo )
+    [[nodiscard]] inline constexpr UpLo Transpose( const UpLo uplo )
     {
         switch( uplo )
         {

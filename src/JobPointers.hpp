@@ -4,13 +4,18 @@ namespace Tools
 {
     // TODO: Make the job pointers respect the size of the cache line somehow.
     
-    template<typename Int>
+    template<typename Int_>
     class JobPointers
     {
+        static_assert(IntQ<Int_>,"");
+        
     public:
+        
+        using Int = Int_;
+        
         JobPointers() = default;
         
-        ~JobPointers() = default;
+//        ~JobPointers() = default;
         
 //        explicit JobPointers( const Int thread_count )
 //        :   job_ptr ( std::vector<Int>(thread_count+1, static_cast<Int>(0) ) )
@@ -20,10 +25,7 @@ namespace Tools
         
         template<typename I>
         JobPointers( const Int job_count, const I thread_count )
-        :   job_ptr ( std::vector<Int>(
-                static_cast<Size_T>(thread_count+1),
-                static_cast<Int>(0) )
-            )
+        :   job_ptr ( ToSize_T(thread_count)+1, static_cast<Int>(0) )
         {
             BalanceWorkLoad( job_count );
         }
@@ -47,14 +49,16 @@ namespace Tools
             }
         }
         
-        const Int & operator[]( const Size_T i ) const
+        template<typename I>
+        const Int & operator[]( const I i ) const
         {
-            return job_ptr[i];
+            return job_ptr[ToSize_T(i)];
         }
         
-        const Int & operator()( const Size_T i ) const
+        template<typename I>
+        const Int & operator()( const I i ) const
         {
-            return job_ptr[i];
+            return job_ptr[ToSize_T(i)];
         }
         
         Int Size() const
@@ -154,9 +158,9 @@ namespace Tools
             ptic("BalanceWorkLoad");
             
 
-            job_ptr[thread_count] = job_count;
+            job_ptr[static_cast<Size_T>(thread_count)] = job_count;
 
-            const Int naive_chunk_size = (job_count + thread_count - 1) / thread_count;
+            const Int naive_chunk_size = ((job_count + thread_count) - Int(1)) / thread_count;
             
             const T total_cost = acc_costs[job_count];
             
@@ -222,7 +226,7 @@ namespace Tools
                     }
                 }
 
-                job_ptr[thread + 1] = b;
+                job_ptr[static_cast<Size_T>(thread + 1)] = b;
             }
             
             ptoc("BalanceWorkLoad");
@@ -254,6 +258,14 @@ namespace Tools
     private:
         
         std::vector<Int> job_ptr;
+        
+        
+    public:
+        
+        static std::string ClassName()
+        {
+            return std::string("JobPointers") + "<" + TypeName<Int> + ">";
+        }
         
         
     }; // JobPointers

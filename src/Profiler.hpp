@@ -11,7 +11,7 @@ namespace Tools
      * @brief Return user's home directory.
      */
     
-    const std::filesystem::path HomeDirectory()
+    static std::filesystem::path HomeDirectory(void)
     {
         const char * s = std::getenv("HOME");
 
@@ -31,22 +31,22 @@ namespace Tools
     
     namespace Profiler
     {
-        std::filesystem::path log_file  = HomeDirectory() / "Tools_Log.txt";
-        std::filesystem::path prof_file = HomeDirectory() / "Tools_Profile.tsv";
+        static std::filesystem::path log_file  = HomeDirectory() / "Tools_Log.txt";
+        static std::filesystem::path prof_file = HomeDirectory() / "Tools_Profile.tsv";
         
-        std::mutex log_mutex;
-        std::ofstream log  ( log_file );
+        static std::mutex log_mutex;
+        static std::ofstream log  ( log_file );
         
 #if defined(TOOLS_ENABLE_PROFILER)
-        std::mutex prof_mutex;
-        std::ofstream prof ( prof_file );
+        static std::mutex prof_mutex;
+        static std::ofstream prof ( prof_file );
         
-        Time init_time = Clock::now();
-        std::vector<Time> time_stack;
-        std::vector<std::string> tag_stack(1,"root");
-        std::vector<int> parent_stack (1, -0);
-        std::vector<int> id_stack (1,0);
-        int id_counter = 0;
+        static Time init_time = Clock::now();
+        static std::vector<Time> time_stack;
+        static std::vector<std::string> tag_stack(1,"root");
+        static std::vector<int> parent_stack (1, -0);
+        static std::vector<int> id_stack (1,0);
+        static int id_counter = 0;
 #endif
         
         

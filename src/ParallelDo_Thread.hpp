@@ -21,11 +21,11 @@ namespace Tools
         }
         else
         {
-            std::vector<std::future<void>> futures (thread_count);
+            std::vector<std::future<void>> futures ( static_cast<Size_T>(thread_count) );
             
             for( Int thread = 0; thread < thread_count; ++thread )
             {
-                futures[thread] = std::async( std::forward<F>(fun), thread );
+                futures[static_cast<Size_T>(thread)] = std::async( std::forward<F>(fun), thread );
             }
             
             for( auto & future : futures )
@@ -54,16 +54,16 @@ namespace Tools
         }
         else
         {
-            std::vector<std::future<T>> futures (thread_count);
+            std::vector<std::future<T>> futures ( static_cast<Size_T>(thread_count) );
             
             for( Int thread = 0; thread < thread_count; ++thread )
             {
-                futures[thread] = std::async( std::forward<F>(fun), thread );
+                futures[static_cast<Size_T>(thread)] = std::async( std::forward<F>(fun), thread );
             }
             
             for( Int thread = 0; thread < thread_count; ++thread )
             {
-                std::invoke( reducer, thread, futures[thread].get(), result );
+                std::invoke( reducer, thread, futures[static_cast<Size_T>(thread)].get(), result );
             }
         }
         
@@ -146,7 +146,7 @@ namespace Tools
             
             for( Int thread = 0; thread < thread_count; ++thread )
             {
-                futures[thread] = std::async( worker, thread );
+                futures[static_cast<Size_T>(thread)] = std::async( worker, thread );
             }
             
             for( auto & future : futures )

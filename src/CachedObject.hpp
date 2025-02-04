@@ -165,7 +165,7 @@ namespace Tools
             catch( const std::out_of_range & e )
             {
                 eprint(this->ClassName()+"::GetCache: Key \""+key+"\" not found!.");
-                throw; //an internal catch block forwards the exception to its external level
+                throw(e); //an internal catch block forwards the exception to its external level
             }
             
             if constexpr ( std::is_same_v<T,std::any> )
@@ -269,7 +269,7 @@ namespace Tools
             catch( const std::out_of_range & e )
             {
                 eprint(this->ClassName()+"GetPersistentCache: Key \""+key+"\" not found!.");
-                throw; //an internal catch block forwards the exception to its external level
+                throw(e); //an internal catch block forwards the exception to its external level
             }
             
             if constexpr ( std::is_same_v<T,std::any> )

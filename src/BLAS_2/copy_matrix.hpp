@@ -46,7 +46,7 @@ namespace Tools
             
             if constexpr ( (M > VarSize) && (N > VarSize ) )
             {
-                copy_buffer<M*N,Sequential>( X, Y );
+                copy_buffer<M*N>( X, Y );
             }
             else
             {

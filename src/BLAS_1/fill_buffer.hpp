@@ -3,34 +3,48 @@
 namespace Tools
 {
     template <
-        Size_T N = VarSize, Parallel_T parQ = Sequential,
+        Size_T N, Parallel_T parQ = Sequential,
         typename T
     >
+    force_inline constexpr void fill_buffer( mptr<T> a, const T init )
+    {
+        static_assert(N > VarSize,"");
+        static_assert(parQ == Sequential,"");
+        
+        std::fill( &a[0], &a[N], init );
+    }
+    
+    template <
+        Size_T N = VarSize, Parallel_T parQ = Sequential,
+        typename T, typename Int
+    >
     force_inline constexpr void fill_buffer(
-        mptr<T> a, const T init, const Size_T n = N, const Size_T thread_count = 1
+        mptr<T> a, const T init, const Int n = N, const Int thread_count = 1
     )
     {
         check_sequential<parQ>( "fill_buffer", thread_count );
+        
+        static_assert(IntQ<Int>,"");
         
         if constexpr ( N == VarSize )
         {
             if constexpr ( parQ == Sequential )
             {
-                std::fill_n( a, n, init );
+                std::fill( &a[0], &a[n], init );
             }
             else
             {
-                if( thread_count <= Scalar::One<Size_T> )
+                if( thread_count <= Scalar::One<Int> )
                 {
-                    std::fill_n( a, n, init );
+                    std::fill( &a[0], &a[n], init );
                 }
                 else
                 {
                     ParallelDo(
-                        [=]( const Size_T thread )
+                        [=]( const Int thread )
                         {
-                            const Size_T begin = JobPointer(n,thread_count,thread  );
-                            const Size_T end   = JobPointer(n,thread_count,thread+1);
+                            const Int begin = JobPointer(n,thread_count,thread  );
+                            const Int end   = JobPointer(n,thread_count,thread+1);
                             
                             std::fill( &a[begin], &a[end], init );
                         },
@@ -41,7 +55,7 @@ namespace Tools
         }
         else
         {
-            std::fill_n( a, N, init );
+            fill_buffer<N>( a, init );
         }
         
     }

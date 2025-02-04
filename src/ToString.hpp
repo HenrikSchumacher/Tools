@@ -127,13 +127,15 @@ namespace Tools
     {
         if( rank >= 0 )
         {
-            std::vector<Int> lds (rank);
+            const Size_T r = ToSize_T(rank);
+            
+            std::vector<Int> lds (r);
 
-            if( rank >= 1 )
+            if( r >= 1 )
             {
-                lds[rank-1] = 1;
+                lds[r-1] = 1;
                 
-                for( Size_T i = rank-1; i --> 0;  )
+                for( Size_T i = r-1; i --> 0;  )
                 {
                     lds[i] = lds[i+1] * dims[i+1];
                 }

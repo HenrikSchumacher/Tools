@@ -171,31 +171,31 @@ namespace Tools
     using Size_T = std::size_t;
     
     template<typename T>
-    constexpr bool IntQ = std::is_integral_v<T>;
+    static constexpr bool IntQ = std::is_integral_v<T>;
     
 #define ASSERT_INT(I) static_assert( IntQ<I>, "Template parameter " #I " must be an integral type." );
     
     template<typename T> 
-    constexpr bool UnsignedIntQ = std::is_unsigned_v<T> && std::is_integral_v<T>;
+    static constexpr bool UnsignedIntQ = std::is_unsigned_v<T> && std::is_integral_v<T>;
     
 #define ASSERT_UINT(I) static_assert( UnsignedIntQ<I>, "Template parameter " #I " must be a unsigned integral type." );
     
     template<typename T>
-    constexpr bool SignedIntQ = std::is_signed_v<T> && std::is_integral_v<T>;
+    static constexpr bool SignedIntQ = std::is_signed_v<T> && std::is_integral_v<T>;
     
 #define ASSERT_SIGNED_INT(I) static_assert( SignedIntQ<I>, "Template parameter " #I " must be a signed integral type." );
     
     template<typename T>
-    constexpr bool FloatQ = std::is_floating_point_v<T>;
+    static constexpr bool FloatQ = std::is_floating_point_v<T>;
     
     template<typename T>
-    constexpr bool ArithmeticQ = std::is_arithmetic_v<T>;
+    static constexpr bool ArithmeticQ = std::is_arithmetic_v<T>;
     
-    template<> constexpr bool ArithmeticQ<std::complex<float>>  = true;
-    template<> constexpr bool ArithmeticQ<std::complex<double>> = true;
+    template<> static constexpr bool ArithmeticQ<std::complex<float>>  = true;
+    template<> static constexpr bool ArithmeticQ<std::complex<double>> = true;
 
     template <typename E>
-    auto constexpr ToUnderlying( const E & e) noexcept
+    force_inline auto constexpr ToUnderlying( const E & e) noexcept
     {
         if constexpr( std::is_enum_v<E> )
         {
@@ -221,13 +221,13 @@ namespace Tools
     using vec_T = T __attribute__((__ext_vector_type__(N))) ;
 
     template<Size_T N, typename T>
-    const T * get_ptr( const vec_T<N,T> & vec )
+    force_inline const T * get_ptr( const vec_T<N,T> & vec )
     {
         return reinterpret_cast<const T *>(&vec);
     }
     
     template<Size_T N, typename T>
-    T * get_ptr( vec_T<N,T> & vec )
+    force_inline T * get_ptr( vec_T<N,T> & vec )
     {
         return reinterpret_cast<T *>(&vec);
     }
@@ -247,13 +247,13 @@ namespace Tools
     using mat_T = T __attribute__((__matrix_type__(M,N))) ;
     
     template<Size_T M, Size_T N, typename T>
-    const T * get_ptr( const mat_T<M,N,T> & mat )
+    force_inline const T * get_ptr( const mat_T<M,N,T> & mat )
     {
         return reinterpret_cast<const T *>(&mat);
     }
     
     template<Size_T M, Size_T N, typename T>
-    T * get_ptr( mat_T<M,N,T> & mat )
+    force_inline T * get_ptr( mat_T<M,N,T> & mat )
     {
         return reinterpret_cast<T *>(&mat);
     }
@@ -264,6 +264,22 @@ namespace Tools
     template<Size_T M, Size_T N, typename T>
     using mat_T = std::array<std::array<T,N>,M>; //Just a dummy; will not be used, actually.
 #endif
+    
+    
+    // Dealing with the pain of signed conversions.
+    
+    template<typename Int>
+    inline constexpr Size_T ToSize_T( const Int i )
+    {
+        static_assert(IntQ<Int>, "");
+        
+        return static_cast<Size_T>(std::max(Int(0),i));
+    }
+    
+    inline constexpr Size_T ToSize_T( const Size_T i )
+    {
+        return i;
+    }
 
 
 } // namespace Tools
