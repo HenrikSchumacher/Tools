@@ -49,7 +49,7 @@ namespace Tools
 #ifdef TOOLS_DEBUG
         if constexpr ( parQ == Sequential )
         {
-            if ( thread_count > Scalar::One<Int> )
+            if ( thread_count > Int(1) )
             {
                 wprint(std::string("check_sequential: method ") + tag + " is marked as sequential, but more than 1 thread is requested.");
             }
@@ -65,26 +65,23 @@ namespace Tools
     // This allows also loops with constant trip counts `N`; if `N > 0`, then the loop will be unrolled and processed sequentially.
     // Parallelization will be turned of also if `parQ` is set to `Sequential`.
     template<
-        Size_T N = VarSize, Parallel_T parQ = Sequential, Dynamic_T dynQ = Static,
-        typename F, typename Int, typename Int_
+        Size_T N_ = VarSize, Parallel_T parQ = Sequential, Dynamic_T dynQ = Static,
+        typename F, typename Int = Size_T
     >
-    force_inline void Do( F && fun, const Int n = N, const Int_ thread_count_ = 1 )
+    force_inline void Do(
+        F && fun, const Int n = static_cast<Int>(N_), const Int thread_count = 1
+    )
     {
         static_assert(IntQ<Int>,"");
-        static_assert(IntQ<Int_>,"");
-        
-        
-        const Int thread_count = static_cast<Int>(thread_count_);
         
         check_sequential<parQ>( "Do", thread_count );
         
-        constexpr Int zero = Scalar::Zero<Int>;
-        constexpr Int one  = Scalar::One <Int>;
+        constexpr Int N = static_cast<Int>(N_);
         
 #ifdef TOOLS_DEBUG
-        if constexpr ( N == VarSize )
+        if constexpr ( N <= VarSize )
         {
-//            if( n == VarSize )
+//            if( n <= VarSize )
 //            {
 //                wprint("Do: Input length n = 0 although N = VarSize.");
 //                return;
@@ -92,21 +89,21 @@ namespace Tools
         }
         else
         {
-            if( N != static_cast<Size_T>(n) )
+            if( N != n )
             {
                 wprint("Do: Input n does not coincide with template parameter N.");
             }
             
             if constexpr ( parQ == Parallel )
             {
-                if( thread_count_ <= one )
+                if( thread_count_ <= Int(1) )
                 {
                     wprint("Do: Parallelization activated, but thread_count <= 1.");
                 }
             }
             else
             {
-                if( thread_count_ > one )
+                if( thread_count_ > Int(1) )
                 {
                     wprint("Do: Parallelization deactivated, but thread_count > 1.");
                 }
@@ -114,13 +111,13 @@ namespace Tools
         }
 #endif
         
-        if constexpr ( N == VarSize )
+        if constexpr ( N <= VarSize )
         {
             if constexpr (parQ == Parallel)
             {
-                if( thread_count <= one )
+                if( thread_count <= Int(0) )
                 {
-                    for( Int i = zero; i < n; ++i ) 
+                    for( Int i = 0; i < n; ++i )
                     {
                         fun(i);
                     }
@@ -129,17 +126,18 @@ namespace Tools
                 {
                     if constexpr ( dynQ == Dynamic_T::True )
                     {
-                        ParallelDo_Dynamic( std::forward<F>(fun), zero, n, one, thread_count );
+                        // TODO: ???
+                        ParallelDo_Dynamic( std::forward<F>(fun), Int(0), n, Int(1), thread_count );
                     }
                     else
                     {
-                        ParallelDo( std::forward<F>(fun), zero, n, thread_count );
+                        ParallelDo( std::forward<F>(fun), Int(0), n, thread_count );
                     }
                 }
             }
             else
             {
-                for( Int i = zero; i < n; ++i ) 
+                for( Int i = Int(0); i < n; ++i )
                 {
                     fun(i);
                 }
@@ -147,7 +145,7 @@ namespace Tools
         }
         else
         {
-            for( Int i = zero; i < N; ++i ) 
+            for( Int i = Int(0); i < N; ++i )
             {
                 fun(i);
             }
@@ -156,21 +154,22 @@ namespace Tools
     
     
     
-    template<Size_T N = VarSize, Parallel_T parQ = Sequential,
-        typename T, typename F, typename R, typename Int, typename Int_
+    template<Size_T N_ = VarSize, Parallel_T parQ = Sequential,
+        typename T, typename F, typename R, typename Int = Size_T
     >
     [[nodiscard]] force_inline T DoReduce(
-        F && fun, R && reducer, cref<T> init, const Int n = N, const Int_ thread_count_ = 1
+        F && fun, R && reducer, cref<T> init, const Int n = static_cast<Int>(N_), const Int thread_count = 1
     )
     {
         // reducer must have prototype reducer( value, result );
-        constexpr Int zero = 0;
         
-        using S = decltype( fun(zero) );
+        static_assert(IntQ<Int>,"");
         
-        const Int thread_count = static_cast<Int>(thread_count_);
+        using S = decltype( fun( Int(0) ) );
         
-        if constexpr ( N == VarSize )
+        constexpr Int N = static_cast<Int>(N_);
+        
+        if constexpr ( N <= VarSize )
         {
             if constexpr ( parQ == Parallel )
             {
@@ -183,7 +182,7 @@ namespace Tools
                         (void)thread;
                         std::invoke( reducer, value, result );
                     },
-                    init, zero, n, thread_count
+                    init, Int(0), n, thread_count
                 );
             }
             else
@@ -202,7 +201,7 @@ namespace Tools
         {
             T result (init);
             
-            for( Int i = 0; i < static_cast<Int>(N); ++i )
+            for( Int i = 0; i < N; ++i )
             {
                 std::invoke( reducer, fun(i), result );
             }

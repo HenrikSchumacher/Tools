@@ -180,7 +180,7 @@ namespace Tools
     force_inline void combine_buffers3(
         cref<a_T> a, cptr<x_T> x, cref<b_T> b, cptr<y_T> y, mptr<z_T> z,
         const Int n = N,
-        const Int thread_count = 1
+        const Int thread_count = Int(1)
     )
     {
         // This routine computes z[i] = a * x[i] + b * y[i].

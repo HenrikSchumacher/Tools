@@ -36,7 +36,7 @@ namespace Tools
                 thread_count
             );
         }
-        else if constexpr ( N == VarSize )
+        else if constexpr ( N <= VarSize )
         {
             Size_T counter = 0;
             

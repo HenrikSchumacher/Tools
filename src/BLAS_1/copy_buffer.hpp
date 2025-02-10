@@ -28,7 +28,7 @@ namespace Tools
         
         static_assert(IntQ<Int>,"");
         
-        if constexpr ( N == VarSize )
+        if constexpr ( N <= VarSize )
         {
             if constexpr ( parQ == Sequential )
             {

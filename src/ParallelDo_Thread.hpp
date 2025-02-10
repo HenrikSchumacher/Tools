@@ -7,17 +7,14 @@ namespace Tools
 {
     
     // Executes the function `fun` of the form `[]( const Int thread ) -> S {...}` parallelized over `thread_count` threads.
-    template<typename F, typename Int>
+    template<typename F, typename Int = Size_T>
     force_inline void ParallelDo( F && fun, const Int thread_count )
     {
         static_assert(IntQ<Int>,"");
         
-        constexpr Int zero = 0;
-        constexpr Int one  = 1;
-        
-        if( thread_count <= one )
+        if( thread_count <= Int(1) )
         {
-            std::invoke( fun, zero );
+            std::invoke( fun, Int(0) );
         }
         else
         {
@@ -37,20 +34,16 @@ namespace Tools
     
     // Executes the function `fun` of the `form []( const Int thread ) -> S {...}` parallelized over `thread_count` threads.
     // Afterwards, reduces with the function `reducer` of the form `[]( const Int thread, cref<S> value, mref<T> result ) {...}`.
-    template<typename F, typename R, typename T, typename Int>
+    template<typename F, typename R, typename T, typename Int = Size_T>
     force_inline T ParallelDoReduce( F && fun, R && reducer, cref<T> init, const Int thread_count )
     {
         static_assert(IntQ<Int>,"");
         
         T result (init);
         
-        constexpr Int zero = 0;
-        constexpr Int one  = 1;
-        
-        if( thread_count <= one )
+        if( thread_count <= Int(1) )
         {
-//            std::invoke( reducer, zero, std::invoke( fun, zero ), result );
-            std::invoke( reducer, zero, fun(zero), result );
+            std::invoke( reducer, Int(0), fun(Int(0)), result );
         }
         else
         {
@@ -72,8 +65,8 @@ namespace Tools
     
     
     // Executes the function `fun` of the form `[]( const Int thread, const Int i ) -> void {...}` parallelized over `thread_count` threads.
-    template<typename F, typename Int>
-    force_inline void ParallelDo_Dynamic( 
+    template<typename F, typename Int = Size_T>
+    force_inline void ParallelDo_Dynamic(
         F && fun, const Int begin, const Int end, const Int inc, const Int thread_count
     )
     {
@@ -84,11 +77,11 @@ namespace Tools
             return;
         }
         
-        if( thread_count <= static_cast<Int>(1) )
+        if( thread_count <= Int(1) )
         {
             for( Int i = begin; i < end; ++i )
             {
-                std::invoke( fun, static_cast<Int>(0), i );
+                std::invoke( fun, Int(0), i );
             }
         }
         else

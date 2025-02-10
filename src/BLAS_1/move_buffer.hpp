@@ -13,7 +13,7 @@ namespace Tools
     {
         check_sequential<parQ>( "move_buffer", thread_count );
         
-        if constexpr ( N == VarSize )
+        if constexpr ( N <= VarSize )
         {
             if constexpr ( parQ == Sequential )
             {
