@@ -2,7 +2,6 @@
 
 namespace Tools
 {
-    
     /*!
      * @brief Computes `y = a * opx(x) + b * opy(y)`, where `x` and `y`
      * are vectors of size `n` and `a` and `b` are scalars.
@@ -42,12 +41,12 @@ namespace Tools
         Scalar::Flag a_flag, Scalar::Flag b_flag,
         Size_T N = VarSize, Parallel_T parQ = Sequential,
         Op opx = Op::Id, Op opy = Op::Id,
-        typename a_T, typename x_T, typename b_T, typename y_T
+        typename a_T, typename x_T, typename b_T, typename y_T, typename Int = Size_T
     >
     force_inline void combine_buffers(
         cref<a_T> a, cptr<x_T> x, cref<b_T> b, mptr<y_T> y,
-        const Size_T n = N,
-        const Size_T thread_count = 1
+        const Int n = N,
+        const Int thread_count = 1
     )
     {
         // This routine computes y[i] = a * x[i] + b * y[i].
@@ -64,6 +63,8 @@ namespace Tools
         // If b_flag == Flag::Generic, then it assumes generic values for `b`.
         
         using namespace Scalar;
+        
+        static_assert( IntQ<Int>,"");
         
         check_sequential<parQ>( "combine_buffers", thread_count );
         
@@ -123,7 +124,7 @@ namespace Tools
             #pragma float_control(precise, off)
 
             Do<N,parQ,Static>(
-                [=]( const Size_T i )
+                [=]( const Int i )
                 {
                     combine_scalars<a_flag,b_flag,opx,opy>( a, x[i], b, y[i] );
                 },
@@ -174,12 +175,12 @@ namespace Tools
         Scalar::Flag a_flag, Scalar::Flag b_flag,
         Size_T N = VarSize, Parallel_T parQ = Sequential,
         Op opx = Op::Id, Op opy = Op::Id,
-        typename a_T, typename x_T, typename b_T, typename y_T, typename z_T
+        typename a_T, typename x_T, typename b_T, typename y_T, typename z_T, typename Int = Size_T
     >
-    force_inline void combine_buffers(
+    force_inline void combine_buffers3(
         cref<a_T> a, cptr<x_T> x, cref<b_T> b, cptr<y_T> y, mptr<z_T> z,
-        const Size_T n = N,
-        const Size_T thread_count = 1
+        const Int n = N,
+        const Int thread_count = 1
     )
     {
         // This routine computes z[i] = a * x[i] + b * y[i].
@@ -198,14 +199,16 @@ namespace Tools
         
         using namespace Scalar;
         
-        check_sequential<parQ>( "combine_buffers", thread_count );
+        static_assert( IntQ<Int>, "" );
+        
+        check_sequential<parQ>( "combine_buffers3", thread_count );
         
         static_assert( (opx == Op::Id) || (opx == Op::Conj),
-            "combine_buffers: Only the values Op::Id and Op::Conj are allowed for opx."
+            "combine_buffers3: Only the values Op::Id and Op::Conj are allowed for opx."
         );
         
         static_assert( (opy == Op::Id) || (opy == Op::Conj),
-            "combine_buffers: Only the values Op::Id and Op::Conj are allowed for opy."
+            "combine_buffers3: Only the values Op::Id and Op::Conj are allowed for opy."
         );
         
         static_assert( ComplexQ<z_T> || (RealQ<a_T> && RealQ<x_T> && RealQ<b_T> && RealQ<y_T> ),
@@ -265,7 +268,7 @@ namespace Tools
                 
                 // z = a * opx(x) + b * opx(y);
                 Do<N,parQ,Static>(
-                    [=]( const Size_T i )
+                    [=]( const Int i )
                     {
                         combine_scalars<a_flag,b_flag,opx,opy>( a, x[i], b, y[i], z[i] );
                     },

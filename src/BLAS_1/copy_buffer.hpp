@@ -16,27 +16,9 @@ namespace Tools
     // This is a bit weird: Typically this fixed-size version should not improve anything because clang and gcc do some heavy optimization for std::copy. In a nutshell, they analyze in every call to std::copy whether n is a compile-time constant -- something that one would not expect a compiler to do for a non-template parameter! However, godbolt tells me that this only happens with at least one restrict qualifier; otherwise the call to std::copy is redirected to std::memmove.
     // We add this fixed-size version anyways so that we do not have to rely on this somewhat unexpected compiler optimization.
     
-    template < Size_T N, Parallel_T parQ = Sequential, typename S, typename T>
-    force_inline constexpr void copy_buffer(
-        cptr<S> from, mptr<T> to
-    )
-    {
-        static_assert(N > VarSize,"");
-        static_assert(parQ == Sequential,"");
-        
-        if constexpr ( SameQ<T,S> )
-        {
-            std::copy( &from[0], &from[N], &to[0] );
-        }
-        else
-        {
-            std::transform( &from[0], &from[N], &to[0], static_caster<S,T>() );
-        }
-    }
-    
     template <
         Size_T N = VarSize, Parallel_T parQ = Sequential,
-        typename S, typename T, typename Int
+        typename S, typename T, typename Int = Size_T
     >
     force_inline constexpr void copy_buffer(
         cptr<S> from, mptr<T> to, const Int n = N, const Int thread_count = 1
@@ -97,7 +79,14 @@ namespace Tools
         }
         else
         {
-            copy_buffer<N>(from,to);
+            if constexpr ( SameQ<T,S> )
+            {
+                std::copy( &from[0], &from[N], &to[0] );
+            }
+            else
+            {
+                std::transform( &from[0], &from[N], &to[0], static_caster<S,T>() );
+            }
         }
         
     }

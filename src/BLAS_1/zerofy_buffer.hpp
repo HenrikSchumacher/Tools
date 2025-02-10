@@ -4,13 +4,15 @@ namespace Tools
 {
     template <
         Size_T N = VarSize, Parallel_T parQ = Sequential,
-        typename T
+        typename T, typename Int = Size_T
     >
     force_inline constexpr void zerofy_buffer( 
-        mptr<T> a, const Size_T n = N, const Size_T thread_count = 1
+        mptr<T> a, const Int n = N, const Int thread_count = 1
     )
     {
         check_sequential<parQ>( "zerofy_buffer", thread_count );
+        
+        static_assert( IntQ<Int>, "");
         
         if constexpr ( N == VarSize )
         {
