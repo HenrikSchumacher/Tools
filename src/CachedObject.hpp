@@ -204,17 +204,19 @@ namespace Tools
         
         std::string CacheKeys() const
         {
-            std::stringstream s;
+            std::string s;
             
             const std::lock_guard<std::mutex> cache_lock( cache_mutex );
             
-            s << "{ \n";
+            s += "{\n";
             for( auto const & p : cache )
             {
-                s << "\t" << p.first << "\n";
+                s += "\t";
+                s += p.first;
+                s += "\n";
             }
-            s << "}";
-            return s.str();
+            s += "}";
+            return s;
         }
         
         void ClearCache() const
@@ -301,17 +303,19 @@ namespace Tools
         
         std::string PersistentCacheKeys() const
         {
-            std::stringstream s;
+            std::string s;
             
             const std::lock_guard<std::mutex> p_cache_lock( p_cache_mutex );
             
-            s << "{ \n";
+            s += "{\n";
             for( auto const & p : p_cache )
             {
-                s << "\t" << p.first << "\n";
+                s += "\t";
+                s += p.first;
+                s += "\n";
             }
-            s << "}";
-            return s.str();
+            s += "}";
+            return s;
         }
         
         void ClearPersistentCache() const

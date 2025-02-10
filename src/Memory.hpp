@@ -101,7 +101,7 @@ namespace Tools
         #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
             _aligned_free( ptr_ );
         #else
-            free( ptr_ );
+            std::free( ptr_ );
         #endif
     }
 
@@ -128,7 +128,8 @@ namespace Tools
         int wasallocated = (ptr_ != nullptr);
         if( wasallocated )
         {
-            aligned_free(ptr_); ptr_ = nullptr;
+            aligned_free(ptr_);
+            ptr_ = nullptr;
         }
         return !wasallocated;
     }

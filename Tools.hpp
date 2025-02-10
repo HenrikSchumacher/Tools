@@ -170,6 +170,8 @@ namespace Tools
     
     using Size_T = std::size_t;
     
+    static constexpr Size_T VarSize = 0;
+    
     template<typename T>
     static constexpr bool IntQ = std::is_integral_v<T>;
     

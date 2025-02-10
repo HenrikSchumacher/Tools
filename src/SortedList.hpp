@@ -274,25 +274,9 @@ namespace Tools
             return false;
         }
         
-        [[nodiscard]] friend std::string ToString( cref<SortedList> L, const int p = 16 )
+        [[nodiscard]] friend std::string ToString( cref<SortedList> L )
         {
-            std::stringstream s;
-            
-            const Size_T n = L.list.size();
-            
-            s << "{ ";
-            if( n > 0 )
-            {
-                s<< ToString(L.list[0],p);
-
-                for( Size_T i = 1; i < n; ++i )
-                {
-                    s <<", " << ToString(L.list[i],p);
-                }
-            }
-            s<< " }";
-            
-            return s.str();
+            return ArrayToString( &L.list[0], {L.list.size()} );
         }
         
     };

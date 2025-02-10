@@ -239,20 +239,9 @@ namespace Tools
         }
         
 
-        [[nodiscard]] std::string friend ToString( const JobPointers & J, const int p = 16)
+        [[nodiscard]] std::string friend ToString( const JobPointers & J)
         {
-            std::stringstream sout;
-            sout << "{ ";
-            if( J.Size() > 0 )
-            {
-                sout << ToString(J.job_ptr[0],p);
-            }
-            for( Int i = 1; i < J.Size(); ++i )
-            {
-                sout << ", " << ToString(J.job_ptr[i],p);
-            }
-            sout << " }";
-            return sout.str();
+            return ArrayToString( &J.job_ptr[0], {J.Size()} );
         }
         
     private:

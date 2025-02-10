@@ -2,126 +2,113 @@
 
 namespace Tools
 {
-    template <typename T>
-    [[nodiscard]] std::string ToString( const T & a_value, const int prec = 17 )
+    [[nodiscard]] std::string ToString( const double & value )
     {
-        std::stringstream s;
-        s << std::setprecision(prec);
-        s << std::showpoint;
-        s << ToUnderlying(a_value);
-        return s.str();
+        return std::format("{: .16e}",value);
     }
-
+    
+    [[nodiscard]] std::string ToString( const std::complex<double> & z )
+    {
+        return std::format("{: .16e} {:+.16e}I",std::real(z),std::imag(z));
+    }
+                           
+                           
+    [[nodiscard]] std::string ToString( const std::complex<float> & z )
+    {
+        return std::format("{: .7e} {:+.7e}I",std::real(z),std::imag(z));
+    }
+    
     template <typename T>
     std::ostream & operator<<( std::ostream & sout, const std::complex<T> & z )
     {
-        sout << std::real(z) << ((std::imag(z) >= static_cast<T>(0)) ? " + " : " - ") << std::abs(std::imag(z)) << " I" ;
-        
-        return sout;
+        return sout << ToString(z);
     }
     
-//    template <typename T>
-//    std::ostream & operator<<( std::ostream & sout, const T & val )
-//    {
-//        return (sout << ToUnderlying(val));
-//    }
-    
-    
+
     template <typename T>
-    [[nodiscard]] std::string ToString( const std::complex<T> & z, const int prec = 17 )
+    [[nodiscard]] std::enable_if_t<IntQ<T>,std::string> ToString( const T & value )
     {
-        std::stringstream s;
-        s << std::setprecision(prec);
-        s << std::showpoint;
-        s << z;
-        return s.str();
+        return std::format("{:d}",value);
     }
-    
+
     template <typename T>
-    [[nodiscard]] std::string ToString( const signed char & z )
+    [[nodiscard]] std::enable_if_t<!IntQ<T>,std::string> ToString( const T & value )
     {
-        std::stringstream sout;
-        sout << static_cast<int>(z);
-        return sout.str();
-    }
-    
-    template <typename T>
-    [[nodiscard]] std::string ToString( const unsigned char & z )
-    {
-        std::stringstream sout;
-        sout << static_cast<unsigned int>(z);
-        return sout.str();
+        return ToString( ToUnderlying(value) );
     }
     
     template <typename S, typename T>
     [[nodiscard]] std::string ToString( const std::pair<S,T> & p )
     {
-        std::stringstream sout;
-        sout << "{ " << p.first << ", " << p.second << " } ";
-        return sout.str();
+        return std::string("{ ") + ToString(p.first) + ", " + ToString(p.second) + " }";
     }
     
-    template<typename Scal, typename Int, typename Int2, typename Int3, class Stream_T>
-    Stream_T & ArrayToStream(
+    template<typename Scal, typename Int, typename Int2, typename Int3>
+    std::string ArrayToString(
         const Scal * const a,
         const Int  * const dims,
         const Int2 * const lds,
         Int3 rank,
-        Stream_T & s,
         std::string line_prefix
     )
     {
+        std::string s;
+        
         if( rank <= 0 )
         {
-            s << a[0];
+            s += ToString(a[0]);
         }
         else if( rank == 1 )
         {
-            s << line_prefix << "{ ";
+            s += line_prefix;
+            s += "{ ";
             
             if( dims[0] > 0 )
             {
-                s << a[0];
+                s += ToString(a[0]);
             }
             
             for( Int i = 1; i < dims[0]; ++i )
             {
-                s << ", " << a[i];
+                s += ", ";
+                s += ToString(a[i]);
             }
             
-            s << " }";
+            s += " }";
         }
         else
         {
-            std::string new_line_prefix = line_prefix+"\t";
+            std::string new_line_prefix = line_prefix + "\t";
             
-            s << line_prefix << "{" << "\n";
+            s += line_prefix;
+            s += "{\n";
+            
             if( dims[0] > 0 )
             {
-                ArrayToStream( a, &dims[1], &lds[1], rank-1, s, new_line_prefix );
+                s += ArrayToString( a, &dims[1], &lds[1], rank-1, new_line_prefix );
             }
             
             for( Int i = 1; i < dims[0]; ++i )
             {
-                s << ","  << "\n";
-                ArrayToStream( &a[lds[0]*i], &dims[1], &lds[1], rank-1, s, new_line_prefix );
+                s += ",\n";
+                s += ArrayToString( &a[lds[0]*i], &dims[1], &lds[1], rank-1, new_line_prefix );
             }
             
-            s << "\n";
+            s += "\n";
             
-            s << line_prefix << "}";
+            s += line_prefix;
+            s += "}";
         }
         
         return s;
     }
     
     
-    template<typename Scal, typename Int, typename Int2, class Stream_T>
-    Stream_T & ArrayToStream(
+    template<typename Scal, typename Int, typename Int2>
+    std::string ArrayToString(
         const Scal * const a,
         const Int  * const dims,
         Int2 rank,
-        Stream_T & s,
         std::string line_prefix = std::string("")
     )
     {
@@ -141,39 +128,22 @@ namespace Tools
                 }
             }
             
-            ArrayToStream( a, dims, lds.data(), rank, s, line_prefix );
+            return ArrayToString( a, dims, lds.data(), rank, line_prefix );
         }
-        return s;
-    }
-    
-    template<typename T, typename Int, typename Int2>
-    std::string ArrayToString(
-        const T   * const a,
-        const Int * const dims,
-        Int2 rank,
-        int prec = 17,
-        std::string line_prefix = ""
-    )
-    {
-        std::stringstream s;
-        
-        s << std::setprecision(prec);
-        s << std::showpoint;
-        
-        (void)ArrayToStream<T,Int>( a, dims, rank, s, line_prefix ).str();
-
-        return s.str();
+        else
+        {
+            return std::string();
+        }
     }
     
     template<typename Scal, typename Int>
     std::string ArrayToString(
         const Scal * const a,
         std::initializer_list<Int> dims,
-        int prec = 17,
         std::string line_prefix = ""
     )
     {
-        return ArrayToString( a, &*dims.begin(), dims.size(), prec, line_prefix );
+        return ArrayToString( a, &*dims.begin(), dims.size(), line_prefix );
     }
     
     template<typename T>
@@ -190,70 +160,89 @@ namespace Tools
         return ArrayToString( &v[0], &dim, 1 );
     }
     
+
+    template<Size_T N_ = VarSize, typename T, typename Int>
+    std::string VectorString(
+        cref<T> A,
+        cref<std::string> prefix,
+        cref<std::string> infix,
+        cref<std::string> suffix,
+        const Int n = static_cast<Int>(N_)
+    )
+    {
+        constexpr Int N = static_cast<Int>(N_);
+        
+        std::string s;
+        
+        s += prefix;
+        
+        if( ((N_ > VarSize) ? N : n) > Int(0) )
+        {
+            s += ToString(A[0]);
+        }
+        
+        for( Int i = 1; i < ((N_ > VarSize) ? N : n); ++i )
+        {
+            s += infix;
+            s += ToString(A[i]);
+        }
+        
+        s  += suffix;
+
+        return s;
+    }
     
-    template<typename T>
+    template<Size_T M_ = VarSize, Size_T N_ = VarSize, typename T, typename Int>
     [[nodiscard]] std::string MatrixString(
-        const Size_T m, const Size_T n, cref<T> A, const Size_T ldA,
+        cref<T> A, const Size_T ldA,
         cref<std::string> header,
         cref<std::string> row_prefix,
         cref<std::string> row_infix,
         cref<std::string> row_suffix,
-        cref<std::string> linesep,
+        cref<std::string> row_sep,
         cref<std::string> footer,
-        const int prec = 17
+        const Int m = static_cast<Int>(M_),
+        const Int n = static_cast<Int>(N_)
     )
     {
-        std::stringstream s;
+        constexpr Int M = static_cast<Int>(M_);
+        constexpr Int N = static_cast<Int>(N_);
         
-        s << std::setprecision(prec);
-        s << std::showpoint;
-
-        s << header;
-
-        for( Size_T i = 0; i < (m-1); i++)
+        std::string s;
+        
+        s += header;
+        
+        if( ((M_ > VarSize) ? M : m) > Int(0) )
         {
-            s << row_prefix;
-
-            for( Size_T j = 0; j < n-1; j++)
-            {
-                s << A[ldA * i + j] << row_infix;
-            }
-
-            s     << A[ldA * i + (n-1)] << row_suffix;
+            s += VectorString<N>(&A[0],row_prefix,row_infix,row_suffix,n);
+        }
+        
+        for( Int i = 1; i < ((M_ > VarSize) ? M : m); ++i )
+        {
+            s += row_sep;
             
-            s << linesep;
-        }
-        {
-            s << row_prefix;
-
-            for( Size_T j = 0; j < n-1; j++)
-            {
-                s << A[ldA * (m-1) + j] << row_infix;
-            }
-            s     << A[ldA * (m-1) + (n-1)] << row_suffix;
+            s += VectorString<N>(&A[ldA * i],row_prefix,row_infix,row_suffix,n);
         }
 
-        s << footer;
-
-        return s.str();
+        s += footer;
+        
+        return s;
     }
     
     template<typename T>
     [[nodiscard]] std::string MatrixStringTSV(
-        const Size_T m, const Size_T n, cref<T> A, const Size_T ldA,
-        int prec = 17
+        const Size_T m, const Size_T n, cref<T> A, const Size_T ldA
     )
     {
-        return MatrixString( m, n, A, ldA, "", "", "\t", "", "\n", "", prec );
+        return MatrixString( A, ldA, "", "", "\t", "", "\n", "", m, n );
     }
     
     template<typename T>
     [[nodiscard]] std::string MatrixStringCSV(
-        const Size_T m, const Size_T n, cref<T> A, const Size_T ldA,
-        int prec = 17
+        const Size_T m, const Size_T n, cref<T> A, const Size_T ldA
     )
     {
-        return MatrixString( m, n, A, ldA, "", "", ",", "", "\n", "", prec );
+        return MatrixString( A, ldA, "", "", ",", "", "\n", "", m, n );
     }
     
     

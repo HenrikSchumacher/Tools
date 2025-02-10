@@ -8,9 +8,6 @@
 
 namespace Tools
 {
-    static constexpr Size_T VarSize = 0;
-
-
     enum struct Parallel_T : bool
     {
         True  = true,
