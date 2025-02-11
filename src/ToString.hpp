@@ -7,11 +7,15 @@ namespace Tools
         return std::format("{: .16e}",value);
     }
     
+    [[nodiscard]] std::string ToString( const float & value )
+    {
+        return std::format("{: .7e}",value);
+    }
+    
     [[nodiscard]] std::string ToString( const std::complex<double> & z )
     {
         return std::format("{: .16e} {:+.16e}I",std::real(z),std::imag(z));
     }
-                           
                            
     [[nodiscard]] std::string ToString( const std::complex<float> & z )
     {
@@ -161,7 +165,7 @@ namespace Tools
     }
     
 
-    template<Size_T N_ = VarSize, typename T, typename Int>
+    template<Size_T N_ = VarSize, typename T, typename Int = Size_T>
     std::string VectorString(
         cref<T> A,
         cref<std::string> prefix,
@@ -192,7 +196,7 @@ namespace Tools
         return s;
     }
     
-    template<Size_T M_ = VarSize, Size_T N_ = VarSize, typename T, typename Int>
+    template<Size_T M_ = VarSize, Size_T N_ = VarSize, typename T, typename Int = Size_T>
     [[nodiscard]] std::string MatrixString(
         cref<T> A, const Size_T ldA,
         cref<std::string> header,
