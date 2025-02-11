@@ -7,7 +7,7 @@ namespace Tools
         typename T, typename Int = Size_T
     >
     force_inline constexpr void zerofy_buffer( 
-        mptr<T> a, const Int n = N, const Int thread_count = 1
+        mptr<T> a, const Int n = static_cast<Int>(N), const Int thread_count = 1
     )
     {
         check_sequential<parQ>( "zerofy_buffer", thread_count );
@@ -22,17 +22,17 @@ namespace Tools
             }
             else
             {
-                if( thread_count <= Scalar::One<Size_T> )
+                if( thread_count <= Int(1) )
                 {
                     std::fill( &a[0], &a[n], static_cast<T>(0) );
                 }
                 else
                 {
                     ParallelDo(
-                        [=]( const Size_T thread )
+                        [=]( const Int thread )
                         {
-                            const Size_T begin = JobPointer(n,thread_count,thread  );
-                            const Size_T end   = JobPointer(n,thread_count,thread+1);
+                            const Int begin = JobPointer(n,thread_count,thread  );
+                            const Int end   = JobPointer(n,thread_count,thread+1);
                             
                             std::fill( &a[begin], &a[end], static_cast<T>(0) );
                         },
