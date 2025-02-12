@@ -17,7 +17,7 @@ namespace Tools
         }
         else
         {
-            std::vector<std::future<void>> futures ( static_cast<Size_T>(thread_count) );
+            std::vector<std::future<void>> futures ( ToSize_T(thread_count) );
             
             for( Int thread = 0; thread < thread_count; ++thread )
             {
@@ -46,7 +46,7 @@ namespace Tools
         }
         else
         {
-            std::vector<std::future<T>> futures ( static_cast<Size_T>(thread_count) );
+            std::vector<std::future<T>> futures ( ToSize_T(thread_count) );
             
             for( Int thread = 0; thread < thread_count; ++thread )
             {
@@ -91,7 +91,7 @@ namespace Tools
             std::mutex iter_mutex;
             
             // A vector to hold the workers.
-            std::vector<std::future<void>> futures ( thread_count );
+            std::vector<std::future<void>> futures ( ToSize_T(thread_count) );
             
             // Lambda-function representing a single worker.
             auto worker = [&,end]( const Int thread )
@@ -109,7 +109,7 @@ namespace Tools
                     
                         if( iter < end )
                         {   
-                            // Iterator `iter` is not out of bound. Assign a new chunk to worker.
+                            // Iterator `iter` is not out of bounds. Assign a new chunk to worker.
                             i_begin = iter;
                             
                             iter = Min( iter + inc, end );
