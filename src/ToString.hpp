@@ -2,6 +2,11 @@
 
 namespace Tools
 {
+    [[nodiscard]] std::string ToString( const std::string & s )
+    {
+        return s;
+    }
+    
     [[nodiscard]] std::string ToString( const double & value )
     {
         return std::format("{: .16e}",value);
@@ -27,11 +32,19 @@ namespace Tools
     {
         return sout << ToString(z);
     }
-    
+
     template <typename T>
     [[nodiscard]] std::string ToString( T * ptr )
     {
-        return std::format("{:p}",ptr);
+        return std::format( "{:p}", (void *)ptr );
+    }
+    
+    template <typename T>
+    [[nodiscard]] std::string ToString( T const * ptr )
+    {
+        std::cout << "ToString(T const * const ptr)" << std::endl;
+        
+        return std::format( "{:p}", (void const *)ptr );
     }
     
 
@@ -41,8 +54,14 @@ namespace Tools
         return std::format("{:d}",value);
     }
 
+
+    
+    template<typename T>
+    static constexpr bool ClassEnumQ = std::is_enum<T>::value && !std::is_convertible<T,int>::value;
+    
+    
     template <typename T>
-    [[nodiscard]] std::enable_if_t<!IntQ<T>,std::string> ToString( const T & value )
+    [[nodiscard]] std::enable_if_t<ClassEnumQ<T>,std::string> ToString( const T & value )
     {
         return ToString( ToUnderlying(value) );
     }
@@ -54,7 +73,7 @@ namespace Tools
     }
     
     template<typename Scal, typename Int, typename Int2, typename Int3>
-    std::string ArrayToString(
+    [[nodiscard]] std::string ArrayToString(
         const Scal * const a,
         const Int  * const dims,
         const Int2 * const lds,
@@ -115,7 +134,7 @@ namespace Tools
     
     
     template<typename Scal, typename Int, typename Int2>
-    std::string ArrayToString(
+    [[nodiscard]] std::string ArrayToString(
         const Scal * const a,
         const Int  * const dims,
         Int2 rank,
@@ -147,7 +166,7 @@ namespace Tools
     }
     
     template<typename Scal, typename Int>
-    std::string ArrayToString(
+    [[nodiscard]] std::string ArrayToString(
         const Scal * const a,
         std::initializer_list<Int> dims,
         std::string line_prefix = ""
@@ -172,7 +191,7 @@ namespace Tools
     
 
     template<Size_T N_ = VarSize, typename T, typename Int = Size_T>
-    std::string VectorString(
+    [[nodiscard]] std::string VectorString(
         cref<T> A,
         cref<std::string> prefix,
         cref<std::string> infix,
