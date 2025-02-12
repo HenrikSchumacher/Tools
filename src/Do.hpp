@@ -134,7 +134,7 @@ namespace Tools
             }
             else
             {
-                for( Int i = Int(0); i < n; ++i )
+                for( Int i = 0; i < n; ++i )
                 {
                     fun(i);
                 }
@@ -142,7 +142,7 @@ namespace Tools
         }
         else
         {
-            for( Int i = Int(0); i < N; ++i )
+            for( Int i = 0; i < N; ++i )
             {
                 fun(i);
             }

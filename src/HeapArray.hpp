@@ -6,7 +6,7 @@ namespace Tools
     template <
         typename Scal_, typename Int_,
         Size_T alignment = DefaultAlignment,
-        typename Alloc_T_ = AlignedAllocator<Scal_>
+    typename Alloc_T_ = AlignedAllocator<Scal_,true>
     >
     class alignas(ObjectAlignment) HeapArray
     {
@@ -31,7 +31,7 @@ namespace Tools
     public:
         
         explicit HeapArray( const Int n )
-        :   buffer_size    { Tools::Max(0,n) }
+        :   buffer_size    { Tools::Max(Int(0),n) }
         {
 //            logprint("Constuctor of "+ClassName()+" of size "+ToString(d0) );
             Alloc_T::Alloc(buffer,ToSize_T(buffer_size),Alignment);
@@ -363,19 +363,18 @@ namespace Tools
         
     public:
         
-        [[nodiscard]] inline friend std::string to_string(
-            cref<HeapArray> A, const int prec = 17
-        )
-        {
-            return ArrayToString( A.buffer, &A.buffer_size, Int(1), prec );
-        }
+//        [[nodiscard]] inline friend std::string to_string(
+//            cref<HeapArray> A, const int prec = 17
+//        )
+//        {
+//            return ArrayToString( A.buffer, &A.buffer_size, Int(1), prec );
+//        }
 
         [[nodiscard]] inline friend std::string ToString( cref<HeapArray> A,
-            const int prec = 17,
             std::string line_prefix = std::string("")
         )
         {
-            return ArrayToString( A.buffer, &A.buffer_size, Int(1), prec, line_prefix );
+            return ArrayToString( A.buffer, &A.buffer_size, Int(1), line_prefix );
         }
         
         [[nodiscard]] std::string friend ToString(

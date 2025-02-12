@@ -348,6 +348,7 @@ namespace Tools
 #include "src/AlignedAllocator.hpp"
 #include "src/HeapArray.hpp"
 #include "src/JobPointers.hpp"
+//#include "src/JobPointers_HeapArray.hpp"
 #include "src/ParallelDo_JobPointers.hpp"
 
 // TODO: get rid of std::vector here
