@@ -339,13 +339,18 @@ namespace Tools
 #include "src/ParallelDo_Thread.hpp"
 
 #include "src/ParallelAlgorithms.hpp"
-#include "src/JobPointers.hpp"
 #include "src/ParallelDo_Common.hpp"
 #include "src/Do.hpp"
 
 #include "src/BLAS_1.hpp"
 #include "src/BLAS_2.hpp"
 
+#include "src/AlignedAllocator.hpp"
+#include "src/HeapArray.hpp"
+#include "src/JobPointers.hpp"
+#include "src/ParallelDo_JobPointers.hpp"
+
+// TODO: get rid of std::vector here
 #include "src/SortedList.hpp"
 
 
@@ -363,4 +368,6 @@ namespace Tools
 #include "src/Hashing.hpp"
 
 #include "src/Debugging.hpp"
+
+
 

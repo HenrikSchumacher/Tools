@@ -4,8 +4,7 @@
 #include <future>
 
 namespace Tools
-{
-    
+{   
     // Executes the function `fun` of the form `[]( const Int thread ) -> S {...}` parallelized over `thread_count` threads.
     template<typename F, typename Int = Size_T>
     force_inline void ParallelDo( F && fun, const Int thread_count )

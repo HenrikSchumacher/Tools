@@ -22,7 +22,7 @@ namespace Tools
             }
             else
             {
-                if( thread_count <= Scalar::One<Size_T> )
+                if( thread_count <= Int(1) )
                 {
                     std::fill( &a[0], &a[n], static_cast<T>(0) );
                 }

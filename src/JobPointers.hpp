@@ -12,32 +12,116 @@ namespace Tools
     public:
         
         using Int = Int_;
+        using Container_T = HeapArray<Int,Int>;
+        
+//        using Alloc_T = AlignedAllocator<Int>;
         
         JobPointers() = default;
         
-//        ~JobPointers() = default;
+    private:
         
-//        explicit JobPointers( const Int thread_count )
-//        :   job_ptr ( std::vector<Int>(thread_count+1, static_cast<Int>(0) ) )
-//        {
-//
-//        }
+        explicit JobPointers( Int thread_count_ )
+        :   thread_count( Max( Int(1), thread_count_ ) )
+        ,   job_ptr     ( thread_count + 1 )
+        {}
+        
+    public:
+        
+        
+        ~JobPointers() = default;
+        
+        
+        // Copy constructor
+        JobPointers( const JobPointers & other )
+        :   JobPointers( other.thread_count  )
+        {
+            job_ptr.Read(other.job_ptr.data());
+        }
+
+        // Copy-cast constructor
+        template<typename J>
+        explicit JobPointers( const JobPointers<J> & other )
+        :   JobPointers ( other.thread_count    )
+        {
+            static_assert(IntQ<J>,"");
+            
+            Read(other.job_ptr.data());
+        }
+
+        inline friend void swap( JobPointers & A, JobPointers & B) noexcept
+        {
+    //        logprint(A.ClassName()+": swap");
+            // see https://stackoverflow.com/questions/5695548/public-friend-swap-member-function for details
+            using std::swap;
+            
+            if( &A == &B )
+            {
+                wprint( std::string("An object of type ") + ClassName() + " has been swapped to itself.");
+            }
+            else
+            {
+                swap( A.thread_count, B.thread_count );
+                swap( A.job_ptr,      B.job_ptr      );
+            }
+        }
+
+        // Move constructor
+        JobPointers( JobPointers && other ) noexcept
+        :   JobPointers()
+        {
+    //        logprint(other.ClassName()+": Move-constructor");
+            swap(*this, other);
+        }
+
+
+        /* Move-assignment operator */
+        mref<JobPointers> operator=( JobPointers && other ) noexcept
+        {
+    //        logprint(other.ClassName()+": Move-assign");
+            if( this == &other )
+            {
+                wprint("An object of type " + ClassName() + " has been move-assigned to itself.");
+            }
+            else
+            {
+                swap( *this, other );
+            }
+            return *this;
+        }
+
+        /* Copy-assignment operator */
+        mref<JobPointers> operator=( const JobPointers & other )
+        {
+            if( this != &other )
+            {
+    //            logprint(other.ClassName()+": Copy-assignment of size "+ToString( other.buffer_size ));
+                
+                if( thread_count != other.thread_count )
+                {
+                    thread_count = other.thread_count;
+                    
+    //                logprint(other.ClassName()+": Reallocation of size "+ToString( buffer_size ) );
+
+                    job_ptr = Container_T(thread_count+1);
+                }
+                
+                Read( other.job_ptr );
+            }
+            return *this;
+        }
+        
+        
         
         template<typename I>
-        JobPointers( const Int job_count, const I thread_count )
-        :   job_ptr ( ToSize_T(thread_count)+1, static_cast<Int>(0) )
+        JobPointers( const Int job_count, const I thread_count_ )
+        :   JobPointers( static_cast<Int>(thread_count_) )
         {
             BalanceWorkLoad( job_count );
         }
         
         template<typename T, typename I>
-        JobPointers( const Int job_count, cptr<T> costs, const I thread_count, bool accumulate = true )
-        :   job_ptr ( 
-                std::vector<Int>(
-                    static_cast<Size_T>(thread_count+1),
-                    static_cast<Int>(0)
-                )
-            )
+        JobPointers( const Int job_count, cptr<T> costs, const I thread_count_, bool accumulate = true )
+        :   JobPointers( static_cast<Int>(thread_count_) )
         {
             if( accumulate )
             {
@@ -52,63 +136,67 @@ namespace Tools
         template<typename I>
         const Int & operator[]( const I i ) const
         {
-            return job_ptr[ToSize_T(i)];
+            return job_ptr[i];
         }
         
         template<typename I>
         const Int & operator()( const I i ) const
         {
-            return job_ptr[ToSize_T(i)];
+            return job_ptr[i];
         }
         
         Int Size() const
         {
-            return static_cast<Int>(job_ptr.size());
-        }
-        
-        Int size() const
-        {
-            return static_cast<Int>(job_ptr.size());
+            return job_ptr.Size();
         }
         
         Int ThreadCount() const
         {
-            if( job_ptr.size() <= static_cast<Size_T>(0) )
-            {
-                wprint("ThreadCount: empty JobPointers detected.");
-            }
-            return ( job_ptr.size() <= static_cast<Size_T>(1) ? static_cast<Int>(1) : static_cast<Int>(job_ptr.size()-1) );
+            return thread_count;
         }
         
         Int JobCount() const
         {
-            return static_cast<Int>(job_ptr.back());
+            return job_ptr.Last();
         }
         
         const Int * data() const
         {
             return job_ptr.data();
         }
-        
-        const std::vector<Int> & Vector() const
+
+        cref<Container_T> Container() const
         {
             return job_ptr;
         }
         
-        auto Begin() const
+        template<typename I>
+        void Read( cptr<I> buffer )
+        {
+            std::copy( buffer, &buffer[thread_count + 1], job_ptr );
+        }
+        
+        template<typename I>
+        void Write( mptr<I> buffer ) const
+        {
+            std::copy( job_ptr, &job_ptr[thread_count + 1], buffer );
+        }
+
+    public:
+        
+        cptr<Int> begin() const
         {
             return job_ptr.begin();
         }
         
-        auto End() const
+        cptr<Int> end() const
         {
             return job_ptr.end();
         }
         
+        
         void BalanceWorkLoad( const Int job_count )
         {
-            const Int thread_count = ThreadCount();
-            
             for( Int k = 0; k < thread_count+1; ++k )
             {
                 job_ptr[k] = JobPointer( job_count, thread_count, k );
@@ -118,8 +206,6 @@ namespace Tools
         template<typename T>
         void BalanceWorkLoad_Accumulated( const Int job_count, cptr<T> costs )
         {
-            const Int thread_count = ThreadCount();
-            
             // This function reads in a list job_acc_costs of accumulated costs, then allocates job_ptr as a vector of size thread_count + 1, and writes the work distribution to it.
             // Assigns threads to consecutive chunks jobs, ..., job_ptr[k+1]-1 of jobs.
             // Uses a binary search to find the chunk boundaries.
@@ -129,16 +215,16 @@ namespace Tools
             
             ptic("BalanceWorkLoad_Accumulated");
             
-            T * restrict acc_costs = nullptr;
+            HeapArray<T,Int> acc_costs( job_count + 1 );
             
-            safe_alloc( acc_costs, static_cast<Size_T>(job_count + 1) );
+            acc_costs[0] = Int(0);
             
-            acc_costs[0] = static_cast<Int>(0);
-            parallel_accumulate( &costs[0], &acc_costs[1], job_count, thread_count );
+            // Better not parallelize this.
+//            parallel_accumulate( &costs[0], &acc_costs[1], job_count, thread_count );
+            
+            parallel_accumulate( costs, &acc_costs[1], job_count, Int(1) );
 
-            BalanceWorkLoad( job_count, acc_costs);
-            
-            safe_free( acc_costs );
+            BalanceWorkLoad( job_count, acc_costs.data() );
             
             ptoc("BalanceWorkLoad_Accumulated");
         }
@@ -146,7 +232,7 @@ namespace Tools
         template<typename T>
         void BalanceWorkLoad( const Int job_count, cptr<T> acc_costs )
         {
-            const Int thread_count = ThreadCount();
+            static_assert(IntQ<T>,"");
             
             // This function reads in a list job_acc_costs of accumulated costs, then allocates job_ptr as a vector of size thread_count + 1, and writes the work distribution to it.
             // Assigns threads to consecutive chunks jobs, ..., job_ptr[k+1]-1 of jobs.
@@ -157,59 +243,67 @@ namespace Tools
             
             ptic("BalanceWorkLoad");
             
+            if( job_count <=0 )
+            {
+                eprint(ClassName()+"::BalanceWorkLoad: job_count cost is <= 0. Aborting with invalid job pointers.");
+                
+                
+                job_ptr.Fill( Int(0) );
+                
+                return;
+            }
 
-            job_ptr[static_cast<Size_T>(thread_count)] = job_count;
-
-            const Int naive_chunk_size = ((job_count + thread_count) - Int(1)) / thread_count;
+            job_ptr[thread_count] = job_count;
+            
+            const Int naive_chunk_size = CeilDivide(job_count,thread_count);
             
             const T total_cost = acc_costs[job_count];
             
             
             if( total_cost <=0 )
             {
-                wprint("BalanceWorkLoad: Total cost is 0.");
+                eprint(ClassName()+"::BalanceWorkLoad: Total cost is 0. Aborting with invalid job pointers");
                 
                 logdump(job_count);
                 logdump(thread_count);
                 
                 logvalprint( "acc_costs", ArrayToString( acc_costs, {job_count + 1} ) );
                 
-                std::fill( job_ptr.begin(), job_ptr.end(), static_cast<Int>(0));
+                std::fill( &job_ptr[0], &job_ptr[thread_count+1], Int(0) );
                             
                 ptoc("BalanceWorkLoad");
                             
                 return;
             }
             
-            const T per_thread_cost = (total_cost + thread_count - 1) / thread_count;
-
+            const T per_thread_cost = CeilDivide(total_cost,static_cast<T>(thread_count));
+            
             // binary search for best work load distribution
             
             //  There is quite a lot false sharing in this loop... so better not parallelize it.
-            for( Int thread = 0; thread < thread_count - 1; ++thread)
+            for( Int thread = 0; thread < thread_count - 1; ++thread )
             {
                 // each thread (other than the last one) is required to have at least this accumulated cost
-                T target = Min( total_cost, static_cast<T>(per_thread_cost * (thread + 1)) );
+                T target = Min( total_cost, per_thread_cost * static_cast<T>(thread + 1) );
                 
-                Int pos;
                 // find an index a such that b_row_acc_costs[ a ] < target;
                 // taking naive_chunk_size * thread as initial guess, because that might be nearly correct for costs that are evenly distributed over the block rows
-                pos = thread + 1;
-                Int a = Min(job_count, static_cast<Int>(naive_chunk_size * pos) );
+                Int pos = thread + 1;
+                Int a = Min(job_count, naive_chunk_size * pos );
                 while( acc_costs[a] >= target )
                 {
                     --pos;
-                    a = Min(job_count, static_cast<Int>(naive_chunk_size * pos) );
+                    a = Min(job_count, naive_chunk_size * pos );
                 };
                 
                 // find an index  b such that b_row_acc_costs[ b ] >= target;
                 // taking naive_chunk_size * (thread + 1) as initial guess, because that might be nearly correct for costs that are evenly distributed over the block rows
                 pos = thread + 1;
-                Int b = Min(job_count, static_cast<Int>(naive_chunk_size * pos) );
+                Int b = Min(job_count, naive_chunk_size * pos );
                 while( (b < job_count) && (acc_costs[b] < target) )
                 {
                     ++pos;
-                    b = Min(job_count, static_cast<Int>(naive_chunk_size * pos) );
+                    b = Min(job_count, naive_chunk_size * pos );
                 };
                 
                 // binary search
@@ -226,27 +320,21 @@ namespace Tools
                     }
                 }
 
-                job_ptr[static_cast<Size_T>(thread + 1)] = b;
+                job_ptr[thread + 1] = b;
             }
             
             ptoc("BalanceWorkLoad");
         }
-        
-        template<typename I>
-        void LoadFromBuffer( cptr<I> buffer )
-        {
-            std::copy_n( buffer, ThreadCount() + 1, &job_ptr[0] );
-        }
-        
 
-        [[nodiscard]] std::string friend ToString( const JobPointers & J)
+        [[nodiscard]] std::string friend ToString( const JobPointers & J )
         {
-            return ArrayToString( &J.job_ptr[0], {J.Size()} );
+            return ArrayToString( J.job_ptr.data(), {J.job_ptr.Size()} );
         }
         
     private:
         
-        std::vector<Int> job_ptr;
+        Int thread_count = 0;
+        Container_T job_ptr;
         
         
     public:

@@ -16,9 +16,9 @@ namespace Tools
     
 //    static constexpr Size_T CacheLineWidth = std::hardware_destructive_interference_size;
     
-    static constexpr Size_T Alignment = std::max( sizeof(void*), std::size_t(16) );
+    static constexpr Size_T DefaultAlignment = std::max( sizeof(void*), std::size_t(16) );
 
-    static constexpr Size_T ObjectAlignment = std::max( CacheLineWidth, Alignment );
+    static constexpr Size_T ObjectAlignment = std::max( CacheLineWidth, DefaultAlignment );
 
     static constexpr Size_T PrefetchStride = 4 * CacheLineWidth;
     
@@ -60,7 +60,7 @@ namespace Tools
         return chunk_size * thread + (remainder * thread) / thread_count;
     }
     
-    inline bool is_aligned( const void * const pointer, const Size_T byte_count = Alignment )
+    inline bool is_aligned( const void * const pointer, const Size_T byte_count = DefaultAlignment )
     {
         return reinterpret_cast<std::uintptr_t>(pointer) % byte_count == 0;
     }
@@ -137,7 +137,7 @@ namespace Tools
 
 
     template <typename T>
-    force_inline int safe_alloc( T * & ptr_, const Size_T n, const Size_T aligment = Alignment )
+    force_inline int safe_alloc( T * & ptr_, const Size_T n, const Size_T aligment = DefaultAlignment )
     {
         int wasallocated = (ptr_ != nullptr);
 
@@ -157,7 +157,7 @@ namespace Tools
 #if COMPILER_IS_ANAL_ABOUT_RESTRICT
     // overload function for restrict qualifier
     template <typename T>
-    force_inline int safe_alloc( T * restrict & ptr_, const Size_T n, const Size_T aligment = Alignment )
+    force_inline int safe_alloc( T * restrict & ptr_, const Size_T n, const Size_T aligment = DefaultAlignment )
     {
         int wasallocated = (ptr_ != nullptr);
 

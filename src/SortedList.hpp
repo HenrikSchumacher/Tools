@@ -8,29 +8,29 @@ namespace Tools
         
         std::vector<T> list;
         
+        // TODO: Replace by
+//        HeapArray<T,Int> list;
+        
     public:
         
-        using iterator       = typename std::vector<T>::iterator;
-        using const_iterator = typename std::vector<T>::const_iterator;
-        
-        iterator begin()
+        mptr<T> begin()
         {
-            return list.begin();
+            return &*list.begin();
         }
         
-        const_iterator begin() const
+        cptr<T> begin() const
         {
-            return list.cbegin();
+            return &*list.cbegin();
         }
         
-        iterator end()
+        mptr<T> end()
         {
-            return list.end();
+            return &*list.end();
         }
         
-        const_iterator end() const
+        cptr<T> end() const
         {
-            return list.cend();
+            return &*list.cend();
         }
         
         SortedList() = default;

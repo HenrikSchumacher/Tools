@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Tensors
+namespace Tools
 {
 
     template <
@@ -8,9 +8,9 @@ namespace Tensors
         Size_T alignment = DefaultAlignment,
         typename Alloc_T_ = AlignedAllocator<Scal_>
     >
-    class HeapArray
+    class alignas(ObjectAlignment) HeapArray
     {
-        static_assert(IntQ<Int>,"");
+        static_assert(IntQ<Int_>,"");
         
     public:
         
@@ -34,7 +34,7 @@ namespace Tensors
         :   buffer_size    { Tools::Max(0,n) }
         {
 //            logprint("Constuctor of "+ClassName()+" of size "+ToString(d0) );
-            Alloc_T::Allocate(buffer,ToSize_T(buffer_size),Alignment);
+            Alloc_T::Alloc(buffer,ToSize_T(buffer_size),Alignment);
         }
         
         HeapArray( const Int n, cref<Scal> init )
@@ -63,7 +63,7 @@ namespace Tensors
         }
 
         // Copy constructor
-        HeapArray( const TENSOR_T & other )
+        HeapArray( const HeapArray & other )
         :   HeapArray( other.buffer_size  )
         {
     //        logprint("Copy of "+ClassName()+" of size "+ToString(other.Size()) );
@@ -136,7 +136,7 @@ namespace Tensors
     //                logprint(other.ClassName()+": Reallocation of size "+ToString( buffer_size ) );
                     
                     Alloc_T::Free(buffer);
-                    Alloc_T::Allocate(buffer,ToSize_T(buffer_size),Alignment);
+                    Alloc_T::Alloc(buffer,ToSize_T(buffer_size),Alignment);
                 }
                 
                 Read( other.buffer );
@@ -349,7 +349,7 @@ namespace Tensors
                 }
             }
             
-            swap( *this, b );
+            swap( *this, B );
         }
         
         template<bool copy>
@@ -382,7 +382,7 @@ namespace Tensors
             cref<HeapArray> A, const Int i_begin, const Int i_end
         )
         {
-            if( (i_begin >= 0) && ( i_end <= array.buffer_size) )
+            if( (i_begin >= 0) && ( i_end <= A.buffer_size) )
             {
                 return ArrayToString(
                     &A.buffer[i_begin],
@@ -413,9 +413,6 @@ namespace Tensors
         }
         
     }; // HeapArray
-    
-#include "Tensor_Common_External.hpp"
-    
     
 } // namespace Tensors
 

@@ -22,6 +22,7 @@ namespace Tools
     
     static constexpr Parallel_T Seq        = Parallel_T::False;
     
+    
     enum struct Dynamic_T : bool
     {
         True  = true,
@@ -108,7 +109,7 @@ namespace Tools
         }
 #endif
         
-        if constexpr ( N <= VarSize )
+        if constexpr ( N_ <= VarSize )
         {
             if constexpr (parQ == Parallel)
             {
@@ -121,9 +122,8 @@ namespace Tools
                 }
                 else
                 {
-                    if constexpr ( dynQ == Dynamic_T::True )
+                    if constexpr ( dynQ == Dynamic )
                     {
-                        // TODO: ???
                         ParallelDo_Dynamic( std::forward<F>(fun), Int(0), n, Int(1), thread_count );
                     }
                     else

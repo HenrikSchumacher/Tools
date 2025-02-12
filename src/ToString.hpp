@@ -28,6 +28,12 @@ namespace Tools
         return sout << ToString(z);
     }
     
+    template <typename T>
+    [[nodiscard]] std::string ToString( T * ptr )
+    {
+        return std::format("{:p}",ptr);
+    }
+    
 
     template <typename T>
     [[nodiscard]] std::enable_if_t<IntQ<T>,std::string> ToString( const T & value )
