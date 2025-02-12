@@ -14,12 +14,13 @@ namespace Tools
             if( wasallocated )
             {
                 aligned_free(ptr);
-                ptr = nullptr;
                 
                 if constexpr ( verboseQ )
                 {
                     print(ClassName() + "::Alloc: Memory at " + ToString(ptr) + " has been released." );
                 }
+                
+                ptr = nullptr;
             }
             
             return !wasallocated;
@@ -34,12 +35,13 @@ namespace Tools
             if( wasallocated )
             {
                 aligned_free(ptr);
-                ptr = nullptr;
                 
                 if constexpr ( verboseQ )
                 {
                     print(ClassName() + "::Alloc: Memory at " + ToString(ptr) + " has been released." );
                 }
+                
+                ptr = nullptr;
             }
             
             return !wasallocated;
