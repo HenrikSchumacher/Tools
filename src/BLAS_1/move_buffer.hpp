@@ -5,13 +5,15 @@ namespace Tools
     
     template <
         Size_T N = VarSize, Parallel_T parQ = Sequential,
-        typename T
+        typename T, typename Int = Size_T
     >
     force_inline void move_buffer(
-        const T * from, T * to, const Size_T n = N, const Size_T thread_count = 1
+        cptr<T> from, mptr<T> to, const Int n = static_cast<Int>(N), const Int thread_count = 1
     )
     {
         check_sequential<parQ>( "move_buffer", thread_count );
+        
+        static_assert( IntQ<Int>, "");
         
         if constexpr ( N <= VarSize )
         {
@@ -22,17 +24,17 @@ namespace Tools
             }
             else
             {
-                if( thread_count <= Scalar::One<Size_T> )
+                if( thread_count <= Int(1) )
                 {
                     std::memmove( &to[0], &from[0], n );
                 }
                 else
                 {
                     ParallelDo(
-                        [=]( const Size_T thread )
+                        [=]( const Int thread )
                         {
-                            const Size_T begin = JobPointer(n,thread_count,thread  );
-                            const Size_T end   = JobPointer(n,thread_count,thread+1);
+                            const Int begin = JobPointer(n,thread_count,thread  );
+                            const Int end   = JobPointer(n,thread_count,thread+1);
 
                             std::memmove( &to[begin], &from[begin], end-begin );
                         },
