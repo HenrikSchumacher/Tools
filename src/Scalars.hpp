@@ -172,6 +172,17 @@ namespace Tools
         template<> static constexpr bool ScalarQ<Complex64 >  = true;
         //        template<> static constexpr bool ScalarQ<Complex128>  = true;
         
+        
+        template<> static constexpr bool ScalarQ<bool>     = true;
+        template<> static constexpr bool ScalarQ<Int8>     = true;
+        template<> static constexpr bool ScalarQ<Int16>    = true;
+        template<> static constexpr bool ScalarQ<Int32>    = true;
+        template<> static constexpr bool ScalarQ<Int64>    = true;
+        template<> static constexpr bool ScalarQ<UInt8>    = true;
+        template<> static constexpr bool ScalarQ<UInt16>   = true;
+        template<> static constexpr bool ScalarQ<UInt32>   = true;
+        template<> static constexpr bool ScalarQ<UInt64>   = true;
+        
         template<typename T> static constexpr bool FloatQ = false;
         
         template<> static constexpr bool FloatQ<Real32 >     = true;
