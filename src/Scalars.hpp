@@ -158,6 +158,18 @@ namespace Tools
         
         template<> static constexpr bool RealQ<Real32 >       = true;
         template<> static constexpr bool RealQ<Real64 >       = true;
+        
+        template<> static constexpr bool RealQ<bool   >       = true;
+        template<> static constexpr bool RealQ<Int8   >       = true;
+        template<> static constexpr bool RealQ<Int16  >       = true;
+        template<> static constexpr bool RealQ<Int32  >       = true;
+        template<> static constexpr bool RealQ<Int64  >       = true;
+        template<> static constexpr bool RealQ<UInt8  >       = true;
+        template<> static constexpr bool RealQ<UInt16 >       = true;
+        template<> static constexpr bool RealQ<UInt32 >       = true;
+        template<> static constexpr bool RealQ<UInt64 >       = true;
+
+        
         //        template<> static constexpr bool RealQ<Real128>       = true;
         template<> static constexpr bool RealQ<Complex32 >    = false;
         template<> static constexpr bool RealQ<Complex64 >    = false;
@@ -357,6 +369,15 @@ namespace Tools
     force_inline constexpr R Frac( cref<S> a, cref<T> b )
     {
         return scalar_cast<R>(a) / scalar_cast<R>(b);
+    }
+    
+    template<typename S, typename T, typename R = decltype( S(1)*T(1) )>
+    force_inline constexpr R Percentage( cref<S> a, cref<T> b )
+    {
+        static_assert(Scalar::RealQ<S>,"");
+        static_assert(Scalar::RealQ<T>,"");
+        static_assert(Scalar::RealQ<R>,"");
+        return R(100) * scalar_cast<R>(a) / scalar_cast<R>(b);
     }
     
 //    template<typename Scal>
