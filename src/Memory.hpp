@@ -137,7 +137,9 @@ namespace Tools
 
 
     template <typename T>
-    force_inline int safe_alloc( T * & ptr_, const Size_T n, const Size_T aligment = DefaultAlignment )
+    force_inline int safe_alloc(
+        T * & ptr_, const Size_T n, const Size_T aligment = DefaultAlignment
+    )
     {
         int wasallocated = (ptr_ != nullptr);
 
@@ -157,7 +159,9 @@ namespace Tools
 #if COMPILER_IS_ANAL_ABOUT_RESTRICT
     // overload function for restrict qualifier
     template <typename T>
-    force_inline int safe_alloc( T * restrict & ptr_, const Size_T n, const Size_T aligment = DefaultAlignment )
+    force_inline int safe_alloc(
+        T * restrict & ptr_, const Size_T n, const Size_T aligment = DefaultAlignment
+    )
     {
         int wasallocated = (ptr_ != nullptr);
 

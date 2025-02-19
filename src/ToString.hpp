@@ -27,6 +27,27 @@ namespace Tools
         return std::format("{: .7e} {:+.7e}I",std::real(z),std::imag(z));
     }
     
+    
+    [[nodiscard]] std::string ToStringFPGeneral( const double & value )
+    {
+        return std::format("{:g}",value);
+    }
+    
+    [[nodiscard]] std::string ToStringFPGeneral( const float & value )
+    {
+        return std::format("{:g}",value);
+    }
+    
+    [[nodiscard]] std::string ToStringFPGeneral( const std::complex<double> & z )
+    {
+        return std::format("{:g} {:+g}I",std::real(z),std::imag(z));
+    }
+    
+    [[nodiscard]] std::string ToStringFPGeneral( const std::complex<float> & z )
+    {
+        return std::format("{:g} {:+g}I",std::real(z),std::imag(z));
+    }
+    
     template <typename T>
     std::ostream & operator<<( std::ostream & sout, const std::complex<T> & z )
     {
@@ -42,11 +63,16 @@ namespace Tools
     template <typename T>
     [[nodiscard]] std::string ToString( T const * ptr )
     {
-        std::cout << "ToString(T const * const ptr)" << std::endl;
+    std::cout << "ToString(T const * const ptr)" << std::endl;
         
         return std::format( "{:p}", (void const *)ptr );
     }
     
+    template <typename T>
+    [[nodiscard]] std::string ToString( const char * ptr )
+    {
+        return std::string(ptr);
+    }
 
     template <typename T>
     [[nodiscard]] std::enable_if_t<IntQ<T>,std::string> ToString( const T & value )
