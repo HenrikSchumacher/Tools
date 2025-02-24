@@ -4,7 +4,7 @@ namespace Tools
 {
     template<
         Size_T N = VarSize, Parallel_T parQ = Sequential,
-        typename x_T, typename y_T, typename up_T
+        typename x_T, typename y_T, typename up_T, typename Int = Size_T
     >
     TOOLS_FORCE_INLINE void elementwise_min(
         cptr<x_T> x, cptr<y_T> y, mptr<up_T> up,

@@ -8,7 +8,7 @@ namespace Tools
     >
     TOOLS_FORCE_INLINE void add_to_buffer(
         cptr<x_T> x, mptr<y_T> y,
-        const Int n = N, const Int thread_count = 1
+        const Int n = static_cast<Int>(N), const Int thread_count = 1
     )
     {
         static_assert( IntQ<Int>, "" );

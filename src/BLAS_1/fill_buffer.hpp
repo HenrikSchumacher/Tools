@@ -3,18 +3,6 @@
 namespace Tools
 {
     template <
-        Size_T N, Parallel_T parQ = Sequential,
-        typename T
-    >
-    TOOLS_FORCE_INLINE constexpr void fill_buffer( mptr<T> a, const T init )
-    {
-        static_assert(N > VarSize,"");
-        static_assert(parQ == Sequential,"");
-        
-        std::fill( &a[0], &a[N], init );
-    }
-    
-    template <
         Size_T N = VarSize, Parallel_T parQ = Sequential,
         typename T, typename Int = Size_T
     >
@@ -55,7 +43,10 @@ namespace Tools
         }
         else
         {
-            fill_buffer<N>( a, init );
+            static_assert(N > VarSize,"");
+            static_assert(parQ == Sequential,"");
+            
+            std::fill( &a[0], &a[N], init );
         }
         
     }

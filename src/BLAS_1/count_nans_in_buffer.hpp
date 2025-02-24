@@ -5,11 +5,11 @@ namespace Tools
     
     template<
         Size_T N = VarSize, Parallel_T parQ = Sequential,
-        typename T
+        typename T, typename Int = Size_T
     >
-    TOOLS_FORCE_INLINE Size_T count_nans_in_buffer(
+    TOOLS_FORCE_INLINE Int count_nans_in_buffer(
         mptr<T> a,
-        const Size_T n = N, const Size_T thread_count = 1
+        const Int n = static_cast<Int>(N), const Int thread_count = 1
     )
     {
         check_sequential<parQ>( "count_nans_in_buffer", thread_count );
@@ -17,12 +17,12 @@ namespace Tools
         if constexpr ( parQ == Parallel )
         {
             return DoReduce(
-                [=]( const Size_T thread ) -> Size_T
+                [=]( const Int thread ) -> Size_T
                 {
                     const Size_T i_begin = JobPointer( n, thread_count, thread     );
                     const Size_T i_end   = JobPointer( n, thread_count, thread + 1 );
 
-                    Size_T counter = 0;
+                    Int counter = 0;
                     
                     for( Size_T i = i_begin; i < i_end; ++i )
                     {
@@ -31,8 +31,8 @@ namespace Tools
                     
                     return counter;
                 },
-                AddReducer<Size_T,Size_T>(),
-                Scalar::Zero<Size_T>,
+                AddReducer<Int,Size_T>(),
+                Scalar::Zero<Int>,
                 thread_count
             );
         }

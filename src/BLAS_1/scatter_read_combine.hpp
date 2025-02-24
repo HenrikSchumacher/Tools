@@ -2,7 +2,6 @@
 
 namespace Tools
 {
-    
     template<
         Scalar::Flag a_flag, Scalar::Flag b_flag,
         Size_T N = VarSize, Parallel_T parQ = Sequential,

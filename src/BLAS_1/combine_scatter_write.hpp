@@ -2,7 +2,6 @@
 
 namespace Tools
 {
-    
     template<
         Scalar::Flag a_flag, Scalar::Flag b_flag,
         Size_T N = VarSize, Parallel_T parQ = Sequential,
@@ -10,7 +9,7 @@ namespace Tools
     >
     constexpr TOOLS_FORCE_INLINE void combine_scatter_write(
         cref<a_T> a, cptr<x_T> x,
-        cref<b_T> b, mptr<y_T> y, cptr<Int> idx, Size_T n = N, Size_T thread_count = 1
+        cref<b_T> b, mptr<y_T> y, cptr<Int> idx, Int n = static_cast<Int>(N), Int thread_count = 1
     )
     {
         check_sequential<parQ>( "combine_scatter_write", thread_count );
@@ -49,7 +48,7 @@ namespace Tools
             #pragma float_control(precise, off)
         
             Do<N,parQ,Static>(
-                [=]( const Size_T k )
+                [=]( const Int k )
                 {
                     combine_scalars<a_flag,b_flag>( a, x[k], b, y[idx[k]] );
                 },

@@ -4,7 +4,7 @@ namespace Tools
 {
     template< Size_T N = VarSize, Parallel_T parQ = Sequential,
         Op opx = Op::Id, Op opy = Op::Id,
-        typename x_T, typename y_T, typename Int
+        typename x_T, typename y_T, typename Int = Size_T
     >
     [[nodiscard]] TOOLS_FORCE_INLINE
     decltype( x_T(1) * y_T(1) ) dot_buffers(

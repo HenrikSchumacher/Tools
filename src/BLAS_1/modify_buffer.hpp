@@ -31,12 +31,12 @@ namespace Tools
     template<
         Scalar::Flag a_flag, Size_T N = VarSize, Parallel_T parQ = Sequential,
         Op op = Op::Id,
-        typename a_T, typename x_T
+        typename a_T, typename x_T, typename Int = Size_T
     >
     TOOLS_FORCE_INLINE void modify_buffer(
         cref<a_T> a, mptr<x_T> x,
-        const Size_T n = N,
-        const Size_T thread_count = 1
+        const Int n = static_cast<Int>(N),
+        const Int thread_count = 1
     )
     {
         // This routine computes y[i] = a * x[i].
@@ -83,7 +83,7 @@ namespace Tools
             #pragma float_control(precise, off)
             
             Do<N,parQ,Static>(
-                [=]( const Size_T i )
+                [=]( const Int i )
                 {
                     x[i] = Scalar::Op<a_flag,op>(a,x[i]);
                 },

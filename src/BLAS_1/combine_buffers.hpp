@@ -45,7 +45,7 @@ namespace Tools
     >
     TOOLS_FORCE_INLINE void combine_buffers(
         cref<a_T> a, cptr<x_T> x, cref<b_T> b, mptr<y_T> y,
-        const Int n = N,
+        const Int n = static_cast<Int>(N),
         const Int thread_count = 1
     )
     {
