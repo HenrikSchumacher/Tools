@@ -235,24 +235,24 @@ namespace Tools
         
     public:
         
-        force_inline mptr<Scal> data()
+        TOOLS_FORCE_INLINE mptr<Scal> data()
         {
             return buffer;
         }
 
-        force_inline cptr<Scal> data() const
+        TOOLS_FORCE_INLINE cptr<Scal> data() const
         {
             return buffer;
         }
         
-        force_inline mptr<Scal> data( const Int i )
+        TOOLS_FORCE_INLINE mptr<Scal> data( const Int i )
         {
             BoundCheck(i);
             
             return &buffer[i];
         }
         
-        force_inline cptr<Scal> data( const Int i ) const
+        TOOLS_FORCE_INLINE cptr<Scal> data( const Int i ) const
         {
             BoundCheck(i);
             
@@ -260,49 +260,49 @@ namespace Tools
         }
         
         
-        force_inline mptr<Scal> begin()
+        TOOLS_FORCE_INLINE mptr<Scal> begin()
         {
             return buffer;
         }
 
-        force_inline cptr<Scal> begin() const
+        TOOLS_FORCE_INLINE cptr<Scal> begin() const
         {
             return buffer;
         }
 
-        force_inline mptr<Scal> end()
+        TOOLS_FORCE_INLINE mptr<Scal> end()
         {
             return &buffer[buffer_size];
         }
 
-        force_inline cptr<Scal> end() const
+        TOOLS_FORCE_INLINE cptr<Scal> end() const
         {
             return &buffer[buffer_size];
         }
         
         
-        force_inline mref<Scal> operator()(const Int i)
+        TOOLS_FORCE_INLINE mref<Scal> operator()(const Int i)
         {
             BoundCheck(i);
             
             return buffer[i];
         }
         
-        force_inline cref<Scal> operator()(const Int i) const
+        TOOLS_FORCE_INLINE cref<Scal> operator()(const Int i) const
         {
             BoundCheck(i);
             
             return buffer[i];
         }
         
-        force_inline mref<Scal> operator[](const Int i)
+        TOOLS_FORCE_INLINE mref<Scal> operator[](const Int i)
         {
             BoundCheck(i);
             
             return buffer[i];
         }
         
-        force_inline cref<Scal> operator[](const Int i) const
+        TOOLS_FORCE_INLINE cref<Scal> operator[](const Int i) const
         {
             BoundCheck(i);
             
@@ -310,22 +310,22 @@ namespace Tools
         }
         
         
-        force_inline mref<Scal> First()
+        TOOLS_FORCE_INLINE mref<Scal> First()
         {
             return buffer[0];
         }
         
-        force_inline cref<Scal> First() const
+        TOOLS_FORCE_INLINE cref<Scal> First() const
         {
             return buffer[0];
         }
 
-        force_inline mref<Scal> Last()
+        TOOLS_FORCE_INLINE mref<Scal> Last()
         {
             return (buffer_size > 0 ? buffer[buffer_size-1] : buffer[0]);
         }
         
-        force_inline cref<Scal> Last() const
+        TOOLS_FORCE_INLINE cref<Scal> Last() const
         {
             return (buffer_size > 0 ? buffer[buffer_size-1] : buffer[0]);
         }

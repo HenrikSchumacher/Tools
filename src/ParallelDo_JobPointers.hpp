@@ -5,7 +5,7 @@ namespace Tools
 {
     // Executes the function `fun` of the form `[]( const Int i ) -> void {...}` parallelized over chunks defined by `job_ptr`.
     template<typename F, typename Int>
-    force_inline void ParallelDo( F && fun, cref<JobPointers<Int>> job_ptr )
+    TOOLS_FORCE_INLINE void ParallelDo( F && fun, cref<JobPointers<Int>> job_ptr )
     {
         static_assert(IntQ<Int>,"");
         
@@ -26,7 +26,7 @@ namespace Tools
     
     
     template<typename F, typename R, typename T, typename Int>
-    force_inline T ParallelDoReduce(
+    TOOLS_FORCE_INLINE T ParallelDoReduce(
         F && fun, R && reducer, cref<T> init, cref<JobPointers<Int>> job_ptr
     )
     {

@@ -146,10 +146,10 @@ namespace Tools
         {
             wprint("RegularFalsi: The functions values of the interval end points do not bracket the value f. Returning interval midpoint.");
             
-            dump(f_a);
-            dump(f_b);
-            dump(Sign(f_a));
-            dump(Sign(f_b));
+            TOOLS_DUMP(f_a);
+            TOOLS_DUMP(f_b);
+            TOOLS_DUMP(Sign(f_a));
+            TOOLS_DUMP(Sign(f_b));
                 
             return Mean(a,b);
         }

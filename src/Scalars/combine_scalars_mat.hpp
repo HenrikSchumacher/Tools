@@ -5,7 +5,7 @@ namespace Tools
     
     // Special version for purely complex types.
     template< enum Tools::Op op = Tools::Op::Id, typename R>
-    force_inline constexpr std::enable_if_t<MatrixizableQ<R>,mat_T<2,2,R>>
+    TOOLS_FORCE_INLINE constexpr std::enable_if_t<MatrixizableQ<R>,mat_T<2,2,R>>
     ComplexMultiplierMatrix( const Cplx<R> & a)
     {
         static_assert(NotTransposedQ(op),"");
@@ -38,7 +38,7 @@ namespace Tools
 
     // Special version for purely complex types.
     template< enum Tools::Op op = Tools::Op::Id, typename R>
-    force_inline constexpr std::enable_if_t<MatrixizableQ<mat_T<2,2,R>>,void>
+    TOOLS_FORCE_INLINE constexpr std::enable_if_t<MatrixizableQ<mat_T<2,2,R>>,void>
     ComplexMultiplierMatrixT( const Cplx<R> & a)
     {
         static_assert(NotTransposedQ(op),"");
@@ -75,7 +75,7 @@ namespace Tools
         Op opx = Op::Id, Op opy = Op::Id,
         typename Real
     >
-    force_inline constexpr std::enable_if_t<MatrixizableQ<Real>,void>
+    TOOLS_FORCE_INLINE constexpr std::enable_if_t<MatrixizableQ<Real>,void>
     combine_scalars_1(
         cref<Cplx<Real>> a, cref<Cplx<Real>> x,
         // We explicitly allopw y and z to overlap.
@@ -123,7 +123,7 @@ namespace Tools
         Op opx = Op::Id, Op opy = Op::Id,
         typename Real
     >
-    force_inline constexpr std::enable_if_t<MatrixizableQ<Real>,void>
+    TOOLS_FORCE_INLINE constexpr std::enable_if_t<MatrixizableQ<Real>,void>
     combine_scalars_1T(
         cref<Cplx<Real>> a, cref<Cplx<Real>> x,
         // We explicitly allopw y and z to overlap.
@@ -171,7 +171,7 @@ namespace Tools
         Op opx = Op::Id, Op opy = Op::Id,
         typename Real
     >
-    force_inline constexpr std::enable_if_t<MatrixizableQ<Real>,void>
+    TOOLS_FORCE_INLINE constexpr std::enable_if_t<MatrixizableQ<Real>,void>
     combine_scalars_3(
         cref<Cplx<Real>> a, cref<Cplx<Real>> x,
         // We explicitly allow y and z to overlap.
@@ -232,7 +232,7 @@ namespace Tools
         Op opx = Op::Id, Op opy = Op::Id,
         typename Real
     >
-    force_inline constexpr std::enable_if_t<MatrixizableQ<Real>,void>
+    TOOLS_FORCE_INLINE constexpr std::enable_if_t<MatrixizableQ<Real>,void>
     combine_scalars_3_perm(
         cref<Cplx<Real>> a, cref<Cplx<Real>> x,
         // We explicitly allopw y and z to overlap.
@@ -281,7 +281,7 @@ namespace Tools
         Op opx = Op::Id, Op opy = Op::Id,
         typename Real
     >
-    force_inline constexpr
+    TOOLS_FORCE_INLINE constexpr
     std::enable_if_t<MatrixizableQ<Real>,void> combine_scalars(
         cref<Cplx<Real>> a, cref<Cplx<Real>> x,
         cref<Cplx<Real>> b, const Cplx<Real> & y,
@@ -303,7 +303,7 @@ namespace Tools
         Op opx = Op::Id, Op opy = Op::Id,
         typename Real
     >
-    force_inline constexpr
+    TOOLS_FORCE_INLINE constexpr
     std::enable_if_t<MatrixizableQ<Real>,void> combine_scalars(
         cref<Cplx<Real>> a, cref<Cplx<Real>> x,
         cref<Cplx<Real>> b, mref<Cplx<Real>> y

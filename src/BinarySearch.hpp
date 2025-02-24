@@ -4,7 +4,7 @@ namespace Tools
 {
     
     template<typename T>
-    force_inline bool BinarySearch(
+    TOOLS_FORCE_INLINE bool BinarySearch(
         cptr<T> sorted_list, const Size_T n,
         cref<T> value,
         mref<Size_T> pos

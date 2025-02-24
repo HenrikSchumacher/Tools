@@ -42,7 +42,7 @@ namespace Tools
         Op opx = Op::Id,
         typename a_T, typename X_T
     >
-    force_inline void modify_matrix(
+    TOOLS_FORCE_INLINE void modify_matrix(
         cref<a_T> a, mptr<X_T> X, const Size_T ldX,
         const Size_T m, const Size_T n, const Size_T thread_count
     )
@@ -93,7 +93,7 @@ namespace Tools
         Op opx = Op::Id,
         typename a_T, typename X_T
     >
-    force_inline void modify_matrix(
+    TOOLS_FORCE_INLINE void modify_matrix(
         cref<a_T> a, mptr<X_T> X, const Size_T ldX
     )
     {
@@ -116,7 +116,7 @@ namespace Tools
         Op opx = Op::Id,
         typename a_T, typename X_T
     >
-    force_inline void modify_matrix(
+    TOOLS_FORCE_INLINE void modify_matrix(
         cref<a_T> a, mptr<X_T> X, const Size_T ldX,
         const Size_T m, const Size_T n, const Size_T thread_count
     )
@@ -137,7 +137,7 @@ namespace Tools
         Op opx = Op::Id,
         typename a_T, typename X_T
     >
-    force_inline void modify_matrix(
+    TOOLS_FORCE_INLINE void modify_matrix(
         cref<a_T> a, mptr<X_T> X, const Size_T ldX,
         const Size_T m, const Size_T n
     )
@@ -193,7 +193,7 @@ namespace Tools
         Op opx = Op::Id,
         typename a_T, typename X_T
     >
-    force_inline void modify_matrix_auto(
+    TOOLS_FORCE_INLINE void modify_matrix_auto(
         cref<a_T> a, mptr<X_T> X, const Size_T ldX,
         const Size_T m, const Size_T n, const Size_T thread_count
     )
@@ -235,7 +235,7 @@ namespace Tools
         Op opx = Op::Id,
         typename a_T, typename X_T
     >
-    force_inline void modify_matrix(
+    TOOLS_FORCE_INLINE void modify_matrix(
         cref<a_T> a, mptr<X_T> X, const Size_T ldX
     )
     {
@@ -256,7 +256,7 @@ namespace Tools
         Op opx = Op::Id,
         typename a_T, typename X_T
     >
-    force_inline void modify_matrix(
+    TOOLS_FORCE_INLINE void modify_matrix(
         cref<a_T> a, mptr<X_T> X, const Size_T ldX,
         const Size_T m, const Size_T n, const Size_T thread_count
     )
@@ -276,7 +276,7 @@ namespace Tools
         Op opx = Op::Id,
         typename a_T, typename X_T
     >
-    force_inline void modify_matrix(
+    TOOLS_FORCE_INLINE void modify_matrix(
         cref<a_T> a, mptr<X_T> X, const Size_T ldX,
         const Size_T m, const Size_T n
     )

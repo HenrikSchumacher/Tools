@@ -33,7 +33,7 @@ namespace Tools
         Op op = Op::Id,
         typename a_T, typename x_T
     >
-    force_inline void modify_buffer(
+    TOOLS_FORCE_INLINE void modify_buffer(
         cref<a_T> a, mptr<x_T> x,
         const Size_T n = N,
         const Size_T thread_count = 1

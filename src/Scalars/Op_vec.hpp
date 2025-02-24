@@ -10,7 +10,7 @@ namespace Tools
 //##########################################################################
     
         template<Flag a_flag, Tools::Op op, typename R>
-        force_inline constexpr
+        TOOLS_FORCE_INLINE constexpr
         std::enable_if_t<
             VectorizableQ<R> && OpReturnRealQ<a_flag,op,R,Cplx<R>>(),
             R
@@ -45,7 +45,7 @@ namespace Tools
         }
         
         template<Flag a_flag, Tools::Op op, typename R>
-        force_inline constexpr
+        TOOLS_FORCE_INLINE constexpr
         std::enable_if_t<
             VectorizableQ<R> && !OpReturnRealQ<a_flag,op,R,Cplx<R>>(),
             vec_T<2,R>
@@ -74,7 +74,7 @@ namespace Tools
 //##########################################################################
     
         template<Flag a_flag, Tools::Op op, typename R>
-        force_inline constexpr
+        TOOLS_FORCE_INLINE constexpr
         std::enable_if_t<
             VectorizableQ<R> && OpReturnRealQ<a_flag,op,R,Cplx<R>>(),
             R
@@ -101,7 +101,7 @@ namespace Tools
         }
 
         template<Flag a_flag, Tools::Op op, typename R>
-        force_inline constexpr
+        TOOLS_FORCE_INLINE constexpr
         std::enable_if_t<
             VectorizableQ<R> && !OpReturnRealQ<a_flag,op,R,Cplx<R>>(),
             vec_T<2,R>
@@ -182,7 +182,7 @@ namespace Tools
 //##########################################################################
     
         template<Flag a_flag, Tools::Op op, typename R>
-        force_inline constexpr
+        TOOLS_FORCE_INLINE constexpr
         std::enable_if_t<
             VectorizableQ<R> && OpReturnRealQ<a_flag,op,Cplx<R>,Cplx<R>>(),
             R
@@ -209,7 +209,7 @@ namespace Tools
         }
 
         template<Flag a_flag, Tools::Op op, typename R>
-        force_inline constexpr
+        TOOLS_FORCE_INLINE constexpr
         std::enable_if_t<
             VectorizableQ<R> && !OpReturnRealQ<a_flag,op,Cplx<R>,Cplx<R>>(),
             vec_T<2,R>

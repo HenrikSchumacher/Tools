@@ -3,7 +3,7 @@
 namespace Tools
 {
     template<bool fmaQ = true, typename Real>
-    force_inline Real Det3D_Naive( cptr<Real> A )
+    TOOLS_FORCE_INLINE Real Det3D_Naive( cptr<Real> A )
     {
         if constexpr( fmaQ )
         {
@@ -27,7 +27,7 @@ namespace Tools
     }
     
     template<bool fmaQ = true, typename Real>
-    force_inline Real SignedVolume3D_Naive(
+    TOOLS_FORCE_INLINE Real SignedVolume3D_Naive(
         cptr<Real> x, cptr<Real> y, cptr<Real> z, cptr<Real> w
     )
     {
@@ -41,7 +41,7 @@ namespace Tools
     }
     
     template<typename Out_T = int, bool fmaQ = true, typename Real>
-    force_inline Out_T Oriented3D_Naive(
+    TOOLS_FORCE_INLINE Out_T Oriented3D_Naive(
         cptr<Real> x, cptr<Real> y, cptr<Real> z, cptr<Real> w
     )
     {

@@ -9,7 +9,7 @@ namespace Tools
     using Clock = std::chrono::high_resolution_clock;
     using Time  = std::chrono::time_point<Clock>;
     
-    force_inline double Duration( const Time & start_time, const Time & stop_time )
+    TOOLS_FORCE_INLINE double Duration( const Time & start_time, const Time & stop_time )
     {
         return std::chrono::duration<double>(stop_time - start_time).count();
     }
@@ -95,8 +95,8 @@ namespace Tools
 } // namespace Tools
 
 
-#define dump(x) Tools::valprint( std::string(#x), x );
+#define TOOLS_DUMP(x) Tools::valprint( std::string(#x), x );
 
-#define mem_dump_string(x) std::string(#x) + " : " + ToString((x).AllocatedByteCount()) + "\n"
+#define TOOLS_MEM_DUMP_STRING(x) std::string(#x) + " : " + ToString((x).AllocatedByteCount()) + "\n"
 
-#define mem_dump(x) Tools::print( mem_dump_string(x) )
+#define TOOLS_MEM_DUMP(x) Tools::print( TOOLS_MEM_DUMP_STRING(x) )

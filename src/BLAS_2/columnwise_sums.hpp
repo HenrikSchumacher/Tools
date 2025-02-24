@@ -3,7 +3,7 @@
 namespace Tools
 {
     template < Size_T M, Size_T N, typename X_T, typename y_T>
-    force_inline constexpr void columnwise_sums(
+    TOOLS_FORCE_INLINE constexpr void columnwise_sums(
         cptr<X_T> X,  const Size_T ldX,
         mptr<y_T> y,  const Size_T ldy
     )

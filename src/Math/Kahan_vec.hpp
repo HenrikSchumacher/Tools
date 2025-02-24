@@ -3,7 +3,7 @@
 namespace Tools
 {
     template<Size_T n, typename Real>
-    force_inline
+    TOOLS_FORCE_INLINE
     std::enable_if_t<VectorizableQ<Real>,vec_T<n,Real>>
     Det2D_Kahan(
         cref<vec_T<n,Real>> a, cref<vec_T<n,Real>> b,
@@ -20,7 +20,7 @@ namespace Tools
     }
     
     template<Size_T n, typename Real >
-    force_inline
+    TOOLS_FORCE_INLINE
     std::enable_if_t<
         VectorizableQ<Real>,
         decltype(vec_T<n,Real>{} > vec_T<n,Real>{})
@@ -39,7 +39,7 @@ namespace Tools
     
     
     template<Size_T n, typename Real>
-    force_inline
+    TOOLS_FORCE_INLINE
     std::enable_if_t<
         VectorizableQ<Real>,
         decltype(vec_T<n,Real>{} > vec_T<n,Real>{} )
@@ -54,7 +54,7 @@ namespace Tools
     }
     
     template<typename Real>
-    force_inline
+    TOOLS_FORCE_INLINE
     std::enable_if_t<VectorizableQ<Real>,bool>
     LineSegmentsIntersectQ_Kahan(
         cref<vec_T<2,Real>> x_0, cref<vec_T<2,Real>> x_1,
@@ -108,7 +108,7 @@ namespace Tools
     
     
 //    template<typename Real>
-//    force_inline bool ConvexPlanarQuadrilateralQ_Kahan(
+//    TOOLS_FORCE_INLINE bool ConvexPlanarQuadrilateralQ_Kahan(
 //        cptr<Real> x_0, cptr<Real> x_1, cptr<Real> x_2, cptr<Real> x_3
 //    )
 //    {

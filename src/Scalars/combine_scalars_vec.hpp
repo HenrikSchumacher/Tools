@@ -8,7 +8,7 @@ namespace Tools
         Op opx = Op::Id, Op opy = Op::Id,
         typename a_T, typename x_T, typename b_T, typename y_T, typename R
     >
-    force_inline constexpr std::enable_if_t<
+    TOOLS_FORCE_INLINE constexpr std::enable_if_t<
         VectorizableQ<R>
         && SameQ<Scalar::Real<a_T>,R> && SameQ<Scalar::Real<x_T>,R>
         && SameQ<Scalar::Real<b_T>,R> && SameQ<Scalar::Real<y_T>,R>

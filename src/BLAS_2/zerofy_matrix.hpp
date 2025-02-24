@@ -6,7 +6,7 @@ namespace Tools
         Size_T M, Size_T N, Parallel_T parQ,
         typename X_T
     >
-    force_inline constexpr void zerofy_matrix(
+    TOOLS_FORCE_INLINE constexpr void zerofy_matrix(
         mptr<X_T> X, const Size_T ldX,
         const Size_T m, const Size_T n, const Size_T thread_count
     )
@@ -41,7 +41,7 @@ namespace Tools
         Size_T M, Size_T N,
         typename X_T
     >
-    force_inline constexpr void zerofy_matrix(
+    TOOLS_FORCE_INLINE constexpr void zerofy_matrix(
         mptr<X_T> X, const Size_T ldX
     )
     {
@@ -56,7 +56,7 @@ namespace Tools
     template <
         typename X_T
     >
-    force_inline constexpr void zerofy_matrix(
+    TOOLS_FORCE_INLINE constexpr void zerofy_matrix(
         mptr<X_T> X, const Size_T ldX,
         const Size_T m, const Size_T n, const Size_T thread_count
     )
@@ -69,7 +69,7 @@ namespace Tools
     template <
         typename X_T
     >
-    force_inline constexpr void zerofy_matrix(
+    TOOLS_FORCE_INLINE constexpr void zerofy_matrix(
         mptr<X_T> X, const Size_T ldX,
         const Size_T m, const Size_T n
     )

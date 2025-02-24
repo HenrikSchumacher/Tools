@@ -4,7 +4,7 @@ namespace Tools
 {
     // From https://stackoverflow.com/a/49658950/8248900.
     template<typename Int_1, typename Int_0>
-    force_inline constexpr Int_1 int_cast( const Int_0 n )
+    TOOLS_FORCE_INLINE constexpr Int_1 int_cast( const Int_0 n )
     {
         static_assert(IntQ<Int_0>,"");
         static_assert(IntQ<Int_1>,"");
@@ -102,7 +102,7 @@ namespace Tools
     
     
     template<typename T>
-    force_inline void assert_positive( const T x )
+    TOOLS_FORCE_INLINE void assert_positive( const T x )
     {
 #ifdef TOOLS_DEBUG
         if constexpr ( std::numeric_limits<T>::is_signed )

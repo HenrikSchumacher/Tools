@@ -3,13 +3,13 @@
 namespace Tools
 {
 //    template<bool fmaQ = true, typename Real>
-//    force_inline Interval<Real,RP> Det3D_IA( cptr<Real> A )
+//    TOOLS_FORCE_INLINE Interval<Real,RP> Det3D_IA( cptr<Real> A )
 //    {
 //        return Det3D_IA( reinterpret_cast<cptr<Singleton<Real>>>(A) );
 //    }
     
     template<bool fmaQ = true, typename Real, RoundingPolicy RP>
-    force_inline Interval<Real,RP> Det3D_IA( cptr<Interval<Real,RP>> A )
+    TOOLS_FORCE_INLINE Interval<Real,RP> Det3D_IA( cptr<Interval<Real,RP>> A )
     {
         if constexpr( fmaQ )
         {
@@ -33,7 +33,7 @@ namespace Tools
     }
     
     template<RoundingPolicy RP, bool diffsafeQ = false, bool fmaQ = true, typename Real>
-    force_inline Interval<Real,RP> SignedVolume3D_IA(
+    TOOLS_FORCE_INLINE Interval<Real,RP> SignedVolume3D_IA(
         cptr<Real> x, cptr<Real> y, cptr<Real> z, cptr<Real> w
     )
     {
@@ -69,7 +69,7 @@ namespace Tools
     
     
     template<RoundingPolicy RP, typename Out_T = int, bool diffsafeQ = false, bool fmaQ = true, typename Real>
-    force_inline Out_T Oriented3D_IA(
+    TOOLS_FORCE_INLINE Out_T Oriented3D_IA(
         cptr<Real> x, cptr<Real> y, cptr<Real> z, cptr<Real> w
     )
     {

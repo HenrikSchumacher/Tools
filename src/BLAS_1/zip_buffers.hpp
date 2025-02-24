@@ -64,7 +64,7 @@ namespace Tools
         Size_T N = VarSize, Parallel_T parQ = Sequential,
         typename F, typename T_a, typename T_b, typename T_c
     >
-    force_inline void zip_buffers(
+    TOOLS_FORCE_INLINE void zip_buffers(
         F && zip, cptr<T_a> a, cptr<T_b> b, mptr<T_c> c,
         const Size_T n = N, const Size_T thread_count = 1
     )

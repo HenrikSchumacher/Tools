@@ -34,7 +34,7 @@ namespace Tools
         Size_T M, Size_T N, Parallel_T parQ,
         typename X_T, typename Y_T
     >
-    force_inline constexpr void copy_matrix(
+    TOOLS_FORCE_INLINE constexpr void copy_matrix(
         cptr<X_T> X, const Size_T ldX,
         mptr<Y_T> Y, const Size_T ldY,
         const Size_T m, const Size_T n, const Size_T thread_count
@@ -70,7 +70,7 @@ namespace Tools
         Size_T M, Size_T N,
         typename X_T, typename Y_T
     >
-    force_inline constexpr void copy_matrix(
+    TOOLS_FORCE_INLINE constexpr void copy_matrix(
         cptr<X_T> X, const Size_T ldX,
         mptr<Y_T> Y, const Size_T ldY
     )
@@ -86,7 +86,7 @@ namespace Tools
     template <
         typename X_T, typename Y_T
     >
-    force_inline constexpr void copy_matrix(
+    TOOLS_FORCE_INLINE constexpr void copy_matrix(
         cptr<X_T> X, const Size_T ldX,
         mptr<Y_T> Y, const Size_T ldY,
         const Size_T m, const Size_T n, const Size_T thread_count
@@ -100,7 +100,7 @@ namespace Tools
     template <
         typename X_T, typename Y_T
     >
-    force_inline constexpr void copy_matrix(
+    TOOLS_FORCE_INLINE constexpr void copy_matrix(
         cptr<X_T> X, const Size_T ldX,
         mptr<Y_T> Y, const Size_T ldY,
         const Size_T m, const Size_T n

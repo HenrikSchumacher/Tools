@@ -24,33 +24,33 @@ namespace Tools
     
     
     template<typename Int>
-    force_inline constexpr Int CeilDivide( const Int n, const Int b )
+    TOOLS_FORCE_INLINE constexpr Int CeilDivide( const Int n, const Int b )
     {
         return ( (n + b - Int(1) ) / b );
     }
 
     template<typename Int>
-    force_inline constexpr Int RoundUpTo( const Int n, const Int b )
+    TOOLS_FORCE_INLINE constexpr Int RoundUpTo( const Int n, const Int b )
     {
         return CeilDivide(n,b) * b;
     }
     
     
     template<typename Int>
-    force_inline constexpr Int FloorDivide( const Int n, const Int b )
+    TOOLS_FORCE_INLINE constexpr Int FloorDivide( const Int n, const Int b )
     {
         return n / b;
     }
     
     template<typename Int>
-    force_inline constexpr Int RoundDownTo( const Int n, const Int b )
+    TOOLS_FORCE_INLINE constexpr Int RoundDownTo( const Int n, const Int b )
     {
         return FloorDivide(n,b) * b;
     }
     
     // Computes k-th job pointer for job_count equally sized jobs distributed on thread_count threads.
     template<typename Int, typename Int1, typename Int2>
-    force_inline Int JobPointer( const Int job_count, const Int1 thread_count_, const Int2 thread_ )
+    TOOLS_FORCE_INLINE Int JobPointer( const Int job_count, const Int1 thread_count_, const Int2 thread_ )
     {
         const Int thread_count = static_cast<Int>(thread_count_);
         const Int thread       = static_cast<Int>(thread_);
@@ -72,7 +72,7 @@ namespace Tools
         return (Size_T(1) << std::countr_zero(ptr));
     }
     
-    [[nodiscard]] force_inline void * aligned_malloc( const Size_T size, const Size_T alignment )
+    [[nodiscard]] TOOLS_FORCE_INLINE void * aligned_malloc( const Size_T size, const Size_T alignment )
     {
         const Size_T padded_size = RoundUpTo(size, alignment);
 
@@ -85,9 +85,9 @@ namespace Tools
         if( ptr_ == nullptr )
         {
             eprint("aligned_malloc: failed to allocate memory.");
-            dump(size);
-            dump(alignment);
-            dump(padded_size);
+            TOOLS_DUMP(size);
+            TOOLS_DUMP(alignment);
+            TOOLS_DUMP(padded_size);
             return nullptr;
         }
         else
@@ -96,7 +96,7 @@ namespace Tools
         }
     }
     
-    force_inline void aligned_free( void * ptr_ )
+    TOOLS_FORCE_INLINE void aligned_free( void * ptr_ )
     {
         #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
             _aligned_free( ptr_ );
@@ -108,7 +108,7 @@ namespace Tools
 
 
     template <typename T>
-    force_inline int safe_free( T * & ptr_ )
+    TOOLS_FORCE_INLINE int safe_free( T * & ptr_ )
     {
         int wasallocated = (ptr_ != nullptr);
         if( wasallocated )
@@ -120,10 +120,10 @@ namespace Tools
         return !wasallocated;
     }
 
-#if COMPILER_IS_ANAL_ABOUT_RESTRICT
+#if TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
     // overload function for restrict qualifier
     template <typename T>
-    force_inline int safe_free( T * restrict & ptr_ )
+    TOOLS_FORCE_INLINE int safe_free( T * restrict & ptr_ )
     {
         int wasallocated = (ptr_ != nullptr);
         if( wasallocated )
@@ -137,7 +137,7 @@ namespace Tools
 
 
     template <typename T>
-    force_inline int safe_alloc(
+    TOOLS_FORCE_INLINE int safe_alloc(
         T * & ptr_, const Size_T n, const Size_T aligment = DefaultAlignment
     )
     {
@@ -156,10 +156,10 @@ namespace Tools
         return wasallocated;
     }
 
-#if COMPILER_IS_ANAL_ABOUT_RESTRICT
+#if TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
     // overload function for restrict qualifier
     template <typename T>
-    force_inline int safe_alloc(
+    TOOLS_FORCE_INLINE int safe_alloc(
         T * restrict & ptr_, const Size_T n, const Size_T aligment = DefaultAlignment
     )
     {
@@ -181,7 +181,7 @@ namespace Tools
     
     
     template<int readwrite, int locality, typename T>
-    force_inline void prefetch_buffer( cptr<T> begin, const Size_T n )
+    TOOLS_FORCE_INLINE void prefetch_buffer( cptr<T> begin, const Size_T n )
     {
         const Size_T prefetch_size = n * sizeof(T);
         
@@ -194,13 +194,13 @@ namespace Tools
     }
     
     template<Size_T N, int readwrite, int locality, typename T>
-    force_inline void prefetch_buffer( cptr<T> begin )
+    TOOLS_FORCE_INLINE void prefetch_buffer( cptr<T> begin )
     {
         constexpr Size_T prefetch_size = N * sizeof(T);
         
         const unsigned char * ptr_ = reinterpret_cast<const unsigned char*>(begin);
     
-        LOOP_UNROLL_FULL
+        TOOLS_LOOP_UNROLL_FULL
         for( Size_T offset = 0; offset < prefetch_size; offset += PrefetchStride )
         {
             prefetch( &ptr_[offset], readwrite, locality );

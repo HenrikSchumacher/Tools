@@ -6,7 +6,7 @@ namespace Tools
         Size_T N = VarSize, Parallel_T parQ = Sequential,
         typename T, typename Int = Size_T
     >
-    force_inline constexpr void zerofy_buffer( 
+    TOOLS_FORCE_INLINE constexpr void zerofy_buffer( 
         mptr<T> a, const Int n = static_cast<Int>(N), const Int thread_count = 1
     )
     {

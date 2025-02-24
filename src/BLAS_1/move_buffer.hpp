@@ -7,7 +7,7 @@ namespace Tools
         Size_T N = VarSize, Parallel_T parQ = Sequential,
         typename T, typename Int = Size_T
     >
-    force_inline void move_buffer(
+    TOOLS_FORCE_INLINE void move_buffer(
         cptr<T> from, mptr<T> to, const Int n = static_cast<Int>(N), const Int thread_count = 1
     )
     {

@@ -222,7 +222,7 @@ namespace Tools
             // The cost of the k-th thread goes from job no job_ptr[k] to job no job_ptr[k+1] (as always in C/C++, job_ptr[k+1] points _after_ the last job.
         
             
-            ptic("BalanceWorkLoad_Accumulated");
+            TOOLS_PTIC("BalanceWorkLoad_Accumulated");
             
             HeapArray<T,Int> acc_costs( job_count + 1 );
             
@@ -235,7 +235,7 @@ namespace Tools
 
             BalanceWorkLoad( job_count, acc_costs.data() );
             
-            ptoc("BalanceWorkLoad_Accumulated");
+            TOOLS_PTOC("BalanceWorkLoad_Accumulated");
         }
         
         template<typename T>
@@ -250,7 +250,7 @@ namespace Tools
             // The cost of the k-th thread goes from job no job_ptr[k] to job no job_ptr[k+1] (as always in C/C++, job_ptr[k+1] points _after_ the last job.
         
             
-            ptic("BalanceWorkLoad");
+            TOOLS_PTIC("BalanceWorkLoad");
             
             if( job_count <=0 )
             {
@@ -273,14 +273,14 @@ namespace Tools
             {
                 eprint(ClassName()+"::BalanceWorkLoad: Total cost is 0. Aborting with invalid job pointers");
                 
-                logdump(job_count);
-                logdump(thread_count);
+                TOOLS_LOGDUMP(job_count);
+                TOOLS_LOGDUMP(thread_count);
                 
                 logvalprint( "acc_costs", ArrayToString( acc_costs, {job_count + 1} ) );
                 
                 std::fill( &job_ptr[0], &job_ptr[thread_count+1], Int(0) );
                             
-                ptoc("BalanceWorkLoad");
+                TOOLS_PTOC("BalanceWorkLoad");
                             
                 return;
             }
@@ -332,7 +332,7 @@ namespace Tools
                 job_ptr[thread + 1] = b;
             }
             
-            ptoc("BalanceWorkLoad");
+            TOOLS_PTOC("BalanceWorkLoad");
         }
 
         [[nodiscard]] std::string friend ToString( const JobPointers & J )

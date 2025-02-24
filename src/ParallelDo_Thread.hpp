@@ -7,7 +7,7 @@ namespace Tools
 {   
     // Executes the function `fun` of the form `[]( const Int thread ) -> S {...}` parallelized over `thread_count` threads.
     template<typename F, typename Int = Size_T>
-    force_inline void ParallelDo( F && fun, const Int thread_count )
+    TOOLS_FORCE_INLINE void ParallelDo( F && fun, const Int thread_count )
     {
         static_assert(IntQ<Int>,"");
         
@@ -34,7 +34,7 @@ namespace Tools
     // Executes the function `fun` of the `form []( const Int thread ) -> S {...}` parallelized over `thread_count` threads.
     // Afterwards, reduces with the function `reducer` of the form `[]( const Int thread, cref<S> value, mref<T> result ) {...}`.
     template<typename F, typename R, typename T, typename Int = Size_T>
-    force_inline T ParallelDoReduce( F && fun, R && reducer, cref<T> init, const Int thread_count )
+    TOOLS_FORCE_INLINE T ParallelDoReduce( F && fun, R && reducer, cref<T> init, const Int thread_count )
     {
         static_assert(IntQ<Int>,"");
         
@@ -65,7 +65,7 @@ namespace Tools
     
     // Executes the function `fun` of the form `[]( const Int thread, const Int i ) -> void {...}` parallelized over `thread_count` threads.
     template<typename F, typename Int = Size_T>
-    force_inline void ParallelDo_Dynamic(
+    TOOLS_FORCE_INLINE void ParallelDo_Dynamic(
         F && fun, const Int begin, const Int end, const Int inc, const Int thread_count
     )
     {

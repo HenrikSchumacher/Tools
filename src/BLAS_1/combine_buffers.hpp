@@ -43,7 +43,7 @@ namespace Tools
         Op opx = Op::Id, Op opy = Op::Id,
         typename a_T, typename x_T, typename b_T, typename y_T, typename Int = Size_T
     >
-    force_inline void combine_buffers(
+    TOOLS_FORCE_INLINE void combine_buffers(
         cref<a_T> a, cptr<x_T> x, cref<b_T> b, mptr<y_T> y,
         const Int n = N,
         const Int thread_count = 1
@@ -177,7 +177,7 @@ namespace Tools
         Op opx = Op::Id, Op opy = Op::Id,
         typename a_T, typename x_T, typename b_T, typename y_T, typename z_T, typename Int = Size_T
     >
-    force_inline void combine_buffers3(
+    TOOLS_FORCE_INLINE void combine_buffers3(
         cref<a_T> a, cptr<x_T> x, cref<b_T> b, cptr<y_T> y, mptr<z_T> z,
         const Int n = N,
         const Int thread_count = Int(1)

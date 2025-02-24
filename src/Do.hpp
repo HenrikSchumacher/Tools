@@ -66,7 +66,7 @@ namespace Tools
         Size_T N_ = VarSize, Parallel_T parQ = Sequential, Dynamic_T dynQ = Static,
         typename F, typename Int = Size_T
     >
-    force_inline void Do(
+    TOOLS_FORCE_INLINE void Do(
         F && fun, const Int n = static_cast<Int>(N_), const Int thread_count = 1
     )
     {
@@ -154,7 +154,7 @@ namespace Tools
     template<Size_T N_ = VarSize, Parallel_T parQ = Sequential,
         typename T, typename F, typename R, typename Int = Size_T
     >
-    [[nodiscard]] force_inline T DoReduce(
+    [[nodiscard]] TOOLS_FORCE_INLINE T DoReduce(
         F && fun, R && reducer, cref<T> init, const Int n = static_cast<Int>(N_), const Int thread_count = 1
     )
     {

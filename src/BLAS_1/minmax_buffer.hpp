@@ -34,7 +34,7 @@ namespace Tools
     
     
     template< Size_T N = VarSize, Parallel_T parQ = Sequential, typename S >
-    [[nodiscard]] force_inline std::pair<S,S>
+    [[nodiscard]] TOOLS_FORCE_INLINE std::pair<S,S>
     minmax_buffer( cptr<S> z, const Size_T n = N, const Size_T thread_count = 1)
     {
         return MinMaxBy<N,parQ>( [z]( const Size_T i ){ return z[i]; }, n, thread_count );
@@ -93,7 +93,7 @@ namespace Tools
     }
     
     template< Size_T N = VarSize, Parallel_T parQ = Sequential, typename S >
-    [[nodiscard]] force_inline S 
+    [[nodiscard]] TOOLS_FORCE_INLINE S 
     min_buffer( cptr<S> z, const Size_T n = N, const Size_T thread_count = 1 )
     {
         return MinBy<N,parQ>(
@@ -102,7 +102,7 @@ namespace Tools
     }
     
     template< Size_T N = VarSize, Parallel_T parQ = Sequential, typename S >
-    [[nodiscard]] force_inline S 
+    [[nodiscard]] TOOLS_FORCE_INLINE S 
     min_pos_buffer( cptr<S> z, const Size_T n = N, const Size_T thread_count = 1 )
     {
         return MinimumBy<N,parQ>(
@@ -163,7 +163,7 @@ namespace Tools
     }
     
     template< Size_T N = VarSize, Parallel_T parQ = Sequential, typename S >
-    [[nodiscard]] force_inline S 
+    [[nodiscard]] TOOLS_FORCE_INLINE S 
     max_buffer( cptr<S> z, const Size_T n = N, const Size_T thread_count = 1 )
     {
         return MaxBy<N,parQ>(
@@ -172,7 +172,7 @@ namespace Tools
     }
     
     template< Size_T N = VarSize, Parallel_T parQ = Sequential, typename S >
-    [[nodiscard]] force_inline S 
+    [[nodiscard]] TOOLS_FORCE_INLINE S 
     max_pos_buffer( cptr<S> z, const Size_T n = N, const Size_T thread_count = 1 )
     {
         return MaximumBy<N,parQ>(

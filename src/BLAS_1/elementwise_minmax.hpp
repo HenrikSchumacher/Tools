@@ -6,7 +6,7 @@ namespace Tools
         Size_T N = VarSize, Parallel_T parQ = Sequential,
         typename x_T, typename y_T, typename up_T
     >
-    force_inline void elementwise_min(
+    TOOLS_FORCE_INLINE void elementwise_min(
         cptr<x_T> x, cptr<y_T> y, mptr<up_T> up,
         const Size_T n = N,
         const Size_T thread_count = 1
@@ -46,7 +46,7 @@ namespace Tools
         Size_T N = VarSize, Parallel_T parQ = Sequential,
         typename x_T, typename lo_T
     >
-    force_inline void elementwise_min_update(
+    TOOLS_FORCE_INLINE void elementwise_min_update(
         cptr<x_T> x, cptr<lo_T> lo,
         const Size_T n = N,
         const Size_T thread_count = 1
@@ -87,7 +87,7 @@ namespace Tools
         Size_T N = VarSize, Parallel_T parQ = Sequential,
         typename x_T, typename y_T, typename up_T
     >
-    force_inline void elementwise_max(
+    TOOLS_FORCE_INLINE void elementwise_max(
         cptr<x_T> x, cptr<y_T> y, mptr<up_T> up,
         const Size_T n = N,
         const Size_T thread_count = 1
@@ -127,7 +127,7 @@ namespace Tools
         Size_T N = VarSize, Parallel_T parQ = Sequential,
         typename x_T, typename hi_T
     >
-    force_inline void elementwise_max_update(
+    TOOLS_FORCE_INLINE void elementwise_max_update(
         cptr<x_T> x, cptr<hi_T> hi,
         const Size_T n = N,
         const Size_T thread_count = 1
@@ -167,7 +167,7 @@ namespace Tools
         Size_T N = VarSize, Parallel_T parQ = Sequential,
         typename x_T, typename y_T, typename lo_T, typename hi_T
     >
-    force_inline void elementwise_minmax(
+    TOOLS_FORCE_INLINE void elementwise_minmax(
         cptr<x_T> x, cptr<y_T> y, mptr<lo_T> lo, mptr<hi_T> up,
         const Size_T n = N,
         const Size_T thread_count = 1
@@ -210,7 +210,7 @@ namespace Tools
         Size_T N = VarSize, Parallel_T parQ = Sequential,
         typename x_T, typename lo_T, typename up_T
     >
-    force_inline void elementwise_minmax_update(
+    TOOLS_FORCE_INLINE void elementwise_minmax_update(
         cptr<x_T> x, mptr<lo_T> lo, mptr<up_T> up,
         const Size_T n = N,
         const Size_T thread_count = 1

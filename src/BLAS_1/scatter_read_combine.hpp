@@ -8,7 +8,7 @@ namespace Tools
         Size_T N = VarSize, Parallel_T parQ = Sequential,
         typename R_0, typename S_0, typename Int, typename R_1, typename S_1
     >
-    constexpr force_inline void scatter_read_combine(
+    constexpr TOOLS_FORCE_INLINE void scatter_read_combine(
         cref<R_0> a, cptr<S_0> x, cptr<Int> idx,
         cref<R_1> b, mptr<S_1> y,                 Size_T n = N, Size_T thread_count = 1
     )

@@ -6,7 +6,7 @@ namespace Tools
         Size_T M, Size_T N,
         typename X_T, typename y_T, typename R_y_T
     >
-    force_inline constexpr void columnwise_reduction_vec(
+    TOOLS_FORCE_INLINE constexpr void columnwise_reduction_vec(
         cptr<X_T> X,  const Size_T ldX,
         mptr<y_T> y,  const Size_T ldy, R_y_T && y_reducer
     )
@@ -38,7 +38,7 @@ namespace Tools
         Size_T M, Size_T N,
         typename X_T, typename y_T, typename R_y_T, typename z_T, typename R_z_T
     >
-    force_inline constexpr void columnwise_reduction_vec(
+    TOOLS_FORCE_INLINE constexpr void columnwise_reduction_vec(
         cptr<X_T> X,  const Size_T ldX,
         mptr<y_T> y,  const Size_T ldy, R_y_T && y_reducer,
         mptr<z_T> z,  const Size_T ldz, R_z_T && z_reducer
@@ -79,7 +79,7 @@ namespace Tools
         Size_T M, Size_T N,
         typename X_T, typename y_T, typename R_y_T
     >
-    force_inline constexpr void columnwise_reduction(
+    TOOLS_FORCE_INLINE constexpr void columnwise_reduction(
         cptr<X_T> X,  const Size_T ldX,
         mptr<y_T> y,  const Size_T ldy, R_y_T && y_reducer
     )
@@ -111,7 +111,7 @@ namespace Tools
         Size_T M, Size_T N, typename X_T,
         typename y_T, typename R_y_T, typename z_T, typename R_z_T
     >
-    force_inline constexpr void columnwise_reduction(
+    TOOLS_FORCE_INLINE constexpr void columnwise_reduction(
         cptr<X_T> X,  const Size_T ldX,
         mptr<y_T> y,  const Size_T ldy, R_y_T && y_reducer,
         mptr<z_T> z,  const Size_T ldz, R_z_T && z_reducer

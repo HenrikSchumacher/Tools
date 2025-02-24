@@ -63,22 +63,22 @@ namespace Tools
         {
             std::fesetround( state );
             
-//            dump( prev_state );
+//            TOOLS_DUMP( prev_state );
 //            
-//            dump( state );
+//            TOOLS_DUMP( state );
 //            
-//            dump( std::fegetround() );
+//            TOOLS_DUMP( std::fegetround() );
         }
         
         ~RoundingModeBarrier()
         {
             std::fesetround( prev_state );
             
-//            dump( prev_state );
+//            TOOLS_DUMP( prev_state );
 //            
-//            dump( state );
+//            TOOLS_DUMP( state );
 //            
-//            dump( std::fegetround() );
+//            TOOLS_DUMP( std::fegetround() );
         }
         
     }; // class RoundingModeBarrier
@@ -93,7 +93,7 @@ namespace Tools
     
     // From Hida, Li, Bailey - Library for Double-Double and Quad-Double Arithmetic
     template<typename Real>
-    force_inline std::pair<Real,Real> TwoAdd( const Real a, const Real b )
+    TOOLS_FORCE_INLINE std::pair<Real,Real> TwoAdd( const Real a, const Real b )
     {
         const Real s = a + b;
         const Real v = s - b;
@@ -104,7 +104,7 @@ namespace Tools
     
     // From Hida, Li, Bailey - Library for Double-Double and Quad-Double Arithmetic
     template<typename Real>
-    force_inline std::pair<Real,Real> TwoMulFMA( const Real a, const Real b )
+    TOOLS_FORCE_INLINE std::pair<Real,Real> TwoMulFMA( const Real a, const Real b )
     {
         const Real p = a * b;
         const Real e = std::fma(a,b,-p);
@@ -113,7 +113,7 @@ namespace Tools
     }
     
     template<typename Real>
-    force_inline Real RoundUp( const Real x, const bool increaseQ )
+    TOOLS_FORCE_INLINE Real RoundUp( const Real x, const bool increaseQ )
     {
         return std::nextafter( x, increaseQ ? std::numeric_limits<Real>::max() : x );
     }
@@ -136,7 +136,7 @@ namespace Tools
             #endif
         }
 
-        force_inline static Real AddRoundUp( const Real a, const Real b )
+        TOOLS_FORCE_INLINE static Real AddRoundUp( const Real a, const Real b )
         {
             if constexpr ( RP == RoundingPolicy::UseRoundingMode )
             {
@@ -152,7 +152,7 @@ namespace Tools
             }
         }
         
-        force_inline static Real MulRoundUp( const Real a, const Real b )
+        TOOLS_FORCE_INLINE static Real MulRoundUp( const Real a, const Real b )
         {
             if constexpr ( RP == RoundingPolicy::UseRoundingMode)
             {
@@ -257,33 +257,33 @@ namespace Tools
         
     public:
         
-        force_inline friend S_T operator+( const S_T s )
+        TOOLS_FORCE_INLINE friend S_T operator+( const S_T s )
         {
             return S_T{s.x};
         }
         
-        force_inline friend S_T operator-( const S_T s )
+        TOOLS_FORCE_INLINE friend S_T operator-( const S_T s )
         {
             return S_T{-s.x};
         }
         
-        force_inline friend S_T Abs( const S_T s )
+        TOOLS_FORCE_INLINE friend S_T Abs( const S_T s )
         {
             return S_T{Abs(s.x)};
         }
         
-        force_inline friend I_T Square( const S_T s )
+        TOOLS_FORCE_INLINE friend I_T Square( const S_T s )
         {
             return I_T::Create( MulRoundUp(- s.x, s.x),  MulRoundUp(s.x, s.x) );
         }
 
-        force_inline friend S_T Ramp( const S_T s )
+        TOOLS_FORCE_INLINE friend S_T Ramp( const S_T s )
         {
             return S_T{Ramp(s.x)};
         }
         
         template<typename R = int>
-        force_inline friend R Sign( const S_T s )
+        TOOLS_FORCE_INLINE friend R Sign( const S_T s )
         {
             return Sign<R>(s.x);
         }
@@ -295,28 +295,28 @@ namespace Tools
     
     public:
         
-        force_inline friend I_T operator+( const S_T s, const S_T t )
+        TOOLS_FORCE_INLINE friend I_T operator+( const S_T s, const S_T t )
         {
             return I_T::Create( AddRoundUp(-s.x,-t.x), AddRoundUp( s.x, t.x) );
         }
         
-        force_inline friend I_T operator-( const S_T s, const S_T t )
+        TOOLS_FORCE_INLINE friend I_T operator-( const S_T s, const S_T t )
         {
             return I_T::Create( AddRoundUp(-s.x, t.x), AddRoundUp( s.x,-t.x) );
         }
         
-        force_inline friend I_T operator*( const S_T s, const S_T t )
+        TOOLS_FORCE_INLINE friend I_T operator*( const S_T s, const S_T t )
         {
             return I_T::Create( MulRoundUp(-s.x, t.x), MulRoundUp( s.x, t.x) );
         }
         
         
-        force_inline friend S_T Max( const S_T s, const S_T t )
+        TOOLS_FORCE_INLINE friend S_T Max( const S_T s, const S_T t )
         {
             return S_T( Max( s.x, t.x ) );
         }
         
-        force_inline friend S_T Min( const S_T s, const S_T t )
+        TOOLS_FORCE_INLINE friend S_T Min( const S_T s, const S_T t )
         {
             return S_T( Min( s.x, t.x ) );
         }
@@ -327,7 +327,7 @@ namespace Tools
 //######################################################
         
         
-        force_inline friend I_T fma( const S_T r, const S_T s, const S_T t )
+        TOOLS_FORCE_INLINE friend I_T fma( const S_T r, const S_T s, const S_T t )
         {
             RoundingModeWarning("fma (SSS)");
             
@@ -430,8 +430,8 @@ namespace Tools
             if( -a > b )
             {
                 eprint("Create: -a > b");
-                dump(-a);
-                dump(b);
+                TOOLS_DUMP(-a);
+                TOOLS_DUMP(b);
             }
 #endif
             Interval K;
@@ -497,85 +497,85 @@ namespace Tools
 
     public:
         
-        force_inline bool SingletonQ() const
+        TOOLS_FORCE_INLINE bool SingletonQ() const
         {
             return (-a==b);
         }
         
-        force_inline bool ContainsZeroQ() const
+        TOOLS_FORCE_INLINE bool ContainsZeroQ() const
         {
             return (b >= 0) && (a >= 0);
         }
         
-        force_inline bool ContainsQ( const R_T x ) const
+        TOOLS_FORCE_INLINE bool ContainsQ( const R_T x ) const
         {
             return (b >= x) && (-a <= x);
         }
         
-        force_inline bool NotContainsQ( const R_T x ) const
+        TOOLS_FORCE_INLINE bool NotContainsQ( const R_T x ) const
         {
             return (b < x) || (-a > x);
         }
         
-        force_inline bool FullyNegativeQ() const
+        TOOLS_FORCE_INLINE bool FullyNegativeQ() const
         {
             return b < 0;
         }
         
-        force_inline bool FullyPositiveQ() const
+        TOOLS_FORCE_INLINE bool FullyPositiveQ() const
         {
             return a < 0;
         }
         
 
-        force_inline friend bool operator<( const I_T I, const I_T J )
+        TOOLS_FORCE_INLINE friend bool operator<( const I_T I, const I_T J )
         {
             return I.b < -J.a;
         }
         
-        force_inline friend bool operator>( const I_T I, const I_T J )
+        TOOLS_FORCE_INLINE friend bool operator>( const I_T I, const I_T J )
         {
             return -I.a > J.b;
         }
         
         
         
-        force_inline friend bool operator<( const I_T I, const R_T x )
+        TOOLS_FORCE_INLINE friend bool operator<( const I_T I, const R_T x )
         {
             return I.b < x;
         }
         
-        force_inline friend bool operator<( const I_T I, const S_T s )
+        TOOLS_FORCE_INLINE friend bool operator<( const I_T I, const S_T s )
         {
             return I < s.x;
         }
         
-        force_inline friend bool operator>( const R_T x, const I_T I )
+        TOOLS_FORCE_INLINE friend bool operator>( const R_T x, const I_T I )
         {
             return I < x;
         }
         
-        force_inline friend bool operator>( const S_T s, const I_T I )
+        TOOLS_FORCE_INLINE friend bool operator>( const S_T s, const I_T I )
         {
             return I < s.x;
         }
         
-        force_inline friend bool operator>( const I_T I, const R_T x )
+        TOOLS_FORCE_INLINE friend bool operator>( const I_T I, const R_T x )
         {
             return -I.a > x;
         }
         
-        force_inline friend bool operator>( const I_T I, const S_T s )
+        TOOLS_FORCE_INLINE friend bool operator>( const I_T I, const S_T s )
         {
             return I > s.x;
         }
         
-        force_inline friend bool operator<( const R_T x, const I_T I )
+        TOOLS_FORCE_INLINE friend bool operator<( const R_T x, const I_T I )
         {
             return I > x;
         }
         
-        force_inline friend bool operator<( const S_T s, const I_T I )
+        TOOLS_FORCE_INLINE friend bool operator<( const S_T s, const I_T I )
         {
             return I > s.x;
         }
@@ -586,17 +586,17 @@ namespace Tools
         
     public:
         
-        force_inline friend I_T operator+( const I_T I )
+        TOOLS_FORCE_INLINE friend I_T operator+( const I_T I )
         {
             return Create( I.a, I.b );
         }
         
-        force_inline friend I_T operator-( const I_T I )
+        TOOLS_FORCE_INLINE friend I_T operator-( const I_T I )
         {
             return Create( I.b, I.a );
         }
         
-        force_inline friend I_T Abs( const I_T I )
+        TOOLS_FORCE_INLINE friend I_T Abs( const I_T I )
         {
             const Real A = Abs(I.a);
             const Real B = Abs(I.b);
@@ -604,7 +604,7 @@ namespace Tools
             return Create( I.ContainsZeroQ() ? 0 : Min(A,B), Max(A,B) );
         }
         
-        force_inline friend I_T Square( const I_T I )
+        TOOLS_FORCE_INLINE friend I_T Square( const I_T I )
         {
             const Real A = MulRoundUp( I.a, I.a );
             const Real B = MulRoundUp( I.b, I.b );
@@ -612,13 +612,13 @@ namespace Tools
             return Create( I.ContainsZeroQ() ? 0 : Min(A,B), Max(A,B) );
         }
 
-        force_inline friend I_T Ramp( const I_T I )
+        TOOLS_FORCE_INLINE friend I_T Ramp( const I_T I )
         {
             return Create( Min(Scalar::Zero<Real>,I.a), Max(Scalar::Zero<Real>,I.b) );
         }
         
         template<typename R = int>
-        force_inline friend R Sign( const I_T I )
+        TOOLS_FORCE_INLINE friend R Sign( const I_T I )
         {
             constexpr Real zero = 0;
             
@@ -634,64 +634,64 @@ namespace Tools
     
     public:
         
-        force_inline friend I_T operator+( const I_T I, const I_T J )
+        TOOLS_FORCE_INLINE friend I_T operator+( const I_T I, const I_T J )
         {
             return Create( AddRoundUp( I.a, J.a ), AddRoundUp( I.b, J.b ) );
         }
         
-        force_inline friend I_T operator+( const I_T I, const R_T x )
+        TOOLS_FORCE_INLINE friend I_T operator+( const I_T I, const R_T x )
         {
             return Create( AddRoundUp( I.a, -x ), AddRoundUp( I.b, x ) );
         }
         
-        force_inline friend I_T operator+( const I_T I, const S_T s )
+        TOOLS_FORCE_INLINE friend I_T operator+( const I_T I, const S_T s )
         {
             return I + s.x;
         }
         
         
-        force_inline friend I_T operator+( const R_T x, const I_T I )
+        TOOLS_FORCE_INLINE friend I_T operator+( const R_T x, const I_T I )
         {
             return I + x;
         }
         
-        force_inline friend I_T operator+( const S_T s, const I_T I )
+        TOOLS_FORCE_INLINE friend I_T operator+( const S_T s, const I_T I )
         {
             return I + s.x;
         }
         
         
         
-        force_inline friend I_T operator-( const I_T I, const I_T J )
+        TOOLS_FORCE_INLINE friend I_T operator-( const I_T I, const I_T J )
         {
             return Create( AddRoundUp( I.a, J.b ), AddRoundUp( I.b, J.a ) );
         }
         
-        force_inline friend I_T operator-( const I_T I, const R_T x )
+        TOOLS_FORCE_INLINE friend I_T operator-( const I_T I, const R_T x )
         {
             return Create( AddRoundUp( I.a, x ) , AddRoundUp( I.b, -x ) );
         }
         
 
-        force_inline friend I_T operator-( const I_T I, const S_T s )
+        TOOLS_FORCE_INLINE friend I_T operator-( const I_T I, const S_T s )
         {
             return I + s.x;
         }
         
 
-        force_inline friend I_T operator-( const R_T x, const I_T I )
+        TOOLS_FORCE_INLINE friend I_T operator-( const R_T x, const I_T I )
         {
             return Create( AddRoundUp( -x, I.b ) , AddRoundUp( x, I.a ) );
             
         }
 
-        force_inline friend I_T operator-( const S_T s, const I_T J )
+        TOOLS_FORCE_INLINE friend I_T operator-( const S_T s, const I_T J )
         {
             return s.x - J;
         }
 
         
-        force_inline friend I_T mult_II_pos_pos( const I_T I, const I_T J )
+        TOOLS_FORCE_INLINE friend I_T mult_II_pos_pos( const I_T I, const I_T J )
         {
             // I.Lower() > 0, I.Upper() > 0, J.Lower() > 0, J.Upper() > 0
             // [ I.Lower() * J.Lower(), I.Upper() * J.Upper() ]
@@ -699,7 +699,7 @@ namespace Tools
             return Create( MulRoundUp(I.a, -J.a), MulRoundUp(I.b, J.b) );
         }
         
-        force_inline friend I_T mult_II_switch( const I_T I, const I_T J )
+        TOOLS_FORCE_INLINE friend I_T mult_II_switch( const I_T I, const I_T J )
         {
             switch( Sign(I) )
             {
@@ -792,7 +792,7 @@ namespace Tools
         }
         
         
-        force_inline friend I_T mult_RI_switch( const R_T x, const I_T J )
+        TOOLS_FORCE_INLINE friend I_T mult_RI_switch( const R_T x, const I_T J )
         {
             switch( Sign(x) )
             {
@@ -816,7 +816,7 @@ namespace Tools
         
         
         
-        force_inline friend I_T mul_II_bruteforce( const I_T I, const I_T J )
+        TOOLS_FORCE_INLINE friend I_T mul_II_bruteforce( const I_T I, const I_T J )
         {
             // 8(!) multiplications, but apparently, they can be vectorized.
             
@@ -833,7 +833,7 @@ namespace Tools
             return Create( A, B );
         }
         
-        force_inline friend I_T mul_IR_bruteforce( const I_T I, const R_T x )
+        TOOLS_FORCE_INLINE friend I_T mul_IR_bruteforce( const I_T I, const R_T x )
         {
             return Create(
                 Max( MulRoundUp(  I.a, x ), MulRoundUp( -I.b, x ) ),
@@ -841,7 +841,7 @@ namespace Tools
             );
         }
         
-        force_inline friend I_T mul_II_bruteforce2( const I_T I, const I_T J )
+        TOOLS_FORCE_INLINE friend I_T mul_II_bruteforce2( const I_T I, const I_T J )
         {
             // Advantage: No switching of rounding mode needed.
             // Is slower than mul_II_bruteforce, though.
@@ -865,7 +865,7 @@ namespace Tools
             return Create( A, B );
         }
         
-        force_inline friend I_T mul_IR_bruteforce2( const I_T I, const R_T x )
+        TOOLS_FORCE_INLINE friend I_T mul_IR_bruteforce2( const I_T I, const R_T x )
         {
             const auto [ax, e_ax] = TwoMulFMA( I.a, x );
             const auto [bx, e_bx] = TwoMulFMA( I.b, x );
@@ -878,7 +878,7 @@ namespace Tools
             
         }
         
-        force_inline friend I_T operator*( const I_T I, const I_T J )
+        TOOLS_FORCE_INLINE friend I_T operator*( const I_T I, const I_T J )
         {
             return mul_II_bruteforce( I, J );
             
@@ -887,7 +887,7 @@ namespace Tools
 //            return mult_II_switch( I, J );
         }
                                           
-        force_inline friend I_T operator*( const I_T I, const R_T x )
+        TOOLS_FORCE_INLINE friend I_T operator*( const I_T I, const R_T x )
         {
             return mul_IR_bruteforce( I, x );
             
@@ -896,18 +896,18 @@ namespace Tools
 //            return mult_RI_switch( x, I );
         }
         
-        force_inline friend I_T operator*( const I_T I, const S_T s )
+        TOOLS_FORCE_INLINE friend I_T operator*( const I_T I, const S_T s )
         {
             return I * s.x;
         }
         
         
-        force_inline friend I_T operator*( const R_T x, const I_T I )
+        TOOLS_FORCE_INLINE friend I_T operator*( const R_T x, const I_T I )
         {
             return I * x;
         }
         
-        force_inline friend I_T operator*( const S_T s, const I_T I )
+        TOOLS_FORCE_INLINE friend I_T operator*( const S_T s, const I_T I )
         {
             return I * s.x;
         }
@@ -916,56 +916,56 @@ namespace Tools
         
         
         
-        force_inline friend I_T Max( const I_T I, const I_T J )
+        TOOLS_FORCE_INLINE friend I_T Max( const I_T I, const I_T J )
         {
             return Create( Min(I.a,J.a), Max(I.b,J.b) );
         }
         
 
-        force_inline friend I_T Max( const I_T I, const R_T x )
+        TOOLS_FORCE_INLINE friend I_T Max( const I_T I, const R_T x )
         {
             return Create( Min(I.a,-x), Max(I.b,x) );
         }
         
-        force_inline friend I_T Max( const I_T I, const S_T s )
+        TOOLS_FORCE_INLINE friend I_T Max( const I_T I, const S_T s )
         {
             return Max(I,s.x);
         }
         
         
-        force_inline friend I_T Max( const R_T x, const I_T I )
+        TOOLS_FORCE_INLINE friend I_T Max( const R_T x, const I_T I )
         {
             return Create( Min(-x,I.a), Max(x,I.b) );
         }
         
-        force_inline friend I_T Max( const S_T s, const I_T I )
+        TOOLS_FORCE_INLINE friend I_T Max( const S_T s, const I_T I )
         {
             return Max(I,s.x);
         }
         
         
-        force_inline friend I_T Min( const I_T I, const I_T J )
+        TOOLS_FORCE_INLINE friend I_T Min( const I_T I, const I_T J )
         {
             return Create( Max(I.a,J.a), Min(I.b,J.b) );
         }
         
         
-        force_inline friend I_T Min( const I_T I, const R_T x )
+        TOOLS_FORCE_INLINE friend I_T Min( const I_T I, const R_T x )
         {
             return Create( Max(I.a,-x), Min(I.b,x) );
         }
         
-        force_inline friend I_T Min( const I_T I, const S_T s )
+        TOOLS_FORCE_INLINE friend I_T Min( const I_T I, const S_T s )
         {
             return Min(I,s.x);
         }
 
-        force_inline friend I_T Min( const R_T x, const I_T I )
+        TOOLS_FORCE_INLINE friend I_T Min( const R_T x, const I_T I )
         {
             return Min(I,x);
         }
         
-        force_inline friend I_T Min( const S_T s, const I_T I )
+        TOOLS_FORCE_INLINE friend I_T Min( const S_T s, const I_T I )
         {
             return Min(I,s.x);
         }
@@ -974,7 +974,7 @@ namespace Tools
 //##                   Trivariate                      ##
 //######################################################
         
-        force_inline friend I_T fma( const I_T I, const I_T J, const I_T K )
+        TOOLS_FORCE_INLINE friend I_T fma( const I_T I, const I_T J, const I_T K )
         {
             RoundingModeWarning("fma (III)");
 
@@ -991,7 +991,7 @@ namespace Tools
             return Create(A,B);
         }
         
-        force_inline friend I_T fma( const I_T I, const I_T J, const R_T z )
+        TOOLS_FORCE_INLINE friend I_T fma( const I_T I, const I_T J, const R_T z )
         {
             RoundingModeWarning("fma (IIR)");
 
@@ -1008,13 +1008,13 @@ namespace Tools
             return Create(A,B);
         }
         
-        force_inline friend I_T fma( const I_T I, const I_T J, const S_T t )
+        TOOLS_FORCE_INLINE friend I_T fma( const I_T I, const I_T J, const S_T t )
         {
             return fma(I,J,t.x);
         }
 
         
-        force_inline friend I_T fma( const R_T x, const I_T J, const I_T K )
+        TOOLS_FORCE_INLINE friend I_T fma( const R_T x, const I_T J, const I_T K )
         {
             RoundingModeWarning("fma (RII)");
 
@@ -1024,36 +1024,36 @@ namespace Tools
             return Create(A,B);
         }
         
-        force_inline friend I_T fma( const S_T s, const I_T J, const I_T K )
+        TOOLS_FORCE_INLINE friend I_T fma( const S_T s, const I_T J, const I_T K )
         {
             return fma( s.x, J, K );
         }
         
-        force_inline friend I_T fma( const I_T J, const R_T x, const I_T K )
+        TOOLS_FORCE_INLINE friend I_T fma( const I_T J, const R_T x, const I_T K )
         {
             return fma( x, J, K );
         }
         
-        force_inline friend I_T fma( const I_T J, const S_T s, const I_T K )
+        TOOLS_FORCE_INLINE friend I_T fma( const I_T J, const S_T s, const I_T K )
         {
             return fma( s.x, J, K );
         }
         
         
-        force_inline friend I_T fma( const R_T x, const R_T y, const I_T K )
+        TOOLS_FORCE_INLINE friend I_T fma( const R_T x, const R_T y, const I_T K )
         {
             RoundingModeWarning("fma (RRI)");
             
             return Create(std::fma( -x, y, K.a ), std::fma( x, y, K.b ) );
         }
         
-        force_inline friend I_T fma( const S_T s, const S_T t, const I_T K )
+        TOOLS_FORCE_INLINE friend I_T fma( const S_T s, const S_T t, const I_T K )
         {
             return fma( s.x, t.x, K );
         }
         
         
-        force_inline friend I_T fma( const R_T x, const I_T I, const R_T z )
+        TOOLS_FORCE_INLINE friend I_T fma( const R_T x, const I_T I, const R_T z )
         {
             RoundingModeWarning("fma (RIR)");
             
@@ -1063,18 +1063,18 @@ namespace Tools
             );
         }
         
-        force_inline friend I_T fma( const S_T r, const I_T I, const S_T t )
+        TOOLS_FORCE_INLINE friend I_T fma( const S_T r, const I_T I, const S_T t )
         {
             return fma( r.x, I, t.x );
         }
         
         
-        force_inline friend I_T fma( const I_T I, const R_T x, const R_T z )
+        TOOLS_FORCE_INLINE friend I_T fma( const I_T I, const R_T x, const R_T z )
         {
             return fma( x, I, z );
         }
         
-        force_inline friend I_T fma( const I_T I, const S_T r, const S_T t )
+        TOOLS_FORCE_INLINE friend I_T fma( const I_T I, const S_T r, const S_T t )
         {
             return fma( r.x, I, t.x );
         }

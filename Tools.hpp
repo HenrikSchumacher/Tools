@@ -71,20 +71,20 @@
 #ifdef TOOLS_AGGRESSIVE_INLINING
 
     #if __has_attribute(__always_inline__)
-        #define force_inline inline __attribute__((__always_inline__))
+        #define TOOLS_FORCE_INLINE inline __attribute__((__always_inline__))
 
-        #define force_flattening __attribute__((__flatten__))
+        #define TOOLS_FORCE_FLATTENING __attribute__((__flatten__))
     #else
-        #define force_inline inline
+        #define TOOLS_FORCE_INLINE inline
 
-        #define force_flattening
+        #define TOOLS_FORCE_FLATTENING
     #endif
 
 #else
 
-    #define force_inline inline
+    #define TOOLS_FORCE_INLINE inline
 
-    #define force_flattening
+    #define TOOLS_FORCE_FLATTENING
 
 #endif
 
@@ -93,35 +93,35 @@
 
     #if defined(__ICC) || defined(__ICL)
 
-        #define LOOP_UNROLL_FULL    _Pragma(STRINGIFY(unroll))
-        #define LOOP_UNROLL(n)      _Pragma(STRINGIFY(unroll (n)))
+        #define TOOLS_LOOP_UNROLL_FULL    _Pragma(STRINGIFY(unroll))
+        #define TOOLS_LOOP_UNROLL(n)      _Pragma(STRINGIFY(unroll (n)))
 
     #elif defined(__clang__)
 
-        #define LOOP_UNROLL_FULL    _Pragma(STRINGIFY(clang loop unroll(enable)))
-        #define LOOP_UNROLL(n)      _Pragma(STRINGIFY(clang loop unroll_count(n)))
+        #define TOOLS_LOOP_UNROLL_FULL    _Pragma(STRINGIFY(clang loop unroll(enable)))
+        #define TOOLS_LOOP_UNROLL(n)      _Pragma(STRINGIFY(clang loop unroll_count(n)))
 
     #elif defined(__GNUC__) && !defined(__clang__)
 
-        #define LOOP_UNROLL_FULL
-        #define LOOP_UNROLL(n)      _Pragma(STRINGIFY(GCC unroll (n)))
+        #define TOOLS_LOOP_UNROLL_FULL
+        #define TOOLS_LOOP_UNROLL(n)      _Pragma(STRINGIFY(GCC unroll (n)))
 
     #elif defined(_MSC_BUILD)
         //  #pragma message ("Microsoft Visual C++ (MSVC) detected: Loop unrolling not supported!")
-        #define LOOP_UNROLL_FULL
-        #define LOOP_UNROLL(n)
+        #define TOOLS_LOOP_UNROLL_FULL
+        #define TOOLS_LOOP_UNROLL(n)
 
     #else
         //  #warning "Unknown compiler: Loop unrolling not supported!"
 
-        #define LOOP_UNROLL_FULL
-        #define LOOP_UNROLL(n)
+        #define TOOLS_LOOP_UNROLL_FULL
+        #define TOOLS_LOOP_UNROLL(n)
     #endif
 
 #else
     
-    #define LOOP_UNROLL_FULL
-    #define LOOP_UNROLL(n)
+    #define TOOLS_LOOP_UNROLL_FULL
+    #define TOOLS_LOOP_UNROLL(n)
 
 #endif
 
@@ -142,15 +142,15 @@
 #if !defined(restrict)
     #if defined(__GNUC__)
         #define restrict __restrict__
-        #define COMPILER_IS_ANAL_ABOUT_RESTRICT 1
+        #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 1
     #elif defined(__clang__)
         #define restrict __restrict
-        #define COMPILER_IS_ANAL_ABOUT_RESTRICT 0
+        #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 0
     #elif defined(_MSC_VER)
         #define restrict __restrict
-        #define COMPILER_IS_ANAL_ABOUT_RESTRICT 0
+        #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 0
     #else
-        #define COMPILER_IS_ANAL_ABOUT_RESTRICT 0
+        #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 0
     #endif
 #endif
 
@@ -197,7 +197,7 @@ namespace Tools
     template<> static constexpr bool ArithmeticQ<std::complex<double>> = true;
 
     template <typename E>
-    force_inline auto constexpr ToUnderlying( const E & e) noexcept
+    TOOLS_FORCE_INLINE auto constexpr ToUnderlying( const E & e) noexcept
     {
         if constexpr( std::is_enum_v<E> )
         {
@@ -223,13 +223,13 @@ namespace Tools
     using vec_T = T __attribute__((__ext_vector_type__(N))) ;
 
     template<Size_T N, typename T>
-    force_inline const T * get_ptr( const vec_T<N,T> & vec )
+    TOOLS_FORCE_INLINE const T * get_ptr( const vec_T<N,T> & vec )
     {
         return reinterpret_cast<const T *>(&vec);
     }
     
     template<Size_T N, typename T>
-    force_inline T * get_ptr( vec_T<N,T> & vec )
+    TOOLS_FORCE_INLINE T * get_ptr( vec_T<N,T> & vec )
     {
         return reinterpret_cast<T *>(&vec);
     }
@@ -249,13 +249,13 @@ namespace Tools
     using mat_T = T __attribute__((__matrix_type__(M,N))) ;
     
     template<Size_T M, Size_T N, typename T>
-    force_inline const T * get_ptr( const mat_T<M,N,T> & mat )
+    TOOLS_FORCE_INLINE const T * get_ptr( const mat_T<M,N,T> & mat )
     {
         return reinterpret_cast<const T *>(&mat);
     }
     
     template<Size_T M, Size_T N, typename T>
-    force_inline T * get_ptr( mat_T<M,N,T> & mat )
+    TOOLS_FORCE_INLINE T * get_ptr( mat_T<M,N,T> & mat )
     {
         return reinterpret_cast<T *>(&mat);
     }

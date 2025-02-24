@@ -7,7 +7,7 @@ namespace Tools
         Size_T N = VarSize, Parallel_T parQ = Sequential,
         typename T
     >
-    force_inline Size_T count_nans_in_buffer(
+    TOOLS_FORCE_INLINE Size_T count_nans_in_buffer(
         mptr<T> a,
         const Size_T n = N, const Size_T thread_count = 1
     )

@@ -7,7 +7,7 @@ namespace Tools
     {
     public:
         
-        force_inline static int Free( T * & ptr)
+        TOOLS_FORCE_INLINE static int Free( T * & ptr)
         {
             const int wasallocated = (ptr != nullptr);
             
@@ -26,9 +26,9 @@ namespace Tools
             return !wasallocated;
         }
         
-#if COMPILER_IS_ANAL_ABOUT_RESTRICT
+#if TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
         // overload function for restrict qualifier
-        force_inline static int Free( T * restrict & ptr )
+        TOOLS_FORCE_INLINE static int Free( T * restrict & ptr )
         {
             const int wasallocated = (ptr != nullptr);
             
@@ -48,7 +48,7 @@ namespace Tools
         }
 #endif
         
-        force_inline static int Alloc(
+        TOOLS_FORCE_INLINE static int Alloc(
             T * & ptr, const Size_T n, const Size_T aligment = DefaultAlignment
         )
         {
@@ -78,9 +78,9 @@ namespace Tools
         }
         
         
-#if COMPILER_IS_ANAL_ABOUT_RESTRICT
+#if TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
         // overload function for restrict qualifier
-        force_inline static int Alloc(
+        TOOLS_FORCE_INLINE static int Alloc(
             T * restrict & ptr, const Size_T n, const Size_T aligment = DefaultAlignment
         )
         {

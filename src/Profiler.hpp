@@ -188,7 +188,7 @@ namespace Tools
     }
     
     
-#define logdump(x) logvalprint( std::string(#x), x );
+#define TOOLS_LOGDUMP(x) logvalprint( std::string(#x), x );
 
     
     /*!
@@ -294,19 +294,19 @@ namespace Tools
 #endif
     }
     
-#define pdump(x) pvalprint( std::string(#x), x );
+#define TOOLS_PDUMP(x) pvalprint( std::string(#x), x );
 
     
 #ifdef TOOLS_ENABLE_PROFILER
-    #define ptic( s ) ptic_impl(s)
+    #define TOOLS_PTIC( s ) ptic_impl(s)
 #else
-    #define ptic( s )
+    #define TOOLS_PTIC( s )
 #endif
     
 #ifdef TOOLS_ENABLE_PROFILER
-    #define ptoc( s ) ptoc_impl(s)
+    #define TOOLS_PTOC( s ) ptoc_impl(s)
 #else
-    #define ptoc( s )
+    #define TOOLS_PTOC( s )
 #endif
     
     inline void ptic_impl(const std::string & tag)
@@ -336,7 +336,7 @@ namespace Tools
     inline void ptic_impl( const ct_string<N> & tag )
     {
 #ifdef TOOLS_ENABLE_PROFILER
-        ptic(tag.data());
+        TOOLS_PTIC(tag.data());
 #else
         (void)tag;
 #endif
@@ -376,15 +376,15 @@ namespace Tools
             }
             else
             {
-                eprint( "Unmatched ptoc detected. Tag requested =  " + tag + ". Tag found = " + Profiler::tag_stack.back() + ".");
-//                eprint( "Unmatched ptoc detected. Stack empty. Label =  " + tag + ".");
+                eprint( "Unmatched TOOLS_PTOC detected. Tag requested =  " + tag + ". Tag found = " + Profiler::tag_stack.back() + ".");
+//                eprint( "Unmatched TOOLS_PTOC detected. Stack empty. Label =  " + tag + ".");
 //                    eprint(std::string("  Expected label =  ") + tag);
 //                    eprint(std::string("  Visited label  =  ") + Profiler::tag_stack.back());
             }
         }
         else
         {
-            eprint( "Unmatched ptoc detected. Stack empty. Label =  " + tag + ".");
+            eprint( "Unmatched TOOLS_PTOC detected. Stack empty. Label =  " + tag + ".");
         }
 #else
         (void)tag;
@@ -395,7 +395,7 @@ namespace Tools
     inline void ptoc_impl( const ct_string<N> & tag )
     {
 #ifdef TOOLS_ENABLE_PROFILER
-        ptoc(tag.data());
+        TOOLS_PTOC(tag.data());
 #else
         (void)tag;
 #endif
@@ -403,13 +403,13 @@ namespace Tools
     
     
 #ifdef TOOLS_DEBUG
-    #define TOOLS_DEBUG_TIC(tag) ptic(tag);
+    #define TOOLS_DEBUG_TIC(tag) TOOLS_PTIC(tag);
 #else
     #define TOOLS_DEBUG_TIC(tag)
 #endif
     
 #ifdef TOOLS_DEBUG
-    #define TOOLS_DEBUG_TOC(tag) ptoc(tag);
+    #define TOOLS_DEBUG_TOC(tag) TOOLS_PTOC(tag);
 #else
     #define TOOLS_DEBUG_TOC(tag)
 #endif

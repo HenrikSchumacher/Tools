@@ -127,7 +127,7 @@ namespace Tools
             // The cost of the k-th thread goes from job no job_ptr[k] to job no job_ptr[k+1] (as always in C/C++, job_ptr[k+1] points _after_ the last job.
         
             
-            ptic("BalanceWorkLoad_Accumulated");
+            TOOLS_PTIC("BalanceWorkLoad_Accumulated");
             
             T * restrict acc_costs = nullptr;
             
@@ -140,7 +140,7 @@ namespace Tools
             
             safe_free( acc_costs );
             
-            ptoc("BalanceWorkLoad_Accumulated");
+            TOOLS_PTOC("BalanceWorkLoad_Accumulated");
         }
         
         template<typename T>
@@ -155,7 +155,7 @@ namespace Tools
             // The cost of the k-th thread goes from job no job_ptr[k] to job no job_ptr[k+1] (as always in C/C++, job_ptr[k+1] points _after_ the last job.
         
             
-            ptic("BalanceWorkLoad");
+            TOOLS_PTIC("BalanceWorkLoad");
             
 
             job_ptr[static_cast<Size_T>(thread_count)] = job_count;
@@ -169,14 +169,14 @@ namespace Tools
             {
                 wprint("BalanceWorkLoad: Total cost is 0.");
                 
-                logdump(job_count);
-                logdump(thread_count);
+                TOOLS_LOGDUMP(job_count);
+                TOOLS_LOGDUMP(thread_count);
                 
                 logvalprint( "acc_costs", ArrayToString( acc_costs, {job_count + 1} ) );
                 
                 std::fill( job_ptr.begin(), job_ptr.end(), static_cast<Int>(0));
                             
-                ptoc("BalanceWorkLoad");
+                TOOLS_PTOC("BalanceWorkLoad");
                             
                 return;
             }
@@ -229,7 +229,7 @@ namespace Tools
                 job_ptr[static_cast<Size_T>(thread + 1)] = b;
             }
             
-            ptoc("BalanceWorkLoad");
+            TOOLS_PTOC("BalanceWorkLoad");
         }
         
         template<typename I>

@@ -7,7 +7,7 @@ namespace Tools
         Op opx = Op::Id, Op opy = Op::Id,
         typename a_T, typename x_T, typename b_T, typename y_T
     >
-    constexpr force_inline
+    constexpr TOOLS_FORCE_INLINE
     void combine_scalars(
         cref<a_T> a, cref<x_T> x, cref<b_T> b, mref<y_T> y
     )
@@ -58,7 +58,7 @@ namespace Tools
         Op opx = Op::Id, Op opy = Op::Id,
         typename a_T, typename x_T, typename b_T, typename y_T, typename z_T
     >
-    constexpr force_inline
+    constexpr TOOLS_FORCE_INLINE
     void combine_scalars(
         cref<a_T> a, cref<x_T> x, cref<b_T> b, cref<y_T> y, mref<z_T> z
     )

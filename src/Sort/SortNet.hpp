@@ -6,7 +6,7 @@ namespace Tools
 {
     
     template<bool reverseQ, typename T, typename C = std::less<T>>
-    force_inline void CompSwap( mref<T> a, mref<T> b, C comp = C() )
+    TOOLS_FORCE_INLINE void CompSwap( mref<T> a, mref<T> b, C comp = C() )
     {
         if constexpr ( reverseQ )
         {
@@ -20,7 +20,7 @@ namespace Tools
     
     
     template<bool reverseQ, typename C = std::less<double>>
-    force_inline void CompSwap( mref<double> a, mref<double> b, C comp = C()  )
+    TOOLS_FORCE_INLINE void CompSwap( mref<double> a, mref<double> b, C comp = C()  )
     {
         using T = double;
         

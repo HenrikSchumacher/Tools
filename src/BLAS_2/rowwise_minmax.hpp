@@ -3,7 +3,7 @@
 namespace Tools
 {
     template < Size_T M, Size_T N, typename X_T, typename y_T>
-    force_inline constexpr void rowwise_min(
+    TOOLS_FORCE_INLINE constexpr void rowwise_min(
         cptr<X_T> X,  const Size_T ldX,
         mptr<y_T> y,  const Size_T ldy
     )
@@ -27,7 +27,7 @@ namespace Tools
     }
     
     template < Size_T M, Size_T N, typename X_T, typename y_T>
-    force_inline constexpr void rowwise_max(
+    TOOLS_FORCE_INLINE constexpr void rowwise_max(
         cptr<X_T> X,  const Size_T ldX,
         mptr<y_T> y,  const Size_T ldy
     )
@@ -51,7 +51,7 @@ namespace Tools
     }
     
     template < Size_T M, Size_T N, typename X_T, typename y_T>
-    force_inline constexpr void rowwise_minmax(
+    TOOLS_FORCE_INLINE constexpr void rowwise_minmax(
         cptr<X_T> X,  const Size_T ldX,
         mptr<y_T> y,  const Size_T ldy,
         mptr<y_T> z,  const Size_T ldz

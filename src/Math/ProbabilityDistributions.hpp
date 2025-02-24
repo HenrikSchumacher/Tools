@@ -26,7 +26,7 @@ namespace Tools
         ~uniform_dist() = default;
         
         template<typename R>
-        force_inline Real operator()( R & r ) const
+        TOOLS_FORCE_INLINE Real operator()( R & r ) const
         {
             return a + static_cast<Real>(r()) * scale;
         }
@@ -46,7 +46,7 @@ namespace Tools
         ~fake_gaussian_dist() = default;
         
         template<typename PRNG_T>
-        force_inline Real operator()( PRNG_T & random_engine ) const
+        TOOLS_FORCE_INLINE Real operator()( PRNG_T & random_engine ) const
         {
             const UInt r = random_engine();
             
@@ -78,7 +78,7 @@ namespace Tools
         ~BoxMuller() = default;
                 
         template<typename PRNG_T>
-        force_inline void operator()( PRNG_T & random_engine, Real & x, Real & y )
+        TOOLS_FORCE_INLINE void operator()( PRNG_T & random_engine, Real & x, Real & y )
         {
             const Real r   = Sqrt(-Scalar::Two<Real> * std::log( r_dist(random_engine)) );
             
@@ -89,7 +89,7 @@ namespace Tools
         }
         
         template<typename PRNG_T>
-        force_inline Real operator()( PRNG_T & random_engine )
+        TOOLS_FORCE_INLINE Real operator()( PRNG_T & random_engine )
         {
             if( computedQ )
             {
@@ -135,7 +135,7 @@ namespace Tools
         ~Gaussian() = default;
         
         template<typename PRNG_T>
-        force_inline Real operator()( PRNG_T & random_engine )
+        TOOLS_FORCE_INLINE Real operator()( PRNG_T & random_engine )
         {
             if( computedQ )
             {

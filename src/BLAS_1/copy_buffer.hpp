@@ -20,7 +20,7 @@ namespace Tools
         Size_T N = VarSize, Parallel_T parQ = Sequential,
         typename S, typename T, typename Int = Size_T
     >
-    force_inline constexpr void copy_buffer(
+    TOOLS_FORCE_INLINE constexpr void copy_buffer(
         cptr<S> from, mptr<T> to, const Int n = N, const Int thread_count = 1
     )
     {

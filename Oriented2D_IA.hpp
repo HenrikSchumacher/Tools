@@ -3,7 +3,7 @@
 namespace Tools
 {
     template<bool fmaQ = true, typename Real, RoundingPolicy RP>
-    force_inline Interval<Real,RP> Det2D_IA(
+    TOOLS_FORCE_INLINE Interval<Real,RP> Det2D_IA(
         const Singleton<Real,RP> a, const Singleton<Real,RP> b,
         const Singleton<Real,RP> c, const Singleton<Real,RP> d
     )
@@ -21,13 +21,13 @@ namespace Tools
     
     
     template<bool fmaQ = true, typename Real, RoundingPolicy RP>
-    force_inline Interval<Real,RP> Det2D_IA( cptr<Singleton<Real,RP>> A )
+    TOOLS_FORCE_INLINE Interval<Real,RP> Det2D_IA( cptr<Singleton<Real,RP>> A )
     {
         return Det2D_IA<fmaQ>( A[0], A[1], A[2], A[3] );
     }
     
     template<bool fmaQ = true, typename Real, RoundingPolicy RP>
-    force_inline Interval<Real,RP> Det2D_IA(
+    TOOLS_FORCE_INLINE Interval<Real,RP> Det2D_IA(
         const Interval<Real,RP> a, const Interval<Real,RP> b,
         const Interval<Real,RP> c, const Interval<Real,RP> d
     )
@@ -43,14 +43,14 @@ namespace Tools
     }
     
     template<bool fmaQ = true, typename Real, RoundingPolicy RP>
-    force_inline Interval<Real,RP> Det2D_IA( cptr<Interval<Real,RP>> A )
+    TOOLS_FORCE_INLINE Interval<Real,RP> Det2D_IA( cptr<Interval<Real,RP>> A )
     {
         return Det2D_IA<fmaQ>( A[0], A[1], A[2], A[3] );
     }
 
     
     template<RoundingPolicy RP, bool diffsafeQ = false, bool fmaQ = true, typename Real>
-    force_inline Interval<Real,RP> SignedVolume2D_IA( cptr<Real> x, cptr<Real> y, cptr<Real> z )
+    TOOLS_FORCE_INLINE Interval<Real,RP> SignedVolume2D_IA( cptr<Real> x, cptr<Real> y, cptr<Real> z )
     {
         using S_T = Singleton<Real,RP>;
         
@@ -72,7 +72,7 @@ namespace Tools
 
     
     template<typename Out_T = int, typename Real, RoundingPolicy RP>
-    force_inline Out_T DetSign2D_IA(
+    TOOLS_FORCE_INLINE Out_T DetSign2D_IA(
         const Singleton<Real,RP> a, const Singleton<Real,RP> b,
         const Singleton<Real,RP> c, const Singleton<Real,RP> d
     )
@@ -81,13 +81,13 @@ namespace Tools
     }
     
     template<typename Out_T = int, typename Real, RoundingPolicy RP>
-    force_inline Out_T DetSign2D_IA( cptr<Singleton<Real,RP>> A )
+    TOOLS_FORCE_INLINE Out_T DetSign2D_IA( cptr<Singleton<Real,RP>> A )
     {
         return DetSign2D_IA( A[0], A[1], A[2], A[3] );
     }
     
 //    template<typename Out_T = int, typename Real>
-//    force_inline Out_T DetSign2D_IA(
+//    TOOLS_FORCE_INLINE Out_T DetSign2D_IA(
 //        const Real a, const Real b,
 //        const Real c, const Real d
 //    )
@@ -98,13 +98,13 @@ namespace Tools
 //    }
 
 //    template<typename Out_T = int, typename Real>
-//    force_inline Out_T DetSign2D_IA( cptr<Real> A )
+//    TOOLS_FORCE_INLINE Out_T DetSign2D_IA( cptr<Real> A )
 //    {
 //        return DetSign2D_IA<Out_T>( A[0], A[1], A[2], A[3] );
 //    }
     
     template<typename Out_T = int, typename Real, RoundingPolicy RP>
-    force_inline Out_T DetSign2D_IA(
+    TOOLS_FORCE_INLINE Out_T DetSign2D_IA(
         const Interval<Real,RP> a, const Interval<Real,RP> b,
         const Interval<Real,RP> c, const Interval<Real,RP> d
     )
@@ -113,13 +113,13 @@ namespace Tools
     }
     
 //    template<typename Out_T = int, typename Real>
-//    force_inline Out_T DetSign2D_IA( cptr<Interval<Real>> A )
+//    TOOLS_FORCE_INLINE Out_T DetSign2D_IA( cptr<Interval<Real>> A )
 //    {
 //        return DetSign2D_IA( A[0], A[1], A[2], A[3] );
 //    }
     
     template<RoundingPolicy RP, typename Out_T, bool diffsafeQ, typename Real>
-    force_inline Out_T Oriented2D_IA( cptr<Real> x, cptr<Real> y, cptr<Real> z )
+    TOOLS_FORCE_INLINE Out_T Oriented2D_IA( cptr<Real> x, cptr<Real> y, cptr<Real> z )
     {
         using S_T = Singleton<Real,RP>;
         

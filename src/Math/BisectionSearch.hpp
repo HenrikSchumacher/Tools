@@ -4,7 +4,7 @@ namespace Tools
 {
     
     template<int up_lo_flag, typename Real, typename Fun_T>
-    force_inline Real BisectionSearch(
+    TOOLS_FORCE_INLINE Real BisectionSearch(
         const Fun_T & f, const Real a_0, const Real b_0, const Real value,
         const Real relative_error
     )

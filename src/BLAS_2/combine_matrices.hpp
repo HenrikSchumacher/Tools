@@ -53,7 +53,7 @@ namespace Tools
         Op opx = Op::Id, Op opy = Op::Id,
         typename a_T, typename X_T, typename b_T, typename Y_T
     >
-    force_inline void combine_matrices(
+    TOOLS_FORCE_INLINE void combine_matrices(
         cref<a_T> a, cptr<X_T> X, const Size_T ldX,
         cref<b_T> b, mptr<Y_T> Y, const Size_T ldY,
         const Size_T m, const Size_T n, const Size_T thread_count
@@ -118,7 +118,7 @@ namespace Tools
         Op opx = Op::Id, Op opy = Op::Id,
         typename a_T, typename X_T, typename b_T, typename Y_T
     >
-    force_inline void combine_matrices(
+    TOOLS_FORCE_INLINE void combine_matrices(
         cref<a_T> a, cptr<X_T> X, const Size_T ldX,
         cref<b_T> b, mptr<Y_T> Y, const Size_T ldY
     )
@@ -143,7 +143,7 @@ namespace Tools
         Op opx = Op::Id, Op opy = Op::Id,
         typename a_T, typename X_T, typename b_T, typename Y_T
     >
-    force_inline void combine_matrices(
+    TOOLS_FORCE_INLINE void combine_matrices(
         cref<a_T> a, cptr<X_T> X, const Size_T ldX,
         cref<b_T> b, mptr<Y_T> Y, const Size_T ldY,
         const Size_T m, const Size_T n, const Size_T thread_count
@@ -166,7 +166,7 @@ namespace Tools
         Op opx = Op::Id, Op opy = Op::Id,
         typename a_T, typename X_T, typename b_T, typename Y_T
     >
-    force_inline void combine_matrices(
+    TOOLS_FORCE_INLINE void combine_matrices(
         cref<a_T> a, cptr<X_T> X, const Size_T ldX,
         cref<b_T> b, mptr<Y_T> Y, const Size_T ldY,
         const Size_T m, const Size_T n
@@ -233,7 +233,7 @@ namespace Tools
         Op opx = Op::Id, Op opy = Op::Id,
         typename a_T, typename X_T, typename b_T, typename Y_T
     >
-    force_inline void combine_matrices_auto(
+    TOOLS_FORCE_INLINE void combine_matrices_auto(
         cref<a_T> a, cptr<X_T> X, const Size_T ldX,
         cref<b_T> b, mptr<Y_T> Y, const Size_T ldY,
         const Size_T m, const Size_T n, const Size_T thread_count
@@ -363,7 +363,7 @@ namespace Tools
         Op opx = Op::Id, Op opy = Op::Id,
         typename a_T, typename X_T, typename b_T, typename Y_T
     >
-    force_inline void combine_matrices(
+    TOOLS_FORCE_INLINE void combine_matrices(
         cref<a_T> a, cptr<X_T> X, const Size_T ldX,
         cref<b_T> b, mptr<Y_T> Y, const Size_T ldY
     )
@@ -386,7 +386,7 @@ namespace Tools
         Op opx = Op::Id, Op opy = Op::Id,
         typename a_T, typename X_T, typename b_T, typename Y_T
     >
-    force_inline void combine_matrices(
+    TOOLS_FORCE_INLINE void combine_matrices(
         cref<a_T> a, cptr<X_T> X, const Size_T ldX,
         cref<b_T> b, mptr<Y_T> Y, const Size_T ldY,
         const Size_T m, const Size_T n, const Size_T thread_count
@@ -408,7 +408,7 @@ namespace Tools
         Op opx = Op::Id, Op opy = Op::Id,
         typename a_T, typename X_T, typename b_T, typename Y_T
     >
-    force_inline void combine_matrices(
+    TOOLS_FORCE_INLINE void combine_matrices(
         cref<a_T> a, cptr<X_T> X, const Size_T ldX,
         cref<b_T> b, mptr<Y_T> Y, const Size_T ldY,
         const Size_T m, const Size_T n

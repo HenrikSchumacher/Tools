@@ -32,7 +32,7 @@ namespace Tools
         Size_T M, Size_T N, Parallel_T parQ,
         typename b_T, typename Y_T
     >
-    force_inline constexpr void scale_matrix(
+    TOOLS_FORCE_INLINE constexpr void scale_matrix(
         cref<b_T> beta, mptr<Y_T> Y, const Size_T ldY,
         const Size_T m, const Size_T n, const Size_T thread_count
     )
@@ -69,7 +69,7 @@ namespace Tools
         Size_T M, Size_T N,
         typename b_T, typename Y_T
     >
-    force_inline constexpr void scale_matrix(
+    TOOLS_FORCE_INLINE constexpr void scale_matrix(
         cref<b_T> beta, mptr<Y_T> Y, const Size_T ldY
     )
     {
@@ -84,7 +84,7 @@ namespace Tools
     template <
         typename b_T, typename Y_T
     >
-    force_inline constexpr void scale_matrix(
+    TOOLS_FORCE_INLINE constexpr void scale_matrix(
         cref<b_T> beta, mptr<Y_T> Y, const Size_T ldY,
         const Size_T m, const Size_T n, const Size_T thread_count
     )
@@ -96,7 +96,7 @@ namespace Tools
     template <
         typename b_T, typename Y_T
     >
-    force_inline constexpr void scale_matrix(
+    TOOLS_FORCE_INLINE constexpr void scale_matrix(
         cref<b_T> beta, mptr<Y_T> Y, const Size_T ldY,
         const Size_T m, const Size_T n
     )

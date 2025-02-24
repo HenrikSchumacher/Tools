@@ -4,7 +4,7 @@ namespace Tools
 {
     
     template< Size_T N = VarSize, Parallel_T parQ = Sequential, typename S >
-    [[nodiscard]] force_inline Scalar::Real<S> norm_1(
+    [[nodiscard]] TOOLS_FORCE_INLINE Scalar::Real<S> norm_1(
         cptr<S> x, const Size_T n = N, const Size_T thread_count = 1
     )
     {

@@ -4,7 +4,7 @@ namespace Tools
 {
     
     template<typename Real>
-    force_inline std::pair<Real,Real> TwoSum( const Real a, const Real b )
+    TOOLS_FORCE_INLINE std::pair<Real,Real> TwoSum( const Real a, const Real b )
     {
         // Algorithm 3.1 from Ogita, Rump, Oishi - Accurate Sum and Dot Product
         //
@@ -27,7 +27,7 @@ namespace Tools
     }
     
     
-//    force_inline std::pair<double,double> TwoSum_asm_arm_reg( double a, double b )
+//    TOOLS_FORCE_INLINE std::pair<double,double> TwoSum_asm_arm_reg( double a, double b )
 //    {
 //        // In my version of clang this should be the precise equivalent to TwoSum without -ffast-math.
 //        
@@ -54,7 +54,7 @@ namespace Tools
 //        return {a,b};
 //    }
 //    
-//    force_inline std::pair<double,double> TwoSum_asm_arm( const double a, const double b )
+//    TOOLS_FORCE_INLINE std::pair<double,double> TwoSum_asm_arm( const double a, const double b )
 //    {
 //        // My poor man's transformation of TwoSum to asm.
 //        
@@ -106,7 +106,7 @@ namespace Tools
 //    }
 //    
 //
-//    force_inline std::pair<float,float> TwoSum_asm_arm( const float a, const float b )
+//    TOOLS_FORCE_INLINE std::pair<float,float> TwoSum_asm_arm( const float a, const float b )
 //    {
 //        // My poor man's transformation of TwoSum to asm.
 //        
@@ -160,7 +160,7 @@ namespace Tools
     
     
     template<typename Real>
-    force_inline std::pair<Real,Real> TwoProductFMA( const Real a, const Real b )
+    TOOLS_FORCE_INLINE std::pair<Real,Real> TwoProductFMA( const Real a, const Real b )
     {
         // Algorithm 3.5 from Ogita, Rump, Oishi - Accurate Sum and Dot Product
         //
@@ -235,24 +235,24 @@ namespace Tools
     
     // TODO: Make it parallel!
     template<Size_T N = 0, typename Real>
-    force_inline Real CompensatedSum( cptr<Real> x, const Size_T n = N )
+    TOOLS_FORCE_INLINE Real CompensatedSum( cptr<Real> x, const Size_T n = N )
     {
         CompensatedAccumulator<Real> acc( x[0] );
         
-//        dump(acc.Value());
+//        TOOLS_DUMP(acc.Value());
         
         for( Size_T i = 1; i < n; ++i )
         {
             acc += x[i];
             
-//            dump(acc.Value());
+//            TOOLS_DUMP(acc.Value());
         }
         
         return acc.Value();
     }
 
     template<typename Real>
-    force_inline Real CompensatedSum( const Real a, const Real b )
+    TOOLS_FORCE_INLINE Real CompensatedSum( const Real a, const Real b )
     {
         CompensatedAccumulator<Real> acc( a );
 
@@ -262,7 +262,7 @@ namespace Tools
     }
 
     template<typename Real>
-    force_inline Real CompensatedSum( const Real a, const Real b, const Real c )
+    TOOLS_FORCE_INLINE Real CompensatedSum( const Real a, const Real b, const Real c )
     {
         CompensatedAccumulator<Real> acc( a );
 
@@ -274,7 +274,7 @@ namespace Tools
     
     
     template<Size_T N = 0, typename Real>
-    force_inline Real CompensatedDot( cptr<Real> x, cptr<Real> y, const Size_T n = N )
+    TOOLS_FORCE_INLINE Real CompensatedDot( cptr<Real> x, cptr<Real> y, const Size_T n = N )
     {
         // Algorithm 5.3 "Dot2" from Ogita, Rump, Oishi - Accurate Sum and Dot Product
 

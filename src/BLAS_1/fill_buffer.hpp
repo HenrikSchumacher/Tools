@@ -6,7 +6,7 @@ namespace Tools
         Size_T N, Parallel_T parQ = Sequential,
         typename T
     >
-    force_inline constexpr void fill_buffer( mptr<T> a, const T init )
+    TOOLS_FORCE_INLINE constexpr void fill_buffer( mptr<T> a, const T init )
     {
         static_assert(N > VarSize,"");
         static_assert(parQ == Sequential,"");
@@ -18,7 +18,7 @@ namespace Tools
         Size_T N = VarSize, Parallel_T parQ = Sequential,
         typename T, typename Int = Size_T
     >
-    force_inline constexpr void fill_buffer(
+    TOOLS_FORCE_INLINE constexpr void fill_buffer(
         mptr<T> a, const T init, const Int n = static_cast<Size_T>(N), const Int thread_count = 1
     )
     {

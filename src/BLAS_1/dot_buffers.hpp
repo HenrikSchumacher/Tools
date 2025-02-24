@@ -6,7 +6,7 @@ namespace Tools
         Op opx = Op::Id, Op opy = Op::Id,
         typename x_T, typename y_T, typename Int
     >
-    [[nodiscard]] force_inline
+    [[nodiscard]] TOOLS_FORCE_INLINE
     decltype( x_T(1) * y_T(1) ) dot_buffers(
         cptr<x_T> x, cptr<y_T> y, const Int n = static_cast<Int>(N), const Int thread_count = 1
     )

@@ -100,7 +100,7 @@ namespace Tools
     } // Power
     
     template<typename R = int, typename T>
-    force_inline constexpr R Sign( const T x)
+    TOOLS_FORCE_INLINE constexpr R Sign( const T x)
     {
         constexpr T zero = 0;
         
@@ -108,7 +108,7 @@ namespace Tools
     }
     
     template<typename R = int, typename S, typename T>
-    force_inline constexpr R DifferenceSign( const S x, const T y )
+    TOOLS_FORCE_INLINE constexpr R DifferenceSign( const S x, const T y )
     {
         // Returns the sign of x - y.
         
@@ -116,7 +116,7 @@ namespace Tools
     }
     
     template<Size_T n, typename T>
-    force_inline constexpr
+    TOOLS_FORCE_INLINE constexpr
     std::enable_if_t<VectorizableQ<T>,decltype(vec_T<n,T>{} > vec_T<n,T>{})>
     DifferenceSign( cref<vec_T<n,T>> x, cref<vec_T<n,T>> y )
     {
@@ -126,7 +126,7 @@ namespace Tools
     }
     
     
-    force_inline constexpr bool OppositeSignQ( const int x, const int y )
+    TOOLS_FORCE_INLINE constexpr bool OppositeSignQ( const int x, const int y )
     {
         // This is often adviced, but it is wrong.
         // It returns true for ( -1 ^ 0 ) < 0.
@@ -137,7 +137,7 @@ namespace Tools
     
     
     template<typename R = int, typename S, typename T>
-    force_inline constexpr R KroneckerDelta( const S i, const T j )
+    TOOLS_FORCE_INLINE constexpr R KroneckerDelta( const S i, const T j )
     {
         return static_cast<R>( i == j );
     }
@@ -145,14 +145,14 @@ namespace Tools
     
     
     template<typename T>
-    force_inline constexpr bool Equal3( const T & a, const T & b, const T & c )
+    TOOLS_FORCE_INLINE constexpr bool Equal3( const T & a, const T & b, const T & c )
     {
         return (a == b) && (b == c);
     }
     
     
     template<typename Scal>
-    force_inline constexpr Scal Mean( const Scal & x, const Scal & y )
+    TOOLS_FORCE_INLINE constexpr Scal Mean( const Scal & x, const Scal & y )
     {
         using Real = Scalar::Real<Scal>;
      
@@ -162,7 +162,7 @@ namespace Tools
     }
     
     template<typename Real>
-    force_inline constexpr Real Max( const Real & x, const Real & y )
+    TOOLS_FORCE_INLINE constexpr Real Max( const Real & x, const Real & y )
     {
         using std::max;
         
@@ -177,7 +177,7 @@ namespace Tools
     }
     
     template<typename Real>
-    force_inline constexpr Real Max( const Real & x, const Real & y, const Real & z )
+    TOOLS_FORCE_INLINE constexpr Real Max( const Real & x, const Real & y, const Real & z )
     {
         using std::max;
         
@@ -192,7 +192,7 @@ namespace Tools
     }
     
     template<typename Real>
-    force_inline constexpr Real Min( const Real & x, const Real & y )
+    TOOLS_FORCE_INLINE constexpr Real Min( const Real & x, const Real & y )
     {
         using std::min;
         
@@ -207,7 +207,7 @@ namespace Tools
     }
     
     template<typename Real>
-    force_inline constexpr Real Min( const Real & x, const Real & y, const Real & z )
+    TOOLS_FORCE_INLINE constexpr Real Min( const Real & x, const Real & y, const Real & z )
     {
         using std::min;
         
@@ -223,7 +223,7 @@ namespace Tools
     
     
     template<typename Real>
-    force_inline constexpr std::pair<Real,Real> MinMax( const Real & x, const Real & y )
+    TOOLS_FORCE_INLINE constexpr std::pair<Real,Real> MinMax( const Real & x, const Real & y )
     {
         using std::minmax;
         
@@ -238,13 +238,13 @@ namespace Tools
     }
     
     template<typename Real>
-    force_inline constexpr std::pair<Real,Real> MinMax( const std::pair<Real,Real> & p )
+    TOOLS_FORCE_INLINE constexpr std::pair<Real,Real> MinMax( const std::pair<Real,Real> & p )
     {
         return MinMax( p.first, p.second );
     }
     
     template<typename Real>
-    force_inline constexpr std::pair<Real,Real> MinMax(
+    TOOLS_FORCE_INLINE constexpr std::pair<Real,Real> MinMax(
         const Real & x, const Real & y, const Real & z
     )
     {
@@ -264,34 +264,34 @@ namespace Tools
     }
     
     template<typename Real>
-    force_inline constexpr Real Ramp( const Real & x )
+    TOOLS_FORCE_INLINE constexpr Real Ramp( const Real & x )
     {
         static_assert(Scalar::RealQ<Real>, "Argument must be of a real type.");
         return Max( Scalar::Zero<Real>, x );
     }
     
     template<typename Real>
-    force_inline constexpr Real Clamp( const Real & x, const Real & a, const Real & b )
+    TOOLS_FORCE_INLINE constexpr Real Clamp( const Real & x, const Real & a, const Real & b )
     {
         static_assert(Scalar::RealQ<Real>, "Argument must be of a real type.");
         return Max( a, Min( b, x ) );
     }
     
     template<typename Real>
-    force_inline constexpr Real Ramp_1( const Real & x )
+    TOOLS_FORCE_INLINE constexpr Real Ramp_1( const Real & x )
     {
         static_assert(Scalar::RealQ<Real>, "Argument must be of a real type.");
         return Max( Scalar::One<Real>, x );
     }
     
     template<typename Real>
-    force_inline constexpr Real Sqrt( const Real & x )
+    TOOLS_FORCE_INLINE constexpr Real Sqrt( const Real & x )
     {
         return std::sqrt(x);
     }
     
     template<typename Real>
-    force_inline constexpr Real InvSqrt( const Real & x )
+    TOOLS_FORCE_INLINE constexpr Real InvSqrt( const Real & x )
     {
         return Inv( Sqrt(x) );
     }
