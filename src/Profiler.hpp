@@ -298,18 +298,18 @@ namespace Tools
 
     
 #ifdef TOOLS_ENABLE_PROFILER
-    #define TOOLS_PTIC( s ) ptic_impl(s)
+    #define TOOLS_PTIC( s ) TOOLS_PTIC_impl(s)
 #else
     #define TOOLS_PTIC( s )
 #endif
     
 #ifdef TOOLS_ENABLE_PROFILER
-    #define TOOLS_PTOC( s ) ptoc_impl(s)
+    #define TOOLS_PTOC( s ) TOOLS_PTOC_impl(s)
 #else
     #define TOOLS_PTOC( s )
 #endif
     
-    inline void ptic_impl(const std::string & tag)
+    inline void TOOLS_PTIC_impl(const std::string & tag)
     {
 #ifdef TOOLS_ENABLE_PROFILER
         const std::lock_guard<std::mutex> prof_lock( Profiler::prof_mutex );
@@ -333,7 +333,7 @@ namespace Tools
     }
     
     template<Size_T N>
-    inline void ptic_impl( const ct_string<N> & tag )
+    inline void TOOLS_PTIC_impl( const ct_string<N> & tag )
     {
 #ifdef TOOLS_ENABLE_PROFILER
         TOOLS_PTIC(tag.data());
@@ -342,7 +342,7 @@ namespace Tools
 #endif
     }
     
-    inline void ptoc_impl(const std::string & tag)
+    inline void TOOLS_PTOC_impl(const std::string & tag)
     {
 #ifdef TOOLS_ENABLE_PROFILER
         const std::lock_guard<std::mutex> prof_lock( Profiler::prof_mutex );
@@ -392,7 +392,7 @@ namespace Tools
     }
     
     template<Size_T N>
-    inline void ptoc_impl( const ct_string<N> & tag )
+    inline void TOOLS_PTOC_impl( const ct_string<N> & tag )
     {
 #ifdef TOOLS_ENABLE_PROFILER
         TOOLS_PTOC(tag.data());

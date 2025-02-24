@@ -42,13 +42,14 @@ namespace Tools
     template<typename T>
     inline void valprint( const std::string & s, const T & value)
     {
-        print( s + " = " + ToString(value) );
-    }
-
-    template<typename T>
-    inline void valprint( const std::string & s, const T & value, const int p)
-    {
-        print( s + " = " + ToString(value, p) );
+        if constexpr ( FloatQ<T> )
+        {
+            print( s + " = " + ToStringFPGeneral(value) );
+        }
+        else
+        {
+            print( s + " = " + ToString(value) );
+        }
     }
     
     inline void valprint( const std::string & s, const std::string & value)

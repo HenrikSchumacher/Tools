@@ -179,7 +179,7 @@ namespace Tools
     >
     TOOLS_FORCE_INLINE void combine_buffers3(
         cref<a_T> a, cptr<x_T> x, cref<b_T> b, cptr<y_T> y, mptr<z_T> z,
-        const Int n = N,
+        const Int n = static_cast<Size_T>(N),
         const Int thread_count = Int(1)
     )
     {
