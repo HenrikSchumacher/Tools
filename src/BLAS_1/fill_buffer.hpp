@@ -16,10 +16,10 @@ namespace Tools
     
     template <
         Size_T N = VarSize, Parallel_T parQ = Sequential,
-        typename T, typename Int
+        typename T, typename Int = Size_T
     >
     force_inline constexpr void fill_buffer(
-        mptr<T> a, const T init, const Int n = N, const Int thread_count = 1
+        mptr<T> a, const T init, const Int n = static_cast<Size_T>(N), const Int thread_count = 1
     )
     {
         check_sequential<parQ>( "fill_buffer", thread_count );
