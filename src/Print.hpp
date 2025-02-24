@@ -96,3 +96,7 @@ namespace Tools
 
 
 #define dump(x) Tools::valprint( std::string(#x), x );
+
+#define mem_dump_string(x) std::string(#x) + " : " + ToString((x).AllocatedByteCount()) + "\n"
+
+#define mem_dump(x) Tools::print( mem_dump_string(x) )

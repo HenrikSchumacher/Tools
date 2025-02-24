@@ -114,9 +114,9 @@ namespace Tools
 #endif
         }
         
-        inline void Clear()
+        inline void Clear( const bool silentQ = false, const bool appendQ = false )
         {
-            Clear( HomeDirectory() );
+            Clear( HomeDirectory(), silentQ, appendQ );
         }
         
     } // namespace Profiler

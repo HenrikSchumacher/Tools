@@ -7,6 +7,16 @@ namespace Tools
         return s;
     }
     
+    [[nodiscard]] std::string ToString( const char * ptr )
+    {
+        return std::string(ptr);
+    }
+    
+    [[nodiscard]] std::string ToString( char * ptr )
+    {
+        return std::string(ptr);
+    }
+    
     [[nodiscard]] std::string ToString( const double & value )
     {
         return std::format("{: .16e}",value);
@@ -48,6 +58,33 @@ namespace Tools
         return std::format("{:g} {:+g}I",std::real(z),std::imag(z));
     }
     
+    
+    [[nodiscard]] std::string ToMathematicaString( const float x )
+    {
+        std::string s = ToStringFPGeneral(x);
+        
+        Size_T p = s.find("e");
+        
+        if(p != std::string::npos)
+        {
+            s.replace(p, 1, "*^");
+        }
+        return s;
+    }
+    
+    [[nodiscard]] std::string ToMathematicaString( const double x )
+    {
+        std::string s = ToStringFPGeneral(x);
+        
+        Size_T p = s.find("e");
+        
+        if(p != std::string::npos)
+        {
+            s.replace(p, 1, "*^");
+        }
+        return s;
+    }
+    
     template <typename T>
     std::ostream & operator<<( std::ostream & sout, const std::complex<T> & z )
     {
@@ -66,12 +103,6 @@ namespace Tools
     std::cout << "ToString(T const * const ptr)" << std::endl;
         
         return std::format( "{:p}", (void const *)ptr );
-    }
-    
-    template <typename T>
-    [[nodiscard]] std::string ToString( const char * ptr )
-    {
-        return std::string(ptr);
     }
 
     template <typename T>
