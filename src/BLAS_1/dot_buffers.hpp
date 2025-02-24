@@ -2,14 +2,13 @@
 
 namespace Tools
 {
-    
-    template< Size_T N = VarSize, Parallel_T parQ = Sequential, 
+    template< Size_T N = VarSize, Parallel_T parQ = Sequential,
         Op opx = Op::Id, Op opy = Op::Id,
-        typename x_T, typename y_T, typename Int = Size_T
+        typename x_T, typename y_T, typename Int
     >
     [[nodiscard]] force_inline
     decltype( x_T(1) * y_T(1) ) dot_buffers(
-        cptr<x_T> x, cptr<y_T> y, const Int n = N, const Int thread_count = 1
+        cptr<x_T> x, cptr<y_T> y, const Int n = static_cast<Int>(N), const Int thread_count = 1
     )
     {
         static_assert(IntQ<Int>, "");
@@ -32,7 +31,7 @@ namespace Tools
             #pragma float_control(precise, off)
             
             return DoReduce<N,parQ>(
-                [x,y]( const Size_T i ) -> T
+                [x,y]( const Int i ) -> T
                 {
                     return
                     scalar_cast<T>( opx == Op::Conj ? Conj(x[i]) : x[i] )
