@@ -4,22 +4,7 @@ namespace Tools
 {
     static std::mutex cout_mutex;
     static std::mutex cerr_mutex;
-    static std::mutex timer_mutex;
-
-    using Clock = std::chrono::high_resolution_clock;
-    using Time  = std::chrono::time_point<Clock>;
     
-    TOOLS_FORCE_INLINE double Duration( const Time & start_time, const Time & stop_time )
-    {
-        return std::chrono::duration<double>(stop_time - start_time).count();
-    }
-    
-    namespace Timer
-    {
-        static std::vector<Time> time_stack;
-    }
-
-
     inline void print( const std::string & s )
     {
         const std::lock_guard<std::mutex>  cout_lock( Tools::cout_mutex  );
@@ -39,58 +24,58 @@ namespace Tools
         print( s.data() );
     }
     
-    template<typename T>
+    template<Size_T align = 0, typename T>
     inline void valprint( const std::string & s, const T & value)
     {
-        if constexpr ( FloatQ<T> )
+        if constexpr ( align > 0 )
         {
-            print( s + " = " + ToStringFPGeneral(value) );
+            const Size_T len = s.size();
+            
+            if( len <= align )
+            {
+                std::string s_out = (ct_spaces<align> + " = ") + COND(FloatQ<T>,ToStringFPGeneral(value),ToString(value));
+                
+                std::copy_n( s.begin(), len, s_out.begin() );
+                
+                print(s_out);
+            }
+            else
+            {
+                print( s + " = " + COND(FloatQ<T>,ToStringFPGeneral(value),ToString(value)) );
+            }
         }
         else
         {
-            print( s + " = " + ToString(value) );
+            print( s + " = " + COND(FloatQ<T>,ToStringFPGeneral(value),ToString(value)) );
         }
     }
     
+    template<Size_T align = 0, typename T>
     inline void valprint( const std::string & s, const std::string & value)
     {
-        print( s + " = " + value );
-    }
-    
-    inline void tic(const std::string & s)
-    {
+        if constexpr ( align > 0 )
         {
-            const std::lock_guard<std::mutex> timer_lock( Tools::timer_mutex );
+            const Size_T len = s.size();
             
-            Timer::time_stack.push_back(Clock::now());
-        }
-        
-        print( s + "..." );
-    }
-
-    inline double toc(const std::string & s)
-    {
-        double duration (0);
-    
-        
-        if (!Timer::time_stack.empty())
-        {
+            print( s + " = " + value );
+            
+            if( len <= align )
             {
-                const std::lock_guard<std::mutex> timer_lock( Tools::timer_mutex );
-                duration = Tools::Duration( Timer::time_stack.back(), Clock::now() );
+                std::string s_out = (ct_spaces<align> + " = ") + value;
+                
+                std::copy_n( s.begin(), len, s_out.begin() );
+                
+                print(s_out);
             }
-                print( std::to_string(duration) + " s.");
+            else
             {
-                const std::lock_guard<std::mutex> timer_lock( Tools::timer_mutex );
-                Timer::time_stack.pop_back();
+                print( s + " = " + value );
             }
         }
         else
         {
-            print("Unmatched toc detected. Label =  " + s);
+            print( s + " = " + value );
         }
-        
-        return duration;
     }
 
 } // namespace Tools
