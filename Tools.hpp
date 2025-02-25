@@ -125,28 +125,17 @@
 
 #endif
 
-
-
-//#define IS_ARITHMETIC(T) class = typename std::enable_if_t<std::is_arithmetic_v<T>>
-//#define IS_FLOAT(T)      class = typename std::enable_if_t<std::is_floating_point_v<T>>
-//#define IS_INT(T)        class = typename std::enable_if_t<std::is_integral_v<T>>
-//
-//#define IS_POSITIVE(x)  class = typename std::enable_if_t<x>0>
-//
-//#define ASSERT_ARITHMETIC(T) static_assert( std::is_arithmetic_v<T>, "Template parameter " #T " must be arithmetic type." );
-//
-//
-//#define ASSERT_FLOAT(type) static_assert( std::is_floating_point_v<type>, "Template parameter " #type " must be floating point type." );
-
-
 #if !defined(restrict)
     #if defined(__GNUC__)
-        #define restrict __restrict__
+        #define restrict __restrict__                     // for gcc
         #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 1
-    #elif defined(__clang__)
+    #elif defined(__clang__) && defined(_MSC_VER)         // for clang-cl
+        #define restrict __restrict
+        #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 1
+    #elif defined(__clang__) && !defined(_MSC_VER)        // for pure clang
         #define restrict __restrict
         #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 0
-    #elif defined(_MSC_VER)
+    #elif !defined(__clang__) && defined(_MSC_VER)        // for pure MSVC
         #define restrict __restrict
         #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 0
     #else
@@ -291,6 +280,7 @@ namespace Tools
 #include "src/ToString.hpp"
 #include "src/combine_strings.hpp"
 #include "src/Print.hpp"
+#include "src/Time.hpp"
 #include "src/Profiler.hpp"
 #include "src/Memory.hpp"
 
