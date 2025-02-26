@@ -128,18 +128,28 @@
 #if !defined(restrict)
     #if defined(__GNUC__)
         #define restrict __restrict__                     // for gcc
-        #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 1
+        #ifndef TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
+            #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 1
+        #endif
     #elif defined(__clang__) && defined(_MSC_VER)         // for clang-cl
         #define restrict __restrict
-        #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 1
+        #ifndef TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
+            #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 1
+        #endif
     #elif defined(__clang__) && !defined(_MSC_VER)        // for pure clang
         #define restrict __restrict
-        #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 0
+        #ifndef TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
+            #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 0
+        #endif
     #elif !defined(__clang__) && defined(_MSC_VER)        // for pure MSVC
         #define restrict __restrict
-        #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 0
+        #ifndef TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
+            #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 0
+        #endif
     #else
-        #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 0
+        #ifndef TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
+            #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 0
+        #endif
     #endif
 #endif
 

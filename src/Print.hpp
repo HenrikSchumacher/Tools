@@ -83,6 +83,6 @@ namespace Tools
 
 #define TOOLS_DUMP(x) Tools::valprint( std::string(#x), x );
 
-#define TOOLS_MEM_DUMP_STRING(x) std::string(#x) + " : " + ToString((x).AllocatedByteCount()) + "\n"
+#define TOOLS_MEM_DUMP_STRING(x) "\"" + std::string(#x) + "\" -> " + ToString((x).AllocatedByteCount())
 
 #define TOOLS_MEM_DUMP(x) Tools::print( TOOLS_MEM_DUMP_STRING(x) )
