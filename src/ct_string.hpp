@@ -60,17 +60,33 @@ namespace Tools
         }
         
         
-        constexpr char & operator[](std::size_t i)
+//        constexpr char & operator[](std::size_t i)
+//        {
+//            return bytes[i];
+//        }
+//        
+//        constexpr char const & operator[](std::size_t i) const
+//        {
+//            return bytes[i];
+//        }
+
+        template<typename Int>
+        constexpr char & operator[](const Int i)
         {
+            static_assert(IntQ<Int>,"");
+            
             return bytes[i];
         }
         
-        constexpr char const & operator[](std::size_t i) const
+        template<typename Int>
+        constexpr char const & operator[](const Int i) const
         {
+            static_assert(IntQ<Int>,"");
+            
             return bytes[i];
         }
         
-        constexpr char const* data() const
+        constexpr char const * data() const
         {
             return bytes;
         }
@@ -126,51 +142,6 @@ namespace Tools
         return lhs + rhs.data();
     }
     
-    template<typename Int>
-    constexpr ct_string<std::numeric_limits<Int>::digits10+3>
-    to_ct_string( const Int i )
-    {
-        constexpr Size_T N = std::numeric_limits<Int>::digits10+3;
-        
-        constexpr char digits [11] = "0123456789";
-        
-        Int x [11];
-        
-        ct_string<N> s;
-        
-        Size_T x_ptr = 0;
-        
-        Int d = i % 10;
-        Int r = i / 10;
-        
-        x[x_ptr++] = d;
-        
-        while( r != 0 )
-        {
-            d = r % 10;
-            r = r / 10;
-            
-            x[x_ptr++] = d;
-        }
-        
-        Int s_ptr = 0;
-        
-        if( i < 0 )
-        {
-            s[s_ptr++] = '-';
-        }
-        
-        while( x_ptr > 0 )
-        {
-            s[s_ptr++] = digits[x[--x_ptr]];
-        }
-        
-        return s;
-    }
-
-
-    
-    
     template<Size_T t >
     static constexpr ct_string<t + 1> ct_tabs = ct_tabs<t-1> + ct_string<2>("\t");
     template<> static constexpr ct_string<1> ct_tabs<0> = ct_string<1>("");
@@ -179,4 +150,60 @@ namespace Tools
     static constexpr ct_string<t + 1> ct_spaces = ct_spaces<t-1> + ct_string<2>(" ");
     template<> static constexpr ct_string<1> ct_spaces<0> = ct_string<1>("");
     
+    
+    constexpr ct_string<2> to_ct_string( const bool b )
+    {
+        if( b )
+        {
+            return "1";
+        }
+        else
+        {
+            return "0";
+        }
+    }
+
+    
+    template<typename Int>
+    constexpr ct_string<std::numeric_limits<Int>::digits10+3>
+    to_ct_string( const Int i )
+    {
+        constexpr Size_T N = std::numeric_limits<Int>::digits10+3;
+
+        constexpr char digits [11] = "0123456789";
+
+        Int x [11];
+
+        ct_string<N> s;
+
+        Size_T x_ptr = 0;
+
+        Int d = i % 10;
+        Int r = i / 10;
+
+        x[x_ptr++] = d;
+
+        while( r != 0 )
+        {
+            d = r % 10;
+            r = r / 10;
+
+            x[x_ptr++] = d;
+        }
+
+        Int s_ptr = 0;
+
+        if( i < 0 )
+        {
+            s[s_ptr++] = '-';
+        }
+
+        // Reverse
+        while( x_ptr > 0 )
+        {
+            s[s_ptr++] = digits[x[--x_ptr]];
+        }
+
+        return s;
+    }
 } // namespace Tools

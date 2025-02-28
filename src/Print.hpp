@@ -5,14 +5,24 @@ namespace Tools
     static std::mutex cout_mutex;
     static std::mutex cerr_mutex;
     
+    // We need it here because print might need knowledge of it when running in Mathematica.
+    using Clock = std::chrono::high_resolution_clock;
+    using Time  = std::chrono::time_point<Clock>;
+    
+    namespace Timer
+    {
+        static std::vector<Time> stack;
+        static std::mutex mutex;
+    }
+    
     inline void print( const std::string & s )
     {
         const std::lock_guard<std::mutex>  cout_lock( Tools::cout_mutex  );
         
 #if defined(LTEMPLATE_H) || defined(MATHEMATICA)
-        const std::lock_guard<std::mutex> timer_lock( Tools::timer_mutex );
+        const std::lock_guard<std::mutex> timer_lock( Timer::mutex );
         
-        mma::print( std::string( 2 * (Timer::time_stack.size()), ' ') + s );
+        mma::print( std::string( 2 * (Timer::stack.size()), ' ') + s );
 #else
         std::cout << s << std::endl;
 #endif

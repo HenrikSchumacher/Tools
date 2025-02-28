@@ -2,9 +2,6 @@
 
 namespace Tools
 {
-    using Clock = std::chrono::high_resolution_clock;
-    using Time  = std::chrono::time_point<Clock>;
-    
     TOOLS_FORCE_INLINE double Duration( const Time & start_time, const Time & stop_time )
     {
         return std::chrono::duration<double>(stop_time - start_time).count();
@@ -86,22 +83,13 @@ namespace Tools
             return std::chrono::duration<double>(t[1].t - t[0].t).count();
         }
     };
-    
-    
-    
-    static std::mutex timer_mutex;
-    
-    namespace Timer
-    {
-        static std::vector<Time> time_stack;
-    }
 
     inline void tic(const std::string & s)
     {
         {
-            const std::lock_guard<std::mutex> timer_lock( Tools::timer_mutex );
+            const std::lock_guard<std::mutex> timer_lock( Timer::mutex );
             
-            Timer::time_stack.push_back(Clock::now());
+            Timer::stack.push_back(Clock::now());
         }
         
         print( s + "..." );
@@ -111,16 +99,16 @@ namespace Tools
     {
         double duration = 0;
         
-        if (!Timer::time_stack.empty())
+        if (!Timer::stack.empty())
         {
             {
-                const std::lock_guard<std::mutex> timer_lock( Tools::timer_mutex );
-                duration = Tools::Duration( Timer::time_stack.back(), Clock::now() );
+                const std::lock_guard<std::mutex> timer_lock( Timer::mutex );
+                duration = Tools::Duration( Timer::stack.back(), Clock::now() );
             }
                 print( std::to_string(duration) + " s.");
             {
-                const std::lock_guard<std::mutex> timer_lock( Tools::timer_mutex );
-                Timer::time_stack.pop_back();
+                const std::lock_guard<std::mutex> timer_lock( Timer::mutex );
+                Timer::stack.pop_back();
             }
         }
         else

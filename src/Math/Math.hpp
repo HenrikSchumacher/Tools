@@ -490,6 +490,19 @@ namespace Tools
             return 1;
         }
     }
+    
+    
+    template<typename Scal>
+    inline static constexpr Scal NextFloat( const Scal x )
+    {
+        return std::nextafter( x, std::numeric_limits<Scal>::infinity() );
+    }
+    
+    template<typename Scal>
+    inline static constexpr Scal PrevFloat( const Scal x )
+    {
+        return std::nextafter( x, -std::numeric_limits<Scal>::infinity() );
+    }
 }
 
  
