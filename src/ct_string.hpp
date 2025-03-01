@@ -163,7 +163,7 @@ namespace Tools
         }
     }
 
-    
+    // Slows down everything?
     template<typename Int>
     constexpr ct_string<std::numeric_limits<Int>::digits10+3>
     to_ct_string( const Int i )

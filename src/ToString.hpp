@@ -341,6 +341,5 @@ namespace Tools
         s << std::setw(width) << std::setfill('0') << val;
         return s.str();
     }
-
     
 } // namespace Tools
