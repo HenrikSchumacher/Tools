@@ -59,6 +59,34 @@ namespace Tools
     }
     
     
+    [[nodiscard]] std::string ToMathematicaScientificString( const float x )
+    {
+        std::string s = ToString(x);
+        
+        Size_T p = s.find("e");
+        
+        if(p != std::string::npos)
+        {
+            s.replace(p, 1, "*^");
+        }
+//        std::cout << s << std::endl;
+        return s;
+    }
+    
+    [[nodiscard]] std::string ToMathematicaScientificString( const double x )
+    {
+        std::string s = ToString(x);
+        
+        Size_T p = s.find("e");
+        
+        if(p != std::string::npos)
+        {
+            s.replace(p, 1, "*^");
+        }
+//        std::cout << s << std::endl;
+        return s;
+    }
+    
     [[nodiscard]] std::string ToMathematicaString( const float x )
     {
         std::string s = ToStringFPGeneral(x);
@@ -69,6 +97,7 @@ namespace Tools
         {
             s.replace(p, 1, "*^");
         }
+//        std::cout << s << std::endl;
         return s;
     }
     
@@ -82,6 +111,7 @@ namespace Tools
         {
             s.replace(p, 1, "*^");
         }
+//        std::cout << s << std::endl;
         return s;
     }
     
@@ -231,6 +261,7 @@ namespace Tools
     {
         return ArrayToString( a, &*dims.begin(), dims.size(), line_prefix );
     }
+    
     
     template<typename T>
     [[nodiscard]] std::string ToString( const std::vector<T> & v )
