@@ -503,6 +503,31 @@ namespace Tools
     {
         return std::nextafter( x, -std::numeric_limits<Scal>::infinity() );
     }
+    
+    
+    template<typename T>
+    T ModDistance( const T L, const T i, const T j )
+    {
+        // Computes distance betreen mod(i,L) and mid(j,L) on the torus with arclength L. (Works also for integers.)
+        
+        static_assert( Scalar::RealQ<T>,"");
+
+        if constexpr ( UnsignedIntQ<T> )
+        {
+            auto [a,b] = MinMax(i,j);
+            
+            const T delta = b - a;
+            
+            return Min( delta, L - delta );
+        }
+        else
+        {
+            const T delta = Abs(j-i);
+            
+            return Min( delta, L - delta );
+        }
+        
+    }
 }
 
  

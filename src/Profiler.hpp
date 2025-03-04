@@ -66,11 +66,11 @@ namespace Tools
 
             if( appendQ )
             {
-                Profiler::log.open( Profiler::log_file.string(), std::ios_base::app );
+                Profiler::log.open( Profiler::log_file, std::ios_base::app );
             }
             else
             {
-                Profiler::log.open( Profiler::log_file.string() );
+                Profiler::log.open( Profiler::log_file );
             }
 
             if( !silentQ )
@@ -94,11 +94,11 @@ namespace Tools
             
             if( appendQ )
             {
-                Profiler::prof.open( Profiler::prof_file.string(), std::ios_base::app );
+                Profiler::prof.open( Profiler::prof_file, std::ios_base::app );
             }
             else
             {
-                Profiler::prof.open( Profiler::prof_file.string() );
+                Profiler::prof.open( Profiler::prof_file );
             }
 
             Profiler::init_time = Clock::now();
