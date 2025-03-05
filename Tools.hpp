@@ -344,6 +344,7 @@ namespace Tools
 
 #include "src/BLAS_1.hpp"
 #include "src/BLAS_2.hpp"
+#include "src/BLAS_4.hpp"
 
 #include "src/AlignedAllocator.hpp"
 #include "src/HeapArray.hpp"

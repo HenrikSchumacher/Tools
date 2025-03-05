@@ -37,6 +37,8 @@ namespace Tools
      * @param thread_count Number of threads to parallelize over.
      */
     
+    // TODO: We might want to have also inc_x and inc_y variants.
+    
     template<
         Scalar::Flag a_flag, Scalar::Flag b_flag,
         Size_T N = VarSize, Parallel_T parQ = Sequential,
@@ -170,6 +172,7 @@ namespace Tools
      * @param thread_count Number of threads to parallelize over.
      */
     
+    // TODO: We might want to have also inc_x, inc_y, inc_z variants.
     
     template<
         Scalar::Flag a_flag, Scalar::Flag b_flag,
