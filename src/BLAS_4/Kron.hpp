@@ -4,122 +4,22 @@
 
 namespace Tools
 {
-    
-//    template <typename T>
-//    struct Type_T {
-//        using Type = T;
-//    };
-//    
-//    template <typename T>
-//    inline constexpr Type_T<T> Type{};
-
-    
     struct Kron
     {
+        using F_T = Scalar::Flag;
+         
         struct TArg
         {
-            Scalar::Flag a_flag = Scalar::Flag::Generic;
+            Scalar::Flag a_flag = F_T::Generic;
             Op opA = Op::Id; Size_T mA = VarSize; Size_T nA = VarSize;
             Op opB = Op::Id; Size_T mB = VarSize; Size_T nB = VarSize;
-            Scalar::Flag b_flag = Scalar::Flag::Generic;
+            Scalar::Flag b_flag = F_T::Generic;
             Parallel_T parQ = Sequential;
-        };
+        }; // TArg
         
         template<TArg targ>
         struct Prod
         {
-//            template <
-//                typename A_T, typename B_T, typename C_T,
-//                typename a_T = Scalar::Real<A_T>,
-//                typename b_T = Scalar::Real<C_T>,
-//            
-//            >
-//            struct MArg
-//            {
-//                a_T a = Scalar::One<a_T>; // TODO: Default this according to targ.
-//                cptr<A_T> A;
-////                Int mA = targ.mA;
-////                Int nA = targ.nA;
-////                Int ldA = nA;
-//                cptr<B_T> B;
-////                Int mB = targ.mB;
-////                Int nB = targ.nB;
-////                Int ldB = nB;
-//                b_T b  = Scalar::Zero<b_T>; // TODO: Default this according to targ.
-//                mptr<C_T> C;
-////                Int ldC = nA * nB;
-////                Int thread_count = 1; // TODO: Default this according to targ.
-//            };
-//            
-//            // deduction guide
-//            template <
-//                typename A_T, typename B_T, typename C_T, typename a_T, typename b_T, typename I = Int
-//            >
-//            MArg( a_T, A_T *, B_T *, b_T, C_T * )
-//            ->
-//            MArg<A_T,B_T,C_T,a_T,b_T>;
-//            
-//            struct OArg
-//            {
-////                cref<a_T> a;
-////                cptr<A_T> A;
-//                Int mA = targ.mA;
-//                Int nA = targ.nA;
-//                Int ldA = nA;
-////                cptr<B_T> B;
-//                Int mB = targ.mB;
-//                Int nB = targ.nB;
-//                Int ldB = nB;
-////                cref<b_T> b;
-////                mptr<C_T> C;
-//                Int ldC = nA * nB;
-//                Int thread_count = 1;
-//            };
-//            
-//
-//            
-//            template<
-//                typename A_T, typename B_T, typename C_T, typename a_T, typename b_T
-//            >
-//            void operator()(
-//                MArg<A_T,B_T,C_T,a_T,b_T> marg,
-//                OArg oarg
-//            )
-//            {
-//                constexpr Scalar::Flag A_flag =
-//                    (targ.a_flag == Scalar::Flag::Zero)
-//                    ? Scalar::Flag::Zero
-//                    : Scalar::Flag::Generic;
-//                
-//                
-//                // TODO: Currently we parallelize only over the first dimension of `A`. We have bad luck if that is small.
-//                
-//                Do<targ.nA,targ.parQ>(
-//                    [=](const Int i )
-//                    {
-//                        const Int incC = oarg.ldC * oarg.mB * i;
-//                        
-//                        for( Int k = 0; k < oarg.mB; ++k )
-//                        {
-//                            outerprod_buffers<
-//                                A_flag, targ.b_flag, targ.nA, targ.nB,
-//                                Sequential, targ.opA, targ.opB
-//                            >(
-//                              marg.a, &marg.A[oarg.ldA * i],
-//                                      &marg.B[oarg.ldB * k],
-//                              marg.b, &marg.C[incC + oarg.ldC * k],
-//                              oarg.nB, oarg.nA, oarg.nB
-//                            );
-//                        }
-//                    },
-//                    oarg.mA, oarg.thread_count
-//                );
-//            }
-            
-            
-            
-            
-            
             
             template <
                 typename A_T, typename B_T, typename C_T,
@@ -129,7 +29,9 @@ namespace Tools
             >
             struct Arg
             {
-                a_T a = Scalar::One<a_T>; // TODO: Default this according to targ.
+                // We initialize this to 1 if we have no reason to do otherwise.
+                a_T a = (targ.a_flag == F_T::Minus ? a_T(-1) :
+                            (targ.a_flag == F_T::Zero ? a_T(0) : a_T(1) ) );
                 cptr<A_T> A;
                 Int mA = targ.mA;
                 Int nA = targ.nA;
@@ -138,19 +40,21 @@ namespace Tools
                 Int mB = targ.mB;
                 Int nB = targ.nB;
                 Int ldB = nB;
-                b_T b  = Scalar::Zero<b_T>; // TODO: Default this according to targ.
+                // We initialize this to 0 if we have no reason to do otherwise.
+                b_T b  = (targ.b_flag == F_T::Minus ? b_T(-1) :
+                             (targ.b_flag == F_T::Plus ? b_T(1) : b_T(0) ) );
                 mptr<C_T> C;
                 Int ldC = nA * nB;
-                Int thread_count = 1; // TODO: Default this according to targ.
-            };
+                Int thread_count = 1;
+            }; // Arg
             
             
-            // deduction guide
+            // deduction guide // TODO: Is this really needed?
             template <
                 typename A_T, typename B_T, typename C_T,
                 typename a_T, typename b_T, typename Int
             >
-            Arg( a_T, A_T *, Int, Int, Int, B_T *, Int, Int, Int, b_T, C_T *, Int, Int )
+            Arg( a_T, A_T const *, Int, Int, Int, B_T const *, Int, Int, Int, b_T, C_T *, Int, Int )
             ->
             Arg<A_T,B_T,C_T,a_T,b_T,Int>;
             
@@ -161,7 +65,6 @@ namespace Tools
             >
             void operator()( Arg<A_T,B_T,C_T,a_T,b_T,Int> arg )
             {
-                
                 static_assert( IntQ<Int>, "" );
 
                 constexpr Scalar::Flag A_flag =
@@ -184,24 +87,21 @@ namespace Tools
                                 Sequential, targ.opA, targ.opB
                             >(
                               arg.a, &arg.A[arg.ldA * i],
-                                      &arg.B[arg.ldB * k],
+                                     &arg.B[arg.ldB * k],
                               arg.b, &arg.C[incC + arg.ldC * k],
                               arg.nB, arg.nA, arg.nB
                             );
                         }
                     },
                     arg.mA, arg.thread_count
-                );
-            }
-//
-//            template<typename S, typename T>
-//            void operator()( S arg, T oarg )
-//            {
-//                this->operator()( MArg{marg}, OArg{oarg} );
-//            }
-
-        };
-    };
+                                      
+                ); // Do
+                
+            } // operator()
+            
+        }; // Prod
+        
+    }; // Kron
     
     struct KronProd_TArgs
     {
@@ -278,5 +178,53 @@ namespace Tools
             args.mA, args.thread_count
         );
     }
+    
+    
+//    // Under clang-19 (not Apple clang!) we can now call Kron, e.g. this way:
+//
+//    Kron::Prod<{.parQ = Parallel}>()({
+//        .a = a, .A = A.data(), .mA = A.Dim(0), .nA = A.Dim(1), .ldA = A.Dim(1),
+//                .B = B.data(), .mB = B.Dim(0), .nB = B.Dim(1), .ldB = B.Dim(1),
+//        .b = b, .C = C.data(),                                 .ldC = C.Dim(1),
+//        .thread_count = thread_count
+//    });
+//
+//    // or
+//
+//    Kron::Prod<{.parQ = Parallel}>()({
+//        .A = A.data(), .mA = A.Dim(0), .nA = A.Dim(1),
+//        .B = B.data(), .mB = B.Dim(0), .nB = B.Dim(1),
+//        .C = C.data(),
+//        .thread_count = thread_count
+//    });
+//    // or
+//
+//    Kron::Prod<{ .mA = 3, .nA = 3, .mB = 3, .nB = 3}>()({
+//        .A = A.data(), .B = B.data(), .C = C.data(), .thread_count = thread_count
+//    });
+    
+//    // This is still not exactly what I want:
+//
+//    Kron::Prod<.parQ = Parallel>(
+//        .a = a, .A = A.data(), .mA = A.Dim(0), .nA = A.Dim(1), .ldA = A.Dim(1),
+//                .B = B.data(), .mB = B.Dim(0), .nB = B.Dim(1), .ldB = B.Dim(1),
+//        .b = b, .C = C.data(),                                 .ldC = C.Dim(1),
+//        .thread_count = thread_count
+//    );
+//
+//    // But it is as close as I can get to it with C++20.
+//    
+//    // Under Apple clang we still have to give a lot of help:
+//
+//    using KronProd = Kron::Prod<Kron::TArg{ .parQ = Parallel }>;
+//
+//    KronProd kron;
+//
+//    kron(KronProd::Arg{{
+//        .a = a, .A = A.data(), .mA = A.Dim(0), .nA = A.Dim(1), .ldA = A.Dim(1),
+//                .B = B.data(), .mB = B.Dim(0), .nB = B.Dim(1), .ldB = B.Dim(1),
+//        .b = b, .C = C.data(),                                 .ldC = C.Dim(1),
+//        .thread_count = thread_count
+//    });
         
 } // namespace Tools
