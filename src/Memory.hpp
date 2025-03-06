@@ -11,16 +11,16 @@ namespace Tools
     #endif
     
     // length of cache line measured in bytes
-    static constexpr Size_T CacheLineWidth = 64;
+    constexpr Size_T CacheLineWidth = 64;
 //    //TODO: Replace the hard-coded constant by __cpp_lib_hardware_interference_size as soon as this C++17 feature is supported by all compilers.
     
-//    static constexpr Size_T CacheLineWidth = std::hardware_destructive_interference_size;
+//    constexpr Size_T CacheLineWidth = std::hardware_destructive_interference_size;
     
-    static constexpr Size_T DefaultAlignment = std::max( sizeof(void*), std::size_t(16) );
+    constexpr Size_T DefaultAlignment = std::max( sizeof(void*), std::size_t(16) );
 
-    static constexpr Size_T ObjectAlignment = std::max( CacheLineWidth, DefaultAlignment );
+    constexpr Size_T ObjectAlignment = std::max( CacheLineWidth, DefaultAlignment );
 
-    static constexpr Size_T PrefetchStride = 4 * CacheLineWidth;
+    constexpr Size_T PrefetchStride = 4 * CacheLineWidth;
     
     
     template<typename Int>

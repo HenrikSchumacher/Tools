@@ -61,7 +61,7 @@
 #define TOOLS_STRINGIFY(x) TOOLS_STRINGIFY_IMPL(x)
 
 #define TOOLS_TO_STD_STRING(x) std::string(TOOLS_STRINGIFY(x))
-    
+
 #define TOOLS_CONCAT2_IMPL(id1, id2) id1##id2
 #define TOOLS_CONCAT2(id1, id2) TOOLS_CONCAT2_IMPL(id1, id2)
     
@@ -223,28 +223,28 @@ namespace Tools
     
     using Size_T = std::size_t;
     
-    static constexpr Size_T VarSize = 0;
+    constexpr Size_T VarSize = 0;
     
     template<typename T>
-    static constexpr bool IntQ = std::is_integral_v<T>;
+    constexpr bool IntQ = std::is_integral_v<T>;
     
 #define ASSERT_INT(I) static_assert( IntQ<I>, "Template parameter " #I " must be an integral type." );
     
     template<typename T> 
-    static constexpr bool UnsignedIntQ = std::is_unsigned_v<T> && std::is_integral_v<T>;
+    constexpr bool UnsignedIntQ = std::is_unsigned_v<T> && std::is_integral_v<T>;
     
 #define ASSERT_UINT(I) static_assert( UnsignedIntQ<I>, "Template parameter " #I " must be a unsigned integral type." );
     
     template<typename T>
-    static constexpr bool SignedIntQ = std::is_signed_v<T> && std::is_integral_v<T>;
+    constexpr bool SignedIntQ = std::is_signed_v<T> && std::is_integral_v<T>;
     
 #define ASSERT_SIGNED_INT(I) static_assert( SignedIntQ<I>, "Template parameter " #I " must be a signed integral type." );
     
     template<typename T>
-    static constexpr bool FloatQ = std::is_floating_point_v<T>;
+    constexpr bool FloatQ = std::is_floating_point_v<T>;
     
     template<typename T>
-    static constexpr bool ArithmeticQ = std::is_arithmetic_v<T>;
+    constexpr bool ArithmeticQ = std::is_arithmetic_v<T>;
     
     template<> constexpr bool ArithmeticQ<std::complex<float>>  = true;
     template<> constexpr bool ArithmeticQ<std::complex<double>> = true;
@@ -265,12 +265,12 @@ namespace Tools
     
 //    // Workaround for static_assert(false,"") within constexpr if.
     template <typename>
-    inline constexpr bool DependentFalse = false;
+    constexpr bool DependentFalse = false;
     
 
 #if ( (!(defined TOOLS_DEACTIVATE_VECTOR_EXTENSIONS)) && (__has_attribute(__ext_vector_type__)) )
     
-    static constexpr bool vec_enabledQ = true;
+    constexpr bool vec_enabledQ = true;
     
     template<Size_T N, typename T>
     using vec_T = T __attribute__((__ext_vector_type__(N))) ;
@@ -288,7 +288,7 @@ namespace Tools
     }
     
 #else
-    static constexpr bool vec_enabledQ = false;
+    constexpr bool vec_enabledQ = false;
 
     template<Size_T N, typename T>
     using vec_T = std::array<T,N>; //Just a dummy; will not be used, actually.
@@ -296,7 +296,7 @@ namespace Tools
 
 #if ( (!(defined TOOLS_DEACTIVATE_MATRIX_EXTENSIONS)) && (__has_attribute(__matrix_type__)) )
     
-    static constexpr bool mat_enabledQ = true;
+    constexpr bool mat_enabledQ = true;
 
     template<Size_T M, Size_T N, typename T>
     using mat_T = T __attribute__((__matrix_type__(M,N))) ;
@@ -314,7 +314,7 @@ namespace Tools
     }
     
 #else
-    static constexpr bool mat_enabledQ = false;
+    constexpr bool mat_enabledQ = false;
 
     template<Size_T M, Size_T N, typename T>
     using mat_T = std::array<std::array<T,N>,M>; //Just a dummy; will not be used, actually.

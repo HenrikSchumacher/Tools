@@ -260,6 +260,6 @@ namespace Tools
         False = false
     };
     
-    static constexpr AddTo_T AddTo     = AddTo_T::True;
-    static constexpr AddTo_T Overwrite = AddTo_T::False;
+    constexpr AddTo_T AddTo     = AddTo_T::True;
+    constexpr AddTo_T Overwrite = AddTo_T::False;
 }

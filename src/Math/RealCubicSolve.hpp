@@ -24,7 +24,7 @@ namespace Tools
         
         static_assert( Scalar::RealQ<Real>, "Input parameters must be of real floating point types.");
                 
-        static constexpr Real infty = std::numeric_limits<Real>::max();
+        constexpr Real infty = std::numeric_limits<Real>::max();
         
         auto f = [c_3,c_2,c_1,c_0]( const Real x )
         {
@@ -147,7 +147,7 @@ namespace Tools
         
         static_assert( Scalar::RealQ<Real>, "Input parameters must be of real floating point types.");
                 
-        static constexpr Real infty = std::numeric_limits<Real>::max();
+        constexpr Real infty = std::numeric_limits<Real>::max();
         
         auto f = [c_3,c_2,c_1,c_0]( const Real x )
         {
@@ -295,7 +295,7 @@ namespace Tools
 //        constexpr Real half  = Frac<Real>(1,2);
         constexpr Real third    = Frac<Real>(1,3);
         
-        static constexpr Real infty = std::numeric_limits<Real>::max();
+        constexpr Real infty = std::numeric_limits<Real>::max();
 
         // Convert to depressed form:
         // t = x - shift
@@ -386,8 +386,8 @@ namespace Tools
         
         constexpr Real half = Inv<Real>(2);
         
-        static constexpr Real eps   = 8 * std::numeric_limits<Real>::epsilon();
-        static constexpr Real infty = std::numeric_limits<Real>::max();
+        constexpr Real eps   = 8 * std::numeric_limits<Real>::epsilon();
+        constexpr Real infty = std::numeric_limits<Real>::max();
         
         if( std::abs(a) < eps )
         {

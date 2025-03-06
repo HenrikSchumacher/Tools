@@ -339,7 +339,7 @@ namespace Tools
     }
     
     template<typename T, typename I>
-    inline static constexpr T Factorial( I n )
+    inline constexpr T Factorial( I n )
     {
         T result ( 1 );
         
@@ -352,7 +352,7 @@ namespace Tools
     }
     
     template<typename T, typename I>
-    inline static constexpr T DoubleFactorial( I n )
+    inline constexpr T DoubleFactorial( I n )
     {
         T result ( 1 );
         
@@ -366,7 +366,7 @@ namespace Tools
     
     
     template<typename T, typename I>
-    inline static constexpr T StandardSimplexVolume( I d )
+    inline constexpr T StandardSimplexVolume( I d )
     {
         return Inv( Factorial<T>(d) );
     }
@@ -404,7 +404,7 @@ namespace Tools
     
     
     template < typename T >
-    inline static constexpr T SphereVolume ( const Size_T n )
+    inline constexpr T SphereVolume ( const Size_T n )
     {
         
         T result ( (n % 2 == 0) ? Scalar::Two<T> : Scalar::TwoPi<T> );
@@ -419,7 +419,7 @@ namespace Tools
     }
     
     template < typename T >
-    inline static constexpr T BallVolume ( const Size_T n )
+    inline constexpr T BallVolume ( const Size_T n )
     {
         
         T result ( (n % 2 == 0) ? Scalar::One<T> : Scalar::Two<T> );
@@ -434,7 +434,7 @@ namespace Tools
     }
     
     template < typename T >
-    inline static constexpr T SOVolume ( const Size_T n )
+    inline constexpr T SOVolume ( const Size_T n )
     {
         
         T result ( Scalar::One<T> );
@@ -450,7 +450,7 @@ namespace Tools
     
     
     template < typename T >
-    inline static constexpr T GammaQuotient ( const T x, const T a )
+    inline constexpr T GammaQuotient ( const T x, const T a )
     {
         // Computes Gamma(x+a)/Gamma(x) with considerably less risk of overflow than std::tgamma(x+a)/std::tgamma(x).
 
@@ -493,13 +493,13 @@ namespace Tools
     
     
     template<typename Scal>
-    inline static constexpr Scal NextFloat( const Scal x )
+    inline constexpr Scal NextFloat( const Scal x )
     {
         return std::nextafter( x, std::numeric_limits<Scal>::max() );
     }
     
     template<typename Scal>
-    inline static constexpr Scal PrevFloat( const Scal x )
+    inline constexpr Scal PrevFloat( const Scal x )
     {
         return std::nextafter( x, std::numeric_limits<Scal>::lowest() );
     }

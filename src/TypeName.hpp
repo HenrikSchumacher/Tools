@@ -26,7 +26,7 @@ namespace Tools
     
     
     template<typename T> requires std::is_integral_v<T>
-    static constexpr const char * TypeName<T> = Scalar::IntegralTypeTraits<T>::type_name;
+    constexpr const char * TypeName<T> = Scalar::IntegralTypeTraits<T>::type_name;
     
     // default implementation
     template<typename T>
@@ -43,12 +43,12 @@ namespace Tools
     template<> constexpr const char * FullTypeName<std::string>  = "std::string";
     
     template<typename S, typename T>
-    static constexpr const char * FullTypeName<std::pair<S,T>> = "pair<?,?>";
+    constexpr const char * FullTypeName<std::pair<S,T>> = "pair<?,?>";
     
     template<typename T> requires std::is_integral_v<T>
-    static constexpr const char * FullTypeName<T> = Scalar::IntegralTypeTraits<T>::full_name;
+    constexpr const char * FullTypeName<T> = Scalar::IntegralTypeTraits<T>::full_name;
 
-    [[maybe_unused]] static std::string IntegerInfo()
+    [[maybe_unused]] std::string IntegerInfo()
     {
         std::stringstream s ;
 
@@ -135,7 +135,7 @@ namespace Tools
         return s.str();
     }
     
-    [[maybe_unused]] static std::string FloatingPointInfo()
+    [[maybe_unused]] std::string FloatingPointInfo()
     {
         std::stringstream s ;
 

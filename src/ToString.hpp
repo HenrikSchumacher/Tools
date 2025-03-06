@@ -2,6 +2,14 @@
 
 namespace Tools
 {
+#ifdef TOOLS_NO_STDFORMAT
+#include "fmt/format.h"
+    using fmt::format;
+#else
+    using std::format;
+#endif
+    
+    
     [[nodiscard]] std::string ToString( const std::string & s )
     {
         return s;
@@ -19,43 +27,43 @@ namespace Tools
     
     [[nodiscard]] std::string ToString( const double & value )
     {
-        return std::format("{: .16e}",value);
+        return format("{: .16e}",value);
     }
     
     [[nodiscard]] std::string ToString( const float & value )
     {
-        return std::format("{: .7e}",value);
+        return format("{: .7e}",value);
     }
     
     [[nodiscard]] std::string ToString( const std::complex<double> & z )
     {
-        return std::format("{: .16e} {:+.16e}I",std::real(z),std::imag(z));
+        return format("{: .16e} {:+.16e}I",std::real(z),std::imag(z));
     }
                            
     [[nodiscard]] std::string ToString( const std::complex<float> & z )
     {
-        return std::format("{: .7e} {:+.7e}I",std::real(z),std::imag(z));
+        return format("{: .7e} {:+.7e}I",std::real(z),std::imag(z));
     }
     
     
     [[nodiscard]] std::string ToStringFPGeneral( const double & value )
     {
-        return std::format("{:.16g}",value);
+        return format("{:.16g}",value);
     }
     
     [[nodiscard]] std::string ToStringFPGeneral( const float & value )
     {
-        return std::format("{:.7g}",value);
+        return format("{:.7g}",value);
     }
     
     [[nodiscard]] std::string ToStringFPGeneral( const std::complex<double> & z )
     {
-        return std::format("{:.16g} {:+.16g}I",std::real(z),std::imag(z));
+        return format("{:.16g} {:+.16g}I",std::real(z),std::imag(z));
     }
     
     [[nodiscard]] std::string ToStringFPGeneral( const std::complex<float> & z )
     {
-        return std::format("{:.7g} {:+.7g}I",std::real(z),std::imag(z));
+        return format("{:.7g} {:+.7g}I",std::real(z),std::imag(z));
     }
     
     
@@ -124,7 +132,7 @@ namespace Tools
     template <typename T>
     [[nodiscard]] std::string ToString( T * ptr )
     {
-        return std::format( "{:p}", (void *)ptr );
+        return format( "{:p}", (void *)ptr );
     }
     
     template <typename T>
@@ -132,19 +140,19 @@ namespace Tools
     {
     std::cout << "ToString(T const * const ptr)" << std::endl;
         
-        return std::format( "{:p}", (void const *)ptr );
+        return format( "{:p}", (void const *)ptr );
     }
 
     template <typename T>
     [[nodiscard]] std::enable_if_t<IntQ<T>,std::string> ToString( const T & value )
     {
-        return std::format("{:d}",value);
+        return format("{:d}",value);
     }
 
 
     
     template<typename T>
-    static constexpr bool ClassEnumQ = std::is_enum<T>::value && !std::is_convertible<T,int>::value;
+    constexpr bool ClassEnumQ = std::is_enum<T>::value && !std::is_convertible<T,int>::value;
     
     
     template <typename T>

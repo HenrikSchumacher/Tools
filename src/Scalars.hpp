@@ -47,13 +47,13 @@ namespace Tools
     using std::imag;
     
     template<typename S, typename T>
-    static constexpr bool SameQ = std::is_same_v<S,T>;
+    constexpr bool SameQ = std::is_same_v<S,T>;
     
     template<typename T>
-    static constexpr bool VectorizableQ = vec_enabledQ && ( SameQ<T,Real32> || SameQ<T,Real64> || SameQ<T,Int16> || SameQ<T, Int32> || SameQ<T,Int64> || SameQ<T,UInt16> ||SameQ<T,UInt32> || SameQ<T,UInt64> );
+    constexpr bool VectorizableQ = vec_enabledQ && ( SameQ<T,Real32> || SameQ<T,Real64> || SameQ<T,Int16> || SameQ<T, Int32> || SameQ<T,Int64> || SameQ<T,UInt16> ||SameQ<T,UInt32> || SameQ<T,UInt64> );
     
     template<typename T>
-    static constexpr bool MatrixizableQ = mat_enabledQ
+    constexpr bool MatrixizableQ = mat_enabledQ
         && (
             SameQ<T,Real32> || SameQ<T,Real64>
             || SameQ<T, Int16> || SameQ<T, Int32> || SameQ<T, Int64>
@@ -175,7 +175,7 @@ namespace Tools
         template<> constexpr bool RealQ<Complex64 >    = false;
         //        template<> constexpr bool RealQ<Complex128>    = false;
         
-        template<typename T> static constexpr bool ScalarQ    = false;
+        template<typename T> constexpr bool ScalarQ    = false;
         
         template<> constexpr bool ScalarQ<Real32 >     = true;
         template<> constexpr bool ScalarQ<Real64 >     = true;
@@ -195,14 +195,14 @@ namespace Tools
         template<> constexpr bool ScalarQ<UInt32>   = true;
         template<> constexpr bool ScalarQ<UInt64>   = true;
         
-        template<typename T> static constexpr bool FloatQ = false;
+        template<typename T> constexpr bool FloatQ = false;
         
         template<> constexpr bool FloatQ<Real32 >     = true;
         template<> constexpr bool FloatQ<Real64 >     = true;
         template<> constexpr bool FloatQ<Complex32 >  = true;
         template<> constexpr bool FloatQ<Complex64 >  = true;
         
-        template<typename T> static constexpr int Prec       = 0;
+        template<typename T> constexpr int Prec       = 0;
         
         template<> constexpr int Prec<Real32 >     = sizeof(Real32) * 8;
         template<> constexpr int Prec<Real64 >     = sizeof(Real64) * 8;
@@ -237,7 +237,7 @@ namespace Tools
         template<typename T> constexpr Scalar::Real<T> Sixth   = One<T>/Six<T>;
         
         
-        template<typename T> static constexpr Scalar::Complex<T> I {0,1};
+        template<typename T> constexpr Scalar::Complex<T> I {0,1};
         
         template<typename T> constexpr Scalar::Real<T> Pi = static_cast<Scalar::Real<T>>(3.141592653589793238462643383279502884197);
         

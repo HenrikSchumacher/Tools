@@ -37,7 +37,7 @@ namespace Tools
     {
         static_assert(Scalar::RealQ<Real>,"");
         
-        static constexpr Real scale = Scalar::One<Real> / (1ull << 20);
+        static constexpr Real scale = Scalar::One<Real> / (UInt64(1) << 20);
         
     public:
         
@@ -80,6 +80,8 @@ namespace Tools
         template<typename PRNG_T>
         TOOLS_FORCE_INLINE void operator()( PRNG_T & random_engine, Real & x, Real & y )
         {
+            TOOLS_MAKE_FP_FAST()
+            
             const Real r   = Sqrt(-Scalar::Two<Real> * std::log( r_dist(random_engine)) );
             
             const Real phi = phi_dist(random_engine);
@@ -91,6 +93,8 @@ namespace Tools
         template<typename PRNG_T>
         TOOLS_FORCE_INLINE Real operator()( PRNG_T & random_engine )
         {
+            TOOLS_MAKE_FP_FAST()
+            
             if( computedQ )
             {
                 computedQ = false;
@@ -144,12 +148,14 @@ namespace Tools
             }
             else
             {
+                TOOLS_MAKE_FP_FAST()
+                
                 X = dist(random_engine);
                 Y = dist(random_engine);
                 
                 r2 = X * X + Y * Y;
                 
-                [[unlikely]] while ( r2 > Scalar::One<Real> || r2 == Scalar::Zero<Real> )
+                while ( r2 > Scalar::One<Real> || r2 == Scalar::Zero<Real> )
                 {
                     X = dist(random_engine);
                     Y = dist(random_engine);
