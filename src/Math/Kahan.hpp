@@ -19,6 +19,7 @@ namespace Tools
 //
         // Precise determinat would be e + f;
         
+        TOOLS_MAKE_FP_STRICT()
         
         // Thus should use one negation less than the above.
         const Real w = b * c;

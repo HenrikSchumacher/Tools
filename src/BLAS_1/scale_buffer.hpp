@@ -11,7 +11,7 @@ namespace Tools
     )
     {
         {
-            #pragma float_control(precise, off)
+            TOOLS_MAKE_FP_FAST()
             
             modify_buffer<Scalar::Flag::Generic,N,parQ,Op::Id>(a,x,n,thread_count);
         }

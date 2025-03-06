@@ -11,7 +11,7 @@ namespace Tools
         using T = Scalar::Real<S>;
         
         {
-            #pragma float_control(precise, off)
+            TOOLS_MAKE_FP_FAST()
             
             return DoReduce<N,parQ>(
                 [x]( const Size_T i )

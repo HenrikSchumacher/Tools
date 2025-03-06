@@ -12,7 +12,7 @@ namespace Tools
         // |y| << |x|.
         
         // Trying to turn off floating point optimizations like those allowed by the compiler flags -fassociative-math or -ffast-math
-        #pragma float_control(precise, on)
+        TOOLS_MAKE_FP_STRICT()
         
         static_assert(std::is_floating_point_v<Real>,"");
         
@@ -168,7 +168,7 @@ namespace Tools
         // |y| << |x|.
         
         // std::fma should make this work even with -ffast-math compiler flag. Just to be safe:
-        #pragma float_control(precise, on)
+        TOOLS_MAKE_FP_STRICT()
         
         static_assert(std::is_floating_point_v<Real>,"");
         

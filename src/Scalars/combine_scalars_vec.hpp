@@ -41,7 +41,7 @@ namespace Tools
         V_T & Z = to_vec_T(z);
         
         {
-            #pragma float_control(precise, off)
+            TOOLS_MAKE_FP_FAST()
             
             Z = Scalar::Op_vec<a_flag,opx>(a,x)
                 +

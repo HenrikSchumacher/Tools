@@ -28,7 +28,7 @@ namespace Tools
         using T = decltype( x_T(1) * y_T(1) );
         
         {
-            #pragma float_control(precise, off)
+            TOOLS_MAKE_FP_FAST()
             
             return DoReduce<N,parQ>(
                 [x,y]( const Int i ) -> T

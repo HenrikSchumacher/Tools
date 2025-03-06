@@ -57,16 +57,29 @@
         }                                               \
     }())
 
-#define STRINGIFY_IMPL(x) #x
-#define STRINGIFY(x) STRINGIFY_IMPL(x)
+#define TOOLS_STRINGIFY_IMPL(x) #x
+#define TOOLS_STRINGIFY(x) TOOLS_STRINGIFY_IMPL(x)
 
-#define TO_STD_STRING(x) std::string(STRINGIFY(x))
+#define TOOLS_TO_STD_STRING(x) std::string(TOOLS_STRINGIFY(x))
     
-#define CONCAT_IMPL(id1, id2) id1##id2
-#define CONCAT(id1, id2) CONCAT_IMPL(id1, id2)
+#define TOOLS_CONCAT2_IMPL(id1, id2) id1##id2
+#define TOOLS_CONCAT2(id1, id2) TOOLS_CONCAT2_IMPL(id1, id2)
     
-#define CONCAT3_IMPL(id1, id2, id3) id1##id2##id3
-#define CONCAT3(id1, id2, id3) CONCAT3_IMPL(id1, id2, id3)
+#define TOOLS_CONCAT3_IMPL(id1, id2, id3) id1##id2##id3
+#define TOOLS_CONCAT3(id1, id2, id3) TOOLS_CONCAT3_IMPL(id1, id2, id3)
+
+#define TOOLS_IF #if
+#define TOOLS_ELSE #else
+#define TOOLS_ENDIF #endif
+#define TOOLS_NEWLINE /*
+*/
+
+#define TOOLS_DEFINEDQ( S )                                 \
+    TOOLS_IF defined((S))          TOOLS_NEWLINE            \
+                1                                           \
+    TOOLS_ELSE                     TOOLS_NEWLINE            \
+                0                                           \
+    TOOLS_ENDIF
 
 #ifdef TOOLS_AGGRESSIVE_INLINING
 
@@ -93,18 +106,18 @@
 
     #if defined(__ICC) || defined(__ICL)
 
-        #define TOOLS_LOOP_UNROLL_FULL    _Pragma(STRINGIFY(unroll))
-        #define TOOLS_LOOP_UNROLL(n)      _Pragma(STRINGIFY(unroll (n)))
+        #define TOOLS_LOOP_UNROLL_FULL    _Pragma(TOOLS_STRINGIFY(unroll))
+        #define TOOLS_LOOP_UNROLL(n)      _Pragma(TOOLS_STRINGIFY(unroll (n)))
 
     #elif defined(__clang__)
 
-        #define TOOLS_LOOP_UNROLL_FULL    _Pragma(STRINGIFY(clang loop unroll(enable)))
-        #define TOOLS_LOOP_UNROLL(n)      _Pragma(STRINGIFY(clang loop unroll_count(n)))
+        #define TOOLS_LOOP_UNROLL_FULL    _Pragma(TOOLS_STRINGIFY(clang loop unroll(enable)))
+        #define TOOLS_LOOP_UNROLL(n)      _Pragma(TOOLS_STRINGIFY(clang loop unroll_count(n)))
 
     #elif defined(__GNUC__) && !defined(__clang__)
 
         #define TOOLS_LOOP_UNROLL_FULL
-        #define TOOLS_LOOP_UNROLL(n)      _Pragma(STRINGIFY(GCC unroll (n)))
+        #define TOOLS_LOOP_UNROLL(n)      _Pragma(TOOLS_STRINGIFY(GCC unroll (n)))
 
     #elif defined(_MSC_BUILD)
         //  #pragma message ("Microsoft Visual C++ (MSVC) detected: Loop unrolling not supported!")
@@ -124,6 +137,7 @@
     #define TOOLS_LOOP_UNROLL(n)
 
 #endif
+
 
 #if !defined(restrict)
     #if defined(__GNUC__)
@@ -151,6 +165,46 @@
             #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 0
         #endif
     #endif
+#endif
+
+
+// Use TOOLS_MAKE_FP_FAST() only in block scope.
+#if defined(_MSC_VER)
+
+// see https://learn.microsoft.com/en-us/cpp/preprocessor/float-control?view=msvc-170
+
+    #define TOOLS_MAKE_FP_FAST()                                    \
+        _Pragma(TOOLS_STRINGIFY(float_control(except, off)))        \
+        _Pragma(TOOLS_STRINGIFY(fenv_access(off)))                  \
+        _Pragma(TOOLS_STRINGIFY(float_control(precise, off)))       \
+        _Pragma(TOOLS_STRINGIFY(fp_contract(on)))                   \
+
+#else
+
+    #define TOOLS_MAKE_FP_FAST()                                    \
+        _Pragma(TOOLS_STRINGIFY(float_control(precise, off)))
+
+
+#endif
+
+// Use TOOLS_MAKE_FP_STRICT() only in block scope.
+#if defined(_MSC_VER)
+
+// see https://learn.microsoft.com/en-us/cpp/preprocessor/float-control?view=msvc-170
+
+    #define TOOLS_MAKE_FP_STRICT()                              \
+        _Pragma(TOOLS_STRINGIFY(float_control(precise, on)))    \
+        _Pragma(TOOLS_STRINGIFY(fenv_access(on)))               \
+        _Pragma(TOOLS_STRINGIFY(float_control(except, on)))
+
+
+
+#else
+
+    #define TOOLS_MAKE_FP_STRICT()                              \
+        _Pragma(TOOLS_STRINGIFY(float_control(precise, on)))
+
+
 #endif
 
 namespace Tools
@@ -192,8 +246,8 @@ namespace Tools
     template<typename T>
     static constexpr bool ArithmeticQ = std::is_arithmetic_v<T>;
     
-    template<> static constexpr bool ArithmeticQ<std::complex<float>>  = true;
-    template<> static constexpr bool ArithmeticQ<std::complex<double>> = true;
+    template<> constexpr bool ArithmeticQ<std::complex<float>>  = true;
+    template<> constexpr bool ArithmeticQ<std::complex<double>> = true;
 
     template <typename E>
     TOOLS_FORCE_INLINE auto constexpr ToUnderlying( const E & e) noexcept

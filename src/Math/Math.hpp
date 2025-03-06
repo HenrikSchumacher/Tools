@@ -495,13 +495,13 @@ namespace Tools
     template<typename Scal>
     inline static constexpr Scal NextFloat( const Scal x )
     {
-        return std::nextafter( x, std::numeric_limits<Scal>::infinity() );
+        return std::nextafter( x, std::numeric_limits<Scal>::max() );
     }
     
     template<typename Scal>
     inline static constexpr Scal PrevFloat( const Scal x )
     {
-        return std::nextafter( x, -std::numeric_limits<Scal>::infinity() );
+        return std::nextafter( x, std::numeric_limits<Scal>::lowest() );
     }
     
     

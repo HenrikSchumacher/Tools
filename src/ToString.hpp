@@ -373,4 +373,10 @@ namespace Tools
         return s.str();
     }
     
+
+    [[nodiscard]] std::string BoolString( const bool b )
+    {
+        return b ? "True" : "False";
+    }
+    
 } // namespace Tools

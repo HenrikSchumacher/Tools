@@ -11,6 +11,8 @@ namespace Tools
         mptr<y_T> y,  const Size_T ldy, R_y_T && y_reducer
     )
     {
+        TOOLS_MAKE_FP_FAST()
+        
         if constexpr ( M <= 0 )
         {
             return;
@@ -22,6 +24,7 @@ namespace Tools
         
         V_T x_vec;
         V_T y_vec;
+        
         
         copy_buffer<N>( X, get_ptr(y_vec) );
         

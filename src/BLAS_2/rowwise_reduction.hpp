@@ -11,6 +11,8 @@ namespace Tools
         mptr<y_T> y,  const Size_T ldy, R_y_T && y_reducer
     )
     {
+        TOOLS_MAKE_FP_FAST()
+        
         if constexpr ( N <= 0 )
         {
             return;
@@ -38,6 +40,8 @@ namespace Tools
         mptr<z_T> z,  const Size_T ldz, R_z_T && z_reducer
     )
     {
+        TOOLS_MAKE_FP_FAST()
+        
         if constexpr ( M <= 0 )
         {
             return;
@@ -68,6 +72,8 @@ namespace Tools
         mptr<y_T> y,  const Size_T ldy, R_y_T && y_reducer
     )
     {
+        TOOLS_MAKE_FP_FAST()
+        
         if constexpr ( M <= 0 )
         {
             return;
@@ -98,6 +104,8 @@ namespace Tools
         mptr<z_T> z,  const Size_T ldz, R_z_T && z_reducer
     )
     {
+        TOOLS_MAKE_FP_FAST()
+        
         if constexpr ( M <= 0 )
         {
             return;

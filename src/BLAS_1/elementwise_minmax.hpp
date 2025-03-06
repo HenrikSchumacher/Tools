@@ -240,6 +240,8 @@ namespace Tools
         }
         else
         {
+            TOOLS_MAKE_FP_FAST()
+            
             Do<N,parQ>(
                 [=]( const Size_T i )
                 {

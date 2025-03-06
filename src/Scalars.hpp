@@ -148,66 +148,66 @@ namespace Tools
     
     namespace Scalar
     {
-        template<> static constexpr bool ComplexQ<Real32>     = false;
-        template<> static constexpr bool ComplexQ<Real64>     = false;
-        //        template<> static constexpr bool ComplexQ<Real128>    = false;
-        template<> static constexpr bool ComplexQ<Complex32>  = true;
-        template<> static constexpr bool ComplexQ<Complex64>  = true;
-        //        template<> static constexpr bool ComplexQ<Complex128> = true;
+        template<> constexpr bool ComplexQ<Real32>     = false;
+        template<> constexpr bool ComplexQ<Real64>     = false;
+        //        template<> constexpr bool ComplexQ<Real128>    = false;
+        template<> constexpr bool ComplexQ<Complex32>  = true;
+        template<> constexpr bool ComplexQ<Complex64>  = true;
+        //        template<> constexpr bool ComplexQ<Complex128> = true;
         
         
-        template<> static constexpr bool RealQ<Real32 >       = true;
-        template<> static constexpr bool RealQ<Real64 >       = true;
+        template<> constexpr bool RealQ<Real32 >       = true;
+        template<> constexpr bool RealQ<Real64 >       = true;
         
-        template<> static constexpr bool RealQ<bool   >       = true;
-        template<> static constexpr bool RealQ<Int8   >       = true;
-        template<> static constexpr bool RealQ<Int16  >       = true;
-        template<> static constexpr bool RealQ<Int32  >       = true;
-        template<> static constexpr bool RealQ<Int64  >       = true;
-        template<> static constexpr bool RealQ<UInt8  >       = true;
-        template<> static constexpr bool RealQ<UInt16 >       = true;
-        template<> static constexpr bool RealQ<UInt32 >       = true;
-        template<> static constexpr bool RealQ<UInt64 >       = true;
+        template<> constexpr bool RealQ<bool   >       = true;
+        template<> constexpr bool RealQ<Int8   >       = true;
+        template<> constexpr bool RealQ<Int16  >       = true;
+        template<> constexpr bool RealQ<Int32  >       = true;
+        template<> constexpr bool RealQ<Int64  >       = true;
+        template<> constexpr bool RealQ<UInt8  >       = true;
+        template<> constexpr bool RealQ<UInt16 >       = true;
+        template<> constexpr bool RealQ<UInt32 >       = true;
+        template<> constexpr bool RealQ<UInt64 >       = true;
 
         
-        //        template<> static constexpr bool RealQ<Real128>       = true;
-        template<> static constexpr bool RealQ<Complex32 >    = false;
-        template<> static constexpr bool RealQ<Complex64 >    = false;
-        //        template<> static constexpr bool RealQ<Complex128>    = false;
+        //        template<> constexpr bool RealQ<Real128>       = true;
+        template<> constexpr bool RealQ<Complex32 >    = false;
+        template<> constexpr bool RealQ<Complex64 >    = false;
+        //        template<> constexpr bool RealQ<Complex128>    = false;
         
         template<typename T> static constexpr bool ScalarQ    = false;
         
-        template<> static constexpr bool ScalarQ<Real32 >     = true;
-        template<> static constexpr bool ScalarQ<Real64 >     = true;
-        //        template<> static constexpr bool ScalarQ<Real128>     = true;
-        template<> static constexpr bool ScalarQ<Complex32 >  = true;
-        template<> static constexpr bool ScalarQ<Complex64 >  = true;
-        //        template<> static constexpr bool ScalarQ<Complex128>  = true;
+        template<> constexpr bool ScalarQ<Real32 >     = true;
+        template<> constexpr bool ScalarQ<Real64 >     = true;
+        //        template<> constexpr bool ScalarQ<Real128>     = true;
+        template<> constexpr bool ScalarQ<Complex32 >  = true;
+        template<> constexpr bool ScalarQ<Complex64 >  = true;
+        //        template<> constexpr bool ScalarQ<Complex128>  = true;
         
         
-        template<> static constexpr bool ScalarQ<bool>     = true;
-        template<> static constexpr bool ScalarQ<Int8>     = true;
-        template<> static constexpr bool ScalarQ<Int16>    = true;
-        template<> static constexpr bool ScalarQ<Int32>    = true;
-        template<> static constexpr bool ScalarQ<Int64>    = true;
-        template<> static constexpr bool ScalarQ<UInt8>    = true;
-        template<> static constexpr bool ScalarQ<UInt16>   = true;
-        template<> static constexpr bool ScalarQ<UInt32>   = true;
-        template<> static constexpr bool ScalarQ<UInt64>   = true;
+        template<> constexpr bool ScalarQ<bool>     = true;
+        template<> constexpr bool ScalarQ<Int8>     = true;
+        template<> constexpr bool ScalarQ<Int16>    = true;
+        template<> constexpr bool ScalarQ<Int32>    = true;
+        template<> constexpr bool ScalarQ<Int64>    = true;
+        template<> constexpr bool ScalarQ<UInt8>    = true;
+        template<> constexpr bool ScalarQ<UInt16>   = true;
+        template<> constexpr bool ScalarQ<UInt32>   = true;
+        template<> constexpr bool ScalarQ<UInt64>   = true;
         
         template<typename T> static constexpr bool FloatQ = false;
         
-        template<> static constexpr bool FloatQ<Real32 >     = true;
-        template<> static constexpr bool FloatQ<Real64 >     = true;
-        template<> static constexpr bool FloatQ<Complex32 >  = true;
-        template<> static constexpr bool FloatQ<Complex64 >  = true;
+        template<> constexpr bool FloatQ<Real32 >     = true;
+        template<> constexpr bool FloatQ<Real64 >     = true;
+        template<> constexpr bool FloatQ<Complex32 >  = true;
+        template<> constexpr bool FloatQ<Complex64 >  = true;
         
         template<typename T> static constexpr int Prec       = 0;
         
-        template<> static constexpr int Prec<Real32 >     = sizeof(Real32) * 8;
-        template<> static constexpr int Prec<Real64 >     = sizeof(Real64) * 8;
-        template<> static constexpr int Prec<Complex32 >  = sizeof(Real32) * 8;
-        template<> static constexpr int Prec<Complex64 >  = sizeof(Real64) * 8;
+        template<> constexpr int Prec<Real32 >     = sizeof(Real32) * 8;
+        template<> constexpr int Prec<Real64 >     = sizeof(Real64) * 8;
+        template<> constexpr int Prec<Complex32 >  = sizeof(Real32) * 8;
+        template<> constexpr int Prec<Complex64 >  = sizeof(Real64) * 8;
         
         
         template<typename T>
@@ -222,37 +222,37 @@ namespace Tools
         std::conditional_t<Prec<T> ==  64,  Complex64,
         T>>;
         
-        template<typename T> static constexpr Scalar::Real<T> Zero  {0};
-        template<typename T> static constexpr Scalar::Real<T> One   {1};
-        template<typename T> static constexpr Scalar::Real<T> Two   {2};
-        template<typename T> static constexpr Scalar::Real<T> Three {3};
-        template<typename T> static constexpr Scalar::Real<T> Four  {4};
-        template<typename T> static constexpr Scalar::Real<T> Fife  {5};
-        template<typename T> static constexpr Scalar::Real<T> Six   {6};
-        template<typename T> static constexpr Scalar::Real<T> Half    = One<T>/Two<T>;
-        template<typename T> static constexpr Scalar::Real<T> Third   = One<T>/Three<T>;
-        template<typename T> static constexpr Scalar::Real<T> Quarter = One<T>/Four<T>;
-        template<typename T> static constexpr Scalar::Real<T> Fourth  = One<T>/Four<T>;
-        template<typename T> static constexpr Scalar::Real<T> Fifth   = One<T>/Fife<T>;
-        template<typename T> static constexpr Scalar::Real<T> Sixth   = One<T>/Six<T>;
+        template<typename T> constexpr Scalar::Real<T> Zero  {0};
+        template<typename T> constexpr Scalar::Real<T> One   {1};
+        template<typename T> constexpr Scalar::Real<T> Two   {2};
+        template<typename T> constexpr Scalar::Real<T> Three {3};
+        template<typename T> constexpr Scalar::Real<T> Four  {4};
+        template<typename T> constexpr Scalar::Real<T> Fife  {5};
+        template<typename T> constexpr Scalar::Real<T> Six   {6};
+        template<typename T> constexpr Scalar::Real<T> Half    = One<T>/Two<T>;
+        template<typename T> constexpr Scalar::Real<T> Third   = One<T>/Three<T>;
+        template<typename T> constexpr Scalar::Real<T> Quarter = One<T>/Four<T>;
+        template<typename T> constexpr Scalar::Real<T> Fourth  = One<T>/Four<T>;
+        template<typename T> constexpr Scalar::Real<T> Fifth   = One<T>/Fife<T>;
+        template<typename T> constexpr Scalar::Real<T> Sixth   = One<T>/Six<T>;
         
         
         template<typename T> static constexpr Scalar::Complex<T> I {0,1};
         
-        template<typename T> static constexpr Scalar::Real<T> Pi = static_cast<Scalar::Real<T>>(3.141592653589793238462643383279502884197);
+        template<typename T> constexpr Scalar::Real<T> Pi = static_cast<Scalar::Real<T>>(3.141592653589793238462643383279502884197);
         
-        template<typename T> static constexpr Scalar::Real<T> TwoPi    = Scalar::Two<T> * Scalar::Pi<T>;
-        template<typename T> static constexpr Scalar::Real<T> TwoPiInv = Scalar::One<T> / ( Scalar::Two<T> * Scalar::Pi<T> );
+        template<typename T> constexpr Scalar::Real<T> TwoPi    = Scalar::Two<T> * Scalar::Pi<T>;
+        template<typename T> constexpr Scalar::Real<T> TwoPiInv = Scalar::One<T> / ( Scalar::Two<T> * Scalar::Pi<T> );
         
-        template<typename T> static constexpr Scalar::Real<T> eps      = std::numeric_limits<Scalar::Real<T>>::epsilon();
+        template<typename T> constexpr Scalar::Real<T> eps      = std::numeric_limits<Scalar::Real<T>>::epsilon();
         
-        template<typename T> static constexpr Scalar::Real<T> eta      = std::numeric_limits<Scalar::Real<T>>::min();
+        template<typename T> constexpr Scalar::Real<T> eta      = std::numeric_limits<Scalar::Real<T>>::min();
         
-        template<typename T> static constexpr Scalar::Real<T> Max      = std::numeric_limits<Scalar::Real<T>>::max();
+        template<typename T> constexpr Scalar::Real<T> Max      = std::numeric_limits<Scalar::Real<T>>::max();
         
-        template<typename T> static constexpr Scalar::Real<T> Infty    = std::numeric_limits<Scalar::Real<T>>::has_infinity ? std::numeric_limits<Scalar::Real<T>>::infinity() : std::numeric_limits<Scalar::Real<T>>::max();
+        template<typename T> constexpr Scalar::Real<T> Infty    = std::numeric_limits<Scalar::Real<T>>::has_infinity ? std::numeric_limits<Scalar::Real<T>>::infinity() : std::numeric_limits<Scalar::Real<T>>::max();
         
-        template<typename T> static constexpr Scalar::Real<T> Min      = std::numeric_limits<Scalar::Real<T>>::lowest();
+        template<typename T> constexpr Scalar::Real<T> Min      = std::numeric_limits<Scalar::Real<T>>::lowest();
         
     } // namespace Scalar
     

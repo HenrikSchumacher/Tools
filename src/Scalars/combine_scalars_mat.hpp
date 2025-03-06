@@ -109,7 +109,7 @@ namespace Tools
         // TODO: Improve implementation for opx == Op::Re, opx == Op::Im, opy == Op::Re, opy == Op::Im
         
         {
-            #pragma float_control(precise, off)
+            TOOLS_MAKE_FP_FAST()
         
             Z = ComplexMultiplierMatrix<opx>(a) * X
                 +
@@ -157,7 +157,7 @@ namespace Tools
         // TODO: Improve implementation for opx == Op::Re, opx == Op::Im, opy == Op::Re, opy == Op::Im
         
         {
-            #pragma float_control(precise, off)
+            TOOLS_MAKE_FP_FAST()
         
             Z = X * ComplexMultiplierMatrixT<opx>(a)
                 +
@@ -201,7 +201,7 @@ namespace Tools
         using M_T = mat_T<2,4,Real>;
         
         {
-            #pragma float_control(precise, off)
+            TOOLS_MAKE_FP_FAST()
             
             M_T AB;
             
@@ -248,7 +248,7 @@ namespace Tools
         using M_T = mat_T<2,4,Real>;
         
         {
-            #pragma float_control(precise, off)
+            TOOLS_MAKE_FP_FAST()
             
             M_T AB;
             

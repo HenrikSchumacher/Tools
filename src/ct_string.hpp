@@ -144,11 +144,11 @@ namespace Tools
     
     template<Size_T t >
     static constexpr ct_string<t + 1> ct_tabs = ct_tabs<t-1> + ct_string<2>("\t");
-    template<> static constexpr ct_string<1> ct_tabs<0> = ct_string<1>("");
+    template<> constexpr ct_string<1> ct_tabs<0> = ct_string<1>("");
     
     template<Size_T t >
     static constexpr ct_string<t + 1> ct_spaces = ct_spaces<t-1> + ct_string<2>(" ");
-    template<> static constexpr ct_string<1> ct_spaces<0> = ct_string<1>("");
+    template<> constexpr ct_string<1> ct_spaces<0> = ct_string<1>("");
     
     
     constexpr ct_string<2> to_ct_string( const bool b )
