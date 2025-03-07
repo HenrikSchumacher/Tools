@@ -7,6 +7,7 @@
 #include "BLAS_2/combine_matrices.hpp"
 
 #include "BLAS_2/outerprod_buffers.hpp"
+//#include "BLAS_2/OuterProd.hpp"
 
 #include "BLAS_2/columnwise_reduction.hpp"
 #include "BLAS_2/columnwise_sums.hpp"
