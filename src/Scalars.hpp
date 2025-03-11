@@ -26,7 +26,7 @@ namespace Tools
     {
         static_assert(sizeof(vec_T<2,R>) == sizeof(Cplx<R>), "");
         
-        return *reinterpret_cast<const vec_T<2,R> *>(&z);
+        return *reinterpret_cast<vec_T<2,R> *>(&z);
     }
     
     template<typename R>
@@ -36,7 +36,7 @@ namespace Tools
         
         Cplx<R> z;
         
-        *reinterpret_cast<vec_T<2,R> *>(&z) = Z;
+        *reinterpret_cast<const vec_T<2,R> *>(&z) = Z;
     
         return z;
     }
