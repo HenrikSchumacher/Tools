@@ -401,10 +401,13 @@ namespace Tools
     template<typename Scal>
     inline constexpr bool NaNQ( cref<Scal> x )
     {
+        TOOLS_MAKE_FP_STRICT()
+        
         // Works also with `-ffast-math` option?
         if constexpr ( FloatQ<Scal> && Scalar::RealQ<Scal> )
         {
-            return std::isnan(x) || (ToString(x) == "nan");
+//            return std::isnan(x) || (ToString(x) == "nan");
+            return std::isnan(x);
         }
         else if constexpr ( Scalar::ComplexQ<Scal> )
         {
