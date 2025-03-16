@@ -269,9 +269,17 @@ namespace Tools
         static_assert(Scalar::RealQ<Real>, "Argument must be of a real type.");
         return Max( Scalar::Zero<Real>, x );
     }
+
+    template<typename Real>
+    [[deprecated("Use Clip instead.")]]
+    TOOLS_FORCE_INLINE constexpr Real Clamp( const Real & x, const Real & a, const Real & b )
+    {
+        static_assert(Scalar::RealQ<Real>, "Argument must be of a real type.");
+        return Max( a, Min( b, x ) );
+    }
     
     template<typename Real>
-    TOOLS_FORCE_INLINE constexpr Real Clamp( const Real & x, const Real & a, const Real & b )
+    TOOLS_FORCE_INLINE constexpr Real Clip( const Real & x, const Real & a, const Real & b )
     {
         static_assert(Scalar::RealQ<Real>, "Argument must be of a real type.");
         return Max( a, Min( b, x ) );
