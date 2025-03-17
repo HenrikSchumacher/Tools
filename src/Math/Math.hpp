@@ -271,7 +271,6 @@ namespace Tools
     }
 
     template<typename Real>
-    [[deprecated("Use Clip instead.")]]
     TOOLS_FORCE_INLINE constexpr Real Clamp( const Real & x, const Real & a, const Real & b )
     {
         static_assert(Scalar::RealQ<Real>, "Argument must be of a real type.");
