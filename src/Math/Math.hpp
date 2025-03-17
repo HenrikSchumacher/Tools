@@ -315,7 +315,9 @@ namespace Tools
             b += (x[i]+y[i]) * (x[i]+y[i]);
         }
         
-        return Scalar::Two<Real> * atan( std::sqrt(a/b) );
+//        return Scalar::Two<Real> * std::atan( std::sqrt(a/b) );
+        
+        return Scalar::Two<Real> * std::atan2( std::sqrt(a), std::sqrt(b) );
     }
     
     template<int AmbDim, typename Real>
@@ -323,10 +325,7 @@ namespace Tools
     {
         Real a2 = Scalar::Zero<Real>;
         Real b2 = Scalar::Zero<Real>;
-        
-        Real u [AmbDim] = {};
-        Real v [AmbDim] = {};
-        
+
         for( int i = 0; i < AmbDim; ++i )
         {
             a2 += x[i] * x[i];
@@ -336,10 +335,13 @@ namespace Tools
         const Real a_inv = InvSqrt(a2);
         const Real b_inv = InvSqrt(b2);
         
+        Real u [AmbDim] = {};
+        Real v [AmbDim] = {};
+        
         for( int i = 0; i < AmbDim; ++i )
         {
             u[i] = x[i] * a_inv;
-            v[i] = v[i] * a_inv;
+            v[i] = y[i] * a_inv;
         }
         
         return AngleBetweenUnitVectors<AmbDim>(&u[0],&v[0]);
