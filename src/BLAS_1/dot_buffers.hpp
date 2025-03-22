@@ -8,7 +8,10 @@ namespace Tools
     >
     [[nodiscard]] TOOLS_FORCE_INLINE
     decltype( x_T(1) * y_T(1) ) dot_buffers(
-        cptr<x_T> x, cptr<y_T> y, const Int n = static_cast<Int>(N), const Int thread_count = 1
+        cptr<x_T> x,
+        cptr<y_T> y,
+        const Int n = static_cast<Int>(N),
+        const Int thread_count = 1
     )
     {
         static_assert(IntQ<Int>, "");
@@ -45,6 +48,21 @@ namespace Tools
                 T(0), n, thread_count
             );
         }
+    }
+    
+    
+    template< Size_T N = VarSize, Parallel_T parQ = Sequential,
+        typename x_T, typename y_T, typename Int = Size_T
+    >
+    [[nodiscard]] TOOLS_FORCE_INLINE
+    decltype( x_T(1) * y_T(1) ) innerprod(
+        cptr<x_T> x,
+        cptr<y_T> y,
+        const Int n = static_cast<Int>(N),
+        const Int thread_count = 1
+    )
+    {
+        return dot_buffers<N,parQ,Op::Conj,Op::Id>(x,y,n,thread_count);
     }
     
 } // namespace Tools

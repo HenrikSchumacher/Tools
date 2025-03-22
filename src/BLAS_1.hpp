@@ -5,6 +5,7 @@
 
 #include "BLAS_1/copy_buffer.hpp"
 #include "BLAS_1/move_buffer.hpp"
+#include "BLAS_1/swap_buffers.hpp"
 #include "BLAS_1/zerofy_buffer.hpp"
 #include "BLAS_1/fill_buffer.hpp"
 

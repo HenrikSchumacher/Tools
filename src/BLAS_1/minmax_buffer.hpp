@@ -3,21 +3,23 @@
 namespace Tools
 {
     
-    template< Size_T N = VarSize, Parallel_T parQ = Sequential, typename F
-//        typename S = decltype( F()(Size_T(0)) )
+    template<
+        Size_T N = VarSize, Parallel_T parQ = Sequential, typename F, typename Int = Size_T
     >
     auto MinMaxBy(
-        F && f, const Size_T n = N, const Size_T thread_count = 1
-    ) -> std::pair<decltype(f(Size_T(0))),decltype(f(Size_T(0)))>
+        F && f,
+        const Int n = static_cast<Int>(N),
+        const Int thread_count = Int(1)
+    ) -> std::pair<decltype(f(Int(0))),decltype(f(Int(0)))>
     {
-        using S = decltype(f(Size_T(0)));
+        using S = decltype(f(Int(0)));
         
         using T = std::pair<S,S>;
         
         T init { std::numeric_limits<S>::max(), std::numeric_limits<S>::lowest() };
         
         return DoReduce<N,parQ>(
-            [&f]( const Size_T i ) -> T
+            [&f]( const Int i ) -> T
             {
                 const S f_i = f(i);
                 
@@ -33,25 +35,35 @@ namespace Tools
     }
     
     
-    template< Size_T N = VarSize, Parallel_T parQ = Sequential, typename S >
+    template<
+        Size_T N = VarSize, Parallel_T parQ = Sequential, typename S, typename Int = Size_T
+    >
     [[nodiscard]] TOOLS_FORCE_INLINE std::pair<S,S>
-    minmax_buffer( cptr<S> z, const Size_T n = N, const Size_T thread_count = 1)
+    minmax_buffer(
+        cptr<S> z,
+        const Int n = static_cast<int>(N),
+        const Int thread_count = Int(1)
+    )
     {
-        return MinMaxBy<N,parQ>( [z]( const Size_T i ){ return z[i]; }, n, thread_count );
+        return MinMaxBy<N,parQ>( [z]( const Int i ){ return z[i]; }, n, thread_count );
     }
     
     
     
     
-    template< Size_T N = VarSize, Parallel_T parQ = Sequential, typename F >
+    template<
+        Size_T N = VarSize, Parallel_T parQ = Sequential, typename F, typename Int = Size_T
+    >
     auto MinBy(
-        F && f, const Size_T n = N, const Size_T thread_count = 1
-    ) -> decltype(f(Size_T(0)))
+        F && f,
+        const Int n = static_cast<Int>(N),
+        const Int thread_count = Int(1)
+    ) -> decltype(f(Int(0)))
     {
-        using T = decltype(f(Size_T(0)));
+        using T = decltype(f(Int(0)));
         
         return DoReduce<N,parQ>(
-            [&f]( const Size_T i ) -> T
+            [&f]( const Int i ) -> T
             {
                 return f(i);
             },
@@ -63,19 +75,23 @@ namespace Tools
         );
     }
     
-    template< Size_T N = VarSize, Parallel_T parQ = Sequential, typename F >
-    auto MinimumBy( 
-        F && f, const Size_T n = N, const Size_T thread_count = 1
-    ) -> std::pair<Size_T,decltype(f(Size_T(0)))>
+    template<
+        Size_T N = VarSize, Parallel_T parQ = Sequential, typename F, typename Int = Size_T
+    >
+    auto MinimumBy(
+        F && f,
+        const Int n = static_cast<Int>(N),
+        const Int thread_count = 1
+    ) -> std::pair<Int,decltype(f(Int(0)))>
     {
-        using S = decltype( f(Size_T(0)) );
+        using S = decltype( f(Int(0)) );
         
-        using T = std::pair<Size_T,S>;
+        using T = std::pair<Int,S>;
         
-        T init { Size_T(0), std::numeric_limits<S>::max() };
+        T init { Int(0), std::numeric_limits<S>::max() };
         
         return DoReduce<N,parQ>(
-            [&f]( const Size_T i ) -> T
+            [&f]( const Int i ) -> T
             {
                 const S f_i = f(i);
                 
@@ -92,36 +108,52 @@ namespace Tools
         );
     }
     
-    template< Size_T N = VarSize, Parallel_T parQ = Sequential, typename S >
-    [[nodiscard]] TOOLS_FORCE_INLINE S 
-    min_buffer( cptr<S> z, const Size_T n = N, const Size_T thread_count = 1 )
+    template<
+        Size_T N = VarSize, Parallel_T parQ = Sequential, typename S, typename Int = Size_T
+    >
+    [[nodiscard]] TOOLS_FORCE_INLINE S
+    min_buffer(
+        cptr<S> z,
+        const Int n = static_cast<Int>(N),
+        const Int thread_count = Int(1)
+    )
     {
         return MinBy<N,parQ>(
-            [z]( const Size_T i ){ return z[i]; }, n, thread_count
+            [z]( const Int i ){ return z[i]; }, n, thread_count
         );
     }
     
-    template< Size_T N = VarSize, Parallel_T parQ = Sequential, typename S >
-    [[nodiscard]] TOOLS_FORCE_INLINE S 
-    min_pos_buffer( cptr<S> z, const Size_T n = N, const Size_T thread_count = 1 )
+    template<
+        Size_T N = VarSize, Parallel_T parQ = Sequential, typename S, typename Int = Size_T
+    >
+    [[nodiscard]] TOOLS_FORCE_INLINE S
+    min_pos_buffer(
+        cptr<S> z,
+        const Int n = static_cast<Int>(N),
+        const Int thread_count = Int(1)
+    )
     {
         return MinimumBy<N,parQ>(
-            [z]( const Size_T i ){ return z[i]; }, n, thread_count
+            [z]( const Int i ){ return z[i]; }, n, thread_count
         ).first;
     }
     
     
     
 
-    template< Size_T N = VarSize, Parallel_T parQ = Sequential, typename F >
+    template<
+        Size_T N = VarSize, Parallel_T parQ = Sequential, typename F, typename Int = Size_T
+    >
     auto MaxBy(
-        F && f, const Size_T n = N, const Size_T thread_count = 1
-    ) -> decltype(f(Size_T(0)))
+        F && f,
+        const Int n = static_cast<Int>(N),
+        const Int thread_count = Int(1)
+    ) -> decltype(f(Int(0)))
     {
-        using S = decltype(f(Size_T(0)));
+        using S = decltype(f(Int(0)));
         
         return DoReduce<N,parQ>(
-            [&f]( const Size_T i ) -> S
+            [&f]( const Int i ) -> S
             {
                 return f(i);
             },
@@ -133,19 +165,23 @@ namespace Tools
         );
     }
     
-    template< Size_T N = VarSize, Parallel_T parQ = Sequential, typename F >
+    template<
+        Size_T N = VarSize, Parallel_T parQ = Sequential, typename F, typename Int = Size_T
+    >
     auto MaximumBy(
-        F && f, const Size_T n = N, const Size_T thread_count = 1
-    ) -> std::pair<Size_T,decltype(f(Size_T(0)))>
+        F && f,
+        const Int n = static_cast<Int>(N),
+        const Int thread_count = Int(1)
+    ) -> std::pair<Int,decltype(f(Int(0)))>
     {
-        using S = decltype(f(Size_T()));
+        using S = decltype(f(Int(0)));
         
-        using T = std::pair<Size_T,S>;
+        using T = std::pair<Int,S>;
         
-        T init { Size_T(0), std::numeric_limits<S>::lowest() };
+        T init { Int(0), std::numeric_limits<S>::lowest() };
         
         return DoReduce<N,parQ>(
-            [&f]( const Size_T i ) -> T
+            [&f]( const Int i ) -> T
             {
                 const S f_i = f(i);
                 
@@ -162,21 +198,33 @@ namespace Tools
         );
     }
     
-    template< Size_T N = VarSize, Parallel_T parQ = Sequential, typename S >
-    [[nodiscard]] TOOLS_FORCE_INLINE S 
-    max_buffer( cptr<S> z, const Size_T n = N, const Size_T thread_count = 1 )
+    template<
+        Size_T N = VarSize, Parallel_T parQ = Sequential, typename S, typename Int = Size_T
+    >
+    [[nodiscard]] TOOLS_FORCE_INLINE S
+    max_buffer(
+        cptr<S> z,
+        const Int n = static_cast<Int>(N),
+        const Int thread_count = Int(1)
+    )
     {
         return MaxBy<N,parQ>(
-            [z]( const Size_T i ){ return z[i]; }, n, thread_count
+            [z]( const Int i ){ return z[i]; }, n, thread_count
         );
     }
     
-    template< Size_T N = VarSize, Parallel_T parQ = Sequential, typename S >
-    [[nodiscard]] TOOLS_FORCE_INLINE S 
-    max_pos_buffer( cptr<S> z, const Size_T n = N, const Size_T thread_count = 1 )
+    template<
+        Size_T N = VarSize, Parallel_T parQ = Sequential, typename S, typename Int = Size_T
+    >
+    [[nodiscard]] TOOLS_FORCE_INLINE S
+    max_pos_buffer(
+        cptr<S> z,
+        const Int n = static_cast<Int>(N),
+        const Int thread_count = Int(1)
+    )
     {
         return MaximumBy<N,parQ>(
-            [z]( const Size_T i ){ return z[i]; }, n, thread_count
+            [z]( const Int i ){ return z[i]; }, n, thread_count
         ).first;
     }
     

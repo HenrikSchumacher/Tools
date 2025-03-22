@@ -35,4 +35,17 @@ namespace Tools
         return Sqrt( norm_2_squared<N,parQ>( x, n, thread_count ) );
     }
     
+    
+    template< Size_T N = VarSize, Parallel_T parQ = Sequential, typename x_T >
+    TOOLS_FORCE_INLINE void normalize(
+        mptr<x_T> x, const Size_T n = N, const Size_T thread_count = 1
+    )
+    {
+        const Scalar::Real<x_T> a = Inv(norm_2<N,parQ>(x,n,thread_count));
+        
+        scale_buffer<N,parQ>(a,x,n,thread_count);
+    }
+    
+    
+    
 } // namespace Tools

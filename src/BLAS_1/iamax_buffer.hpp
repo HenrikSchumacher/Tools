@@ -4,10 +4,14 @@ namespace Tools
 {
     template<
         Size_T N = VarSize, Parallel_T parQ = Sequential,
-        typename S, typename Int
+        typename S, typename Int = Size_T
     >
     [[nodiscard]] TOOLS_FORCE_INLINE Int
-    iamax_buffer( cptr<S> z, const Int n = static_cast<Int>(N), const Int thread_count = 1 )
+    iamax_buffer(
+        cptr<S> z,
+        const Int n = static_cast<Int>(N),
+        const Int thread_count = Int(1)
+    )
     {
         // Find the first position i such that z[i] has maximal modulus.
         
@@ -30,7 +34,11 @@ namespace Tools
         typename S, typename Int = Size_T
     >
     [[nodiscard]] TOOLS_FORCE_INLINE Int
-    iamin_buffer( cptr<S> z, const Int n = static_cast<Size_T>(N), const Int thread_count = 1 )
+    iamin_buffer(
+        cptr<S> z,
+        const Int n = static_cast<Int>(N),
+        const Int thread_count = Int(1)
+    )
     {
         // Find the first position i such that z[i] has minimal modulus.
         

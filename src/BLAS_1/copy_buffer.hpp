@@ -21,7 +21,9 @@ namespace Tools
         typename S, typename T, typename Int = Size_T
     >
     TOOLS_FORCE_INLINE constexpr void copy_buffer(
-        cptr<S> from, mptr<T> to, const Int n = N, const Int thread_count = 1
+        cptr<S> from, mptr<T> to,
+        const Int n = static_cast<Int>(N),
+        const Int thread_count = Int(1)
     )
     {
         check_sequential<parQ>( "copy_buffer", thread_count );

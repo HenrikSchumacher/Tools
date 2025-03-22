@@ -6,26 +6,27 @@ namespace Tools
         Size_T N = VarSize, Parallel_T parQ = Sequential,
         typename T, typename Int = Size_T
     >
-    TOOLS_FORCE_INLINE void move_buffer(
-        cptr<T> from, mptr<T> to, const Int n = static_cast<Int>(N), const Int thread_count = 1
+    TOOLS_FORCE_INLINE constexpr void swap_buffers(
+        mptr<T> x, mptr<T> y,
+        const Int n = static_cast<Int>(N),
+        const Int thread_count = Int(1)
     )
     {
-        check_sequential<parQ>( "move_buffer", thread_count );
+        check_sequential<parQ>( "swap_buffers", thread_count );
         
-        static_assert( IntQ<Int>, "");
+        static_assert(IntQ<Int>,"");
         
         if constexpr ( N <= VarSize )
         {
             if constexpr ( parQ == Sequential )
             {
-                
-                std::memmove( &to[0], &from[0], n );
+                std::swap_ranges( x, &x[n], y );
             }
             else
             {
-                if( thread_count <= Int(1) )
+                if( thread_count <= Scalar::One<Int> )
                 {
-                    std::memmove( &to[0], &from[0], n );
+                    std::swap_ranges( x, &x[n], y );
                 }
                 else
                 {
@@ -35,7 +36,7 @@ namespace Tools
                             const Int begin = JobPointer(n,thread_count,thread  );
                             const Int end   = JobPointer(n,thread_count,thread+1);
 
-                            std::memmove( &to[begin], &from[begin], end-begin );
+                            std::swap_ranges( &x[begin], &x[end], y );
                         },
                         thread_count
                     );
@@ -44,7 +45,12 @@ namespace Tools
         }
         else
         {
-            std::memmove( &to[0], &from[0], n );
+            for( Int i = 0; i < N; ++i )
+            {
+                using std::swap;
+                
+                swap( x[i], y[i] );
+            }
         }
     }
     
