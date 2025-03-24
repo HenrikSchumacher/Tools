@@ -18,17 +18,30 @@ namespace Tools
         
         T init { std::numeric_limits<S>::max(), std::numeric_limits<S>::lowest() };
         
+//        return DoReduce<N,parQ>(
+//            [&f]( const Int i ) -> T
+//            {
+//                const S f_i = f(i);
+//                
+//                return T(f_i,f_i);
+//            },
+//            []( cref<T> value, mref<T> result )
+//            {
+//                result.first  = Min( value.first,  result.first  );
+//                result.second = Max( value.second, result.second );
+//            },
+//            init, n, thread_count
+//        );
+        
         return DoReduce<N,parQ>(
-            [&f]( const Int i ) -> T
+            [&f]( const Int i ) -> S
             {
-                const S f_i = f(i);
-                
-                return T(f_i,f_i);
+                return f(i);
             },
-            []( cref<T> value, mref<T> result )
+            []( cref<S> value, mref<T> result )
             {
-                result.first  = Min( value.first,  result.first  );
-                result.second = Max( value.second, result.second );
+                result.first  = Min( value,  result.first  );
+                result.second = Max( value, result.second );
             },
             init, n, thread_count
         );
@@ -67,7 +80,7 @@ namespace Tools
             {
                 return f(i);
             },
-            []( const T & value, T & result )
+            []( cref<T> value, mref<T> result )
             {
                 result = Min( result, value );
             },
@@ -95,7 +108,7 @@ namespace Tools
             {
                 const S f_i = f(i);
                 
-                return std::tie(i,f_i);
+                return T{i,f_i};
             },
             []( cref<T> value, mref<T> result )
             {
@@ -126,8 +139,8 @@ namespace Tools
     template<
         Size_T N = VarSize, Parallel_T parQ = Sequential, typename S, typename Int = Size_T
     >
-    [[nodiscard]] TOOLS_FORCE_INLINE S
-    min_pos_buffer(
+    [[nodiscard]] TOOLS_FORCE_INLINE
+    Int min_pos_buffer(
         cptr<S> z,
         const Int n = static_cast<Int>(N),
         const Int thread_count = Int(1)
@@ -157,7 +170,7 @@ namespace Tools
             {
                 return f(i);
             },
-            []( const S & value, S & result )
+            []( cref<S> value, mref<S> result )
             {
                 result = Max( result, value );
             },
@@ -201,8 +214,8 @@ namespace Tools
     template<
         Size_T N = VarSize, Parallel_T parQ = Sequential, typename S, typename Int = Size_T
     >
-    [[nodiscard]] TOOLS_FORCE_INLINE S
-    max_buffer(
+    [[nodiscard]] TOOLS_FORCE_INLINE
+    S max_buffer(
         cptr<S> z,
         const Int n = static_cast<Int>(N),
         const Int thread_count = Int(1)
@@ -216,8 +229,8 @@ namespace Tools
     template<
         Size_T N = VarSize, Parallel_T parQ = Sequential, typename S, typename Int = Size_T
     >
-    [[nodiscard]] TOOLS_FORCE_INLINE S
-    max_pos_buffer(
+    [[nodiscard]] TOOLS_FORCE_INLINE
+    Int max_pos_buffer(
         cptr<S> z,
         const Int n = static_cast<Int>(N),
         const Int thread_count = Int(1)
