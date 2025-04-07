@@ -515,7 +515,7 @@ namespace Tools
     
     
     template<typename T>
-    T ModDistance( const T L, const T i, const T j )
+    inline T ModDistance( const T L, const T i, const T j )
     {
         // Computes distance betreen mod(i,L) and mid(j,L) on the torus with arclength L. (Works also for integers.)
         
@@ -535,8 +535,29 @@ namespace Tools
             
             return Min( delta, L - delta );
         }
-        
     }
+    
+    template<typename T, bool left_closedQ = true, bool right_closedQ = false>
+    inline bool InIntervalQ( const T i, const T a, const T b )
+    {
+        if constexpr( left_closedQ && !right_closedQ )
+        {
+            return (a <= i) && (i < b);
+        }
+        else if constexpr( left_closedQ && right_closedQ )
+        {
+            return (a <= i) && (i <= b);
+        }
+        else if constexpr( !left_closedQ && !right_closedQ )
+        {
+            return (a < i) && (i < b);
+        }
+        else if constexpr( !left_closedQ && right_closedQ )
+        {
+            return (a < i) && (i <= b);
+        }
+    }
+
 }
 
  
