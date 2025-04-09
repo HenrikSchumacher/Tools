@@ -36,7 +36,7 @@ namespace Tools
     TOOLS_FORCE_INLINE void modify_buffer(
         cref<a_T> a, mptr<x_T> x,
         const Int n = static_cast<Int>(N),
-        const Int thread_count = 1
+        const Int thread_count = Int(1)
     )
     {
         // This routine computes y[i] = a * x[i].

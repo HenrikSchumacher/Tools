@@ -178,11 +178,11 @@ namespace Tools
     {
         std::string s;
         
-        if( rank <= Int2(0) )
+        if( rank <= Int3(0) )
         {
             s += ToString(a[0]);
         }
-        else if( rank == Int2(1) )
+        else if( rank == Int3(1) )
         {
             s += line_prefix;
             s += "{ ";
@@ -209,13 +209,13 @@ namespace Tools
             
             if( dims[0] > Int(0) )
             {
-                s += ArrayToString( a, &dims[1], &lds[1], rank-Int2(1), new_line_prefix );
+                s += ArrayToString( a, &dims[1], &lds[1], rank - Int3(1), new_line_prefix );
             }
             
             for( Int i = 1; i < dims[0]; ++i )
             {
                 s += ",\n";
-                s += ArrayToString( &a[lds[0]*i], &dims[1], &lds[1], rank-Int2(1), new_line_prefix );
+                s += ArrayToString( &a[lds[0]*i], &dims[1], &lds[1], rank - Int3(1), new_line_prefix );
             }
             
             s += "\n";

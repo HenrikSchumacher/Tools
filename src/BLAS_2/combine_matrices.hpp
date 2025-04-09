@@ -51,17 +51,17 @@ namespace Tools
         Scalar::Flag a_flag, Scalar::Flag b_flag,
         Size_T M, Size_T N, Parallel_T parQ,
         Op opx = Op::Id, Op opy = Op::Id,
-        typename a_T, typename X_T, typename b_T, typename Y_T
+        typename a_T, typename X_T, typename b_T, typename Y_T, typename Int
     >
     TOOLS_FORCE_INLINE void combine_matrices(
-        cref<a_T> a, cptr<X_T> X, const Size_T ldX,
-        cref<b_T> b, mptr<Y_T> Y, const Size_T ldY,
-        const Size_T m, const Size_T n, const Size_T thread_count
+        cref<a_T> a, cptr<X_T> X, const Int ldX,
+        cref<b_T> b, mptr<Y_T> Y, const Int ldY,
+        const Int m, const Int n, const Int thread_count
     )
     {
         // It is safer to enforce the implicit assumptions explicitly here.
-        const Size_T m_ = (M > VarSize ? M : m);
-        const Size_T n_ = (N > VarSize ? N : n);
+        const Int m_ = (M > VarSize ? static_cast<Int>(M) : m);
+        const Int n_ = (N > VarSize ? static_cast<Int>(N) : n);
         
         // PROBLEM: If x == nullptr, which is allowed when a_flag = Zero,
         // then we should better prevent dereferencing x.
@@ -95,10 +95,10 @@ namespace Tools
             else
             {
                 Do<M,parQ,Static>(
-                    [=]( const Size_T i )
+                    [=]( const Int i )
                     {
                         combine_buffers<a_flag,b_flag,N,Sequential,opx,opy>(
-                            a, &X[ldX * i], b, &Y[ldY * i], n_, Size_T(1)
+                            a, &X[ldX * i], b, &Y[ldY * i], n_, Int(1)
                         );
                     },
                     m_, thread_count
@@ -116,11 +116,11 @@ namespace Tools
         Scalar::Flag a_flag, Scalar::Flag b_flag,
         Size_T M, Size_T N,
         Op opx = Op::Id, Op opy = Op::Id,
-        typename a_T, typename X_T, typename b_T, typename Y_T
+        typename a_T, typename X_T, typename b_T, typename Y_T, typename Int
     >
     TOOLS_FORCE_INLINE void combine_matrices(
-        cref<a_T> a, cptr<X_T> X, const Size_T ldX,
-        cref<b_T> b, mptr<Y_T> Y, const Size_T ldY
+        cref<a_T> a, cptr<X_T> X, const Int ldX,
+        cref<b_T> b, mptr<Y_T> Y, const Int ldY
     )
     {
         static_assert( M > VarSize, "" );
@@ -129,7 +129,7 @@ namespace Tools
         combine_matrices<a_flag,b_flag,M,N,Sequential,opx,opy>(
             a, X, ldX,
             b, Y, ldY,
-            M, N, Size_T(1)
+            M, N, Int(1)
          );
     }
     
@@ -141,12 +141,12 @@ namespace Tools
     template<
         Scalar::Flag a_flag, Scalar::Flag b_flag,
         Op opx = Op::Id, Op opy = Op::Id,
-        typename a_T, typename X_T, typename b_T, typename Y_T
+        typename a_T, typename X_T, typename b_T, typename Y_T, typename Int
     >
     TOOLS_FORCE_INLINE void combine_matrices(
-        cref<a_T> a, cptr<X_T> X, const Size_T ldX,
-        cref<b_T> b, mptr<Y_T> Y, const Size_T ldY,
-        const Size_T m, const Size_T n, const Size_T thread_count
+        cref<a_T> a, cptr<X_T> X, const Int ldX,
+        cref<b_T> b, mptr<Y_T> Y, const Int ldY,
+        const Int m, const Int n, const Int thread_count
     )
     {
         combine_matrices<a_flag,b_flag,VarSize,VarSize,Parallel,opx,opy>(
@@ -164,18 +164,18 @@ namespace Tools
     template<
         Scalar::Flag a_flag, Scalar::Flag b_flag,
         Op opx = Op::Id, Op opy = Op::Id,
-        typename a_T, typename X_T, typename b_T, typename Y_T
+        typename a_T, typename X_T, typename b_T, typename Y_T, typename Int
     >
     TOOLS_FORCE_INLINE void combine_matrices(
-        cref<a_T> a, cptr<X_T> X, const Size_T ldX,
-        cref<b_T> b, mptr<Y_T> Y, const Size_T ldY,
-        const Size_T m, const Size_T n
+        cref<a_T> a, cptr<X_T> X, const Int ldX,
+        cref<b_T> b, mptr<Y_T> Y, const Int ldY,
+        const Int m, const Int n
     )
     {
         combine_matrices<a_flag,b_flag,VarSize,VarSize,Sequential,opx,opy>(
             a, X, ldX,
             b, Y, ldY,
-            m, n, Size_T(1)
+            m, n, Int(1)
          );
     }
     
@@ -231,12 +231,12 @@ namespace Tools
     template<
         Size_T M, Size_T N, Parallel_T parQ,
         Op opx = Op::Id, Op opy = Op::Id,
-        typename a_T, typename X_T, typename b_T, typename Y_T
+        typename a_T, typename X_T, typename b_T, typename Y_T, typename Int
     >
     TOOLS_FORCE_INLINE void combine_matrices_auto(
-        cref<a_T> a, cptr<X_T> X, const Size_T ldX,
-        cref<b_T> b, mptr<Y_T> Y, const Size_T ldY,
-        const Size_T m, const Size_T n, const Size_T thread_count
+        cref<a_T> a, cptr<X_T> X, const Int ldX,
+        cref<b_T> b, mptr<Y_T> Y, const Int ldY,
+        const Int m, const Int n, const Int thread_count
     )
     {
         using F_T = Scalar::Flag;
@@ -361,11 +361,11 @@ namespace Tools
     template<
         Size_T M, Size_T N,
         Op opx = Op::Id, Op opy = Op::Id,
-        typename a_T, typename X_T, typename b_T, typename Y_T
+        typename a_T, typename X_T, typename b_T, typename Y_T, typename Int
     >
     TOOLS_FORCE_INLINE void combine_matrices(
-        cref<a_T> a, cptr<X_T> X, const Size_T ldX,
-        cref<b_T> b, mptr<Y_T> Y, const Size_T ldY
+        cref<a_T> a, cptr<X_T> X, const Int ldX,
+        cref<b_T> b, mptr<Y_T> Y, const Int ldY
     )
     {
         static_assert( M > VarSize, "" );
@@ -374,7 +374,7 @@ namespace Tools
         combine_matrices_auto<M,N,Sequential,opx,opy>(
             a, X, ldX,
             b, Y, ldY,
-            M, N, Size_T(1)
+            M, N, Int(1)
          );
     }
     
@@ -384,12 +384,12 @@ namespace Tools
      */
     template<
         Op opx = Op::Id, Op opy = Op::Id,
-        typename a_T, typename X_T, typename b_T, typename Y_T
+        typename a_T, typename X_T, typename b_T, typename Y_T, typename Int
     >
     TOOLS_FORCE_INLINE void combine_matrices(
-        cref<a_T> a, cptr<X_T> X, const Size_T ldX,
-        cref<b_T> b, mptr<Y_T> Y, const Size_T ldY,
-        const Size_T m, const Size_T n, const Size_T thread_count
+        cref<a_T> a, cptr<X_T> X, const Int ldX,
+        cref<b_T> b, mptr<Y_T> Y, const Int ldY,
+        const Int m, const Int n, const Int thread_count
     )
     {
         combine_matrices_auto<VarSize,VarSize,Parallel,opx,opy>(
@@ -406,18 +406,18 @@ namespace Tools
     
     template<
         Op opx = Op::Id, Op opy = Op::Id,
-        typename a_T, typename X_T, typename b_T, typename Y_T
+        typename a_T, typename X_T, typename b_T, typename Y_T, typename Int
     >
     TOOLS_FORCE_INLINE void combine_matrices(
-        cref<a_T> a, cptr<X_T> X, const Size_T ldX,
-        cref<b_T> b, mptr<Y_T> Y, const Size_T ldY,
-        const Size_T m, const Size_T n
+        cref<a_T> a, cptr<X_T> X, const Int ldX,
+        cref<b_T> b, mptr<Y_T> Y, const Int ldY,
+        const Int m, const Int n
     )
     {
         combine_matrices_auto<VarSize,VarSize,Sequential,opx,opy>(
             a, X, ldX,
             b, Y, ldY,
-            m, n, Size_T(1)
+            m, n, Int(1)
          );
     }
     

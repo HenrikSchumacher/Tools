@@ -40,16 +40,16 @@ namespace Tools
         Scalar::Flag a_flag,
         Size_T M, Size_T N, Parallel_T parQ,
         Op opx = Op::Id,
-        typename a_T, typename X_T
+        typename a_T, typename X_T, typename Int = Size_T
     >
     TOOLS_FORCE_INLINE void modify_matrix(
-        cref<a_T> a, mptr<X_T> X, const Size_T ldX,
-        const Size_T m, const Size_T n, const Size_T thread_count
+        cref<a_T> a, mptr<X_T> X, const Int ldX,
+        const Int m, const Int n, const Int thread_count
     )
     {
         // It is safer to enforce the implicit assumptions explicitly here.
-        const Size_T m_ = (M > VarSize ? M : m);
-        const Size_T n_ = (N > VarSize ? N : n);
+        const Int m_ = (M > VarSize ? static_cast<Int>(M) : m);
+        const Int n_ = (N > VarSize ? static_cast<Int>(N) : n);
         
         // PROBLEM: If x == nullptr, which is allowed when a_flag = Zero,
         // then we should better prevent dereferencing x.
@@ -71,7 +71,7 @@ namespace Tools
             else
             {
                 Do<M,parQ,Static>(
-                    [=]( const Size_T i )
+                    [=]( const Int i )
                     {
                         modify_buffer<a_flag,N,Sequential,opx>(
                             a, &X[ldX * i], n_
@@ -91,10 +91,10 @@ namespace Tools
         Scalar::Flag a_flag,
         Size_T M, Size_T N,
         Op opx = Op::Id,
-        typename a_T, typename X_T
+        typename a_T, typename X_T, typename Int
     >
     TOOLS_FORCE_INLINE void modify_matrix(
-        cref<a_T> a, mptr<X_T> X, const Size_T ldX
+        cref<a_T> a, mptr<X_T> X, const Int ldX
     )
     {
         static_assert( M > VarSize, "" );
@@ -102,7 +102,7 @@ namespace Tools
         
         modify_matrix<a_flag,M,N,Sequential,opx>(
             a, X, ldX,
-            M, N, Size_T(1)
+            M, N, Int(1)
          );
     }
     
@@ -114,11 +114,11 @@ namespace Tools
     template<
         Scalar::Flag a_flag,
         Op opx = Op::Id,
-        typename a_T, typename X_T
+        typename a_T, typename X_T, typename Int
     >
     TOOLS_FORCE_INLINE void modify_matrix(
-        cref<a_T> a, mptr<X_T> X, const Size_T ldX,
-        const Size_T m, const Size_T n, const Size_T thread_count
+        cref<a_T> a, mptr<X_T> X, const Int ldX,
+        const Int m, const Int n, const Int thread_count
     )
     {
         modify_matrix<a_flag,VarSize,VarSize,Parallel,opx>(
@@ -135,16 +135,16 @@ namespace Tools
     template<
         Scalar::Flag a_flag,
         Op opx = Op::Id,
-        typename a_T, typename X_T
+        typename a_T, typename X_T, typename Int
     >
     TOOLS_FORCE_INLINE void modify_matrix(
-        cref<a_T> a, mptr<X_T> X, const Size_T ldX,
-        const Size_T m, const Size_T n
+        cref<a_T> a, mptr<X_T> X, const Int ldX,
+        const Int m, const Int n
     )
     {
         modify_matrix<a_flag,VarSize,VarSize,Sequential,opx>(
             a, X, ldX,
-            m, n, Size_T(1)
+            m, n, Int(1)
          );
     }
     
@@ -191,11 +191,11 @@ namespace Tools
     template<
         Size_T M, Size_T N, Parallel_T parQ,
         Op opx = Op::Id,
-        typename a_T, typename X_T
+        typename a_T, typename X_T, typename Int
     >
     TOOLS_FORCE_INLINE void modify_matrix_auto(
-        cref<a_T> a, mptr<X_T> X, const Size_T ldX,
-        const Size_T m, const Size_T n, const Size_T thread_count
+        cref<a_T> a, mptr<X_T> X, const Int ldX,
+        const Int m, const Int n, const Int thread_count
     )
     {
         using F_T = Scalar::Flag;
@@ -233,10 +233,10 @@ namespace Tools
     template<
         Size_T M, Size_T N,
         Op opx = Op::Id,
-        typename a_T, typename X_T
+        typename a_T, typename X_T, typename Int
     >
     TOOLS_FORCE_INLINE void modify_matrix(
-        cref<a_T> a, mptr<X_T> X, const Size_T ldX
+        cref<a_T> a, mptr<X_T> X, const Int ldX
     )
     {
         static_assert( M > VarSize, "" );
@@ -244,7 +244,7 @@ namespace Tools
         
         modify_matrix_auto<M,N,Sequential,opx>(
             a, X, ldX,
-            M, N, Size_T(1)
+            M, N, Int(1)
          );
     }
     
@@ -254,11 +254,11 @@ namespace Tools
      */
     template<
         Op opx = Op::Id,
-        typename a_T, typename X_T
+        typename a_T, typename X_T, typename Int
     >
     TOOLS_FORCE_INLINE void modify_matrix(
-        cref<a_T> a, mptr<X_T> X, const Size_T ldX,
-        const Size_T m, const Size_T n, const Size_T thread_count
+        cref<a_T> a, mptr<X_T> X, const Int ldX,
+        const Int m, const Int n, const Int thread_count
     )
     {
         modify_matrix_auto<VarSize,VarSize,Parallel,opx>(
@@ -274,16 +274,16 @@ namespace Tools
     
     template<
         Op opx = Op::Id,
-        typename a_T, typename X_T
+        typename a_T, typename X_T, typename Int
     >
     TOOLS_FORCE_INLINE void modify_matrix(
-        cref<a_T> a, mptr<X_T> X, const Size_T ldX,
-        const Size_T m, const Size_T n
+        cref<a_T> a, mptr<X_T> X, const Int ldX,
+        const Int m, const Int n
     )
     {
         modify_matrix_auto<VarSize,VarSize,Sequential,opx>(
             a, X, ldX,
-            m, n, Size_T(1)
+            m, n, Int(1)
          );
     }
     
