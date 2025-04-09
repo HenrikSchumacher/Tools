@@ -108,7 +108,7 @@ namespace Tools
         bool Drop( cref<T> X )
         {
             Int i = Find(X);
-            if( i >= 0 )
+            if( i >= Int(0) )
             {
                 list.erase(list.begin()+i);
                 return true;

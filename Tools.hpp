@@ -249,12 +249,16 @@ namespace Tools
     template<> constexpr bool ArithmeticQ<std::complex<float>>  = true;
     template<> constexpr bool ArithmeticQ<std::complex<double>> = true;
 
+    
+    template <typename E>
+    using Underlying_T = typename std::underlying_type<E>::type;
+    
     template <typename E>
     TOOLS_FORCE_INLINE auto constexpr ToUnderlying( const E & e) noexcept
     {
         if constexpr( std::is_enum_v<E> )
         {
-            return static_cast<typename std::underlying_type<E>::type>(e);
+            return static_cast<Underlying_T<E>>(e);
         }
         else
         {

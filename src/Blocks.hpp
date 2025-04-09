@@ -26,7 +26,7 @@ namespace Tools
             if (block_size == 0)
             {
                 block_size = 1;
-                block_count = (total_size > 1) ? total_size : 1;
+                block_count = (total_size > Int(1)) ? total_size : Int(1);
             }
         }
 
@@ -49,7 +49,7 @@ namespace Tools
          */
         Int end( const Int i ) const
         {
-            return (i == block_count - 1) ? end_ :  begin_ + (i + 1) * block_size;
+            return (i == block_count - Int(1)) ? end_ :  begin_ + (i + Int(1)) * block_size;
         }
 
         /**

@@ -13,12 +13,12 @@ namespace Tools
     {
         TOOLS_MAKE_FP_FAST()
         
-        if constexpr ( N <= 0 )
+        if constexpr ( N <= VarSize )
         {
             return;
         }
         
-        static_assert(M > 0,"");
+        static_assert(M > VarSize,"");
 
         using V_T = vec_T<N,X_T>;
         
@@ -42,12 +42,12 @@ namespace Tools
     {
         TOOLS_MAKE_FP_FAST()
         
-        if constexpr ( M <= 0 )
+        if constexpr ( M <= VarSize )
         {
             return;
         }
         
-        static_assert(N > 0,"");
+        static_assert(N > VarSize,"");
 
         using V_T = vec_T<N,X_T>;
         
@@ -74,12 +74,12 @@ namespace Tools
     {
         TOOLS_MAKE_FP_FAST()
         
-        if constexpr ( M <= 0 )
+        if constexpr ( M <= VarSize )
         {
             return;
         }
 
-        static_assert(N > 0,"");
+        static_assert(N > VarSize,"");
         
         for( Size_T i = 0; i < M; ++i )
         {
@@ -106,12 +106,12 @@ namespace Tools
     {
         TOOLS_MAKE_FP_FAST()
         
-        if constexpr ( M <= 0 )
+        if constexpr ( M <= VarSize )
         {
             return;
         }
 
-        static_assert(N > 0,"");
+        static_assert(N > VarSize,"");
         
         for( Size_T i = 0; i < M; ++i )
         {

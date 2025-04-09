@@ -6,7 +6,7 @@ namespace Tools
     {
         // Taken from https://stackoverflow.com/a/77803192/8248900
         
-        static_assert( N > 0 );
+        static_assert( N > std::size_t(0) );
         
     private:
         
@@ -16,15 +16,15 @@ namespace Tools
         
         constexpr ct_string()
         {
-            for( std::size_t i = 0; i < N; ++i )
+            for( std::size_t i = std::size_t(0); i < N; ++i )
             {
-                bytes[i] = 0;
+                bytes[i] = std::size_t(0);
             }
         }
         
         constexpr ct_string( const ct_string & rhs )
         {
-            for( std::size_t i = 0; i < N; ++i )
+            for( std::size_t i = std::size_t(0); i < N; ++i )
             {
                 bytes[i] = rhs[i];
             }
@@ -193,13 +193,13 @@ namespace Tools
 
         Int s_ptr = 0;
 
-        if( i < 0 )
+        if( i < Int(0) )
         {
             s[s_ptr++] = '-';
         }
 
         // Reverse
-        while( x_ptr > 0 )
+        while( x_ptr > Int(0) )
         {
             s[s_ptr++] = digits[x[--x_ptr]];
         }

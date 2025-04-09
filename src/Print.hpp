@@ -37,7 +37,7 @@ namespace Tools
     template<Size_T align = 0, typename T>
     inline void valprint( const std::string & s, const T & value)
     {
-        if constexpr ( align > 0 )
+        if constexpr ( align > Size_T(0) )
         {
             const Size_T len = s.size();
             
@@ -63,7 +63,7 @@ namespace Tools
     template<Size_T align = 0, typename T>
     inline void valprint( const std::string & s, const std::string & value)
     {
-        if constexpr ( align > 0 )
+        if constexpr ( align > Size_T(0) )
         {
             const Size_T len = s.size();
             

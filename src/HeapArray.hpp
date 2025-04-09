@@ -224,9 +224,13 @@ namespace Tools
         void BoundCheck( const Int i ) const
         {
 #ifdef TOOLS_DEBUG
-            if( (i < 0) || (i > buffer_size) )
+            if( buffer == nullptr )
             {
-                eprint(ClassName()+": first index " + ToString(i) + " is out of bounds [ 0, " + ToString(dims[0]) +" [.");
+                eprint(ClassName() + ": pointer is nullptr.");
+            }
+            if( (i < Int(0)) || (i > buffer_size) )
+            {
+                eprint(ClassName()+": first index " + ToString(i) + " is out of bounds [ 0, " + ToString(buffer_size) +" [.");
             }
 #else
             (void)i;
@@ -322,12 +326,12 @@ namespace Tools
 
         TOOLS_FORCE_INLINE mref<Scal> Last()
         {
-            return (buffer_size > 0 ? buffer[buffer_size-1] : buffer[0]);
+            return (buffer_size > Int(0) ? buffer[buffer_size-Int(1)] : buffer[Int(0)]);
         }
         
         TOOLS_FORCE_INLINE cref<Scal> Last() const
         {
-            return (buffer_size > 0 ? buffer[buffer_size-1] : buffer[0]);
+            return (buffer_size > Int(0) ? buffer[buffer_size-Int(1)] : buffer[Int(0)]);
         }
         
         template<bool copy>
@@ -381,7 +385,7 @@ namespace Tools
             cref<HeapArray> A, const Int i_begin, const Int i_end
         )
         {
-            if( (i_begin >= 0) && ( i_end <= A.buffer_size) )
+            if( (i_begin >= Int(0)) && ( i_end <= A.buffer_size) )
             {
                 return ArrayToString(
                     &A.buffer[i_begin],

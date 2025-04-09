@@ -120,7 +120,7 @@ namespace Tools
             }
         }
         
-        for( int i = counter; i < 3; ++i )
+        for( int i = counter; i < int(3); ++i )
         {
             x_out[i] = infty;
         }
@@ -269,7 +269,7 @@ namespace Tools
             }
         }
         
-        for( int i = counter; i < 3; ++i )
+        for( int i = counter; i < int(3); ++i )
         {
             x_out[i] = infty;
         }
@@ -473,9 +473,9 @@ namespace Tools
     {
         int count = RealCubicSolve_Cardano<Real,false>( a, b, c, d, x );
         
-        for( int i = count; i -->0; )
+        for( int i = count; i --> int(0); )
         {
-            if( (x[i] < 0) || ( x[i] > 1 ) )
+            if( (x[i] < int(0)) || ( x[i] > int(1) ) )
             {
                 --count;
                 x[i] = Scalar::Max<Real>;

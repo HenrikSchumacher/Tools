@@ -80,7 +80,7 @@ namespace Tools
             
             Int exponent;
             
-            const bool use_u_e = ((d >= 0) && (u != 0)) || (v == 0);
+            const bool use_u_e = ((d >= Int(0)) && (u != Int(0))) || (v == Int(0));
             
             if( use_u_e )
             {

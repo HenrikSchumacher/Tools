@@ -78,15 +78,15 @@ namespace Tools
                 }
             }
             
-            if constexpr ( up_lo_flag == 0 )
+            if constexpr ( up_lo_flag == int(0) )
             {
                 return (f_a * b - f_b * a) / (f_a - f_b);
             }
-            else if constexpr ( up_lo_flag < 0 )
+            else if constexpr ( up_lo_flag < int(0) )
             {
                 return a;
             }
-            else if constexpr ( up_lo_flag > 0 )
+            else if constexpr ( up_lo_flag > int(0) )
             {
                 return b;
             }
@@ -110,7 +110,7 @@ namespace Tools
                 {
                     a   = c;
                     f_a = f_c;
-                    if( side == 1 )
+                    if( side == int(1) )
                     {
                         f_b *= Scalar::Half<Real>;
                     }
@@ -120,7 +120,7 @@ namespace Tools
                 {
                     b   = c;
                     f_b = f_c;
-                    if( side == -1 )
+                    if( side == int(-1) )
                     {
                         f_a *= Scalar::Half<Real>;
                     }
@@ -128,16 +128,16 @@ namespace Tools
                 }
             }
             
-            if constexpr ( up_lo_flag == 0 )
+            if constexpr ( up_lo_flag == int(0) )
             {
                 return ( b * f_a - a * f_b ) / ( f_a - f_b );
             }
 
-            else if constexpr ( up_lo_flag < 0 )
+            else if constexpr ( up_lo_flag < int(0) )
             {
                 return b;
             }
-            else if constexpr ( up_lo_flag > 0 )
+            else if constexpr ( up_lo_flag > int(0) )
             {
                 return a;
             }

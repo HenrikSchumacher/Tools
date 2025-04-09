@@ -7,7 +7,7 @@ namespace Tools
     template<Size_T n, Size_T vector_size, bool reverseQ, typename T, typename C>
     void BitonicMerge( mptr<T> a, C comp )
     {
-        if constexpr( n > 1 )
+        if constexpr( n > Size_T(1) )
         {
             constexpr Size_T m = n >> 1;
             
@@ -72,7 +72,7 @@ namespace Tools
     >
     void BitonicSort( mptr<T> a, C comp = C() )
     {
-        if constexpr( n > 32 )
+        if constexpr( n > Size_T(32) )
         {
             constexpr Size_T m = n >> 1;
 
@@ -84,23 +84,23 @@ namespace Tools
 //        {
 //            SortNet<64,reverseQ>()( a, comp );
 //        }
-        else if constexpr( n == 32 )
+        else if constexpr( n == Size_T(32) )
         {
             SortNet<32,reverseQ>()( a, comp );
         }
-        else if constexpr( n == 16 )
+        else if constexpr( n == Size_T(16) )
         {
             SortNet<16,reverseQ>()( a, comp );
         }
-        else if constexpr( n == 8 )
+        else if constexpr( n == Size_T(8) )
         {
             SortNet<8,reverseQ>()( a, comp );
         }
-        else if constexpr( n == 4 )
+        else if constexpr( n == Size_T(4) )
         {
             SortNet<4,reverseQ>()( a, comp );
         }
-        else if constexpr( n == 2 )
+        else if constexpr( n == Size_T(2) )
         {
             SortNet<2,reverseQ>()( a, comp );
         }

@@ -94,14 +94,14 @@ namespace Tools
             
             if constexpr ( parQ == Parallel )
             {
-                if( thread_count_ <= Int(1) )
+                if( thread_count <= Int(1) )
                 {
                     wprint("Do: Parallelization activated, but thread_count <= 1.");
                 }
             }
             else
             {
-                if( thread_count_ > Int(1) )
+                if( thread_count > Int(1) )
                 {
                     wprint("Do: Parallelization deactivated, but thread_count > 1.");
                 }

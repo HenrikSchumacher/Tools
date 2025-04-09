@@ -41,15 +41,15 @@ namespace Tools
                 }
             }
             
-            if constexpr ( up_lo_flag == 0 )
+            if constexpr ( up_lo_flag == int(0) )
             {
                 return Mean(a,b);
             }
-            else if constexpr ( up_lo_flag < 0 )
+            else if constexpr ( up_lo_flag < int(0) )
             {
                 return a;
             }
-            else if constexpr ( up_lo_flag > 0 )
+            else if constexpr ( up_lo_flag > int(0) )
             {
                 return b;
             }
@@ -76,15 +76,15 @@ namespace Tools
                 }
             }
                   
-            if constexpr ( up_lo_flag == 0 )
+            if constexpr ( up_lo_flag == int(0) )
             {
                 return Mean(a,b);
             }
-            else if constexpr ( up_lo_flag < 0 )
+            else if constexpr ( up_lo_flag < int(0) )
             {
                 return b;
             }
-            else if constexpr ( up_lo_flag > 0 )
+            else if constexpr ( up_lo_flag > int(0) )
             {
                 return a;
             }

@@ -18,14 +18,14 @@ namespace Tools
 //        ~JobPointers() = default;
         
 //        explicit JobPointers( const Int thread_count )
-//        :   job_ptr ( std::vector<Int>(thread_count+1, static_cast<Int>(0) ) )
+//        :   job_ptr ( std::vector<Int>(thread_count+1, Int(0) ) )
 //        {
 //
 //        }
         
         template<typename I>
         JobPointers( const Int job_count, const I thread_count )
-        :   job_ptr ( ToSize_T(thread_count)+1, static_cast<Int>(0) )
+        :   job_ptr ( ToSize_T(thread_count)+1, Int(0) )
         {
             BalanceWorkLoad( job_count );
         }
@@ -35,7 +35,7 @@ namespace Tools
         :   job_ptr (
                 std::vector<Int>(
                     static_cast<Size_T>(thread_count+1),
-                    static_cast<Int>(0)
+                    Int(0)
                 )
             )
         {
@@ -77,7 +77,7 @@ namespace Tools
             {
                 wprint("ThreadCount: empty JobPointers detected.");
             }
-            return ( job_ptr.size() <= static_cast<Size_T>(1) ? static_cast<Int>(1) : static_cast<Int>(job_ptr.size()-1) );
+            return ( job_ptr.size() <= static_cast<Size_T>(1) ? Int(1) : static_cast<Int>(job_ptr.size()-1) );
         }
         
         Int JobCount() const
@@ -133,7 +133,7 @@ namespace Tools
             
             safe_alloc( acc_costs, static_cast<Size_T>(job_count + 1) );
             
-            acc_costs[0] = static_cast<Int>(0);
+            acc_costs[0] = Int(0);
             parallel_accumulate( &costs[0], &acc_costs[1], job_count, thread_count );
 
             BalanceWorkLoad( job_count, acc_costs);
@@ -174,7 +174,7 @@ namespace Tools
                 
                 logvalprint( "acc_costs", ArrayToString( acc_costs, {job_count + 1} ) );
                 
-                std::fill( job_ptr.begin(), job_ptr.end(), static_cast<Int>(0));
+                std::fill( job_ptr.begin(), job_ptr.end(), Int(0));
                             
                 TOOLS_PTOC("BalanceWorkLoad");
                             

@@ -178,16 +178,16 @@ namespace Tools
     {
         std::string s;
         
-        if( rank <= 0 )
+        if( rank <= Int2(0) )
         {
             s += ToString(a[0]);
         }
-        else if( rank == 1 )
+        else if( rank == Int2(1) )
         {
             s += line_prefix;
             s += "{ ";
             
-            if( dims[0] > 0 )
+            if( dims[0] > Int(0) )
             {
                 s += ToString(a[0]);
             }
@@ -207,15 +207,15 @@ namespace Tools
             s += line_prefix;
             s += "{\n";
             
-            if( dims[0] > 0 )
+            if( dims[0] > Int(0) )
             {
-                s += ArrayToString( a, &dims[1], &lds[1], rank-1, new_line_prefix );
+                s += ArrayToString( a, &dims[1], &lds[1], rank-Int2(1), new_line_prefix );
             }
             
             for( Int i = 1; i < dims[0]; ++i )
             {
                 s += ",\n";
-                s += ArrayToString( &a[lds[0]*i], &dims[1], &lds[1], rank-1, new_line_prefix );
+                s += ArrayToString( &a[lds[0]*i], &dims[1], &lds[1], rank-Int2(1), new_line_prefix );
             }
             
             s += "\n";
@@ -236,19 +236,26 @@ namespace Tools
         std::string line_prefix = std::string("")
     )
     {
-        if( rank >= 0 )
+        const Size_T r = ToSize_T(rank);
+        
+        if( r >= Size_T(0) )
         {
-            const Size_T r = ToSize_T(rank);
-            
             std::vector<Int> lds (r);
 
-            if( r >= 1 )
+            if( r >= Size_T(1) )
             {
-                lds[r-1] = 1;
+//                lds[r-Size_T(1)] = Size_T(1);
+//                
+//                for( Size_T i = r - Size_T(1); i --> Size_T(0);  )
+//                {
+//                    lds[i] = lds[i+Size_T(1)] * dims[i+Size_T(1)];
+//                }
                 
-                for( Size_T i = r-1; i --> 0;  )
+                lds.back() = Size_T(1);
+                
+                for( Size_T i = r; i --> Size_T(1);  )
                 {
-                    lds[i] = lds[i+1] * dims[i+1];
+                    lds[i] = lds[i] * dims[i];
                 }
             }
             

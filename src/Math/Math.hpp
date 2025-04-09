@@ -14,7 +14,7 @@ namespace Tools
     typename std::enable_if_t<std::is_integral_v<Int>,Real>
     inline Power( const Real base, const Int exponent)
     {
-        if( exponent >= 0)
+        if( exponent >= Int(0))
         {
             switch( exponent )
             {
@@ -352,7 +352,7 @@ namespace Tools
     {
         T result ( 1 );
         
-        for( T k = static_cast<T>(n); k > 1; k -= 1 )
+        for( T k = static_cast<T>(n); k > T(1); k -= T(1) )
         {
             result *= k;
         }
@@ -365,7 +365,7 @@ namespace Tools
     {
         T result ( 1 );
         
-        for( T k = static_cast<T>(n); k > 1; k -= 2 )
+        for( T k = static_cast<T>(n); k > T(1); k -= T(2) )
         {
             result *= k;
         }

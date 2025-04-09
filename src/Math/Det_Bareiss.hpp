@@ -44,11 +44,11 @@ namespace Tools
         
         // Bareiss algorithm copied and adapted from https://cs.stackexchange.com/q/124759/146040
         
-        if( n > 3 )
+        if( n > Int(3) )
         {
             Int8 sign ( 1 );
             
-            for(Int k = 0; k < n - 1; ++k )
+            for(Int k = 0; k < n - Int(1); ++k )
             {
                 //Pivot column swap.
                 

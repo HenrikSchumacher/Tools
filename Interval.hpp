@@ -148,7 +148,7 @@ namespace Tools
             {
                 const auto [p, e] = TwoAdd( a, b );
                 
-                return RoundUp( p, e > 0 );
+                return RoundUp( p, e > Real(0) );
             }
         }
         
@@ -163,7 +163,7 @@ namespace Tools
             {
                 const auto [p, e] = TwoMulFMA( a, b );
                 
-                return RoundUp( p, e > 0 );
+                return RoundUp( p, e > Real(0) );
             }
         }
         
@@ -504,7 +504,7 @@ namespace Tools
         
         TOOLS_FORCE_INLINE bool ContainsZeroQ() const
         {
-            return (b >= 0) && (a >= 0);
+            return (b >= Real(0)) && (a >= Real(0));
         }
         
         TOOLS_FORCE_INLINE bool ContainsQ( const R_T x ) const
@@ -519,12 +519,12 @@ namespace Tools
         
         TOOLS_FORCE_INLINE bool FullyNegativeQ() const
         {
-            return b < 0;
+            return b < Real(0);
         }
         
         TOOLS_FORCE_INLINE bool FullyPositiveQ() const
         {
-            return a < 0;
+            return a < Real(0);
         }
         
 
@@ -1110,16 +1110,16 @@ namespace Tools
         
         using oux_T = decltype( c_T(1) * x_T(1) );
         
-        if( D <= 0 )
+        if( D <= int(0) )
         {
             return oux_T{c[0]};
         }
         
         if constexpr ( fmaQ )
         {
-            oux_T r = fma( c[D], x, c[D-1] );
+            oux_T r = fma( c[D], x, c[D-int(1)] );
             
-            for( int i = D-1; i --> 0;  )
+            for( int i = D-int(1); i --> int(0);  )
             {
                 
                 r = fma( r, x, c[i] );
@@ -1129,9 +1129,9 @@ namespace Tools
         }
         else
         {
-            oux_T r = c[D] * x + c[D-1];
+            oux_T r = c[D] * x + c[D-int(1)];
             
-            for( int i = D-1; i --> 0;  )
+            for( int i = D-int(1); i --> int(0);  )
             {
                 
                 r = r * x + c[i];

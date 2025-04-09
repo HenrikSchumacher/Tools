@@ -118,11 +118,11 @@ namespace Tools
                 
                 Size_T n_ = n - power_of_2;
                 
-                if constexpr( power_of_2 > 16 )
+                if constexpr( power_of_2 > Size_T(16) )
                 {
                     BitonicMergeSorter<vector_size,reverseQ> S ;
                     
-                    S.BitonicMergeSort<power_of_2/2>( a_, b_, n_, comp );
+                    S.BitonicMergeSort<power_of_2/Size_T(2)>( a_, b_, n_, comp );
                 }
                 else
                 {
@@ -236,7 +236,7 @@ namespace Tools
         template<Size_T power_of_2, typename T, typename C>
         void FindPowerOfTwo( mptr<T> a, mptr<T> b, const Size_T n_, C comp  )
         {
-            if( n_ < 2 * power_of_2 )
+            if( n_ < Size_T(2) * power_of_2 )
             {
                 if constexpr ( power_of_2 < 2305843009213693952UL )
                 {
