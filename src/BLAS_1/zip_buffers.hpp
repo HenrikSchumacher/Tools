@@ -62,11 +62,12 @@ namespace Tools
     
     template <
         Size_T N = VarSize, Parallel_T parQ = Sequential,
-        typename F, typename T_a, typename T_b, typename T_c
+        typename F, typename T_a, typename T_b, typename T_c,
+        typename Int = Size_T
     >
     TOOLS_FORCE_INLINE void zip_buffers(
         F && zip, cptr<T_a> a, cptr<T_b> b, mptr<T_c> c,
-        const Size_T n = N, const Size_T thread_count = 1
+        const Int n = static_cast<Int>(N), const Int thread_count = Int(1)
     )
     {
         check_sequential<parQ>( "zip_buffers", thread_count );
@@ -75,7 +76,7 @@ namespace Tools
             TOOLS_MAKE_FP_FAST()
             
             Do<N,parQ>(
-                [=]( const Size_T i )
+                [=]( const Int i )
                 {
                     zip( a[i], b[i], c[i] );
                 },

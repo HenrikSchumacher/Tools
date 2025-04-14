@@ -168,114 +168,115 @@ namespace Tools
     }
     
     template<typename Scal, typename Int, typename Int2, typename Int3>
-    [[nodiscard]] std::string ArrayToString(
-        const Scal * const a,
-        const Int  * const dims,
-        const Int2 * const lds,
-        Int3 rank,
-        std::string line_prefix
-    )
-    {
-        std::string s;
-        
-        if( rank <= Int3(0) )
+        [[nodiscard]] std::string ArrayToString(
+            const Scal * const a,
+            const Int  * const dims,
+            const Int2 * const lds,
+            Int3 rank,
+            std::string line_prefix
+        )
         {
-            s += ToString(a[0]);
-        }
-        else if( rank == Int3(1) )
-        {
-            s += line_prefix;
-            s += "{ ";
+            std::string s;
             
-            if( dims[0] > Int(0) )
+            Size_T r = ToSize_T(rank);
+            
+            if( r <= Size_T(0) )
             {
                 s += ToString(a[0]);
             }
-            
-            for( Int i = 1; i < dims[0]; ++i )
+            else if( r == Size_T(1) )
             {
-                s += ", ";
-                s += ToString(a[i]);
-            }
-            
-            s += " }";
-        }
-        else
-        {
-            std::string new_line_prefix = line_prefix + "\t";
-            
-            s += line_prefix;
-            s += "{\n";
-            
-            if( dims[0] > Int(0) )
-            {
-                s += ArrayToString( a, &dims[1], &lds[1], rank - Int3(1), new_line_prefix );
-            }
-            
-            for( Int i = 1; i < dims[0]; ++i )
-            {
-                s += ",\n";
-                s += ArrayToString( &a[lds[0]*i], &dims[1], &lds[1], rank - Int3(1), new_line_prefix );
-            }
-            
-            s += "\n";
-            
-            s += line_prefix;
-            s += "}";
-        }
-        
-        return s;
-    }
-    
-    
-    template<typename Scal, typename Int, typename Int2>
-    [[nodiscard]] std::string ArrayToString(
-        const Scal * const a,
-        const Int  * const dims,
-        Int2 rank,
-        std::string line_prefix = std::string("")
-    )
-    {
-        const Size_T r = ToSize_T(rank);
-        
-        if( r >= Size_T(0) )
-        {
-            std::vector<Int> lds (r);
-
-            if( r >= Size_T(1) )
-            {
-//                lds[r-Size_T(1)] = Size_T(1);
-//                
-//                for( Size_T i = r - Size_T(1); i --> Size_T(0);  )
-//                {
-//                    lds[i] = lds[i+Size_T(1)] * dims[i+Size_T(1)];
-//                }
+                s += line_prefix;
+                s += "{ ";
                 
-                lds.back() = Size_T(1);
-                
-                for( Size_T i = r; i --> Size_T(1);  )
+                if( dims[0] > Int(0) )
                 {
-                    lds[i] = lds[i] * dims[i];
+                    s += ToString(a[0]);
                 }
+                
+                for( Int i = 1; i < dims[0]; ++i )
+                {
+                    s += ", ";
+                    s += ToString(a[i]);
+                }
+                
+                s += " }";
+            }
+            else
+            {
+                std::string new_line_prefix = line_prefix + "\t";
+                
+                s += line_prefix;
+                s += "{\n";
+                
+                if( dims[0] > Int(0) )
+                {
+                    s += ArrayToString( a, &dims[1], &lds[1], r - Size_T(1), new_line_prefix );
+                }
+                
+                for( Int i = 1; i < dims[0]; ++i )
+                {
+                    s += ",\n";
+                    s += ArrayToString( &a[lds[0]*i], &dims[1], &lds[1], r - Size_T(1), new_line_prefix );
+                }
+                
+                s += "\n";
+                
+                s += line_prefix;
+                s += "}";
             }
             
-            return ArrayToString( a, dims, lds.data(), rank, line_prefix );
+            return s;
         }
-        else
+        
+        
+        template<typename Scal, typename Int, typename Int2>
+        [[nodiscard]] std::string ArrayToString(
+            const Scal * const a,
+            const Int  * const dims,
+            Int2 rank,
+            std::string line_prefix = std::string("")
+        )
         {
-            return std::string();
+            const Size_T r = ToSize_T(rank);
+            
+            if( r >= Size_T(0) )
+            {
+                std::vector<Int> lds (r);
+
+                if( r >= Size_T(1) )
+                {
+                    lds[r-1] = Size_T(1);
+//                    
+//                    for( Size_T i = r - Size_T(1); i --> Size_T(0);  )
+//                    {
+//                        lds[i] = lds[i+ Size_T(1)] * dims[i+ Size_T(1)];
+//                    }
+                    
+                    
+                    for( Size_T i = r; i --> Size_T(1);  )
+                    {
+                        lds[i - Size_T(1)] = lds[i] * dims[i];
+                    }
+                }
+                
+                return ArrayToString( a, dims, lds.data(), rank, line_prefix );
+            }
+            else
+            {
+                return std::string();
+            }
         }
-    }
-    
-    template<typename Scal, typename Int>
-    [[nodiscard]] std::string ArrayToString(
-        const Scal * const a,
-        std::initializer_list<Int> dims,
-        std::string line_prefix = ""
-    )
-    {
-        return ArrayToString( a, &*dims.begin(), dims.size(), line_prefix );
-    }
+        
+        template<typename Scal, typename Int>
+        [[nodiscard]] std::string ArrayToString(
+            const Scal * const a,
+            std::initializer_list<Int> dims,
+            std::string line_prefix = ""
+        )
+        {
+            return ArrayToString( a, &*dims.begin(), dims.size(), line_prefix );
+        }
     
     
     template<typename T>

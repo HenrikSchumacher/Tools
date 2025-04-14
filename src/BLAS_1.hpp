@@ -36,3 +36,6 @@
 #include "BLAS_1/combine_scatter_write.hpp"
 
 #include "BLAS_1/count_nans_in_buffer.hpp"
+
+#include "BLAS_1/Find.hpp"
+#include "BLAS_1/buffers_equalQ.hpp"
