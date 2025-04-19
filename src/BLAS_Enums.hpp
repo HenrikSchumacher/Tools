@@ -253,6 +253,15 @@ namespace Tools
         Right = 142
     };
     
+    constexpr Side Revert( Side s )
+    {
+        return ( s == Side::Left ) ? Side::Right : Side::Left;
+    }
+
+    std::string ToString( Side s )
+    {
+        return ( s == Side::Left ) ? "Left" : "Right";
+    }
 
     enum class AddTo_T : bool
     {

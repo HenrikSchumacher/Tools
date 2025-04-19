@@ -39,3 +39,5 @@
 
 #include "BLAS_1/Find.hpp"
 #include "BLAS_1/buffers_equalQ.hpp"
+
+#include "BLAS_1/rotate_buffer.hpp"

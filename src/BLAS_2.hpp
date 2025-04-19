@@ -16,3 +16,5 @@
 #include "BLAS_2/rowwise_reduction.hpp"
 #include "BLAS_2/rowwise_sums.hpp"
 //#include "BLAS_2/rowwise_minmax.hpp"
+
+#include "BLAS_2/row_rotate_matrix.hpp"

@@ -1,0 +1,56 @@
+#pragma once
+
+namespace Tools
+{
+    
+    template<typename T, typename Int>
+    void reverse_buffer(
+        mptr<T> x, const Int n
+    )
+    {
+        static_assert(IntQ<Int>, "");
+        T buffer;
+        
+        for( Int i = 0; i < n/2; ++i )
+        {
+            buffer = x[i];
+            x[i] = x[n-i-1];
+            x[n-i-1] = buffer;
+        }
+    }
+    
+    template<Side dir, typename T, typename Int>
+    void rotate_buffer(
+        mptr<T> x, const Int n, const Int shift
+    )
+    {
+        static_assert(IntQ<Int>, "");
+
+        if( n <= Int(1) )
+        {
+            return;
+        }
+        
+        Int s = (dir == Side::Left) ? (shift % n) : (-shift % n);
+        
+        if( s < Int(0) )
+        {
+            s += n;
+        }
+        
+        if( s == Int(0) )
+        {
+            return;
+        }
+        
+        const Int k = n - s;
+        
+        reverse_buffer(&x[0],s);
+        reverse_buffer(&x[s],k);
+        
+        reverse_buffer(&x[0],n);
+    }
+    
+} // namespace Tools
+
+
