@@ -183,6 +183,19 @@ namespace Tools
         ColMajor = 102
     };
     
+    [[nodiscard]] inline constexpr Layout Transpose( const Layout layout )
+    {
+        if ( layout == Layout::RowMajor )
+        {
+            return Layout::ColMajor;
+        }
+        else
+        {
+            return Layout::RowMajor;
+        }
+    }
+    
+    
     [[nodiscard]] inline std::string ToString( const Layout & layout )
     {
         switch( layout )
