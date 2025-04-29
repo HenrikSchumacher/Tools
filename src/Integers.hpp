@@ -11,6 +11,16 @@ namespace Tools
     using UInt32  = std::uint32_t;
     using UInt64  = std::uint64_t;
     
+    using FastInt8  = std::int_fast8_t;
+    using FastInt16 = std::int_fast16_t;
+    using FastInt32 = std::int_fast32_t;
+    using FastInt64 = std::int_fast64_t;
+    
+    using FastUInt8  = std::uint_fast8_t;
+    using FastUInt16 = std::uint_fast16_t;
+    using FastUInt32 = std::uint_fast32_t;
+    using FastUInt64 = std::uint_fast64_t;
+    
     namespace Scalar
     {
         template<typename T> constexpr bool ComplexQ = false;
