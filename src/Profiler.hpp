@@ -62,18 +62,11 @@ namespace Tools
         static std::mutex prof_mutex;
         static std::ofstream prof ( prof_file );
         
-//        static Time init_time = Clock::now();
-        
         static Int id_counter = 0;
         
         static std::vector<StackNode> stack (
             Size_T(1), StackNode( id_counter++, Int(-1), "root" )
         );
-        
-//        static std::vector<Time> time_stack;
-//        static std::vector<std::string> tag_stack(1,"root");
-//        static std::vector<int> parent_stack (1, -0);
-//        static std::vector<int> id_stack (1,0);
 
 #endif
         
@@ -126,17 +119,6 @@ namespace Tools
             {
                 Profiler::prof.open( Profiler::prof_file );
             }
-
-//            Profiler::init_time = Clock::now();
-//            Profiler::time_stack.clear();
-//            Profiler::parent_stack.push_back(0);
-//            Profiler::tag_stack.clear();
-//            Profiler::tag_stack.push_back("root");
-//            Profiler::parent_stack.clear();
-//            Profiler::parent_stack.push_back(-1);
-//            Profiler::id_stack.clear();
-//            Profiler::id_stack.push_back(0);
-//            Profiler::id_counter = 0;
             
             id_counter = 0;
             stack.clear();
@@ -187,13 +169,7 @@ namespace Tools
     #ifdef TOOLS_ENABLE_PROFILER
             const std::lock_guard<std::mutex> prof_lock( prof_mutex );
             
-
             stack.emplace_back( id_counter++, stack.back().id, tag );
-            
-//            time_stack.push_back(Clock::now());
-//            parent_stack.push_back(id_stack.back());
-//            tag_stack.push_back(tag);
-//            id_stack.push_back(++id_counter);
             
             double start_time = Tools::Duration( stack[0].time, stack.back().time );
             
