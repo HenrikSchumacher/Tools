@@ -104,12 +104,9 @@ namespace Tools
             {
                 const std::lock_guard<std::mutex> timer_lock( Timer::mutex );
                 duration = Tools::Duration( Timer::stack.back(), Clock::now() );
-            }
-                print( std::to_string(duration) + " s.");
-            {
-                const std::lock_guard<std::mutex> timer_lock( Timer::mutex );
                 Timer::stack.pop_back();
             }
+            print( std::to_string(duration) + " s.");
         }
         else
         {
