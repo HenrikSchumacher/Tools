@@ -454,7 +454,7 @@ namespace Tools
         return s;
     }
     
-    template<Size_T M_ = VarSize, Size_T N_ = VarSize, typename T, typename F, typename Int = Size_T>
+    template<Size_T M_ = VarSize, Size_T N_ = VarSize, typename T, typename Int = Size_T>
     [[nodiscard]] std::string MatrixString(
         cptr<T> A, const Size_T ldA,
         cref<std::string> header,

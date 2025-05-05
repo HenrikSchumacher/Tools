@@ -10,6 +10,8 @@ namespace Tools
         const Real tol = 64 * Scalar::eps<Real>, const int max_iter = 64
     )
     {
+        using Sign_T = FastInt8;
+        
         (void)max_iter;
         
         constexpr Real a = 0;
@@ -43,12 +45,12 @@ namespace Tools
             return RegulaFalsi<0>( f, L, R, Scalar::Zero<Real>, TOL );
         };
      
-        Real cand [5];
-        int  sign [5];
-        int  size = 0;
+        Real   cand [5];
+        Sign_T sign [5];
+        int    size = 0;
         
         cand[size] = a;
-        sign[size] = Sign(c_0);
+        sign[size] = Sign<Sign_T>(c_0);
         ++size;
         
         if( D > zero )
@@ -62,21 +64,21 @@ namespace Tools
             if( a < x_L && x_L < b )
             {
                 cand[size] = x_L;
-                sign[size] = Sign(f(x_L));
+                sign[size] = Sign<Sign_T>(f(x_L));
                 ++size;
             }
             
             if( a < x_I && x_I < b )
             {
                 cand[size] = x_I;
-                sign[size] = Sign(f(x_I));
+                sign[size] = Sign<Sign_T>(f(x_I));
                 ++size;
             }
             
             if( a < x_R && x_R < b )
             {
                 cand[size] = x_R;
-                sign[size] = Sign(f(x_R));
+                sign[size] = Sign<Sign_T>(f(x_R));
                 ++size;
             }
             
@@ -92,13 +94,13 @@ namespace Tools
             if( a < x_I && x_I < b )
             {
                 cand[size] = x_I;
-                sign[size] = Sign(f(x_I));
+                sign[size] = Sign<Sign_T>(f(x_I));
                 ++size;
             }
         }
         
         cand[size] = b;
-        sign[size] = Sign(c_0+c_1+c_2+c_3);
+        sign[size] = Sign<Sign_T>(c_0+c_1+c_2+c_3);
         ++size;
         
         int counter = 0;
@@ -135,6 +137,8 @@ namespace Tools
         const Real tol = 64 * Scalar::eps<Real>, const int max_iter = 64
     )
     {
+        using Sign_T = FastInt8;
+        
         constexpr Real a = 0;
         constexpr Real b = 1;
         
@@ -192,12 +196,12 @@ namespace Tools
             return x;
         };
         
-        Real cand [5];
-        int  sign [5];
-        int  size = 0;
+        Real   cand [5];
+        Sign_T sign [5];
+        int    size = 0;
         
         cand[size] = a;
-        sign[size] = Sign(c_0);
+        sign[size] = Sign<Sign_T>(c_0);
         ++size;
         
         if( D > zero )
@@ -211,21 +215,21 @@ namespace Tools
             if( a < x_L && x_L < b )
             {
                 cand[size] = x_L;
-                sign[size] = Sign(f(x_L));
+                sign[size] = Sign<Sign_T>(f(x_L));
                 ++size;
             }
             
             if( a < x_I && x_I < b )
             {
                 cand[size] = x_I;
-                sign[size] = Sign(f(x_I));
+                sign[size] = Sign<Sign_T>(f(x_I));
                 ++size;
             }
             
             if( a < x_R && x_R < b )
             {
                 cand[size] = x_R;
-                sign[size] = Sign(f(x_R));
+                sign[size] = Sign<Sign_T>(f(x_R));
                 ++size;
             }
             
@@ -241,13 +245,13 @@ namespace Tools
             if( a < x_I && x_I < b )
             {
                 cand[size] = x_I;
-                sign[size] = Sign(f(x_I));
+                sign[size] = Sign<Sign_T>(f(x_I));
                 ++size;
             }
         }
         
         cand[size] = b;
-        sign[size] = Sign(c_0+c_1+c_2+c_3);
+        sign[size] = Sign<Sign_T>(c_0+c_1+c_2+c_3);
         ++size;
         
         int counter = 0;

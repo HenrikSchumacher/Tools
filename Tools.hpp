@@ -167,7 +167,6 @@
     #endif
 #endif
 
-
 // Use TOOLS_MAKE_FP_FAST() only in block scope.
 #if defined(_MSC_VER)
 
