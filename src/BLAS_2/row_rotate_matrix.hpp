@@ -20,20 +20,36 @@ namespace Tools
         
         if constexpr ( M > VarSize )
         {
-            for( Int i = 0; i < M/2; ++i )
+            const Int half = M/2;
+            
+            for( Int i = 0; i < half; ++i )
             {
                 copy_buffer<N>( &A[ldA * i], scratch, n );
                 fun( &A[ldA *(m-i-1)], &A[ldA * i]      );
                 fun( scratch         , &A[ldA *(m-i-1)] );
             }
+            
+            if( M % 2 )
+            {
+                copy_buffer<N>( &A[ldA * half], scratch, n );
+                fun( scratch, &A[ldA * half] );
+            }
         }
         else
         {
-            for( Int i = 0; i < m/2; ++i )
+            const Int half = m/2;
+            
+            for( Int i = 0; i < half; ++i )
             {
                 copy_buffer<N>( &A[ldA * i], scratch, n );
                 fun( &A[ldA *(m-i-1)], &A[ldA * i]      );
                 fun( scratch         , &A[ldA *(m-i-1)] );
+            }
+            
+            if( m % 2 )
+            {
+                copy_buffer<N>( &A[ldA * half], scratch, n );
+                fun( scratch, &A[ldA * half] );
             }
         }
     }
