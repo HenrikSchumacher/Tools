@@ -179,6 +179,9 @@ namespace Tools
     {
         std::string s;
         
+        // TODO: Find a good reserve strategy.
+//        s.reserve( ToSize_T(dims[0]) * ( Size_T(4) + line_prefix.size() + Size_T(6) * ToSize_T(dims[1]) ) );
+        
         Size_T r = ToSize_T(rank);
         
         if( r <= Size_T(0) )
@@ -382,6 +385,8 @@ namespace Tools
         constexpr Int N = static_cast<Int>(N_);
         
         std::string s;
+        // TODO: Find a good reserve strategy.
+//        s.reserve( ToSize_T(n) * (infix.size() + Size_T(4) ) + prefix.size() + suffix.size() );
         
         s += prefix;
         
@@ -397,7 +402,7 @@ namespace Tools
         }
         
         s  += suffix;
-
+        
         return s;
     }
     
