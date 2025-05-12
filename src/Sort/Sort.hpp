@@ -13,97 +13,79 @@ namespace Tools
         {
             case 2:
             {
-                SortNet<2,reverseQ>()(begin,comp);
-                break;
+                return SortNet<2,reverseQ>()(begin,comp);
             }
             case 3:
             {
-                SortNet<3,reverseQ>()(begin,comp);
-                break;
+                return SortNet<3,reverseQ>()(begin,comp);
             }
             case 4:
             {
-                SortNet<4,reverseQ>()(begin,comp);
-                break;
+                return SortNet<4,reverseQ>()(begin,comp);
             }
             case 5:
             {
-                SortNet<5,reverseQ>()(begin,comp);
-                break;
+                return SortNet<5,reverseQ>()(begin,comp);
             }
             case 6:
             {
-                SortNet<6,reverseQ>()(begin,comp);
-                break;
+                return SortNet<6,reverseQ>()(begin,comp);
             }
             case 7:
             {
-                SortNet<7,reverseQ>()(begin,comp);
-                break;
+                return SortNet<7,reverseQ>()(begin,comp);
             }
             case 8:
             {
-                SortNet<8,reverseQ>()(begin,comp);
-                break;
+                return SortNet<8,reverseQ>()(begin,comp);
             }
             case 9:
             {
-                SortNet<9,reverseQ>()(begin,comp);
-                break;
+                return SortNet<9,reverseQ>()(begin,comp);
             }
             case 10:
             {
-                SortNet<10,reverseQ>()(begin,comp);
-                break;
+                return SortNet<10,reverseQ>()(begin,comp);
             }
             case 11:
             {
-                SortNet<11,reverseQ>()(begin,comp);
-                break;
+                return SortNet<11,reverseQ>()(begin,comp);
             }
             case 12:
             {
-                SortNet<12,reverseQ>()(begin,comp);
-                break;
+                return SortNet<12,reverseQ>()(begin,comp);
             }
             case 13:
             {
-                SortNet<13,reverseQ>()(begin,comp);
-                break;
+                return SortNet<13,reverseQ>()(begin,comp);
             }
             case 14:
             {
-                SortNet<14,reverseQ>()(begin,comp);
-                break;
+                return SortNet<14,reverseQ>()(begin,comp);
             }
             case 15:
             {
-                SortNet<15,reverseQ>()(begin,comp);
-                break;
+                return SortNet<15,reverseQ>()(begin,comp);
             }
             case 16:
             {
-                SortNet<16,reverseQ>()(begin,comp);
-                break;
+                return SortNet<16,reverseQ>()(begin,comp);
             }
             case 32:
             {
-                SortNet<32,reverseQ>()(begin,comp);
-                break;
+                return SortNet<32,reverseQ>()(begin,comp);
             }
             case 64:
             {
-                SortNet<64,reverseQ>()(begin,comp);
-                break;
+                return SortNet<64,reverseQ>()(begin,comp);
             }
             case 1:
             {
-                break;
+                return;
             }
             default:
             {
-                std::sort( begin, end, comp );
-                break;
+                return std::sort( begin, end, comp );
             }
         }
     }
