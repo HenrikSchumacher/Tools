@@ -173,8 +173,8 @@ namespace Tools
         cptr<Int>  const dims,
         cptr<Int2> const lds,
         Int3 rank,
-        std::string line_prefix,
-        F && fun
+        F && fun,
+        std::string line_prefix = ""
     )
     {
         std::string s;
@@ -215,13 +215,13 @@ namespace Tools
             
             if( dims[0] > Int(0) )
             {
-                s += ArrayToString( a, &dims[1], &lds[1], r - Size_T(1), new_line_prefix, fun );
+                s += ArrayToString( a, &dims[1], &lds[1], r - Size_T(1), fun, new_line_prefix );
             }
             
             for( Int i = 1; i < dims[0]; ++i )
             {
                 s += ",\n";
-                s += ArrayToString( &a[lds[0]*i], &dims[1], &lds[1], r - Size_T(1), new_line_prefix, fun );
+                s += ArrayToString( &a[lds[0]*i], &dims[1], &lds[1], r - Size_T(1), fun, new_line_prefix );
             }
             
             s += "\n";
@@ -242,7 +242,9 @@ namespace Tools
         std::string line_prefix  = std::string("")
     )
     {
-        return ArrayToString(a,dims,lds,rank,line_prefix,[]( cref<Scal> a ){ return ToString(a); });
+        return ArrayToString(
+            a,dims,lds,rank,[]( cref<Scal> a ){ return ToString(a); },line_prefix
+        );
     }
     
     template<typename Scal, typename Int, typename Int2, typename F>
@@ -250,8 +252,8 @@ namespace Tools
         cptr<Scal> a,
         cptr<Int> dims,
         Int2 rank,
-        std::string line_prefix,
-        F && fun
+        F && fun,
+        std::string line_prefix = ""
     )
     {
         const Size_T r = ToSize_T(rank);
@@ -276,7 +278,7 @@ namespace Tools
                 }
             }
             
-            return ArrayToString( a, dims, lds.data(), rank, line_prefix, fun );
+            return ArrayToString( a, dims, lds.data(), rank, fun, line_prefix );
         }
         else
         {
@@ -291,32 +293,22 @@ namespace Tools
         std::string line_prefix = std::string("")
     )
     {
-        return ArrayToString( a,dims, rank, line_prefix,
-            []( cref<Scal> a ){ return ToString(a); }
+        return ArrayToString(
+            a,dims, rank,
+            []( cref<Scal> a ){ return ToString(a); },
+            line_prefix
         );
     }
-    
-//    template<typename Scal, typename Int, typename Int2>
-//    [[nodiscard]] std::string ArrayToString(
-//        const Scal * const a,
-//        const Int  * const dims,
-//        std::string line_prefix = std::string("")
-//    )
-//    {
-//        return ArrayToString( a, dims, line_prefix,
-//            []( cref<Scal> a ){ return ToString(a); }
-//        );
-//    }
     
     template<typename Scal, typename Int, typename F>
     [[nodiscard]] std::string ArrayToString(
         cptr<Scal> a,
         std::initializer_list<Int> dims,
-        std::string line_prefix,
-        F && fun
+        F && fun,
+        std::string line_prefix = ""
     )
     {
-        return ArrayToString( a, &*dims.begin(), dims.size(), line_prefix, fun );
+        return ArrayToString( a, &*dims.begin(), dims.size(), fun, line_prefix );
     }
 
     template<typename Scal, typename Int>
@@ -326,8 +318,10 @@ namespace Tools
         std::string line_prefix = ""
     )
     {
-        return ArrayToString( a, &*dims.begin(), dims.size(), line_prefix,
-            []( cref<Scal> a ){ return ToString(a); }
+        return ArrayToString(
+            a, &*dims.begin(), dims.size(),
+            []( cref<Scal> a ){ return ToString(a); },
+            line_prefix
         );
     }
 
@@ -335,12 +329,12 @@ namespace Tools
     template<typename T, typename F>
     [[nodiscard]] std::string ToString(
         cref<std::vector<T>> v,
-        std::string line_prefix,
-        F && fun
+        F && fun,
+        std::string line_prefix
     )
     {
         const Size_T dim = v.size();
-        return ArrayToString( &v[0], &dim, Size_T(1), line_prefix, fun );
+        return ArrayToString( &v[0], &dim, Size_T(1), fun, line_prefix );
     }
     
     template<typename T>
@@ -349,18 +343,18 @@ namespace Tools
         std::string line_prefix = ""
     )
     {
-        return ToString( v, line_prefix, []( cref<T> a ){ return ToString(a); } );
+        return ToString( v, []( cref<T> a ){ return ToString(a); }, line_prefix );
     }
     
     template<typename T, Size_T N, typename F>
     [[nodiscard]] std::string ToString(
         const std::array<T,N> & v,
-        std::string line_prefix,
-        F && fun
+        F && fun,
+        std::string line_prefix = ""
     )
     {
         const Size_T dim = N;
-        return ArrayToString( &v[0], &dim, Size_T(1), line_prefix, fun );
+        return ArrayToString( &v[0], &dim, Size_T(1), fun, line_prefix );
     }
     
     template<typename T, Size_T N>
@@ -369,7 +363,7 @@ namespace Tools
         std::string line_prefix = ""
     )
     {
-        return ToString( v, line_prefix, []( cref<T> a ){ return ToString(a); } );
+        return ToString( v, []( cref<T> a ){ return ToString(a); }, line_prefix );
     }
 
     template<Size_T N_ = VarSize, typename T, typename F, typename Int = Size_T>

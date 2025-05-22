@@ -252,7 +252,7 @@ namespace Tools
         
         class Timer
         {
-            const std::string & tag;
+            const std::string tag;
             
         public:
             
