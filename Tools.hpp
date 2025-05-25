@@ -248,6 +248,19 @@ namespace Tools
     template<> constexpr bool ArithmeticQ<std::complex<float>>  = true;
     template<> constexpr bool ArithmeticQ<std::complex<double>> = true;
 
+    template<typename I, typename J>
+    inline bool IntFitsIntoTypeQ( J x )
+    {
+        static_assert(IntQ<I>,"");
+        static_assert(IntQ<J>,"");
+        
+        return (
+            std::cmp_less_equal( x, std::numeric_limits<I>::max() )
+            &&
+            std::cmp_greater_equal( x, std::numeric_limits<I>::lowest() )
+        );
+    }
+    
     
     template <typename E>
     using Underlying_T = typename std::underlying_type<E>::type;

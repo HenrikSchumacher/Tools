@@ -62,7 +62,6 @@ namespace Tools
     
     namespace Scalar
     {
-        
         enum class Flag : Int8
         {
             Generic =  2,
@@ -401,7 +400,7 @@ namespace Tools
     template<typename Scal>
     inline constexpr bool NaNQ( cref<Scal> x )
     {
-        TOOLS_MAKE_FP_STRICT()
+        TOOLS_MAKE_FP_STRICT();
         
         // Works also with `-ffast-math` option?
         if constexpr ( FloatQ<Scal> && Scalar::RealQ<Scal> )
