@@ -49,7 +49,6 @@ namespace Tools
         {
             WaitForTasks();
             DestroyThreads();
-//            TOOLS_DUMP(std::thread::hardware_concurrency());
             
             Int thread_count = (thread_count_ > Int(0)) ? thread_count_ :  Int(1);
 //            :   Max(

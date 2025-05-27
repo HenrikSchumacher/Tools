@@ -135,15 +135,21 @@ namespace Tools
 //      Cache
 //########################################################################
         
+        template<bool lockQ = true>
         bool InCacheQ( cref<std::string> key ) const
         {
-            // For some reason gcc-12 does not allow me to return static_cast<bool>( cache.count(key) ) directly.
-            
             bool result = false;
             
-//            const std::lock_guard<std::mutex> cache_lock( cache_mutex );
-            
-            result = static_cast<bool>( cache.count( key ) );
+            if constexpr( lockQ )
+            {
+                const std::lock_guard<std::mutex> cache_lock( cache_mutex );
+                result = static_cast<bool>( cache.count( key ) );
+            }
+            else
+            {
+                // The version without lock is necessary because we call InCacheQ frequently from locked routines.
+                result = static_cast<bool>( cache.count( key ) );
+            }
             
             return result;
         }
@@ -193,9 +199,9 @@ namespace Tools
             
             if constexpr ( check_existence_Q )
             {
-                if( InCacheQ(key) )
+                if( this->template InCacheQ<false>(key) )
                 {
-                    wprint( this->ClassName() + "::SetCache: Key " + key + " is already in cache. Check for race conditions." );
+                    wprint( this->ClassName() + "::SetCache: Key " + key + " is already in cache. Maybe check for race conditions." );
                 }
             }
             
@@ -223,15 +229,18 @@ namespace Tools
         {
             const std::lock_guard<std::mutex> cache_lock( cache_mutex );
             
-            cache.clear();
+            if( !cache.empty() )
+            {
+                cache.clear();
+            }
         }
         
         void ClearCache( const std::string & key ) const
         {
-            if( InCacheQ( key ) )
+            const std::lock_guard<std::mutex> cache_lock( cache_mutex );
+            
+            if( this->template InCacheQ<false>( key ) )
             {
-                const std::lock_guard<std::mutex> cache_lock( cache_mutex );
-                
                 cache.erase( key );
             }
         }
@@ -241,25 +250,26 @@ namespace Tools
 //      PersistentCache
 //########################################################################
         
+        template<bool lockQ = true>
         bool InPersistentCacheQ( cref<std::string> key ) const
         {
-            // For some reason gcc-12 does not allow me to return static_cast<bool>( cache.count(key) ) directly.
-            
             bool result = false;
             
-//            const std::lock_guard<std::mutex> p_cache_lock( p_cache_mutex );
-            
-            result = static_cast<bool>( p_cache.count( key ) );
-            
+            if constexpr( lockQ )
+            {
+                const std::lock_guard<std::mutex> p_cache_lock( p_cache_mutex );
+                result = static_cast<bool>( p_cache.count( key ) );
+            }
+            else
+            {
+                result = static_cast<bool>( p_cache.count( key ) );
+            }
             return result;
         }
         
         template<typename T = std::any>
         T & GetPersistentCache( cref<std::string> key ) const
         {
-            // For some reason gcc-12 does not allow me to return cache.at(key) directly. =/
-            // Maybe because that might throw an exception.
-            
             std::any * thing;
             
             const std::lock_guard<std::mutex> p_cache_lock( p_cache_mutex );
@@ -271,7 +281,7 @@ namespace Tools
             catch( const std::out_of_range & e )
             {
                 eprint(this->ClassName()+"GetPersistentCache: Key \""+key+"\" not found!.");
-                throw(e); //an internal catch block forwards the exception to its external level
+                throw(e);
             }
             
             if constexpr ( std::is_same_v<T,std::any> )
@@ -292,9 +302,9 @@ namespace Tools
             
             if constexpr ( check_existence_Q )
             {
-                if( InCacheQ(key) )
+                if( this->template InPersistentCacheQ<false>(key) )
                 {
-                    wprint( this->ClassName() + "::SetPersistentCache: Key " + key + " is already in cache. Check for race conditions." );
+                    wprint( this->ClassName() + "::SetPersistentCache: Key " + key + " is already in cache. Maybe check for race conditions." );
                 }
             }
             
@@ -321,16 +331,19 @@ namespace Tools
         void ClearPersistentCache() const
         {
             const std::lock_guard<std::mutex> p_cache_lock( p_cache_mutex );
-            
-            p_cache.clear();
+         
+            if( !p_cache.empty() )
+            {
+                p_cache.clear();
+            }
         }
         
         void ClearPersistentCache( cref<std::string> key ) const
         {
-            if( InPersistentCacheQ( key ) )
+            const std::lock_guard<std::mutex> p_cache_lock( p_cache_mutex );
+            
+            if( this->template InPersistentCacheQ<false>( key ) )
             {
-                const std::lock_guard<std::mutex> p_cache_lock( p_cache_mutex );
-                
                 p_cache.erase( key );
             }
         }
