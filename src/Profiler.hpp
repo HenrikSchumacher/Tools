@@ -148,7 +148,7 @@ namespace Tools
         {
             std::string msg ( std::string("ERROR: ") + s );
             
-    #if defined(LTEMPLATE_H) || defined(MATHEMATICA)
+    #if defined(LTEMPLATE_H) || defined(TENSORS_MMA_HPP)
 
             print( msg );
     #endif
@@ -198,13 +198,14 @@ namespace Tools
         {
     #ifdef TOOLS_ENABLE_PROFILER
             const std::lock_guard<std::mutex> prof_lock( prof_mutex );
+            
             if( !stack.empty() )
             {
                 StackNode & node = stack.back();
                 
                 if( tag == node.tag )
                 {
-                    Time & init_time = stack[0].time;
+                    Time & init_time  = stack[0].time;
                     double start_time = Tools::Duration( init_time, node.time );
                     double stop_time  = Tools::Duration( init_time, Clock::now() );
                     

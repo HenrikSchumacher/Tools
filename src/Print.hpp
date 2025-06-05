@@ -19,7 +19,7 @@ namespace Tools
     {
         const std::lock_guard<std::mutex>  cout_lock( Tools::cout_mutex  );
         
-#if defined(LTEMPLATE_H) || defined(MATHEMATICA)
+#if defined(LTEMPLATE_H) || defined(TENSORS_MMA_HPP)
         const std::lock_guard<std::mutex> timer_lock( Timer::mutex );
         
         mma::print( std::string( 2 * (Timer::stack.size()), ' ') + s );

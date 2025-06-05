@@ -405,22 +405,22 @@ namespace Tools
         ~Interval() = default;
         
     
-#if defined(LTEMPLATE_H) || defined(MATHEMATICA)
-        
-        explicit Interval( cref<mma::TensorRef<Real>> A )
-        : Interval{ A.data()[0], A.data()[1]  }
-        {}
-        
-        mma::TensorRef<Real> friend to_MTensorRef( const I_T I )
-        {
-            auto R = mma::makeVector<Real>( 2 );
-            
-            R.data()[0] = -I.a;
-            R.data()[1] =  I.b;
-            
-            return R;
-        }
-#endif
+//#if defined(LTEMPLATE_H)
+//        
+//        explicit Interval( cref<mma::TensorRef<Real>> A )
+//        : Interval{ A.data()[0], A.data()[1]  }
+//        {}
+//        
+//        mma::TensorRef<Real> friend to_MTensorRef( const I_T I )
+//        {
+//            auto R = mma::makeVector<Real>( 2 );
+//            
+//            R.data()[0] = -I.a;
+//            R.data()[1] =  I.b;
+//            
+//            return R;
+//        }
+//#endif
 
         
         

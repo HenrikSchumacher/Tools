@@ -2,7 +2,9 @@
 
 namespace Tools
 {
-    TOOLS_FORCE_INLINE double Duration( const Time & start_time, const Time & stop_time )
+    TOOLS_FORCE_INLINE double Duration(
+        const Time & start_time, const Time & stop_time
+    )
     {
         return std::chrono::duration<double>(stop_time - start_time).count();
     }
