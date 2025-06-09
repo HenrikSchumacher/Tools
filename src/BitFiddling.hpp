@@ -15,9 +15,9 @@ namespace Tools
     template<typename I, typename J>
     inline constexpr bool get_bit( const I & x, const J pos )
     {
-        const I mask = ( static_cast<I>(1) << pos );
+        const I mask = static_cast<I>( static_cast<I>(1) << pos );
         
-        return ((x & mask) != 0);
+        return ((x & mask) != I(0));
     }
     
     template<typename I, typename J >
