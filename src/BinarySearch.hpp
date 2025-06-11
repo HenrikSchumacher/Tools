@@ -2,38 +2,39 @@
 
 namespace Tools
 {
-    
-    template<typename T>
+    /*!@brief Returns the largest position `pos` in the input array such that `sorted_list[pos] <= value`. If `value` is found, then `true` is returned. Otherwise `false` is returned.
+     */
+    template<typename T, typename Int>
     TOOLS_FORCE_INLINE bool BinarySearch(
-        cptr<T> sorted_list, const Size_T n,
-        cref<T> value,
-        mref<Size_T> pos
+        cptr<T> sorted_list, const Int n, cref<T> value, mref<Int> pos
     )
     {
-        if( n == 0 )
+        static_assert(IntQ<Int>,"");
+        
+        if( n == Int(0) )
         {
-            pos = 0;
+            pos = Int(0);
             return false;
         }
         
-        Size_T L = 0;
-        Size_T R = n-1;
+        Int L = Int(0);
+        Int R = n - Int(1);
         
-        if( value < sorted_list[L] )
+        if( value <= sorted_list[L] )
         {
             pos = L;
-            return false;
+            return (value == sorted_list[L]);
         }
         
-        if( value > sorted_list[R] )
+        if( value >= sorted_list[R] )
         {
             pos = R;
-            return false;
+            return (value == sorted_list[R]);
         }
         
         while( L < R )
         {
-            const Size_T C = R - (R-L)/static_cast<Size_T>(2);
+            const Int C = R - (R-L)/static_cast<Int>(2);
             
             if( value < sorted_list[C] )
             {
@@ -46,7 +47,7 @@ namespace Tools
         }
         
         pos = L;
-        return sorted_list[L] == value;
+        return (sorted_list[L] == value);
         
     } // BinarySearch
     
