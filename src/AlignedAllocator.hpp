@@ -17,7 +17,7 @@ namespace Tools
                 
                 if constexpr ( verboseQ )
                 {
-                    print(ClassName() + "::Alloc: Memory at " + ToString(ptr) + " has been released." );
+                    print(ClassName()+"::Alloc: Memory at " + ToString(ptr) + " has been released." );
                 }
                 
                 ptr = nullptr;
@@ -38,7 +38,7 @@ namespace Tools
                 
                 if constexpr ( verboseQ )
                 {
-                    print(ClassName() + "::Alloc: Memory at " + ToString(ptr) + " has been released." );
+                    print(ClassName()+"::Alloc: Memory at " + ToString(ptr) + " has been released." );
                 }
                 
                 ptr = nullptr;
@@ -56,7 +56,7 @@ namespace Tools
             
             if( wasallocated != 0 ) [[unlikely]]
             {
-                wprint(ClassName() + "::Alloc: Pointer was not nullptr. Calling Free to prevent memory leak.");
+                wprint(ClassName()+"::Alloc: Pointer was not nullptr. Calling Free to prevent memory leak.");
                 Free(ptr);
             }
             
@@ -64,13 +64,13 @@ namespace Tools
             
             if( ptr == nullptr ) [[unlikely]]
             {
-                eprint(ClassName() + "::Alloc: Allocation of array of size " + ToString(n) + " failed." );
+                eprint(ClassName()+"::Alloc: Allocation of array of size " + ToString(n) + " failed." );
             }
             else
             {
                 if constexpr ( verboseQ )
                 {
-                    print(ClassName() + "::Alloc: Allocation of array of size " + ToString(n) + " at " + ToString(ptr) + " succeeded." );
+                    print(ClassName()+"::Alloc: Allocation of array of size " + ToString(n) + " at " + ToString(ptr) + " succeeded." );
                 }
             }
             
@@ -88,7 +88,7 @@ namespace Tools
             
             if( wasallocated != 0 ) [[unlikely]]
             {
-                wprint(ClassName() + ":: Alloc: Pointer was not nullptr. Calling Free to prevent memory leak.");
+                wprint(ClassName()+":: Alloc: Pointer was not nullptr. Calling Free to prevent memory leak.");
                 Free(ptr);
             }
             
@@ -96,13 +96,13 @@ namespace Tools
             
             if( ptr == nullptr ) [[unlikely]]
             {
-                eprint(ClassName() + "::Alloc: Allocation of array of size " + ToString(n) + " failed." );
+                eprint(ClassName()+"::Alloc: Allocation of array of size " + ToString(n) + " failed." );
             }
             else
             {
                 if constexpr ( verboseQ )
                 {
-                    print(ClassName() + "::Alloc: Allocation of array of size " + ToString(n) + " at " + ToString(ptr) + " succeeded." );
+                    print(ClassName()+"::Alloc: Allocation of array of size " + ToString(n) + " at " + ToString(ptr) + " succeeded." );
                 }
             }
             

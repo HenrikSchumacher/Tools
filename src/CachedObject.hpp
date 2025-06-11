@@ -201,7 +201,7 @@ namespace Tools
             {
                 if( this->template InCacheQ<false>(key) )
                 {
-                    wprint( this->ClassName() + "::SetCache: Key \"" + key + "\" is already in cache. Maybe check for race conditions." );
+                    wprint( this->ClassName()+"::SetCache: Key \"" + key + "\" is already in cache. Maybe check for race conditions." );
                 }
             }
             
@@ -304,7 +304,7 @@ namespace Tools
             {
                 if( this->template InPersistentCacheQ<false>(key) )
                 {
-                    wprint( this->ClassName() + "::SetPersistentCache: Key \"" + key + "\" is already in cache. Maybe check for race conditions." );
+                    wprint( this->ClassName()+"::SetPersistentCache: Key \"" + key + "\" is already in cache. Maybe check for race conditions." );
                 }
             }
             
