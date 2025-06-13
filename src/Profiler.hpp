@@ -253,12 +253,20 @@ namespace Tools
         
         class Timer
         {
+        public:
+            
             const std::string tag;
             
         public:
             
             Timer( const std::string & tag_ )
             : tag { tag_ }
+            {
+                Tic(tag);
+            }
+            
+            Timer( std::string && tag_ )
+            : tag { std::move(tag_) }
             {
                 Tic(tag);
             }
