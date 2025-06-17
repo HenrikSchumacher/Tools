@@ -21,7 +21,7 @@ namespace Tools
     
     template<Side dir, typename T, typename Int>
     void rotate_buffer(
-        mptr<T> x, const Int n, const Int shift
+        mptr<T> x, const Int shift, const Int n
     )
     {
         static_assert(IntQ<Int>, "");
