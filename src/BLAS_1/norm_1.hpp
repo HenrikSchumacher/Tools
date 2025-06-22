@@ -17,7 +17,7 @@ namespace Tools
             TOOLS_MAKE_FP_FAST()
             
             return DoReduce<N,parQ>(
-                [x]( const Size_T i )
+                [x]( const Int i )
                 {
                     return Abs(x[i]);
                 },

@@ -2,13 +2,14 @@
 
 namespace Tools
 {
-    template< Size_T N = VarSize, Parallel_T parQ = Sequential, typename S, typename Int = Size_T >
-    [[nodiscard]] TOOLS_FORCE_INLINE Scalar::Real<S> total_buffer(
-        cptr<S> x, const Int n = static_cast<Int>(N), const Int thread_count = 1
+    template<
+        Size_T N = VarSize, Parallel_T parQ = Sequential,
+        typename x_T, typename Int = Size_T
+    >
+    [[nodiscard]] TOOLS_FORCE_INLINE x_T total_buffer(
+        cptr<x_T> x, const Int n = static_cast<Int>(N), const Int thread_count = 1
     )
     {
-        using T = Scalar::Real<S>;
-        
         {
             TOOLS_MAKE_FP_FAST()
             
@@ -17,11 +18,11 @@ namespace Tools
                 {
                     return x[i];
                 },
-                []( const T & value, T & result )
+                []( const x_T & value, x_T & result )
                 {
                     result += value;
                 },
-                Scalar::Zero<T>, n, thread_count
+                x_T(0), n, thread_count
             );
         }
     }
