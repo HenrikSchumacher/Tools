@@ -354,6 +354,17 @@ namespace Tools
         return i;
     }
 
+    /*!@brief Copy-assignment with strong exception guarantee.
+     * See this talk by Howard Hinnant: https://www.youtube.com/watch?v=vLinb2fgkHk
+     */
+    
+    template<class T>
+    T & strong_assign( T & dest, T src )
+    {
+        using std::swap;
+        swap(dest,src);
+        return dest;
+    }
 
 } // namespace Tools
 

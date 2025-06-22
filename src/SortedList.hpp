@@ -33,9 +33,18 @@ namespace Tools
             return &*list.cend();
         }
         
+        // Default constructor
         SortedList() = default;
-        
+        // Destructor
         ~SortedList() = default;
+        // Copy constructor
+        SortedList( const SortedList & other ) = default;
+        // Copy assignment operator
+        SortedList & operator=( const SortedList & other ) = default;
+        // Move constructor
+        SortedList( SortedList && other ) = default;
+        // Move assignment operator
+        SortedList & operator=( SortedList && other ) = default;
         
         explicit SortedList( const Int n )
         {

@@ -13,15 +13,18 @@ namespace Tools
         
         using Int = Int_;
         
+        // Default constructor
         JobPointers() = default;
-        
-//        ~JobPointers() = default;
-        
-//        explicit JobPointers( const Int thread_count )
-//        :   job_ptr ( std::vector<Int>(thread_count+1, Int(0) ) )
-//        {
-//
-//        }
+        // Destructor
+        ~JobPointers() = default;
+        // Copy constructor
+        JobPointers( const JobPointers & other ) = default;
+        // Copy assignment operator
+        JobPointers & operator=( const JobPointers & other ) = default;
+        // Move constructor
+        JobPointers( JobPointers && other ) = default;
+        // Move assignment operator
+        JobPointers & operator=( JobPointers && other ) = default;
         
         template<typename I>
         JobPointers( const Int job_count, const I thread_count )

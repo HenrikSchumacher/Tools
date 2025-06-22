@@ -22,11 +22,13 @@ namespace Tools
         using ReadLock_T  = std::unique_lock<Mutex_T>;
         using WriteLock_T = std::unique_lock<Mutex_T>;
         
+        // Default constructor
         CachedObject() = default;
         
+        // Destructor (virtual because this class is inherited by many others)
         virtual ~CachedObject() = default;
         
-        /* Copy constructor */
+        // Copy constructor
         CachedObject( const CachedObject & other ) noexcept
         {
             {
@@ -39,7 +41,7 @@ namespace Tools
             }
         }
         
-        /* Move constructor */
+        // Move constructor
         CachedObject( CachedObject && other) noexcept
         {
             {
@@ -53,7 +55,7 @@ namespace Tools
             }
         }
         
-        /* Copy assignment */
+        // Copy assignment
         CachedObject & operator=(const CachedObject & other ) noexcept
         {
             if( this != &other )
@@ -75,7 +77,7 @@ namespace Tools
             return *this;
         }
         
-        /* Move assignment */
+        // Move assignment
         CachedObject & operator=( CachedObject && other ) noexcept
         {
             if (this != &other)
@@ -97,27 +99,28 @@ namespace Tools
             return *this;
         }
         
+        // Swap function
         friend void swap( CachedObject & x, CachedObject & y ) noexcept
+        {
+            if( &x != &y )
             {
-                if( &x != &y )
                 {
-                    {
-                        WriteLock_T lhs_lk( x.cache_mutex, std::defer_lock );
-                        WriteLock_T rhs_lk( y.cache_mutex, std::defer_lock );
-                        std::lock( lhs_lk, rhs_lk );
-                        using std::swap;
-                        swap( x.cache, y.cache );
-                    }
-                    
-                    {
-                        WriteLock_T lhs_lk( x.p_cache_mutex, std::defer_lock );
-                        WriteLock_T rhs_lk( y.p_cache_mutex, std::defer_lock );
-                        std::lock( lhs_lk, rhs_lk );
-                        using std::swap;
-                        swap( x.p_cache, y.p_cache );
-                    }
+                    WriteLock_T lhs_lk( x.cache_mutex, std::defer_lock );
+                    WriteLock_T rhs_lk( y.cache_mutex, std::defer_lock );
+                    std::lock( lhs_lk, rhs_lk );
+                    using std::swap;
+                    swap( x.cache, y.cache );
+                }
+                
+                {
+                    WriteLock_T lhs_lk( x.p_cache_mutex, std::defer_lock );
+                    WriteLock_T rhs_lk( y.p_cache_mutex, std::defer_lock );
+                    std::lock( lhs_lk, rhs_lk );
+                    using std::swap;
+                    swap( x.p_cache, y.p_cache );
                 }
             }
+        }
         
     protected:
             

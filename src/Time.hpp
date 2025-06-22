@@ -26,8 +26,6 @@ namespace Tools
         
         TimePoint() = default;
         
-        ~TimePoint() = default;
-        
         void Now()
         {
             t = Clock::now();
