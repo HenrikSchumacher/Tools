@@ -2,7 +2,7 @@
 namespace Tools
 {
     template<typename T, typename Int>
-    class SortedList
+    class SortedList final
     {
         static_assert(SignedIntQ<Int>,"");
         

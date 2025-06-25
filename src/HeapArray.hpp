@@ -56,7 +56,7 @@ namespace Tools
         HeapArray() = default;
 
         // Destructor
-        ~HeapArray()
+        virtual ~HeapArray()
         {
     //        logprint("Destuctor of "+ClassName()+" of size "+ToString(Size()) );
             Alloc_T::Free(buffer);

@@ -5,7 +5,7 @@ namespace Tools
     // TODO: Make the job pointers respect the size of the cache line somehow.
     
     template<typename Int_>
-    class JobPointers
+    class JobPointers final
     {
         static_assert(IntQ<Int_>,"");
         

@@ -251,7 +251,7 @@ namespace Tools
     #endif
         }
         
-        class Timer
+        class Timer final
         {
         public:
             

@@ -37,7 +37,7 @@ namespace Tools
         }
     };
     
-    class TimeInterval
+    class TimeInterval final
     {
         TimePoint t [2];
         
