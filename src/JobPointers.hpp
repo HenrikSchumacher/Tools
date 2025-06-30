@@ -172,8 +172,8 @@ namespace Tools
             {
                 wprint("BalanceWorkLoad: Total cost is 0.");
                 
-                TOOLS_LOGDUMP(job_count);
-                TOOLS_LOGDUMP(thread_count);
+                TOOLS_DDUMP(job_count);
+                TOOLS_DDUMP(thread_count);
                 
                 logvalprint( "acc_costs", ArrayToString( acc_costs, {job_count + 1} ) );
                 

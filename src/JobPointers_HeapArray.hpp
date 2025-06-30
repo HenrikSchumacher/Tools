@@ -273,9 +273,10 @@ namespace Tools
             {
                 eprint(ClassName()+"::BalanceWorkLoad: Total cost is 0. Aborting with invalid job pointers");
                 
-                TOOLS_LOGDUMP(job_count);
-                TOOLS_LOGDUMP(thread_count);
+                TOOLS_DDUMP(job_count);
+                TOOLS_DDUMP(thread_count);
                 
+                valprint( "acc_costs", ArrayToString( acc_costs, {job_count + 1} ) );
                 logvalprint( "acc_costs", ArrayToString( acc_costs, {job_count + 1} ) );
                 
                 std::fill( &job_ptr[0], &job_ptr[thread_count+1], Int(0) );
