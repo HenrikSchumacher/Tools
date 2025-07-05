@@ -39,6 +39,8 @@ namespace Tools
         static std::mutex log_mutex;
         static std::ofstream log  ( log_file );
         
+        static int blocker_count = 0;
+        
         struct StackNode
         {
             Int id;
@@ -56,6 +58,23 @@ namespace Tools
             ,   tag   ( tag_    )
             ,   time  ( Tools::Clock::now() )
             {}
+        };
+        
+        struct Blocker
+        {
+            Blocker()
+            {
+#if defined(TOOLS_ENABLE_PROFILER)
+                ++blocker_count;
+#endif
+            }
+            
+            ~Blocker()
+            {
+#if defined(TOOLS_ENABLE_PROFILER)
+                --blocker_count;
+#endif
+            }
         };
         
 #if defined(TOOLS_ENABLE_PROFILER)
@@ -167,6 +186,9 @@ namespace Tools
         inline void Tic(const std::string & tag)
         {
     #ifdef TOOLS_ENABLE_PROFILER
+            
+            if( blocker_count > 0 ) { return; }
+                
             const std::lock_guard<std::mutex> prof_lock( prof_mutex );
             
             stack.emplace_back( id_counter++, stack.back().id, tag );
@@ -197,6 +219,9 @@ namespace Tools
         inline void Toc(const std::string & tag)
         {
     #ifdef TOOLS_ENABLE_PROFILER
+            
+            if( blocker_count > 0 ) { return; }
+            
             const std::lock_guard<std::mutex> prof_lock( prof_mutex );
             
             if( !stack.empty() )
@@ -256,26 +281,42 @@ namespace Tools
         public:
             
             const std::string tag;
+            bool activeQ = false;
             
         public:
             
+#ifdef TOOLS_ENABLE_PROFILER
             Timer( const std::string & tag_ )
-            : tag { tag_ }
+            :   tag { tag_ }
+            ,   activeQ( blocker_count <= 0 )
             {
-                Tic(tag);
+
+                if( activeQ ) { Tic(tag); };
             }
             
             Timer( std::string && tag_ )
-            : tag { std::move(tag_) }
+            :   tag { std::move(tag_) }
+            ,   activeQ( blocker_count <= 0 )
             {
-                Tic(tag);
+                if( activeQ ) { Tic(tag); };
             }
-            
+
             ~Timer()
             {
-                Toc(tag);
+                if( activeQ ) { Toc(tag); };
             }
-                
+#else
+            Timer( const std::string & tag_ )
+            {
+
+                (void)tag_;
+            }
+            
+            Timer( std::string && tag_ )
+            {
+                (void)tag_;
+            }
+#endif
         };
         
     } // namespace Profiler

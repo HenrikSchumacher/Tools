@@ -17,6 +17,9 @@ namespace Tools
         }
         else
         {
+            // We want to avoid the profiler messing up, so we silence it for the duration of the parallel region.
+            Profiler::Blocker blocker;
+            
             std::vector<std::future<void>> futures ( ToSize_T(thread_count) );
             
             for( Int thread = 0; thread < thread_count; ++thread )
@@ -46,6 +49,9 @@ namespace Tools
         }
         else
         {
+            // We want to avoid the profiler messing up, so we silence it for the duration of the parallel region.
+            Profiler::Blocker blocker;
+            
             std::vector<std::future<T>> futures ( ToSize_T(thread_count) );
             
             for( Int thread = 0; thread < thread_count; ++thread )
@@ -85,6 +91,9 @@ namespace Tools
         }
         else
         {
+            // We want to avoid the profiler messing up, so we silence it for the duration of the parallel region.
+            Profiler::Blocker blocker;
+            
             // Global index that is supposed to run from begin to end; shared by all threads.
             Int iter = begin;
             // A mutex to synchronize iter.
