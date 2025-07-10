@@ -7,7 +7,7 @@ namespace Tools
         typename T, typename Int = Size_T
     >
     TOOLS_FORCE_INLINE void move_buffer(
-        cptr<T> from, mptr<T> to, const Int n = static_cast<Int>(N), const Int thread_count = 1
+        cptr<T> source, mptr<T> target, const Int n = static_cast<Int>(N), const Int thread_count = 1
     )
     {
         check_sequential<parQ>( "move_buffer", thread_count );
@@ -18,14 +18,13 @@ namespace Tools
         {
             if constexpr ( parQ == Sequential )
             {
-                
-                std::memmove( &to[0], &from[0], n );
+                std::move( &source[0], &source[n], &target[0] );
             }
             else
             {
                 if( thread_count <= Int(1) )
                 {
-                    std::memmove( &to[0], &from[0], n );
+                    std::move( &source[0], &source[n], &target[0] );
                 }
                 else
                 {
@@ -35,7 +34,7 @@ namespace Tools
                             const Int begin = JobPointer(n,thread_count,thread  );
                             const Int end   = JobPointer(n,thread_count,thread+1);
 
-                            std::memmove( &to[begin], &from[begin], end-begin );
+                            std::move( &source[begin], &source[end], &target[begin] );
                         },
                         thread_count
                     );
@@ -44,7 +43,7 @@ namespace Tools
         }
         else
         {
-            std::memmove( &to[0], &from[0], n );
+            std::move( &source[0], &source[n], &target[0] );
         }
     }
     
