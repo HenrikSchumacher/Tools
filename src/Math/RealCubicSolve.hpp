@@ -122,7 +122,7 @@ namespace Tools
             }
         }
         
-        for( int i = counter; i < int(3); ++i )
+        for( int i = counter; i < 3; ++i )
         {
             x_out[i] = infty;
         }
@@ -273,7 +273,7 @@ namespace Tools
             }
         }
         
-        for( int i = counter; i < int(3); ++i )
+        for( int i = counter; i < 3; ++i )
         {
             x_out[i] = infty;
         }

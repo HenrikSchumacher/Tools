@@ -13,10 +13,11 @@ namespace Tools
         
         for( Int i = 0; i < n/2; ++i )
         {
-            buffer = x[i];
-            x[i] = x[n-i-1];
-            x[n-i-1] = buffer;
+            buffer   = std::move(x[i]);
+            x[i]     = std::move(x[n-i-1]);
+            x[n-i-1] = std::move(buffer);
         }
+//        std::reverse(&x[0],&x[n]);
     }
     
     template<Side dir, typename T, typename Int>

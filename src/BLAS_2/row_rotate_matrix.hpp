@@ -3,7 +3,7 @@
 namespace Tools
 {
     template<
-    Size_T M, Size_T N,
+        Size_T M = VarSize, Size_T N = VarSize,
         typename T, typename Fun,
         typename Int = Size_T
     >
@@ -24,14 +24,14 @@ namespace Tools
             
             for( Int i = 0; i < half; ++i )
             {
-                copy_buffer<N>( &A[ldA * i], scratch, n );
+                move_buffer<N>( &A[ldA * i], scratch, n );
                 fun( &A[ldA *(m-i-1)], &A[ldA * i]      );
                 fun( scratch         , &A[ldA *(m-i-1)] );
             }
             
             if( M % 2 )
             {
-                copy_buffer<N>( &A[ldA * half], scratch, n );
+                move_buffer<N>( &A[ldA * half], scratch, n );
                 fun( scratch, &A[ldA * half] );
             }
         }
@@ -41,20 +41,23 @@ namespace Tools
             
             for( Int i = 0; i < half; ++i )
             {
-                copy_buffer<N>( &A[ldA * i], scratch, n );
+                move_buffer<N>( &A[ldA * i], scratch, n );
                 fun( &A[ldA *(m-i-1)], &A[ldA * i]      );
                 fun( scratch         , &A[ldA *(m-i-1)] );
             }
             
             if( m % 2 )
             {
-                copy_buffer<N>( &A[ldA * half], scratch, n );
+                move_buffer<N>( &A[ldA * half], scratch, n );
                 fun( scratch, &A[ldA * half] );
             }
         }
     }
     
-    template<Size_T M, Size_T N, typename T, typename Int = Size_T>
+    template<
+        Size_T M = VarSize, Size_T N = VarSize,
+        typename T, typename Int = Size_T
+    >
     void row_reverse_matrix(
         mptr<T> A,
         const Int ldA,
@@ -62,12 +65,13 @@ namespace Tools
         const Int n = static_cast<Int>(N)
     )
     {
+        // rotate_buffer(A,shift * n, m * n) would also work, but this does it i chunks.
         static_assert(IntQ<Int>, "");
         T * scratch = nullptr;
         
         auto fun = [n]( cptr<T> from, mptr<T> to )
         {
-            copy_buffer<N>( from, to, n );
+            move_buffer<N>( from, to, n );
         };
         
         safe_alloc( scratch, n );
@@ -79,7 +83,8 @@ namespace Tools
     
 
     
-    template<Size_T M, Size_T N, Side dir,
+    template<
+        Size_T M = VarSize, Size_T N = VarSize, Side dir = Side::Left,
         typename T, typename PreScan, typename PostScan,
         typename Int = Size_T
     >
@@ -126,7 +131,10 @@ namespace Tools
     }
     
     
-    template<Size_T M, Size_T N, Side dir, typename T, typename Int = Size_T >
+    template<
+        Size_T M = VarSize, Size_T N = VarSize, Side dir = Side::Left,
+        typename T, typename Int = Size_T
+    >
     void row_rotate_matrix(
         mptr<T> A,
         const Int ldA,
@@ -142,7 +150,7 @@ namespace Tools
         
         auto fun = [n]( cptr<T> from, mptr<T> to )
         {
-            copy_buffer<N>( from, to, n );
+            move_buffer<N>( from, to, n );
         };
         
         row_rotate_matrix<M,N,dir>( A, ldA, shift, m, n, std::move(fun), std::move(fun) );
