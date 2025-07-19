@@ -8,25 +8,50 @@ namespace Tools
     template<bool reverseQ = false, typename T, typename C = std::less<T>>
     TOOLS_FORCE_INLINE void CompSwap( mref<T> a, mref<T> b, C comp = C() )
     {
-        if constexpr ( reverseQ )
+        if constexpr ( IntQ<T> || FloatQ<T> )
         {
-            std::tie(b,a) = std::minmax({a,b},comp);
+            // TODO: This is suitable only for things that are easy to copy.
+            if constexpr ( reverseQ )
+            {
+                std::tie(b,a) = std::minmax({a,b},comp);
+            }
+            else
+            {
+                std::tie(a,b) = std::minmax({a,b},comp);
+            }
         }
         else
         {
-            std::tie(a,b) = std::minmax({a,b},comp);
+            // For generic objects we use std::swap (or customizd swap routines) and rely on move semantics.
+            // There will probably be a branch in the code, but that is well worth it for bigger data structures.
+            if constexpr ( reverseQ )
+            {
+                if( comp(a,b) )
+                {
+                    using std::swap;
+                    swap(a,b);
+                }
+            }
+            else
+            {
+                if( comp(b,a) )
+                {
+                    using std::swap;
+                    swap(b,a);
+                }
+            }
         }
     }
     
-    
+    // TODO: Might be overkill.
     template<bool reverseQ = false, typename C = std::less<double>>
     TOOLS_FORCE_INLINE void CompSwap( mref<double> a, mref<double> b, C comp = C()  )
     {
         using T = double;
         
-        constexpr bool lessQ = std::is_same_v<C,std::less<T>> || std::is_same_v<C,std::less_equal<T>>;
+        constexpr bool lessQ = SameQ<C,std::less<T>> || SameQ<C,std::less_equal<T>>;
         
-        constexpr bool greaterQ = std::is_same_v<C,std::greater<T>> || std::is_same_v<C,std::greater_equal<T>>;
+        constexpr bool greaterQ = SameQ<C,std::greater<T>> || SameQ<C,std::greater_equal<T>>;
         
         if constexpr ( lessQ || greaterQ )
         {
