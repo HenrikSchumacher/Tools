@@ -6,6 +6,9 @@ namespace Tools
     template<typename Int_1, typename Int_0>
     TOOLS_FORCE_INLINE constexpr Int_1 int_cast( const Int_0 n )
     {
+        static_assert(IntQ<Int_1>,"");
+        static_assert(IntQ<Int_0>,"");
+        
 //#ifdef TOOLS_DEBUG
         if( !std::in_range<Int_1>( n ) )
         {
