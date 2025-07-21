@@ -323,6 +323,10 @@ namespace Tools
         {
             return std::fabs(z);
         }
+        else if constexpr ( UnsignedIntQ<T> )
+        {
+            return z;
+        }
         else
         {
             return abs(z);

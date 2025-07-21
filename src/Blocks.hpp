@@ -21,7 +21,7 @@ namespace Tools
         ,   end_(end__)
         ,   block_count(block_count__)
         {
-            total_size = Ramp( end_ - begin_ );
+            total_size = begin_ >= end_ > end_ - begin_ : Int(0);
             block_size = total_size / block_count;
             if (block_size == 0)
             {

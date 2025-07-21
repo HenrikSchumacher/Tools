@@ -343,24 +343,6 @@ namespace Tools
         
         template<typename T> requires std::is_integral_v<T>
         static constexpr bool ComplexQ<T> = IntegralTypeTraits<T>::complexQ;
-
-        template<typename T>
-        using Unsigned =
-            std::conditional_t<sizeof(T) ==  1u,  UInt8,
-            std::conditional_t<sizeof(T) ==  2u,  UInt16,
-            std::conditional_t<sizeof(T) ==  4u,  UInt32,
-            std::conditional_t<sizeof(T) ==  8u,  UInt64,
-            T
-        >>>>;
-        
-        template<typename T>
-        using Signed =
-            std::conditional_t<sizeof(T) ==  1u,  Int8,
-            std::conditional_t<sizeof(T) ==  2u,  Int16,
-            std::conditional_t<sizeof(T) ==  4u,  Int32,
-            std::conditional_t<sizeof(T) ==  8u,  Int64,
-            T
-        >>>>;
         
         
     } // namespace Scalar

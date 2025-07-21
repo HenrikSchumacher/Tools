@@ -239,6 +239,12 @@ namespace Tools
     template<typename T>
     constexpr bool SignedIntQ = std::is_signed_v<T> && std::is_integral_v<T>;
     
+    template<typename T>
+    using ToSigned = std::make_signed_t<T>;
+    
+    template<typename T>
+    using ToUnsigned = std::make_unsigned_t<T>;
+    
 #define ASSERT_SIGNED_INT(I) static_assert( SignedIntQ<I>, "Template parameter " #I " must be a signed integral type." );
     
     template<typename T>
