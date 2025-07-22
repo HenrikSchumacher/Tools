@@ -537,8 +537,13 @@ namespace Tools
             return Min( delta, L - delta );
         }
     }
-    
-    template<typename T, bool left_closedQ = true, bool right_closedQ = false>
+
+    /*!@brief Checks whether `i` is contained in the interval defined by `a` and `b`.
+     */
+    template<
+        bool left_closedQ = true, bool right_closedQ = false,
+        typename T
+    >
     inline bool InIntervalQ( const T i, const T a, const T b )
     {
         if constexpr( left_closedQ && !right_closedQ )
