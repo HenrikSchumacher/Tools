@@ -81,8 +81,6 @@ namespace Tools
         safe_free( scratch );
     }
     
-
-    
     template<
         Size_T M = VarSize, Size_T N = VarSize, Side dir = Side::Left,
         typename T, typename PreScan, typename PostScan,
@@ -99,11 +97,8 @@ namespace Tools
     )
     {
         static_assert(IntQ<Int>, "");
-        
-        if( m <= Int(0) )
-        {
-            return;
-        }
+
+        if( m <= Int(0) ) { return; }
         
         Int s = (dir == Side::Left) ? (shift % m) : (-shift % m);
         
@@ -113,19 +108,17 @@ namespace Tools
         }
   
         // We must not abort here because pre_scan and post_scan need to be applied.
-//        if( s == Int(0) )
-//        {
-//            return;
-//        }
+//        if( s == Int(0) ) { return; }
         
         const Int k = m - s;
         
         T * scratch = nullptr;
         safe_alloc( scratch, ToSize_T(n) );
         
-        row_reverse_matrix<M,N>( &A[ldA * 0], ldA, scratch, s, n, pre_scan  );
-        row_reverse_matrix<M,N>( &A[ldA * s], ldA, scratch, k, n, pre_scan  );
-        row_reverse_matrix<M,N>( &A[ldA * 0], ldA, scratch, m, n, post_scan );
+        // This does not really work with fixed row count as s is not a compile-time constant.
+        row_reverse_matrix<VarSize,N>( &A[ldA * 0], ldA, scratch, s, n, pre_scan  );
+        row_reverse_matrix<VarSize,N>( &A[ldA * s], ldA, scratch, k, n, pre_scan  );
+        row_reverse_matrix<M      ,N>( &A[ldA * 0], ldA, scratch, m, n, post_scan );
             
         safe_free( scratch );
     }
@@ -143,10 +136,7 @@ namespace Tools
         const Int n = static_cast<Int>(N)
     )
     {
-        if( shift / m == Int(0) )
-        {
-            return;
-        }
+        if( (shift % m) == Int(0) ) { return; }
         
         auto fun = [n]( cptr<T> from, mptr<T> to )
         {
