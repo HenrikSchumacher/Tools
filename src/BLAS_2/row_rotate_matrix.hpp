@@ -81,6 +81,7 @@ namespace Tools
         safe_free( scratch );
     }
     
+    
     template<
         Size_T M = VarSize, Size_T N = VarSize, Side dir = Side::Left,
         typename T, typename PreScan, typename PostScan,
