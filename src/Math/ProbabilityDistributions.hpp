@@ -136,8 +136,6 @@ namespace Tools
         
         Gaussian() = default;
         
-        ~Gaussian() = default;
-        
         template<typename PRNG_T>
         TOOLS_FORCE_INLINE Real operator()( PRNG_T & random_engine )
         {
@@ -174,6 +172,117 @@ namespace Tools
             }
         }
         
+    };
+    
+    /*!brief Wrapped normal distribution with center `mu`, standard deviation `sigma`, and period `L`. Returns values in the half-open interval [0,L).
+     */
+    template<typename Real>
+    class WrappedNormalDistribution
+    {
+        static_assert(Scalar::FloatQ<Real>,"");
+        static_assert(Scalar::RealQ<Real>,"");
+        
+    private:
+        
+        Real mu     = 0;
+        Real sigma  = 1;
+        Real L      = Scalar::TwoPi<Real>;
+        Real L_inv  = Inv(Scalar::TwoPi<Real>);
+        
+        std::normal_distribution<Real> gaussian {mu,sigma};
+        
+    public:
+        
+        WrappedNormalDistribution() = default;
+        
+        WrappedNormalDistribution(
+            const Real center,
+            const Real standard_deviation,
+            const Real period
+        )
+        :   mu       { center }
+        ,   sigma    { standard_deviation }
+        ,   L        { period }
+        ,   L_inv    { Inv<Real>(period) }
+        ,   gaussian { mu, standard_deviation }
+        {}
+  
+        Real Mod( const Real x )
+        {
+            return x - L * std::floor(x * L_inv);
+        }
+        
+        template<typename PRNG_T>
+        TOOLS_FORCE_INLINE Real operator()( PRNG_T & random_engine )
+        {
+            return Mod(gaussian(random_engine));
+        }
+        
+        Real Center() const
+        {
+            return mu;
+        }
+        
+        Real StandardDeviation() const
+        {
+            return sigma;
+        }
+        
+        Real Period() const
+        {
+            return L;
+        }
+    };
+    
+    
+    /*!brief Discrete wrapped normal distribution with center `mu`, standard deviation `sigma`, and period `n`. Returns values in the half-open interval [0,L).
+     */
+    template<typename Int, typename Real>
+    class DiscreteWrappedNormalDistribution
+    {
+        static_assert(IntQ<Int>,"");
+        static_assert(FloatQ<Real>,"");
+        static_assert(Scalar::RealQ<Real>,"");
+        
+    private:
+        
+        WrappedNormalDistribution<Real> wrapped_gaussian;
+        
+        Int n;
+        
+    public:
+        
+        DiscreteWrappedNormalDistribution() = delete;
+        
+        DiscreteWrappedNormalDistribution(
+            const Real center,
+            const Real standard_deviation,
+            const Int  period
+        )
+        :   wrapped_gaussian { center, standard_deviation, Real(period) }
+        ,   n                { period }
+        {}
+  
+        template<typename PRNG_T>
+        TOOLS_FORCE_INLINE Int operator()( PRNG_T & random_engine )
+        {
+            return static_cast<Int>(std::floor(wrapped_gaussian(random_engine)));
+        }
+        
+        Real Center() const
+        {
+            return wrapped_gaussian.Center();
+        }
+        
+        Real StandardDeviation() const
+        {
+            return wrapped_gaussian.StandardDeviation();
+        }
+        
+        Int Period() const
+        {
+            return n ;
+        }
     };
 
 }
