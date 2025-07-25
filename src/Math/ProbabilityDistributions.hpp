@@ -174,10 +174,10 @@ namespace Tools
         
     };
     
-    /*!brief Wrapped normal distribution with center `mu`, standard deviation `sigma`, and period `L`. Returns values in the half-open interval [0,L).
+    /*!brief Wrapped Gaussian distribution with center `mu`, standard deviation `sigma`, and period `L`. Returns values in the half-open interval [0,L).
      */
     template<typename Real>
-    class WrappedNormalDistribution
+    class WrappedGaussianDistribution
     {
         static_assert(Scalar::FloatQ<Real>,"");
         static_assert(Scalar::RealQ<Real>,"");
@@ -193,9 +193,9 @@ namespace Tools
         
     public:
         
-        WrappedNormalDistribution() = default;
+        WrappedGaussianDistribution() = default;
         
-        WrappedNormalDistribution(
+        WrappedGaussianDistribution(
             const Real center,
             const Real standard_deviation,
             const Real period
@@ -235,10 +235,10 @@ namespace Tools
     };
     
     
-    /*!brief Discrete wrapped normal distribution with center `mu`, standard deviation `sigma`, and period `n`. Returns values in the half-open interval [0,L).
+    /*!brief Discrete wrapped Gaussian distribution with center `mu`, standard deviation `sigma`, and period `n`. Returns values in the half-open interval [0,L).
      */
     template<typename Int, typename Real>
-    class DiscreteWrappedNormalDistribution
+    class DiscreteWrappedGaussianDistribution
     {
         static_assert(IntQ<Int>,"");
         static_assert(FloatQ<Real>,"");
@@ -246,15 +246,15 @@ namespace Tools
         
     private:
         
-        WrappedNormalDistribution<Real> wrapped_gaussian;
+        WrappedGaussianDistribution<Real> wrapped_gaussian;
         
         Int n;
         
     public:
         
-        DiscreteWrappedNormalDistribution() = delete;
+        DiscreteWrappedGaussianDistribution() = delete;
         
-        DiscreteWrappedNormalDistribution(
+        DiscreteWrappedGaussianDistribution(
             const Real center,
             const Real standard_deviation,
             const Int  period
