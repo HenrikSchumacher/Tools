@@ -151,6 +151,14 @@ namespace Tools
             safe_free(ptr_);
         }
 
+        std::size_t max_n = std::numeric_limits<std::size_t>::max() / sizeof(T);
+        
+        if( n > max_n )
+        {
+            eprint("safe_alloc<" + TypeName<T> + ": size n = " + ToString(n) + " was too big to fit into memory.");
+            return 2;
+        }
+        
         ptr_ = static_cast<T *>( aligned_malloc( n * sizeof(T), aligment ) );
 
         return wasallocated;
