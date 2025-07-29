@@ -381,17 +381,14 @@ namespace Tools
 #include "src/Print.hpp"
 #include "src/Time.hpp"
 #include "src/Profiler.hpp"
+#include "src/BLAS_Enums.hpp"
+#include "src/Integers.hpp"
+#include "src/Scalars.hpp"
+#include "src/TypeName.hpp"
+
 #include "src/Memory.hpp"
 
-
-
-#include "src/Integers.hpp"
-#include "src/BLAS_Enums.hpp"
-#include "src/Scalars.hpp"
 #include "src/BitFiddling.hpp"
-
-
-
 
 #define _USE_MATH_DEFINES
 #include <cmath>
@@ -422,8 +419,6 @@ namespace Tools
 
 // Overloads of combine_scalars for complex types; uses mat_T.
 //#include "src/Scalars/combine_scalars_mat.hpp"
-
-#include "src/TypeName.hpp"
 
 #include "src/ParallelDo_Thread.hpp"
 
