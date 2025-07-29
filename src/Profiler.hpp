@@ -151,16 +151,23 @@ namespace Tools
         }
         
         
+        template<bool tabsQ = true>
         inline void logprint( const std::string & s )
         {
             const std::lock_guard<std::mutex> lock( log_mutex );
+            if constexpr ( tabsQ )
+            {
+#if defined(TOOLS_ENABLE_PROFILER)
+                Profiler::log << std::string( 2 * (Profiler::stack.size()+1), ' ' );
+#endif
+            }
             Profiler::log << s << "\n" << std::endl;
         }
         
-        template<Size_T N>
+        template<bool tabsQ = true, Size_T N>
         inline void logprint( const ct_string<N> & s )
         {
-            logprint( s.data() );
+            logprint<tabsQ>( s.data() );
         }
         
         inline void eprint( const std::string & s )
@@ -173,7 +180,7 @@ namespace Tools
     #endif
             const std::lock_guard<std::mutex> cerr_lock( Tools::cerr_mutex );
             std::cerr << msg << std::endl;
-            logprint( msg );
+            logprint<false>( msg );
         }
         
         template<Size_T N>
@@ -328,15 +335,16 @@ namespace Tools
      * @brief Print to log file specified in `Profiler::log_file`.
      */
     
+    template<bool tabsQ = true>
     inline void logprint( const std::string & s )
     {
-        Profiler::logprint(s);
+        Profiler::logprint<tabsQ>(s);
     }
     
-    template<Size_T N>
+    template<bool tabsQ = true, Size_T N>
     inline void logprint( const ct_string<N> & s )
     {
-        Profiler::logprint(s);
+        Profiler::logprint<tabsQ>(s);
     }
     
     
@@ -416,8 +424,8 @@ namespace Tools
     
     inline void wprint( const std::string & s )
     {
-        print(    std::string("WARNING: ") + s );
-        logprint( std::string("WARNING: ") + s );
+        print( std::string("WARNING: ") + s );
+        logprint<false>( std::string("WARNING: ") + s );
     }
     
     template<Size_T N>
