@@ -155,7 +155,7 @@ namespace Tools
         
         if( n > max_n )
         {
-            eprint("safe_alloc<" + TypeName<T> + ": size n = " + ToString(n) + " was too big to fit into memory.");
+            eprint(std::string("safe_alloc<") + TypeName<T> + ": size n = " + ToString(n) + " was too big to fit into memory.");
             return 2;
         }
         
