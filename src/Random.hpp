@@ -10,6 +10,7 @@ namespace Tools
         
         using PRNG_result_type_T = typename PRNG_T::result_type;
         
+        // TODO: This cannot be universally true.
         static constexpr Size_T PRNG_T_state_size = 4;
         
         static constexpr Size_T seed_size  = (PRNG_T_state_size * sizeof(PRNG_result_type_T)) / sizeof(RNG_result_type_T);
