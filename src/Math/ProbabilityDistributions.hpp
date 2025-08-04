@@ -235,7 +235,7 @@ namespace Tools
     };
     
     
-    /*!brief Discrete wrapped Gaussian distribution with center `mu`, standard deviation `sigma`, and period `n`. Returns values in the half-open interval [0,L).
+    /*!brief Discrete wrapped Gaussian distribution with center `mu`, standard deviation `sigma`, and period `L`. Returns values in the half-open interval [0,L).
      */
     template<typename Int, typename Real>
     class DiscreteWrappedGaussianDistribution
@@ -277,6 +277,121 @@ namespace Tools
         Real StandardDeviation() const
         {
             return wrapped_gaussian.StandardDeviation();
+        }
+        
+        Int Period() const
+        {
+            return n ;
+        }
+    };
+    
+    
+    
+    
+    /*!brief Wrapped Laplace distribution with center `mu`, scale parameter `beta`, and period `L`. Returns values in the half-open interval [0,L).  Here the Laplace distribution is given by f(x) = 1/(2 * beta) * exp( - |x-mu|/beta ).
+     */
+    template<typename Real>
+    class WrappedLaplaceDistribution
+    {
+        static_assert(Scalar::FloatQ<Real>,"");
+        static_assert(Scalar::RealQ<Real>,"");
+        
+    private:
+        
+        Real mu     = 0;
+        Real beta   = 1;
+        Real L      = Scalar::TwoPi<Real>;
+        Real L_inv  = Inv(Scalar::TwoPi<Real>);
+        
+        std::exponential_distribution<Real> exp_dist { Inv<Real>(beta) };
+        std::uniform_int_distribution<int>  coin     { 0, 1 };
+        
+    public:
+        
+        WrappedLaplaceDistribution() = default;
+        
+        WrappedLaplaceDistribution(
+            const Real center,
+            const Real scale_parameter,
+            const Real period
+        )
+        :   mu       { center }
+        ,   beta     { scale_parameter }
+        ,   L        { period }
+        ,   L_inv    { Inv<Real>(period) }
+        ,   exp_dist { Inv<Real>(scale_parameter) }
+        {}
+  
+        Real Mod( const Real x )
+        {
+            return x - L * std::floor(x * L_inv);
+        }
+        
+        template<typename PRNG_T>
+        TOOLS_FORCE_INLINE Real operator()( PRNG_T & random_engine )
+        {
+            const Real sign = (coin(random_engine) ? Real(1) : Real(-1) );
+            return Mod( mu + sign * exp_dist(random_engine));
+        }
+        
+        Real Center() const
+        {
+            return mu;
+        }
+        
+        Real ScaleParameter() const
+        {
+            return beta;
+        }
+        
+        Real Period() const
+        {
+            return L;
+        }
+    };
+    
+    /*!brief Discrete wrapped Laplace distribution with center `mu`, scale parametr `beta`, and period `L`. Returns values in the half-open interval [0,L).
+     */
+    template<typename Int, typename Real>
+    class DiscreteWrappedLaplaceDistribution
+    {
+        static_assert(IntQ<Int>,"");
+        static_assert(FloatQ<Real>,"");
+        static_assert(Scalar::RealQ<Real>,"");
+        
+    private:
+        
+        WrappedLaplaceDistribution<Real> wrapped_laplacian;
+        
+        Int n;
+        
+    public:
+        
+        DiscreteWrappedLaplaceDistribution() = delete;
+        
+        DiscreteWrappedLaplaceDistribution(
+            const Real center,
+            const Real beta,
+            const Int  period
+        )
+        :   wrapped_laplacian { center, beta, Real(period) }
+        ,   n                 { period }
+        {}
+  
+        template<typename PRNG_T>
+        TOOLS_FORCE_INLINE Int operator()( PRNG_T & random_engine )
+        {
+            return static_cast<Int>(std::floor(wrapped_laplacian(random_engine)));
+        }
+        
+        Real Center() const
+        {
+            return wrapped_laplacian.Center();
+        }
+        
+        Real ScaleParameter() const
+        {
+            return wrapped_laplacian.ScaleParameter();
         }
         
         Int Period() const
