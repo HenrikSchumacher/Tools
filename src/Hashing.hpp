@@ -25,9 +25,9 @@ namespace Tools {
     };
     
     
-    template<typename T, std::size_t n>
     struct array_hash
     {
+        template<typename T, std::size_t n>
         inline std::size_t operator()(const std::array<T,n> & a) const
         {
             std::size_t seed = 0;
