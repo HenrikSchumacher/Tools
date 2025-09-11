@@ -48,7 +48,54 @@ namespace Tools
     } // FindFirstPositionGreater
     
     
-    /*!@brief Returns the largest integer interval `[begin,end[` in `[0,n]`  such that each `i`, `begin <= i < end` satisfies `a <= sorted_list[i] < b`. This requires that `sorted_list` is a sorted array of length at least `n` without duplicates.
+    /*!@brief Returns the first position `p` in the sorted input array `sorted_list` such that `sorted_list[p] >= value`. If no such position exists, then `p = n`is returned.
+     */
+    template<typename T, typename Int, typename CMP = std::less<T>>
+    inline Int FindFirstPositionGreaterEqual(
+        cptr<T> sorted_list, const Int n, cref<T> value, CMP && cmp = CMP()
+    )
+    {
+        static_assert(IntQ<Int>,"");
+        
+        if( n <= Int(0) ) { return Int(0); }
+        
+        Int L = Int(0);
+        
+        if( !cmp(sorted_list[L],value) ) // sorted_list[L] >= value
+        {
+            return L;
+        }
+        
+        Int R = n - Int(1);
+        
+        if( cmp(sorted_list[R],value) ) // sorted_list[R] < value
+        {
+            return n;
+        }
+
+        // Invariants from here on: sorted_list[L] < value <= sorted_list[R]
+        // Starting binary search.
+        while( L + Int(1) < R )
+        {
+            const Int C = R - (R-L)/static_cast<Int>(2);
+
+            if( !cmp(sorted_list[C],value) ) // value <= sorted_list[C]
+            {
+                R = C;
+            }
+            else // sorted_list[C] <= value
+            {
+                L = C;
+            }
+        }
+        
+        return R;
+        
+    } // FindFirstPositionGreaterEqual
+    
+    
+    /*!@brief Returns the largest integer interval `[begin,end[` in `[0,n]`  such that each `i`, `begin <= i < end` satisfies `a <= sorted_list[i] < b`. The empty interval is represented by`[n,n[`.
+     * This function requires that `sorted_list` is a sorted array of length at least `n` without duplicates.
      */
     
     template<typename T, typename Int, typename CMP = std::less<T>>
@@ -56,28 +103,38 @@ namespace Tools
         cptr<T> sorted_list, const Int n, cref<T> a, cref<T> b, CMP && cmp = CMP()
     )
     {
-        if( !cmp(a,b) ) { return std::pair{Int(0),Int(0)}; }
-        
+//        print("FindRange");
 //        TOOLS_DUMP(a);
 //        TOOLS_DUMP(b);
 //        TOOLS_DUMP(n);
+        
+        if( !cmp(a,b) ) { return std::pair{Int(0),Int(0)}; }
+
 //        valprint("sorted_list",ArrayToString(sorted_list,{n}));
         
-        Int end = FindFirstPositionGreater(sorted_list,n  ,b,cmp);
+        Int end = FindFirstPositionGreaterEqual(sorted_list,n,b,cmp);
         
-        Int begin = 0;
-        if ( cmp(sorted_list[begin],a) ) // a < sorted_list[begin]
-        {
-            // The correct value for begin must be greater an 0.
-            begin = FindFirstPositionGreater(sorted_list,end,a,cmp);
-            if( !cmp(sorted_list[begin-Int(1)],a) )
-            {
-                --begin;
-            }
-        }
+//        Int begin = 0;
+//        if ( cmp(sorted_list[begin],a) ) // a < sorted_list[begin]
+//        {
+//            // The correct value for begin must be greater than 0.
+//            begin = FindFirstPositionGreater(sorted_list,end,a,cmp);
+//            if( !cmp(sorted_list[begin-Int(1)],a) )
+//            {
+//                --begin;
+//            }
+//        }
+        
+        Int begin = FindFirstPositionGreaterEqual(sorted_list,end,a,cmp);
 
+//        TOOLS_DUMP(begin);
+//        TOOLS_DUMP(a);
 //        TOOLS_DUMP(sorted_list[begin]);
+//        TOOLS_DUMP(sorted_list[begin+1]);
+//        TOOLS_DUMP(end);
+//        TOOLS_DUMP(b);
 //        TOOLS_DUMP(sorted_list[end-1]);
+//        TOOLS_DUMP(sorted_list[end]);
         
         return std::pair{begin,end};
         
