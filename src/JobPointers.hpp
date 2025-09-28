@@ -223,9 +223,7 @@ namespace Tools
                 }
 
                 job_ptr[static_cast<Size_T>(thread + 1)] = b;
-            }
-            
-            TOOLS_PTOC("BalanceWorkLoad");
+            }   
         }
         
         template<typename I>
