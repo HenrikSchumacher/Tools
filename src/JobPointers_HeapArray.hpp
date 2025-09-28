@@ -222,7 +222,7 @@ namespace Tools
             // The cost of the k-th thread goes from job no job_ptr[k] to job no job_ptr[k+1] (as always in C/C++, job_ptr[k+1] points _after_ the last job.
         
             
-            TOOLS_PTIC("BalanceWorkLoad_Accumulated");
+            TOOLS_PTIMER(timer,"BalanceWorkLoad_Accumulated");
             
             HeapArray<T,Int> acc_costs( job_count + 1 );
             
@@ -234,8 +234,6 @@ namespace Tools
             parallel_accumulate( costs, &acc_costs[1], job_count, Int(1) );
 
             BalanceWorkLoad( job_count, acc_costs.data() );
-            
-            TOOLS_PTOC("BalanceWorkLoad_Accumulated");
         }
         
         template<typename T>
@@ -250,7 +248,7 @@ namespace Tools
             // The cost of the k-th thread goes from job no job_ptr[k] to job no job_ptr[k+1] (as always in C/C++, job_ptr[k+1] points _after_ the last job.
         
             
-            TOOLS_PTIC("BalanceWorkLoad");
+            TOOLS_PTIMER(timer,"BalanceWorkLoad");
             
             if( job_count <=0 )
             {
@@ -280,9 +278,6 @@ namespace Tools
                 logvalprint( "acc_costs", ArrayToString( acc_costs, {job_count + 1} ) );
                 
                 std::fill( &job_ptr[0], &job_ptr[thread_count+1], Int(0) );
-                            
-                TOOLS_PTOC("BalanceWorkLoad");
-                            
                 return;
             }
             
@@ -332,8 +327,6 @@ namespace Tools
 
                 job_ptr[thread + 1] = b;
             }
-            
-            TOOLS_PTOC("BalanceWorkLoad");
         }
 
         [[nodiscard]] std::string friend ToString( const JobPointers & J )

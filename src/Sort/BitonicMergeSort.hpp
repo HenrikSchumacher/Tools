@@ -107,7 +107,7 @@ namespace Tools
         template<Size_T power_of_2, typename T, typename C = std::less<T>>
         void BitonicMergeSort( mptr<T> a, mptr<T> b, const Size_T n, C comp = C() )
         {
-            TOOLS_PTIC(ClassName()+"::BitonicMergeSort<"+ToString(power_of_2)+","+TypeName<T>+">");
+            TOOLS_PTIMER(timer,ClassName()+"::BitonicMergeSort<"+ToString(power_of_2)+","+TypeName<T>+">");
             
             BitonicSort<power_of_2,vector_size,reverseQ>( a, comp );
             
@@ -206,27 +206,17 @@ namespace Tools
                     }
                 }
                 
-                TOOLS_PTIC(ClassName()+"::Copy");
-                
                 // TODO: This copy can be avoided by sorting the chunks directly into a, b, depending on the parity of the the depth of their leave node.
                 
                 copy_buffer( a, b, n );
-                
-                TOOLS_PTOC(ClassName()+"::Copy");
-                
-                TOOLS_PTIC(ClassName()+"::Merge");
-                
+
                 MergeBuffers<reverseQ>(
                     &b[0],          &b[power_of_2],
                     &b[power_of_2], &b[n],
                     &a[0],          &a[n],
                     comp
                 );
-                
-                TOOLS_PTOC(ClassName()+"::Merge");
             }
-            
-            TOOLS_PTOC(ClassName()+"::BitonicMergeSort<"+ToString(power_of_2)+","+TypeName<T>+">");
         }
 
         

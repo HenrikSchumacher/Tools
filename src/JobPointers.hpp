@@ -130,7 +130,7 @@ namespace Tools
             // The cost of the k-th thread goes from job no job_ptr[k] to job no job_ptr[k+1] (as always in C/C++, job_ptr[k+1] points _after_ the last job.
         
             
-            TOOLS_PTIC("BalanceWorkLoad_Accumulated");
+            TOOLS_PTIMER(timer,"BalanceWorkLoad_Accumulated");
             
             T * restrict acc_costs = nullptr;
             
@@ -142,8 +142,6 @@ namespace Tools
             BalanceWorkLoad( job_count, acc_costs);
             
             safe_free( acc_costs );
-            
-            TOOLS_PTOC("BalanceWorkLoad_Accumulated");
         }
         
         template<typename T>
@@ -156,17 +154,14 @@ namespace Tools
             // Uses a binary search to find the chunk boundaries.
             // The cost of the i-th job is job_acc_costs[i+1] - job_acc_costs[i].
             // The cost of the k-th thread goes from job no job_ptr[k] to job no job_ptr[k+1] (as always in C/C++, job_ptr[k+1] points _after_ the last job.
-        
             
-            TOOLS_PTIC("BalanceWorkLoad");
-            
+            TOOLS_PTIMER(timer,"BalanceWorkLoad");
 
             job_ptr[static_cast<Size_T>(thread_count)] = job_count;
 
             const Int naive_chunk_size = ((job_count + thread_count) - Int(1)) / thread_count;
             
             const T total_cost = acc_costs[job_count];
-            
             
             if( total_cost <=0 )
             {
@@ -178,8 +173,6 @@ namespace Tools
                 logvalprint( "acc_costs", ArrayToString( acc_costs, {job_count + 1} ) );
                 
                 std::fill( job_ptr.begin(), job_ptr.end(), Int(0));
-                            
-                TOOLS_PTOC("BalanceWorkLoad");
                             
                 return;
             }
