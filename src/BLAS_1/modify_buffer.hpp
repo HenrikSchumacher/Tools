@@ -59,7 +59,7 @@ namespace Tools
             "Second argument is real, but first of the other arguments are not."
         );
         
-        // We refrain from automagically casting `a` to the right precision because this is better done once before any loop that calls `modify_buffer`. Hence we prefer a compile error here.
+        // We refrain from automagically casting `a` to the right precision because this is better done once before any loop that calls `modify_buffer`. Hence, we prefer a compile error here.
         
         static_assert(
             Prec<a_T> == Prec<x_T>,

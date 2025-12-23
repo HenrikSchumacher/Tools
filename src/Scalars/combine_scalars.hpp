@@ -34,7 +34,7 @@ namespace Tools
             "Fourth argument is real, but some of the other arguments are complex."
         );
         
-        // We refrain from automagically casting `a` and `b` to the right precision because this is better done once before any loop that calls `combine_scalars`. Hence we prefer a compile error here.
+        // We refrain from automagically casting `a` and `b` to the right precision because this is better done once before any loop that calls `combine_scalars`. Hence, we prefer a compile error here.
         
         static_assert(
             Scalar::Prec<a_T> == Scalar::Prec<x_T>,
@@ -85,7 +85,7 @@ namespace Tools
             "Fourth argument is real, but some of the other arguments are complex."
         );
         
-        // We refrain from automagically casting `a` and `b` to the right precision because this is better done once before any loop that calls `combine_scalars`. Hence we prefer a compile error here.
+        // We refrain from automagically casting `a` and `b` to the right precision because this is better done once before any loop that calls `combine_scalars`. Hence, we prefer a compile error here.
         
         static_assert(
             Scalar::Prec<a_T> == Scalar::Prec<z_T>,

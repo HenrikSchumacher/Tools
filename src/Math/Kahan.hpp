@@ -21,7 +21,7 @@ namespace Tools
         
         TOOLS_MAKE_FP_STRICT()
         
-        // Thus should use one negation less than the above.
+        // This should use one negation less than the above.
         const Real w = b * c;
         const Real e = std::fma( -b, c, w );
         const Real f = std::fma( -a, d, w );
