@@ -412,9 +412,9 @@ namespace Tools
     }
     
     
-#define TOOLS_LOGDUMP(x) logvalprint( std::string(#x), x );
+#define TOOLS_LOGDUMP(x) Tools::logvalprint( std::string(#x), x );
     
-#define TOOLS_DDUMP(x) logvalprint( std::string(#x), x ); valprint( std::string(#x), x );
+#define TOOLS_DDUMP(x) Tools::logvalprint( std::string(#x), x ); Tools::valprint( std::string(#x), x );
     
 
     
