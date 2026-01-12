@@ -146,12 +146,12 @@ namespace Tools
             if constexpr( lockQ )
             {
                 const std::lock_guard<std::mutex> cache_lock( cache_mutex );
-                result = static_cast<bool>( cache.count( key ) );
+                result = cache.contains( key );
             }
             else
             {
                 // The version without lock is necessary because we call InCacheQ frequently from locked routines.
-                result = static_cast<bool>( cache.count( key ) );
+                result = cache.contains( key );
             }
             
             return result;
@@ -261,11 +261,11 @@ namespace Tools
             if constexpr( lockQ )
             {
                 const std::lock_guard<std::mutex> p_cache_lock( p_cache_mutex );
-                result = static_cast<bool>( p_cache.count( key ) );
+                result = p_cache.contains( key );
             }
             else
             {
-                result = static_cast<bool>( p_cache.count( key ) );
+                result = p_cache.contains( key );
             }
             return result;
         }
