@@ -435,6 +435,22 @@ namespace Tools
     }
     
     /*!
+     * @brief Print a note to `std::cout`.
+     */
+    
+    inline void nprint( const std::string & s )
+    {
+        print( std::string("NOTE: ") + s );
+        logprint<false>( std::string("NOTE: ") + s );
+    }
+    
+    template<Size_T N>
+    inline void nprint( const ct_string<N> & s )
+    {
+        nprint(s.data());
+    }
+    
+    /*!
      * @brief This print function is only active if macro `TOOLS_ENABLE_PROFILER` is defined.
      * It prints to the log file specified in `Profiler::log_file`.
      */
