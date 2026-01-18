@@ -228,7 +228,7 @@ namespace Tools
             {
                 eprint(ClassName() + ": pointer is nullptr.");
             }
-            if( (i < Int(0)) || (i > buffer_size) )
+            if( std::cmp_less(i,Int(0)) || std::cmp_greater(i,buffer_size) )
             {
                 eprint(ClassName()+": first index " + ToString(i) + " is out of bounds [ 0, " + ToString(buffer_size) +" [.");
             }
