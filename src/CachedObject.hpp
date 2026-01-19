@@ -217,14 +217,15 @@ namespace Tools
             
             const std::lock_guard<std::mutex> cache_lock( cache_mutex );
             
-            s += "{\n";
+            Size_T iter = 0;
+            s += "{ ";
             for( auto const & p : cache )
             {
-                s += "\t";
+                if( iter > Size_T(0) ) { s += ", "; }
                 s += p.first;
-                s += "\n";
+                ++iter;
             }
-            s += "}";
+            s += " }";
             return s;
         }
         
