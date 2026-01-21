@@ -46,7 +46,8 @@ namespace Tools
         typename a_T, typename x_T, typename b_T, typename y_T, typename Int = Size_T
     >
     TOOLS_FORCE_INLINE void combine_buffers(
-        cref<a_T> a, cptr<x_T> x, cref<b_T> b, mptr<y_T> y,
+        [[maybe_unused]] cref<a_T> a, cptr<x_T> x,
+        [[maybe_unused]] cref<b_T> b, mptr<y_T> y,
         const Int n = static_cast<Int>(N),
         const Int thread_count = 1
     )
@@ -181,7 +182,9 @@ namespace Tools
         typename a_T, typename x_T, typename b_T, typename y_T, typename z_T, typename Int = Size_T
     >
     TOOLS_FORCE_INLINE void combine_buffers3(
-        cref<a_T> a, cptr<x_T> x, cref<b_T> b, cptr<y_T> y, mptr<z_T> z,
+        [[maybe_unused]] cref<a_T> a, cptr<x_T> x,
+        [[maybe_unused]] cref<b_T> b, cptr<y_T> y,
+                                      mptr<z_T> z,
         const Int n = static_cast<Size_T>(N),
         const Int thread_count = Int(1)
     )

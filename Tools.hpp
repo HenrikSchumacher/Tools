@@ -174,17 +174,21 @@
 
 // see https://learn.microsoft.com/en-us/cpp/preprocessor/float-control?view=msvc-170
 
-    #define TOOLS_MAKE_FP_FAST()                                    \
-        _Pragma(TOOLS_STRINGIFY(float_control(except, off)))        \
-        _Pragma(TOOLS_STRINGIFY(fenv_access(off)))                  \
-        _Pragma(TOOLS_STRINGIFY(float_control(precise, off)))       \
-        _Pragma(TOOLS_STRINGIFY(fp_contract(on)))                   \
+#define TOOLS_MAKE_FP_FAST()                                    \
+    _Pragma(TOOLS_STRINGIFY(float_control(except, off)))        \
+    _Pragma(TOOLS_STRINGIFY(fenv_access(off)))                  \
+    _Pragma(TOOLS_STRINGIFY(float_control(precise, off)))       \
+    _Pragma(TOOLS_STRINGIFY(fp_contract(on)))                   \
+
+#elif defined(__clang__) && !defined(_MSC_VER)        // for pure clang
+
+    #define TOOLS_MAKE_FP_FAST() _Pragma(TOOLS_STRINGIFY(float_control(precise, off)))
 
 #else
 
-    #define TOOLS_MAKE_FP_FAST()                                    \
-        _Pragma(TOOLS_STRINGIFY(float_control(precise, off)))
+    // TODO: Define something better for gcc.
 
+    #define TOOLS_MAKE_FP_FAST()
 
 #endif
 
@@ -199,12 +203,15 @@
         _Pragma(TOOLS_STRINGIFY(float_control(except, on)))
 
 
-
-#else
+#elif defined(__clang__) && !defined(_MSC_VER)        // for pure clang
 
     #define TOOLS_MAKE_FP_STRICT()                              \
         _Pragma(TOOLS_STRINGIFY(float_control(precise, on)))
 
+#else
+
+    // TODO: Define something better for gcc.
+    #define TOOLS_MAKE_FP_STRICT()
 
 #endif
 

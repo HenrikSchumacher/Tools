@@ -39,7 +39,8 @@ namespace Tools
         static std::mutex log_mutex;
         static std::ofstream log  ( log_file );
         
-        static int blocker_count = 0;
+        // Only used in builds with TOOLS_ENABLE_PROFILER.
+        [[maybe_unused]] static int blocker_count = 0;
         
         struct StackNode
         {
