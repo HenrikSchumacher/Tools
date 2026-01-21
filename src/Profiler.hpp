@@ -7,8 +7,7 @@
 namespace Tools
 {
     
-    /*!
-     * @brief Return user's home directory.
+    /*!@brief Return user's home directory.
      */
     
     static std::filesystem::path HomeDirectory(void)
@@ -88,7 +87,7 @@ namespace Tools
             Size_T(1), StackNode( id_counter++, Int(-1), "root" )
         );
 
-#endif
+#endif // defined(TOOLS_ENABLE_PROFILER)
         
         
         inline void Clear(
@@ -143,7 +142,7 @@ namespace Tools
             id_counter = 0;
             stack.clear();
             stack.emplace_back(id_counter++,Int(-1),"root");
-#endif
+#endif // defined(TOOLS_ENABLE_PROFILER)
         }
         
         inline void Clear( const bool silentQ = false, const bool appendQ = false )
@@ -186,6 +185,20 @@ namespace Tools
         
         template<Size_T N>
         inline void eprint( const ct_string<N> & s )
+        {
+            eprint( s.data() );
+        }
+        
+        
+        inline void error( const std::string & s )
+        {
+            std::string msg ( std::string("ERROR: ") + s );
+            logprint<false>( msg );
+            throw std::runtime_error(msg);
+        }
+        
+        template<Size_T N>
+        inline void error( const ct_string<N> & s )
         {
             eprint( s.data() );
         }
@@ -349,8 +362,7 @@ namespace Tools
     }
     
     
-    /*!
-     * @brief Print an error to `std::cout` and `std::cerr`.
+    /*!@brief Print an error to `std::cout` and `std::cerr`.
      */
     
     inline void eprint( const std::string & s )
@@ -362,6 +374,20 @@ namespace Tools
     inline void eprint( const ct_string<N> & s )
     {
         Profiler::eprint(s);
+    }
+    
+    /*!@brief Print log message and throw a `std::runtime_error`.
+     */
+    
+    inline void error( const std::string & s )
+    {
+        Profiler::error(s);
+    }
+    
+    template<Size_T N>
+    inline void error( const ct_string<N> & s )
+    {
+        Profiler::error(s);
     }
 
     
@@ -419,8 +445,7 @@ namespace Tools
     
 
     
-    /*!
-     * @brief Print a warning to `std::cout`.
+    /*!@brief Print a warning to `std::cout`.
      */
     
     inline void wprint( const std::string & s )
@@ -451,8 +476,7 @@ namespace Tools
         nprint(s.data());
     }
     
-    /*!
-     * @brief This print function is only active if macro `TOOLS_ENABLE_PROFILER` is defined.
+    /*!@brief This print function is only active if macro `TOOLS_ENABLE_PROFILER` is defined.
      * It prints to the log file specified in `Profiler::log_file`.
      */
     
@@ -466,8 +490,7 @@ namespace Tools
 #endif
     }
 
-    /*!
-     * @brief This print function is only active if macro `TOOLS_ENABLE_PROFILER` is defined.
+    /*!@brief This print function is only active if macro `TOOLS_ENABLE_PROFILER` is defined.
      * It prints to the log file specified in `Profiler::log_file`.
      */
     
@@ -482,8 +505,7 @@ namespace Tools
 #endif
     }
 
-    /*!
-     * @brief This print function is only active if macro `TOOLS_ENABLE_PROFILER` is defined.
+    /*!@brief This print function is only active if macro `TOOLS_ENABLE_PROFILER` is defined.
      * It prints to the log file specified in `Profiler::log_file`.
      */
     
@@ -499,8 +521,7 @@ namespace Tools
 #endif
     }
     
-    /*!
-     * @brief This print function is only active if macro `TOOLS_ENABLE_PROFILER` is defined.
+    /*!@brief This print function is only active if macro `TOOLS_ENABLE_PROFILER` is defined.
      * It prints to the log file specified in `Profiler::log_file`.
      */
     
