@@ -195,12 +195,12 @@ namespace Tools
 //        }
         
         // Caution! This function is destructive.
-        template<bool check_existence_Q = true>
+        template<bool check_existenceQ = true>
         void SetCache( cref<std::string> key, std::any && thing ) const
         {
             const std::lock_guard<std::mutex> cache_lock( cache_mutex );
             
-            if constexpr ( check_existence_Q )
+            if constexpr ( check_existenceQ )
             {
                 if( this->template InCacheQ<false>(key) )
                 {
@@ -299,12 +299,12 @@ namespace Tools
         }
         
         // Caution! This function is destructive.
-        template<bool check_existence_Q = true>
+        template<bool check_existenceQ = true>
         void SetPersistentCache( cref<std::string> key, std::any && thing ) const
         {
             const std::lock_guard<std::mutex> p_cache_lock( p_cache_mutex );
             
-            if constexpr ( check_existence_Q )
+            if constexpr ( check_existenceQ )
             {
                 if( this->template InPersistentCacheQ<false>(key) )
                 {

@@ -193,14 +193,14 @@ namespace Tools
         inline void error( const std::string & s )
         {
             std::string msg ( std::string("ERROR: ") + s );
-            logprint<false>( msg );
+            eprint(msg);
             throw std::runtime_error(msg);
         }
         
         template<Size_T N>
         inline void error( const ct_string<N> & s )
         {
-            eprint( s.data() );
+            error( s.data() );
         }
         
         
