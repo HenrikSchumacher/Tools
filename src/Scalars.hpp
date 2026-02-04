@@ -329,7 +329,7 @@ namespace Tools
         }
         else
         {
-            return abs(z);
+            return static_cast<T>(abs(z));
         }
     }
     

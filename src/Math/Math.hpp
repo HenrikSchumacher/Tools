@@ -526,15 +526,15 @@ namespace Tools
         {
             auto [a,b] = MinMax(i,j);
             
-            const T delta = b - a;
+            const T delta = static_cast<T>(b - a);
             
-            return Min( delta, L - delta );
+            return Min( delta, static_cast<T>(L - delta) );
         }
         else
         {
-            const T delta = Abs(j-i);
+            const T delta = static_cast<T>(Abs(j-i));
             
-            return Min( delta, L - delta );
+            return Min( delta, static_cast<T>(L - delta) );
         }
     }
 

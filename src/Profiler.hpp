@@ -110,23 +110,25 @@ namespace Tools
             {
                 Profiler::log.open( Profiler::log_file );
             }
-
-            if( !silentQ )
-            {
-                print( std::string("Log     will be written to ") + Profiler::log_file.string() + "." );
-            }
             
+            if( Profiler::log.good() )
+            {
+                if( !silentQ )
+                {
+                    print( std::string("Log     will be written to ") + Profiler::log_file.string() + "." );
+                }
+            }
+            else
+            {
+                print( std::string("ERROR: Profiler failed to open file ") + Profiler::log_file.string() + "." );
+            }
+
             Profiler::log << std::setprecision(16);
             
 #if defined(TOOLS_ENABLE_PROFILER)
             const std::lock_guard<std::mutex> prof_lock( prof_mutex );
             
             Profiler::prof_file = dir / "Tools_Profile.tsv";
-
-            if( !silentQ )
-            {
-                print( std::string("Profile will be written to ") + Profiler::prof_file.string() + ".");
-            }
             
             Profiler::prof.close();
             
@@ -137,6 +139,18 @@ namespace Tools
             else
             {
                 Profiler::prof.open( Profiler::prof_file );
+            }
+
+            if( Profiler::prof.good() )
+            {
+                if( !silentQ )
+                {
+                    print( std::string("Profile will be written to ") + Profiler::prof_file.string() + ".");
+                }
+            }
+            else
+            {
+                print( std::string("ERROR: Profiler failed to open file ") + Profiler::prof_file.string() + "." );
             }
             
             id_counter = 0;
