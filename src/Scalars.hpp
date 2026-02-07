@@ -329,7 +329,7 @@ namespace Tools
         }
         else
         {
-            return static_cast<T>(abs(z));
+            return static_cast<Scalar::Real<T>>(abs(z));
         }
     }
     
