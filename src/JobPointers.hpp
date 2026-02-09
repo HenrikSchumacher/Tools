@@ -130,7 +130,7 @@ namespace Tools
             // The cost of the k-th thread goes from job no job_ptr[k] to job no job_ptr[k+1] (as always in C/C++, job_ptr[k+1] points _after_ the last job.
         
             
-            TOOLS_PTIMER(timer,"BalanceWorkLoad_Accumulated");
+//            TOOLS_PTIMER(timer,MethodName("BalanceWorkLoad_Accumulated"));
             
             T * restrict acc_costs = nullptr;
             
@@ -155,7 +155,7 @@ namespace Tools
             // The cost of the i-th job is job_acc_costs[i+1] - job_acc_costs[i].
             // The cost of the k-th thread goes from job no job_ptr[k] to job no job_ptr[k+1] (as always in C/C++, job_ptr[k+1] points _after_ the last job.
             
-            TOOLS_PTIMER(timer,"BalanceWorkLoad");
+//            TOOLS_PTIMER(timer,MethodName("BalanceWorkLoad"));
 
             job_ptr[static_cast<Size_T>(thread_count)] = job_count;
 
@@ -165,7 +165,7 @@ namespace Tools
             
             if( total_cost <=0 )
             {
-                wprint("BalanceWorkLoad: Total cost is 0.");
+                wprint(MethodName("BalanceWorkLoad") + ": Total cost is 0.");
                 
                 TOOLS_DDUMP(job_count);
                 TOOLS_DDUMP(thread_count);
@@ -244,6 +244,11 @@ namespace Tools
         
         
     public:
+        
+        static std::string MethodName( const std::string & tag )
+        {
+            return ClassName() + "::" + tag;
+        }
         
         static std::string ClassName()
         {
