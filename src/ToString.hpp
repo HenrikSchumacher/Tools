@@ -138,7 +138,7 @@ namespace Tools
     template <typename T>
     [[nodiscard]] std::string ToString( T const * ptr )
     {
-    std::cout << "ToString(T const * const ptr)" << std::endl;
+        //    std::cout << "ToString(T const * const ptr)" << std::endl;
         
         return format( "{:p}", (void const *)ptr );
     }

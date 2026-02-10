@@ -8,19 +8,60 @@
 namespace Tools
 {
     
-    class alignas( ObjectAlignment ) CachedObject
+    template<
+        bool cacheQ_   = true , bool cache_mutexQ_   = true,
+        bool p_cacheQ_ = false, bool p_cache_mutexQ_ = false, Size_T alignment = ObjectAlignment
+    >
+    class alignas(alignment) CachedObject
     {
     public:
         
-        using Container_T = std::unordered_map<std::string,std::any>;
+        static constexpr bool cacheQ         = cacheQ_;
+        static constexpr bool cache_mutexQ   = cacheQ && cache_mutexQ_;
+        static constexpr bool p_cacheQ       = p_cacheQ_;
+        static constexpr bool p_cache_mutexQ = p_cacheQ && p_cache_mutexQ_;
+        
+        struct FakeContainer_T {};
+        
+        using Container_T        = std::unordered_map<std::string,std::any>;
+        using CacheContainer_T   = std::conditional_t<cacheQ,Container_T,FakeContainer_T>;
+        using P_CacheContainer_T = std::conditional_t<p_cacheQ,Container_T,FakeContainer_T>;
         
         
-// For move semantics for mutex-locked classes see here:
-// https://stackoverflow.com/a/29988626/8248900
+        struct FakeMutex_T{};
         
-        using Mutex_T     = std::mutex;
-        using ReadLock_T  = std::unique_lock<Mutex_T>;
-        using WriteLock_T = std::unique_lock<Mutex_T>;
+        struct FakeLock_T
+        {
+            FakeLock_T( [[maybe_unused]] FakeMutex_T & mutex ) {}
+            
+            template<typename T>
+            FakeLock_T( [[maybe_unused]] FakeMutex_T & mutex , [[maybe_unused]] T & anything ) {}
+        };
+        
+        struct FakeGuard_T
+        {
+            FakeGuard_T( [[maybe_unused]] FakeMutex_T & mutex ) {}
+        };
+        
+        using Mutex_T        = std::mutex;
+        
+        using CacheMutex_T   = std::conditional_t<cache_mutexQ,Mutex_T,FakeMutex_T>;
+        using CacheLock_T    = std::unique_lock<Mutex_T>;
+        using CacheGuard_T   = std::conditional_t<cache_mutexQ,std::lock_guard<Mutex_T>,FakeGuard_T>;
+        
+        using P_CacheMutex_T = std::conditional_t<p_cache_mutexQ,Mutex_T,FakeMutex_T>;
+        using P_CacheLock_T  = std::unique_lock<Mutex_T>;
+        using P_CacheGuard_T = std::conditional_t<cache_mutexQ,std::lock_guard<Mutex_T>,FakeGuard_T>;
+
+    protected:
+            
+        [[no_unique_address]] mutable CacheContainer_T   cache;
+        [[no_unique_address]] mutable P_CacheContainer_T p_cache;
+        [[no_unique_address]] mutable CacheMutex_T       cache_mutex;
+        [[no_unique_address]] mutable P_CacheMutex_T     p_cache_mutex;
+        
+    public:
+
         
         // Default constructor
         CachedObject() = default;
@@ -31,27 +72,60 @@ namespace Tools
         // Copy constructor
         CachedObject( const CachedObject & other ) noexcept
         {
+            if constexpr ( cacheQ )
             {
-                ReadLock_T  rhs_lk( other.cache_mutex );
-                this->cache   = other.cache;
+                if constexpr ( cache_mutexQ )
+                {
+                    CacheLock_T rhs_lk( other.cache_mutex );
+                    this->cache = other.cache;
+                }
+                else
+                {
+                    this->cache = other.cache;
+                }
             }
+            
+            if constexpr ( p_cacheQ )
             {
-                ReadLock_T  rhs_lk( other.p_cache_mutex );
-                this->p_cache = other.p_cache;
+                if constexpr ( p_cache_mutexQ )
+                {
+                    P_CacheLock_T rhs_lk( other.p_cache_mutex );
+                    this->p_cache = other.p_cache;
+                }
+                else
+                {
+                    this->p_cache = other.p_cache;
+                }
             }
         }
         
         // Move constructor
         CachedObject( CachedObject && other) noexcept
         {
+            if constexpr ( cacheQ )
             {
-                WriteLock_T rhs_lk ( other.cache_mutex   );
-                this->cache   = std::move( other.cache   );
+                if constexpr ( cache_mutexQ )
+                {
+                    CacheLock_T rhs_lk ( other.cache_mutex );
+                    this->cache = std::move( other.cache   );
+                }
+                else
+                {
+                    this->cache = std::move( other.cache   );
+                }
             }
             
+            if constexpr ( p_cacheQ )
             {
-                WriteLock_T rhs_lk ( other.p_cache_mutex );
-                this->p_cache = std::move( other.p_cache );
+                if constexpr ( p_cache_mutexQ )
+                {
+                    CacheLock_T rhs_lk ( other.p_cache_mutex );
+                    this->p_cache = std::move( other.p_cache );
+                }
+                else
+                {
+                    this->p_cache = std::move( other.p_cache );
+                }
             }
         }
         
@@ -60,18 +134,34 @@ namespace Tools
         {
             if( this != &other )
             {
+                if constexpr ( cacheQ )
                 {
-                    WriteLock_T lhs_lk( this->cache_mutex, std::defer_lock );
-                    ReadLock_T  rhs_lk( other.cache_mutex, std::defer_lock );
-                    std::lock( lhs_lk, rhs_lk );
-                    this->cache = other.cache;
+                    if constexpr ( cache_mutexQ )
+                    {
+                        CacheLock_T lhs_lk( this->cache_mutex, std::defer_lock );
+                        CacheLock_T rhs_lk( other.cache_mutex, std::defer_lock );
+                        std::lock( lhs_lk, rhs_lk );
+                        this->cache = other.cache;
+                    }
+                    else
+                    {
+                        this->cache = other.cache;
+                    }
                 }
                 
+                if constexpr ( p_cacheQ )
                 {
-                    WriteLock_T lhs_lk( this->p_cache_mutex, std::defer_lock );
-                    ReadLock_T  rhs_lk( other.p_cache_mutex, std::defer_lock );
-                    std::lock( lhs_lk, rhs_lk );
-                    this->p_cache = other.p_cache;
+                    if constexpr ( p_cache_mutexQ )
+                    {
+                        P_CacheLock_T lhs_lk( this->p_cache_mutex, std::defer_lock );
+                        P_CacheLock_T rhs_lk( other.p_cache_mutex, std::defer_lock );
+                        std::lock( lhs_lk, rhs_lk );
+                        this->p_cache = other.p_cache;
+                    }
+                    else
+                    {
+                        this->p_cache = other.p_cache;
+                    }
                 }
             }
             return *this;
@@ -82,18 +172,34 @@ namespace Tools
         {
             if (this != &other)
             {
+                if constexpr ( cacheQ )
                 {
-                    WriteLock_T lhs_lk ( this->cache_mutex, std::defer_lock );
-                    WriteLock_T rhs_lk ( other.cache_mutex, std::defer_lock );
-                    std::lock ( lhs_lk, rhs_lk );
-                    this->cache = std::move( other.cache   );
+                    if constexpr ( cache_mutexQ )
+                    {
+                        CacheLock_T lhs_lk ( this->cache_mutex, std::defer_lock );
+                        CacheLock_T rhs_lk ( other.cache_mutex, std::defer_lock );
+                        std::lock ( lhs_lk, rhs_lk );
+                        this->cache = std::move( other.cache   );
+                    }
+                    else
+                    {
+                        this->cache = std::move( other.cache   );
+                    }
                 }
                 
+                if constexpr ( p_cacheQ )
                 {
-                    WriteLock_T lhs_lk ( this->p_cache_mutex, std::defer_lock );
-                    WriteLock_T rhs_lk ( other.p_cache_mutex, std::defer_lock );
-                    std::lock ( lhs_lk, rhs_lk );
-                    this->p_cache = std::move( other.p_cache   );
+                    if constexpr ( p_cache_mutexQ )
+                    {
+                        P_CacheLock_T lhs_lk ( this->p_cache_mutex, std::defer_lock );
+                        P_CacheLock_T rhs_lk ( other.p_cache_mutex, std::defer_lock );
+                        std::lock ( lhs_lk, rhs_lk );
+                        this->p_cache = std::move( other.p_cache   );
+                    }
+                    else
+                    {
+                        this->p_cache = std::move( other.p_cache   );
+                    }
                 }
             }
             return *this;
@@ -104,33 +210,39 @@ namespace Tools
         {
             if( &x != &y )
             {
+                using std::swap;
+
+                if constexpr ( cacheQ )
                 {
-                    WriteLock_T lhs_lk( x.cache_mutex, std::defer_lock );
-                    WriteLock_T rhs_lk( y.cache_mutex, std::defer_lock );
-                    std::lock( lhs_lk, rhs_lk );
-                    using std::swap;
-                    swap( x.cache, y.cache );
+                    if constexpr ( cache_mutexQ )
+                    {
+                        CacheLock_T lhs_lk( x.cache_mutex, std::defer_lock );
+                        CacheLock_T rhs_lk( y.cache_mutex, std::defer_lock );
+                        std::lock( lhs_lk, rhs_lk );
+                        swap( x.cache, y.cache );
+                    }
+                    else
+                    {
+                        swap( x.cache, y.cache );
+                    }
                 }
                 
+                if constexpr ( p_cacheQ )
                 {
-                    WriteLock_T lhs_lk( x.p_cache_mutex, std::defer_lock );
-                    WriteLock_T rhs_lk( y.p_cache_mutex, std::defer_lock );
-                    std::lock( lhs_lk, rhs_lk );
-                    using std::swap;
-                    swap( x.p_cache, y.p_cache );
+                    if constexpr ( p_cache_mutexQ )
+                    {
+                        P_CacheLock_T lhs_lk( x.p_cache_mutex, std::defer_lock );
+                        P_CacheLock_T rhs_lk( y.p_cache_mutex, std::defer_lock );
+                        std::lock( lhs_lk, rhs_lk );
+                        swap( x.p_cache, y.p_cache );
+                    }
+                    else
+                    {
+                        swap( x.p_cache, y.p_cache );
+                    }
                 }
             }
         }
-        
-    protected:
-            
-        mutable Container_T cache;
-        
-        mutable Mutex_T cache_mutex;
-        
-        mutable Container_T p_cache;
-        
-        mutable Mutex_T p_cache_mutex;
         
     public:
         
@@ -138,26 +250,31 @@ namespace Tools
 //      Cache
 //###########################################################
         
-        template<bool lockQ = true>
+        template<bool lockQ = true, typename dummy = void>
         bool InCacheQ( cref<std::string> key ) const
         {
-            bool result = false;
-            
-            if constexpr( lockQ )
+            if constexpr ( cacheQ )
             {
-                const std::lock_guard<std::mutex> cache_lock( cache_mutex );
-                result = cache.contains( key );
+                if constexpr( lockQ )
+                {
+                    const CacheGuard_T cache_lock( cache_mutex );
+                    return cache.contains( key );
+                }
+                else
+                {
+                    // The version without lock is necessary because we call InCacheQ frequently from locked routines.
+                    return cache.contains( key );
+                }
             }
             else
             {
-                // The version without lock is necessary because we call InCacheQ frequently from locked routines.
-                result = cache.contains( key );
+                static_assert(DependentFalse<dummy>,"We should not arrive here");
             }
             
-            return result;
+            return false;
         }
         
-        template<typename T = std::any>
+        template<typename T = std::any, typename dummy = void>
         T & GetCache( cref<std::string> key ) const
         {
             // For some reason gcc-12 does not allow me to return cache.at(key) directly. =/
@@ -165,25 +282,32 @@ namespace Tools
             
             std::any * thing;
             
-            const std::lock_guard<std::mutex> cache_lock( cache_mutex );
-            
-            try
+            if constexpr ( cacheQ )
             {
-                thing = &cache.at( key );
-            }
-            catch( const std::out_of_range & e )
-            {
-                eprint(this->ClassName()+"::GetCache: Key \""+key+"\" not found!.");
-                throw(e); //an internal catch block forwards the exception to its external level
-            }
-            
-            if constexpr ( std::is_same_v<T,std::any> )
-            {
-                return *thing;
+                const CacheGuard_T cache_lock( cache_mutex );
+                
+                try
+                {
+                    thing = &cache.at( key );
+                }
+                catch( const std::out_of_range & e )
+                {
+                    eprint(this->ClassName()+"::GetCache: Key \""+key+"\" not found!.");
+                    throw(e); //an internal catch block forwards the exception to its external level
+                }
+                
+                if constexpr ( std::is_same_v<T,std::any> )
+                {
+                    return *thing;
+                }
+                else
+                {
+                    return std::any_cast<T &>(*thing);
+                }
             }
             else
             {
-                return std::any_cast<T &>(*thing);
+                static_assert(DependentFalse<dummy>,"We should not arrive here");
             }
         }
         
@@ -195,57 +319,74 @@ namespace Tools
 //        }
         
         // Caution! This function is destructive.
-        template<bool check_existenceQ = true>
+        template<bool check_existenceQ = true, typename dummy = void>
         void SetCache( cref<std::string> key, std::any && thing ) const
         {
-            const std::lock_guard<std::mutex> cache_lock( cache_mutex );
-            
-            if constexpr ( check_existenceQ )
+            if constexpr ( cacheQ )
             {
-                if( this->template InCacheQ<false>(key) )
+                const CacheGuard_T cache_lock( cache_mutex );
+                
+                if constexpr ( check_existenceQ )
                 {
-                    wprint( this->ClassName()+"::SetCache: Key \"" + key + "\" is already in cache. Maybe check for race conditions." );
+                    if( this->template InCacheQ<false>(key) )
+                    {
+                        wprint( this->ClassName()+"::SetCache: Key \"" + key + "\" is already in cache. Maybe check for race conditions." );
+                    }
                 }
+                
+                cache[key] = std::move(thing);
             }
-            
-            cache[key] = std::move(thing);
+            else
+            {
+                static_assert(DependentFalse<dummy>,"We should not arrive here");
+            }
         }
         
         std::string CacheKeys() const
         {
             std::string s;
             
-            const std::lock_guard<std::mutex> cache_lock( cache_mutex );
-            
-            Size_T iter = 0;
-            s += "{ ";
-            for( auto const & p : cache )
+            if constexpr ( cacheQ )
             {
-                if( iter > Size_T(0) ) { s += ", "; }
-                s += p.first;
-                ++iter;
+                const CacheGuard_T cache_lock( cache_mutex );
+                
+                Size_T iter = 0;
+                s += "{ ";
+                for( auto const & p : cache )
+                {
+                    if( iter > Size_T(0) ) { s += ", "; }
+                    s += p.first;
+                    ++iter;
+                }
+                s += " }";
             }
-            s += " }";
+            
             return s;
         }
         
         void ClearCache() const
         {
-            const std::lock_guard<std::mutex> cache_lock( cache_mutex );
-            
-            if( !cache.empty() )
+            if constexpr ( cacheQ )
             {
-                cache.clear();
+                const CacheGuard_T cache_lock( cache_mutex );
+                
+                if( !cache.empty() )
+                {
+                    cache.clear();
+                }
             }
         }
         
         void ClearCache( const std::string & key ) const
         {
-            const std::lock_guard<std::mutex> cache_lock( cache_mutex );
-            
-            if( this->template InCacheQ<false>( key ) )
+            if constexpr ( cacheQ )
             {
-                cache.erase( key );
+                const CacheGuard_T cache_lock( cache_mutex );
+                
+                if( this->template InCacheQ<false>( key ) )
+                {
+                    cache.erase( key );
+                }
             }
         }
         
@@ -254,101 +395,136 @@ namespace Tools
 //      PersistentCache
 //###########################################################
         
-        template<bool lockQ = true>
+        template<bool lockQ = true, typename dummy = void>
         bool InPersistentCacheQ( cref<std::string> key ) const
         {
             bool result = false;
             
-            if constexpr( lockQ )
+            if constexpr ( p_cacheQ )
             {
-                const std::lock_guard<std::mutex> p_cache_lock( p_cache_mutex );
-                result = p_cache.contains( key );
+                if constexpr( lockQ )
+                {
+                    if constexpr( lockQ )
+                    {
+                        const P_CacheGuard_T p_cache_lock( p_cache_mutex );
+                        result = p_cache.contains( key );
+                    }
+                    else
+                    {
+                        result = p_cache.contains( key );
+                    }
+                }
             }
             else
             {
-                result = p_cache.contains( key );
+                static_assert(DependentFalse<dummy>,"We should not arrive here");
             }
+            
             return result;
         }
         
-        template<typename T = std::any>
+        template<typename T = std::any, typename dummy = void>
         T & GetPersistentCache( cref<std::string> key ) const
         {
-            std::any * thing;
-            
-            const std::lock_guard<std::mutex> p_cache_lock( p_cache_mutex );
-            
-            try
+            if constexpr ( p_cacheQ )
             {
-                thing = &p_cache.at( key );
-            }
-            catch( const std::out_of_range & e )
-            {
-                eprint(this->ClassName()+"GetPersistentCache: Key \""+key+"\" not found!.");
-                throw(e);
-            }
-            
-            if constexpr ( std::is_same_v<T,std::any> )
-            {
-                return *thing;
+                std::any * thing;
+                
+                const P_CacheGuard_T p_cache_lock( p_cache_mutex );
+                
+                try
+                {
+                    thing = &p_cache.at( key );
+                }
+                catch( const std::out_of_range & e )
+                {
+                    eprint(this->ClassName()+"GetPersistentCache: Key \""+key+"\" not found!.");
+                    throw(e);
+                }
+                
+                if constexpr ( std::is_same_v<T,std::any> )
+                {
+                    return *thing;
+                }
+                else
+                {
+                    return std::any_cast<T &>(*thing);
+                }
             }
             else
             {
-                return std::any_cast<T &>(*thing);
+                static_assert(DependentFalse<dummy>,"We should not arrive here");
             }
         }
         
         // Caution! This function is destructive.
-        template<bool check_existenceQ = true>
+        template<bool check_existenceQ = true, typename dummy = void>
         void SetPersistentCache( cref<std::string> key, std::any && thing ) const
         {
-            const std::lock_guard<std::mutex> p_cache_lock( p_cache_mutex );
-            
-            if constexpr ( check_existenceQ )
+            if constexpr ( p_cacheQ )
             {
-                if( this->template InPersistentCacheQ<false>(key) )
+                const P_CacheGuard_T p_cache_lock( p_cache_mutex );
+                
+                if constexpr ( check_existenceQ )
                 {
-                    wprint( this->ClassName()+"::SetPersistentCache: Key \"" + key + "\" is already in cache. Maybe check for race conditions." );
+                    if( this->template InPersistentCacheQ<false>(key) )
+                    {
+                        wprint( this->ClassName()+"::SetPersistentCache: Key \"" + key + "\" is already in cache. Maybe check for race conditions." );
+                    }
                 }
+                
+                p_cache[key] = std::move(thing);
             }
-            
-            p_cache[key] = std::move(thing);
+            else
+            {
+                static_assert(DependentFalse<dummy>,"We should not arrive here");
+            }
         }
         
         std::string PersistentCacheKeys() const
         {
             std::string s;
             
-            const std::lock_guard<std::mutex> p_cache_lock( p_cache_mutex );
-            
-            s += "{\n";
-            for( auto const & p : p_cache )
+            if constexpr ( p_cacheQ )
             {
-                s += "\t";
-                s += p.first;
-                s += "\n";
+                const P_CacheGuard_T p_cache_lock( p_cache_mutex );
+
+                s += "{\n";
+                for( auto const & p : p_cache )
+                {
+                    s += "\t";
+                    s += p.first;
+                    s += "\n";
+                }
+                s += "}";
             }
-            s += "}";
+            
             return s;
         }
         
         void ClearPersistentCache() const
         {
-            const std::lock_guard<std::mutex> p_cache_lock( p_cache_mutex );
-         
-            if( !p_cache.empty() )
+            if constexpr ( p_cacheQ )
             {
-                p_cache.clear();
+                const P_CacheGuard_T p_cache_lock( p_cache_mutex );
+                
+                if( !p_cache.empty() )
+                {
+                    p_cache.clear();
+                }
             }
         }
         
         void ClearPersistentCache( cref<std::string> key ) const
         {
-            const std::lock_guard<std::mutex> p_cache_lock( p_cache_mutex );
-            
-            if( this->template InPersistentCacheQ<false>( key ) )
+            if constexpr ( p_cacheQ )
             {
-                p_cache.erase( key );
+                const P_CacheGuard_T p_cache_lock( p_cache_mutex );
+                
+                if( this->template InPersistentCacheQ<false>( key ) )
+                {
+                    p_cache.erase( key );
+                }
             }
         }
         
@@ -360,18 +536,25 @@ namespace Tools
         
         void ClearAllCache() const
         {
-            const std::lock_guard<std::mutex>   cache_lock(   cache_mutex );
-            const std::lock_guard<std::mutex> p_cache_lock( p_cache_mutex );
+            if constexpr ( cacheQ )
+            {
+                const CacheGuard_T cache_lock( cache_mutex );
+                
+                cache.clear();
+            }
             
-            cache.clear();
-            
-            p_cache.clear();
+            if constexpr ( p_cacheQ )
+            {
+                const P_CacheGuard_T p_cache_lock( p_cache_mutex );
+                
+                p_cache.clear();
+            }
         }
         
         
-        std::string ClassName() const
+        static auto ClassName()
         {
-            return std::string("CachedObject");
+            return ct_string("CachedObject");
         }
     
     }; // CachedObject
