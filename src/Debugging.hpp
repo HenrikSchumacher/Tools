@@ -12,6 +12,8 @@ namespace Tools
         if( !std::in_range<Int_1>( n ) )
         {
             eprint(std::string("int_cast<") + TypeName<Int_1> + "," + TypeName<Int_0> + "> reports integer overflow for n = " + ToString(n) + ".");
+            
+            return 0;
         }
         
         return static_cast<Int_1>(n);
