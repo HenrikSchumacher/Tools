@@ -37,7 +37,7 @@ namespace Tools
     )
     {
         // The precise dot product is e - f.
-        return Det2D_Kahan_Pair( u_0, u_1, -v_1, v_0 );
+        return Det2D_Kahan_DiffPair( u_0, u_1, -v_1, v_0 );
     }
     
     
