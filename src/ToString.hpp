@@ -27,53 +27,53 @@ namespace Tools
     
     [[nodiscard]] std::string ToString( const double & value )
     {
-        return format("{: .16e}",value);
+        return format("{: .17e}",value);
     }
     
     [[nodiscard]] std::string ToString( const float & value )
     {
-        return format("{: .7e}",value);
+        return format("{: .8e}",value);
     }
     
     [[nodiscard]] std::string ToString( const std::complex<double> & z )
     {
-        return format("{: .16e} {:+.16e}I",std::real(z),std::imag(z));
+        return format("{: .17e} {:+.17e}I",std::real(z),std::imag(z));
     }
                            
     [[nodiscard]] std::string ToString( const std::complex<float> & z )
     {
-        return format("{: .7e} {:+.7e}I",std::real(z),std::imag(z));
+        return format("{: .8e} {:+.8e}I",std::real(z),std::imag(z));
     }
     
     
     [[nodiscard]] std::string ToStringFPGeneral( const double & value )
     {
-        return format("{:.16g}",value);
+        return format("{:.17g}",value);
     }
     
     [[nodiscard]] std::string ToStringFPGeneralLowRes( const double & value )
     {
-        return format("{:.7g}",value);
+        return format("{:.8g}",value);
     }
     
     [[nodiscard]] std::string ToStringFPGeneral( const float & value )
     {
-        return format("{:.7g}",value);
+        return format("{:.8g}",value);
     }
     
     [[nodiscard]] std::string ToStringFPGeneral( const std::complex<double> & z )
     {
-        return format("{:.16g} {:+.16g}I",std::real(z),std::imag(z));
+        return format("{:.17g} {:+.17g}I",std::real(z),std::imag(z));
     }
     
     [[nodiscard]] std::string ToStringFPGeneralLowRes( const std::complex<double> & z )
     {
-        return format("{:.7g} {:+.7g}I",std::real(z),std::imag(z));
+        return format("{:.8g} {:+.8g}I",std::real(z),std::imag(z));
     }
     
     [[nodiscard]] std::string ToStringFPGeneral( const std::complex<float> & z )
     {
-        return format("{:.7g} {:+.7g}I",std::real(z),std::imag(z));
+        return format("{:.8g} {:+.8g}I",std::real(z),std::imag(z));
     }
     
     
