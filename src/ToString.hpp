@@ -51,6 +51,11 @@ namespace Tools
         return format("{:.16g}",value);
     }
     
+    [[nodiscard]] std::string ToStringFPGeneralLowRes( const double & value )
+    {
+        return format("{:.7g}",value);
+    }
+    
     [[nodiscard]] std::string ToStringFPGeneral( const float & value )
     {
         return format("{:.7g}",value);
@@ -59,6 +64,11 @@ namespace Tools
     [[nodiscard]] std::string ToStringFPGeneral( const std::complex<double> & z )
     {
         return format("{:.16g} {:+.16g}I",std::real(z),std::imag(z));
+    }
+    
+    [[nodiscard]] std::string ToStringFPGeneralLowRes( const std::complex<double> & z )
+    {
+        return format("{:.7g} {:+.7g}I",std::real(z),std::imag(z));
     }
     
     [[nodiscard]] std::string ToStringFPGeneral( const std::complex<float> & z )

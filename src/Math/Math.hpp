@@ -162,6 +162,10 @@ namespace Tools
         return Scalar::Half<Real> * (x + y);
     }
     
+    
+    // Max
+    
+    // We use std::fmax instead of std::max.
     template<typename Real>
     TOOLS_FORCE_INLINE constexpr Real Max( const Real & x, const Real & y )
     {
@@ -191,6 +195,9 @@ namespace Tools
             return max({x,y,z});
         }
     }
+    
+
+    // Min
     
     template<typename Real>
     TOOLS_FORCE_INLINE constexpr Real Min( const Real & x, const Real & y )
@@ -222,6 +229,7 @@ namespace Tools
         }
     }
     
+    // MinMax
     
     template<typename Real>
     TOOLS_FORCE_INLINE constexpr std::pair<Real,Real> MinMax( const Real & x, const Real & y )
@@ -253,16 +261,16 @@ namespace Tools
         
         if constexpr ( std::is_floating_point_v<Real> )
         {
-            return std::pair<Real,Real>(
-                std::fmin(std::fmin(x,y),z),
-                std::fmax(std::fmax(x,y),z)
-            );
+            return { std::fmin(std::fmin(x,y),z), std::fmax(std::fmax(x,y),z) };
         }
         else
         {
             return minmax({x,y,z});
         }
     }
+    
+    
+    
     
     template<typename Real>
     TOOLS_FORCE_INLINE constexpr Real Ramp( const Real & x )
@@ -505,12 +513,14 @@ namespace Tools
     template<typename Scal>
     inline constexpr Scal NextFloat( const Scal x )
     {
+        TOOLS_MAKE_FP_STRICT()
         return std::nextafter( x, std::numeric_limits<Scal>::max() );
     }
     
     template<typename Scal>
     inline constexpr Scal PrevFloat( const Scal x )
     {
+        TOOLS_MAKE_FP_STRICT()
         return std::nextafter( x, std::numeric_limits<Scal>::lowest() );
     }
     

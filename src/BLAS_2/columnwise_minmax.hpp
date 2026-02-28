@@ -57,19 +57,19 @@ namespace Tools
         mptr<z_T> z,  const Size_T ldz
     )
     {
-        if constexpr ( VectorizableQ<X_T> )
-        {
-            using V_T = vec_T<N,X_T>;
-            
-            columnwise_reduction_vec<M,N>(
-                X, ldX,
-                y, ldy,
-                [](cref<V_T> a,cref<V_T> b){ return __builtin_elementwise_min(a,b); },
-                z, ldz,
-                [](cref<V_T> a,cref<V_T> b){ return __builtin_elementwise_max(a,b); }
-            );
-        }
-        else
+//        if constexpr ( VectorizableQ<X_T> )
+//        {
+//            using V_T = vec_T<N,X_T>;
+//            
+//            columnwise_reduction_vec<M,N>(
+//                X, ldX,
+//                y, ldy,
+//                [](cref<V_T> a,cref<V_T> b){ return __builtin_elementwise_min(a,b); },
+//                z, ldz,
+//                [](cref<V_T> a,cref<V_T> b){ return __builtin_elementwise_max(a,b); }
+//            );
+//        }
+//        else
         {
             columnwise_reduction<M,N>(
                 X, ldX,

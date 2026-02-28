@@ -132,8 +132,10 @@ namespace Tools
                     }
                 }
             }
-            else
+            else // if constexpr (parQ == Sequential)
             {
+                (void)thread_count;
+                
                 for( Int i = 0; i < n; ++i )
                 {
                     fun(i);
@@ -142,6 +144,8 @@ namespace Tools
         }
         else
         {
+            (void)thread_count;
+            
             for( Int i = 0; i < N; ++i )
             {
                 fun(i);
