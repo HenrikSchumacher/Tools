@@ -17,7 +17,7 @@ namespace Tools
     template<typename T>
     struct ToChars<T&> : public ToChars<T>{};
         
-    template<std::integral T>
+    template<IntQ T>
     struct ToChars<T>
     {
         static constexpr bool implementedQ = true;

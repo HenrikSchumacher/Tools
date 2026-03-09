@@ -153,7 +153,7 @@ namespace Tools
         return format( "{:p}", (void const *)ptr );
     }
 
-    template <std::integral T>
+    template <IntQ T>
     [[nodiscard]] std::string ToString( const T & value )
     {
         return format("{:d}",value);

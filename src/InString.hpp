@@ -14,7 +14,7 @@ namespace Tools
         static constexpr bool implementedQ = false;
     };
 
-    template<std::integral T>
+    template<IntQ T>
     struct FromChars<T>
     {
         static constexpr bool implementedQ = true;

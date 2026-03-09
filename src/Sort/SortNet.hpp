@@ -5,7 +5,7 @@
 namespace Tools
 {
    
-    template<bool reverseQ = false, std::integral T, typename C = std::less<T>>
+    template<bool reverseQ = false, IntQ T, typename C = std::less<T>>
     TOOLS_FORCE_INLINE void CompSwap( mref<T> a, mref<T> b, C && comp = C() )
     {
         if constexpr ( reverseQ )
