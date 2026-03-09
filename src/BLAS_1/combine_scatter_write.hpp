@@ -5,7 +5,7 @@ namespace Tools
     template<
         Scalar::Flag a_flag, Scalar::Flag b_flag,
         Size_T N = VarSize, Parallel_T parQ = Sequential,
-        typename a_T, typename x_T, typename Int, typename b_T, typename y_T
+        typename a_T, typename x_T, IntQ Int, typename b_T, typename y_T
     >
     constexpr TOOLS_FORCE_INLINE void combine_scatter_write(
         cref<a_T> a, cptr<x_T> x,

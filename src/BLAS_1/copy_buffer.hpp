@@ -18,7 +18,7 @@ namespace Tools
     
     template <
         Size_T N = VarSize, Parallel_T parQ = Sequential,
-        typename S, typename T, typename Int = Size_T
+        typename S, typename T, IntQ Int = Size_T
     >
     TOOLS_FORCE_INLINE constexpr void copy_buffer(
         cptr<S> source, mptr<T> target,
@@ -27,8 +27,6 @@ namespace Tools
     )
     {
         check_sequential<parQ>( "copy_buffer", thread_count );
-        
-        static_assert(IntQ<Int>,"");
         
         if constexpr ( N <= VarSize )
         {
@@ -95,7 +93,7 @@ namespace Tools
     
     template <
         Size_T N = VarSize, Parallel_T parQ = Sequential,
-        typename S, typename T, typename Int = Size_T
+        FloatQ S, FloatQ T, IntQ Int = Size_T
     >
     TOOLS_FORCE_INLINE constexpr void copy_buffer_replace_infty(
         cptr<S> source, mptr<T> target,
@@ -104,10 +102,6 @@ namespace Tools
     )
     {
         check_sequential<parQ>( "copy_buffer_replace_infty", thread_count );
-        
-        static_assert(FloatQ<S>,"");
-        static_assert(FloatQ<T>,"");
-        static_assert(IntQ<Int>,"");
         
         if constexpr ( N <= VarSize )
         {
@@ -181,132 +175,5 @@ namespace Tools
             }
         }
     }
-    
-//    template <
-//        Size_T N = VarSize, Parallel_T parQ = Sequential,
-//        typename S, typename T, typename Int = Size_T
-//    >
-//    TOOLS_FORCE_INLINE constexpr void copy_buffer_insert_infty(
-//        cptr<S> source, mptr<T> target,
-//        const Int n = static_cast<Int>(N),
-//        const Int thread_count = Int(1)
-//    )
-//    {
-//        check_sequential<parQ>( "copy_buffer_insert_infty", thread_count );
-//        
-//        static_assert(FloatQ<S>,"");
-//        static_assert(FloatQ<T>,"");
-//        static_assert(IntQ<Int>,"");
-//        
-//        if constexpr ( N <= VarSize )
-//        {
-//            if constexpr ( parQ == Sequential )
-//            {
-//                TOOLS_MAKE_FP_STRICT();
-//                
-//                for( Int i = 0; i < n; ++i )
-//                {
-//                    const S x = source[i];
-//
-//                    if( x == Scalar::Max<S> )
-//                    {
-//                        target[i] = Scalar::Infty<T>;
-//                    }
-//                    else if( x == -Scalar::Max<S> )
-//                    {
-//                        target[i] = -Scalar::Infty<T>;
-//                    }
-//                    else
-//                    {
-//                        target[i] = static_cast<T>(x);
-//                    }
-//                }
-//            }
-//            else
-//            {
-//                if( thread_count <= Scalar::One<Int> )
-//                {
-////                    copy_buffer_insert_infty<VarSize,Sequential>(source,target,n);
-//                    
-//                    TOOLS_MAKE_FP_STRICT();
-//                    
-//                    for( Int i = 0; i < n; ++i )
-//                    {
-//                        const S x = source[i];
-//
-//                        if( x == Scalar::Max<S> )
-//                        {
-//                            target[i] = Scalar::Infty<T>;
-//                        }
-//                        else if( x == -Scalar::Max<S> )
-//                        {
-//                            target[i] = -Scalar::Infty<T>;
-//                        }
-//                        else
-//                        {
-//                            target[i] = static_cast<T>(x);
-//                        }
-//                    }
-//                }
-//                else
-//                {
-//                    ParallelDo(
-//                        [=]( const Int thread )
-//                        {
-//                            TOOLS_MAKE_FP_STRICT();
-//                            
-//                            const Int begin = JobPointer(n,thread_count,thread  );
-//                            const Int end   = JobPointer(n,thread_count,thread+1);
-//
-////                            copy_buffer_insert_infty<VarSize,Sequential>(
-////                                &source[begin],&target[begin],end-begin
-////                            );
-//                            
-//                            for( Int i = begin; i < end; ++i )
-//                            {
-//                                const S x = source[i];
-//
-//                                if( x == Scalar::Max<S> )
-//                                {
-//                                    target[i] = Scalar::Infty<T>;
-//                                }
-//                                else if( x == -Scalar::Max<S> )
-//                                {
-//                                    target[i] = -Scalar::Infty<T>;
-//                                }
-//                                else
-//                                {
-//                                    target[i] = static_cast<T>(x);
-//                                }
-//                            }
-//                        },
-//                        thread_count
-//                    );
-//                }
-//            }
-//        }
-//        else
-//        {
-//            TOOLS_MAKE_FP_STRICT();
-//            
-//            for( Int i = 0; i < N; ++i )
-//            {
-//                const S x = source[i];
-//
-//                if( x == Scalar::Max<S> )
-//                {
-//                    target[i] = Scalar::Infty<S>;
-//                }
-//                else if( x == -Scalar::Max<S> )
-//                {
-//                    target[i] = -Scalar::Infty<T>;
-//                }
-//                else
-//                {
-//                    target[i] = static_cast<T>(x);
-//                }
-//            }
-//        }
-//    }
     
 } // namespace Tools

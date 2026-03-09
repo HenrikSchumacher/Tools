@@ -3,7 +3,7 @@
 namespace Tools
 {
 
-    template<typename Scal, typename Int>
+    template<typename Scal, IntQ Int>
     [[nodiscard]] Scal Det_Bareiss( const Int n, mptr<Scal> A_, const Int ldA )
     {
         static_assert(IntQ<Int>,"");

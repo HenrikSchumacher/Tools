@@ -4,15 +4,13 @@ namespace Tools
 {
     template <
         Size_T N = VarSize, Parallel_T parQ = Sequential,
-        typename T, typename Int = Size_T
+        typename T, IntQ Int = Size_T
     >
     TOOLS_FORCE_INLINE constexpr void fill_buffer(
         mptr<T> a, const T init, const Int n = static_cast<Size_T>(N), const Int thread_count = 1
     )
     {
         check_sequential<parQ>( "fill_buffer", thread_count );
-        
-        static_assert(IntQ<Int>,"");
         
         if constexpr ( N <= VarSize )
         {

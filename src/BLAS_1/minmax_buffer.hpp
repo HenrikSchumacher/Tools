@@ -3,7 +3,7 @@
 namespace Tools
 {
     template<
-        Size_T N = VarSize, Parallel_T parQ = Sequential, typename F, typename Int = Size_T
+        Size_T N = VarSize, Parallel_T parQ = Sequential, typename F, IntQ Int = Size_T
     >
     auto MinMaxBy(
         F && f,
@@ -48,7 +48,7 @@ namespace Tools
     
     
     template<
-        Size_T N = VarSize, Parallel_T parQ = Sequential, typename S, typename Int = Size_T
+        Size_T N = VarSize, Parallel_T parQ = Sequential, typename S, IntQ Int = Size_T
     >
     [[nodiscard]] TOOLS_FORCE_INLINE std::pair<S,S>
     minmax_buffer(
@@ -64,7 +64,7 @@ namespace Tools
     
     
     template<
-        Size_T N = VarSize, Parallel_T parQ = Sequential, typename F, typename Int = Size_T
+        Size_T N = VarSize, Parallel_T parQ = Sequential, typename F, IntQ Int = Size_T
     >
     auto MinBy(
         F && f,
@@ -88,7 +88,7 @@ namespace Tools
     }
     
     template<
-        Size_T N = VarSize, Parallel_T parQ = Sequential, typename F, typename Int = Size_T
+        Size_T N = VarSize, Parallel_T parQ = Sequential, typename F, IntQ Int = Size_T
     >
     auto MinimumBy(
         F && f,
@@ -121,7 +121,7 @@ namespace Tools
     }
     
     template<
-        Size_T N = VarSize, Parallel_T parQ = Sequential, typename S, typename Int = Size_T
+        Size_T N = VarSize, Parallel_T parQ = Sequential, typename S, IntQ Int = Size_T
     >
     [[nodiscard]] TOOLS_FORCE_INLINE S
     min_buffer(
@@ -136,7 +136,7 @@ namespace Tools
     }
     
     template<
-        Size_T N = VarSize, Parallel_T parQ = Sequential, typename S, typename Int = Size_T
+        Size_T N = VarSize, Parallel_T parQ = Sequential, typename S, IntQ Int = Size_T
     >
     [[nodiscard]] TOOLS_FORCE_INLINE
     Int min_pos_buffer(
@@ -154,7 +154,7 @@ namespace Tools
     
 
     template<
-        Size_T N = VarSize, Parallel_T parQ = Sequential, typename F, typename Int = Size_T
+        Size_T N = VarSize, Parallel_T parQ = Sequential, typename F, IntQ Int = Size_T
     >
     auto MaxBy(
         F && f,
@@ -178,7 +178,7 @@ namespace Tools
     }
     
     template<
-        Size_T N = VarSize, Parallel_T parQ = Sequential, typename F, typename Int = Size_T
+        Size_T N = VarSize, Parallel_T parQ = Sequential, typename F, IntQ Int = Size_T
     >
     auto MaximumBy(
         F && f,
@@ -211,7 +211,7 @@ namespace Tools
     }
     
     template<
-        Size_T N = VarSize, Parallel_T parQ = Sequential, typename S, typename Int = Size_T
+        Size_T N = VarSize, Parallel_T parQ = Sequential, typename S, IntQ Int = Size_T
     >
     [[nodiscard]] TOOLS_FORCE_INLINE
     S max_buffer(
@@ -226,7 +226,7 @@ namespace Tools
     }
     
     template<
-        Size_T N = VarSize, Parallel_T parQ = Sequential, typename S, typename Int = Size_T
+        Size_T N = VarSize, Parallel_T parQ = Sequential, typename S, IntQ Int = Size_T
     >
     [[nodiscard]] TOOLS_FORCE_INLINE
     Int max_pos_buffer(

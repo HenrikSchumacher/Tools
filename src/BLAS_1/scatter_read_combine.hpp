@@ -5,7 +5,7 @@ namespace Tools
     template<
         Scalar::Flag a_flag, Scalar::Flag b_flag,
         Size_T N = VarSize, Parallel_T parQ = Sequential,
-        typename R_0, typename S_0, typename Int, typename R_1, typename S_1
+        typename R_0, typename S_0, IntQ Int, typename R_1, typename S_1
     >
     constexpr TOOLS_FORCE_INLINE void scatter_read_combine(
         cref<R_0> a, cptr<S_0> x, cptr<Int> idx,

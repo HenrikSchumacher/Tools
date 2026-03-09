@@ -4,8 +4,7 @@ namespace Tools
 {
     template<
         Size_T M = VarSize, Size_T N = VarSize,
-        typename T, typename Fun,
-        typename Int = Size_T
+        typename T, typename Fun, IntQ Int = Size_T
     >
     void row_reverse_matrix(
         mptr<T> A,
@@ -56,7 +55,7 @@ namespace Tools
     
     template<
         Size_T M = VarSize, Size_T N = VarSize,
-        typename T, typename Int = Size_T
+        typename T, IntQ Int = Size_T
     >
     void row_reverse_matrix(
         mptr<T> A,
@@ -84,8 +83,7 @@ namespace Tools
     
     template<
         Size_T M = VarSize, Size_T N = VarSize, Side dir = Side::Left,
-        typename T, typename PreScan, typename PostScan,
-        typename Int = Size_T
+        typename T, typename PreScan, typename PostScan, IntQ Int = Size_T
     >
     void row_rotate_matrix(
         mptr<T> A,
@@ -127,7 +125,7 @@ namespace Tools
     
     template<
         Size_T M = VarSize, Size_T N = VarSize, Side dir = Side::Left,
-        typename T, typename Int = Size_T
+        typename T, IntQ Int = Size_T
     >
     void row_rotate_matrix(
         mptr<T> A,

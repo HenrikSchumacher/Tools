@@ -5,7 +5,7 @@ namespace Tools
  
     // This class is basically blocks from https://github.com/bshoshany/thread-pool with a couple of functionalities removed.
     
-    template <typename Int>
+    template <IntQ Int>
     class Blocks
     {
     public:

@@ -23,33 +23,33 @@ namespace Tools
     constexpr Size_T PrefetchStride = 4 * CacheLineWidth;
     
     
-    template<typename Int>
+    template<IntQ Int>
     TOOLS_FORCE_INLINE constexpr Int CeilDivide( const Int n, const Int b )
     {
         return ( (n + b - Int(1) ) / b );
     }
 
-    template<typename Int>
+    template<IntQ Int>
     TOOLS_FORCE_INLINE constexpr Int RoundUpTo( const Int n, const Int b )
     {
         return CeilDivide(n,b) * b;
     }
     
     
-    template<typename Int>
+    template<IntQ Int>
     TOOLS_FORCE_INLINE constexpr Int FloorDivide( const Int n, const Int b )
     {
         return n / b;
     }
     
-    template<typename Int>
+    template<IntQ Int>
     TOOLS_FORCE_INLINE constexpr Int RoundDownTo( const Int n, const Int b )
     {
         return FloorDivide(n,b) * b;
     }
     
     // Computes k-th job pointer for job_count equally sized jobs distributed on thread_count threads.
-    template<typename Int, typename Int1, typename Int2>
+    template<IntQ Int, IntQ Int1, IntQ Int2>
     TOOLS_FORCE_INLINE Int JobPointer( const Int job_count, const Int1 thread_count_, const Int2 thread_ )
     {
         const Int thread_count = static_cast<Int>(thread_count_);

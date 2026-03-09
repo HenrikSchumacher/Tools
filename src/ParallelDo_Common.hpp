@@ -48,7 +48,7 @@ namespace Tools
     //ParallelDo    
     
     // Executes the function `fun` of the form `[]( const Int i ) -> void {...}` on the range [begin,end[, parallelized over `thread_count` threads.
-    template<typename F, typename Int>
+    template<typename F, IntQ Int>
     TOOLS_FORCE_INLINE void ParallelDo(
         F && fun, const Int begin, const Int end, const Int thread_count
     )
@@ -72,7 +72,7 @@ namespace Tools
     
     
     // Executes the function `fun` of the form `[]( const Int i ) -> void {...}` on the range [0,end[, parallelized over `thread_count` threads.
-    template<typename F, typename Int>
+    template<typename F, IntQ Int>
     TOOLS_FORCE_INLINE void ParallelDo(
         F && fun, const Int n, const Int thread_count
     )
@@ -95,7 +95,7 @@ namespace Tools
     }
     
     
-    template<typename F, typename R, typename T, typename Int>
+    template<typename F, typename R, typename T, IntQ Int>
     TOOLS_FORCE_INLINE T ParallelDoReduce(
         F && fun, R && reducer, cref<T> init, 
         const Int begin, const Int end, const Int thread_count
@@ -124,7 +124,7 @@ namespace Tools
         );
     }
     
-//    template<typename F, typename R, typename T, typename Int>
+//    template<typename F, typename R, typename T, IntQ Int>
 //    TOOLS_FORCE_INLINE T ParallelDoReduce(
 //        F && fun, R && reducer, cref<T> init, const Int n, const Int thread_count
 //    )

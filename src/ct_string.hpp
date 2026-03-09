@@ -31,7 +31,7 @@ namespace Tools
         }
         
         // Construct from a "string literal":
-        constexpr ct_string( char const(&arr)[N] )
+        constexpr ct_string( const char(&arr)[N] )
         {
             for( std::size_t i = 0; i < N; ++i )
             {
@@ -70,7 +70,7 @@ namespace Tools
 //            return bytes[i];
 //        }
 
-        template<typename Int>
+        template<IntQ Int>
         constexpr char & operator[](const Int i)
         {
             static_assert(IntQ<Int>,"");
@@ -78,7 +78,7 @@ namespace Tools
             return bytes[i];
         }
         
-        template<typename Int>
+        template<IntQ Int>
         constexpr char const & operator[](const Int i) const
         {
             static_assert(IntQ<Int>,"");
@@ -125,7 +125,7 @@ namespace Tools
     
     
     template<std::size_t M, std::size_t N>
-    [[nodiscard]] constexpr ct_string<M+N-1> operator+( ct_string<M> lhs, char const(&rhs)[N] )
+    [[nodiscard]] constexpr ct_string<M+N-1> operator+( ct_string<M> lhs, const char(&rhs)[N] )
     {
         return lhs + ct_string<N>( rhs );
     }
@@ -164,7 +164,7 @@ namespace Tools
     }
 
     // Slows down everything?
-    template<typename Int>
+    template<IntQ Int>
     constexpr ct_string<std::numeric_limits<Int>::digits10+3>
     to_ct_string( const Int i )
     {

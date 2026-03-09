@@ -237,13 +237,9 @@ namespace Tools
     
     /*!brief Discrete wrapped Gaussian distribution with center `mu`, standard deviation `sigma`, and period `L`. Returns values in the half-open interval [0,L).
      */
-    template<typename Int, typename Real>
+    template<IntQ Int, FloatQ Real>
     class DiscreteWrappedGaussianDistribution
     {
-        static_assert(IntQ<Int>,"");
-        static_assert(FloatQ<Real>,"");
-        static_assert(Scalar::RealQ<Real>,"");
-        
     private:
         
         WrappedGaussianDistribution<Real> wrapped_gaussian;
@@ -352,12 +348,9 @@ namespace Tools
     
     /*!brief Discrete wrapped Laplace distribution with center `mu`, scale parametr `beta`, and period `L`. Returns values in the half-open interval [0,L).
      */
-    template<typename Int, typename Real>
+    template<IntQ Int, FloatQ Real>
     class DiscreteWrappedLaplaceDistribution
     {
-        static_assert(IntQ<Int>,"");
-        static_assert(FloatQ<Real>,"");
-        static_assert(Scalar::RealQ<Real>,"");
         
     private:
         

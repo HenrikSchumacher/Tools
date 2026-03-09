@@ -43,7 +43,7 @@ namespace Tools
         Scalar::Flag a_flag, Scalar::Flag b_flag,
         Size_T N = VarSize, Parallel_T parQ = Sequential,
         Op opx = Op::Id, Op opy = Op::Id,
-        typename a_T, typename x_T, typename b_T, typename y_T, typename Int = Size_T
+        typename a_T, typename x_T, typename b_T, typename y_T, IntQ Int = Size_T
     >
     TOOLS_FORCE_INLINE void combine_buffers(
         [[maybe_unused]] cref<a_T> a, cptr<x_T> x,
@@ -179,7 +179,7 @@ namespace Tools
         Scalar::Flag a_flag, Scalar::Flag b_flag,
         Size_T N = VarSize, Parallel_T parQ = Sequential,
         Op opx = Op::Id, Op opy = Op::Id,
-        typename a_T, typename x_T, typename b_T, typename y_T, typename z_T, typename Int = Size_T
+        typename a_T, typename x_T, typename b_T, typename y_T, typename z_T, IntQ Int = Size_T
     >
     TOOLS_FORCE_INLINE void combine_buffers3(
         [[maybe_unused]] cref<a_T> a, cptr<x_T> x,

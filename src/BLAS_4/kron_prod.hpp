@@ -13,7 +13,7 @@ namespace Tools
         Parallel_T parQ = Sequential,
         Op op_A = Op::Id, Op op_B = Op::Id,
         typename a_T,  typename A_T, typename B_T,
-        typename b_T, typename C_T, typename Int = Size_T
+        typename b_T, typename C_T, IntQ Int = Size_T
     >
     TOOLS_FORCE_INLINE constexpr void kron_prod(
         cref<a_T> a, cptr<A_T> A, const Int ldA,

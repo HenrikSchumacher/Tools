@@ -4,7 +4,7 @@ namespace Tools
 {
     template<
         Size_T N = VarSize, Parallel_T parQ = Sequential,
-        typename S, typename Int = Size_T
+        typename S, IntQ Int = Size_T
     >
     [[nodiscard]] TOOLS_FORCE_INLINE Int
     iamax_buffer(
@@ -31,7 +31,7 @@ namespace Tools
     
     template<
         Size_T N = VarSize, Parallel_T parQ = Sequential,
-        typename S, typename Int = Size_T
+        typename S, IntQ Int = Size_T
     >
     [[nodiscard]] TOOLS_FORCE_INLINE Int
     iamin_buffer(

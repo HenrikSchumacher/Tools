@@ -41,7 +41,7 @@ namespace Tools
         static_assert(dynQ == Static, "This method ignores dynamic scheduling; it is always static.");
     }
     
-    template<Parallel_T parQ, typename Int >
+    template<Parallel_T parQ, IntQ Int >
     void check_sequential( std::string tag, Int thread_count )
     {
 #ifdef TOOLS_DEBUG
@@ -64,7 +64,7 @@ namespace Tools
     // Parallelization will be turned of also if `parQ` is set to `Sequential`.
     template<
         Size_T N_ = VarSize, Parallel_T parQ = Sequential, Dynamic_T dynQ = Static,
-        typename F, typename Int = Size_T
+        typename F, IntQ Int = Size_T
     >
     TOOLS_FORCE_INLINE void Do(
         F && fun, const Int n = static_cast<Int>(N_), const Int thread_count = 1
@@ -156,7 +156,7 @@ namespace Tools
     
     
     template<Size_T N_ = VarSize, Parallel_T parQ = Sequential,
-        typename T, typename F, typename R, typename Int = Size_T
+        typename T, typename F, typename R, IntQ Int = Size_T
     >
     [[nodiscard]] TOOLS_FORCE_INLINE T DoReduce(
         F && fun, R && reducer, cref<T> init, const Int n = static_cast<Int>(N_), const Int thread_count = 1

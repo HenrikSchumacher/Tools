@@ -338,10 +338,8 @@ namespace Tools
     template<typename T, typename S>
     TOOLS_FORCE_INLINE constexpr
     typename std::enable_if_t<
-    Scalar::ScalarQ<T>
-    &&
-    Scalar::RealQ<S>,
-    typename Scalar::Real<T>
+        Scalar::ScalarQ<T> && Scalar::RealQ<S>,
+        typename Scalar::Real<T>
     >
     scalar_cast( S x )
     {
@@ -351,10 +349,8 @@ namespace Tools
     template<typename T, typename S>
     TOOLS_FORCE_INLINE constexpr
     typename std::enable_if_t<
-    Scalar::ScalarQ<T>
-    &&
-    Scalar::ComplexQ<S>,
-    typename Scalar::Complex<T>
+        Scalar::ScalarQ<T> && Scalar::ComplexQ<S>,
+        typename Scalar::Complex<T>
     >
     scalar_cast( cref<S> x )
     {

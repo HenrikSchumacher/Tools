@@ -234,17 +234,20 @@ namespace Tools
     constexpr Size_T VarSize = 0;
     
     template<typename T>
-    constexpr bool IntQ = std::is_integral_v<T>;
+    concept IntQ = std::integral<T>;
+    
+    template<typename T>
+    concept NonIntQ = !std::integral<T>;
     
 #define ASSERT_INT(I) static_assert( IntQ<I>, "Template parameter " #I " must be an integral type." );
     
     template<typename T> 
-    constexpr bool UnsignedIntQ = std::is_unsigned_v<T> && std::is_integral_v<T>;
+    concept UnsignedIntQ = std::integral<T> && std::is_unsigned_v<T>;
     
 #define ASSERT_UINT(I) static_assert( UnsignedIntQ<I>, "Template parameter " #I " must be a unsigned integral type." );
     
     template<typename T>
-    constexpr bool SignedIntQ = std::is_signed_v<T> && std::is_integral_v<T>;
+    concept SignedIntQ = std::integral<T> && std::is_signed_v<T>;
     
     template<typename T>
     using ToSigned = std::make_signed_t<T>;
@@ -255,7 +258,10 @@ namespace Tools
 #define ASSERT_SIGNED_INT(I) static_assert( SignedIntQ<I>, "Template parameter " #I " must be a signed integral type." );
     
     template<typename T>
-    constexpr bool FloatQ = std::is_floating_point_v<T>;
+    concept FloatQ = std::floating_point<T>;
+    
+    template<typename T>
+    concept NonPointerQ = !std::is_pointer_v<T> && !std::is_pointer_v<typename std::remove_reference<T>::type>;
     
     template<typename T>
     constexpr bool ArithmeticQ = std::is_arithmetic_v<T>;
@@ -354,11 +360,9 @@ namespace Tools
     
     // Dealing with the pain of signed conversions.
     
-    template<typename Int>
+    template<IntQ Int>
     inline constexpr Size_T ToSize_T( const Int i )
     {
-        static_assert(IntQ<Int>, "");
-        
         return static_cast<Size_T>(std::max(Int(0),i));
     }
     
@@ -396,6 +400,10 @@ namespace Tools
 #include "src/Memory.hpp"
 
 #include "src/BitFiddling.hpp"
+
+#include "src/FunctionTraits.hpp"
+#include "src/OutString.hpp"
+#include "src/InString.hpp"
 
 #define _USE_MATH_DEFINES
 #include <cmath>
@@ -438,9 +446,7 @@ namespace Tools
 #include "src/BLAS_4.hpp"
 
 #include "src/AlignedAllocator.hpp"
-#include "src/HeapArray.hpp"
 #include "src/JobPointers.hpp"
-//#include "src/JobPointers_HeapArray.hpp"
 #include "src/ParallelDo_JobPointers.hpp"
 
 // TODO: get rid of std::vector here
@@ -462,7 +468,4 @@ namespace Tools
 
 #include "src/Debugging.hpp"
 #include "src/Random.hpp"
-
-
-
 

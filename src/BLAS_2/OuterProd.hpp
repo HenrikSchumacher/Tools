@@ -19,7 +19,7 @@ namespace Tools
             typename x_T, typename y_T, typename C_T,
             typename a_T = Scalar::Real<x_T>,
             typename b_T = Scalar::Real<C_T>,
-            typename Int = Size_T
+            IntQ     Int = Size_T
         >
         struct Kernel
         {

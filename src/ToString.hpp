@@ -153,20 +153,23 @@ namespace Tools
         return format( "{:p}", (void const *)ptr );
     }
 
-    template <typename T>
-    [[nodiscard]] std::enable_if_t<IntQ<T>,std::string> ToString( const T & value )
+    template <std::integral T>
+    [[nodiscard]] std::string ToString( const T & value )
     {
         return format("{:d}",value);
     }
 
 
     
+//    template<typename T>
+//    constexpr bool ClassEnumQ = std::is_enum<T>::value && !std::is_convertible<T,int>::value;
+    
     template<typename T>
-    constexpr bool ClassEnumQ = std::is_enum<T>::value && !std::is_convertible<T,int>::value;
+    concept ClassEnum = std::is_enum<T>::value && !std::is_convertible<T,int>::value;
     
     
-    template <typename T>
-    [[nodiscard]] std::enable_if_t<ClassEnumQ<T>,std::string> ToString( const T & value )
+    template <ClassEnum T>
+    [[nodiscard]] std::string ToString( const T & value )
     {
         return ToString( ToUnderlying(value) );
     }
@@ -177,7 +180,7 @@ namespace Tools
         return std::string("{ ") + ToString(p.first) + ", " + ToString(p.second) + " }";
     }
     
-    template<typename Scal, typename Int, typename Int2, typename Int3, typename F>
+    template<typename Scal, IntQ Int, IntQ Int2, IntQ Int3, NonIntQ F>
     [[nodiscard]] std::string ArrayToString(
         cptr<Scal> a,
         cptr<Int>  const dims,
@@ -243,7 +246,7 @@ namespace Tools
         return s;
     }
     
-    template<typename Scal, typename Int, typename Int2, typename Int3>
+    template<typename Scal, IntQ Int, IntQ Int2, IntQ Int3>
     [[nodiscard]] std::string ArrayToString(
         cptr<Scal> a,
         cptr<Int>  dims,
@@ -257,7 +260,7 @@ namespace Tools
         );
     }
     
-    template<typename Scal, typename Int, typename Int2, typename F>
+    template<typename Scal, IntQ Int, IntQ Int2, NonIntQ F>
     [[nodiscard]] std::string ArrayToString(
         cptr<Scal> a,
         cptr<Int> dims,
@@ -295,7 +298,7 @@ namespace Tools
             return std::string();
         }
     }
-    template<typename Scal, typename Int, typename Int2>
+    template<typename Scal, IntQ Int, IntQ Int2>
     [[nodiscard]] std::string ArrayToString(
         cptr<Scal> a,
         cptr<Int> dims,
@@ -310,7 +313,7 @@ namespace Tools
         );
     }
     
-    template<typename Scal, typename Int, typename F>
+    template<typename Scal, IntQ Int, NonIntQ F>
     [[nodiscard]] std::string ArrayToString(
         cptr<Scal> a,
         std::initializer_list<Int> dims,
@@ -321,7 +324,7 @@ namespace Tools
         return ArrayToString( a, &*dims.begin(), dims.size(), fun, line_prefix );
     }
 
-    template<typename Scal, typename Int>
+    template<typename Scal, IntQ Int>
     [[nodiscard]] std::string ArrayToString(
         cptr<Scal> a,
         std::initializer_list<Int> dims,
@@ -336,7 +339,7 @@ namespace Tools
     }
 
     
-    template<typename T, typename F>
+    template<typename T, NonIntQ F>
     [[nodiscard]] std::string ToString(
         cref<std::vector<T>> v,
         F && fun,
@@ -356,7 +359,7 @@ namespace Tools
         return ToString( v, []( cref<T> a ){ return ToString(a); }, line_prefix );
     }
     
-    template<typename T, Size_T N, typename F>
+    template<typename T, Size_T N, NonIntQ F>
     [[nodiscard]] std::string ToString(
         const std::array<T,N> & v,
         F && fun,
@@ -376,7 +379,7 @@ namespace Tools
         return ToString( v, []( cref<T> a ){ return ToString(a); }, line_prefix );
     }
 
-    template<Size_T N_ = VarSize, typename T, typename F, typename Int = Size_T>
+    template<Size_T N_ = VarSize, typename T, NonIntQ F, IntQ Int = Size_T>
     [[nodiscard]] std::string VectorString(
         cptr<T> A,
         cref<std::string> prefix,
@@ -411,7 +414,7 @@ namespace Tools
     }
     
     
-    template<Size_T N_ = VarSize, typename T, typename Int = Size_T>
+    template<Size_T N_ = VarSize, typename T, IntQ Int = Size_T>
     [[nodiscard]] std::string VectorString(
         cptr<T> A,
         cref<std::string> prefix,
@@ -425,7 +428,7 @@ namespace Tools
         );
     }
     
-    template<Size_T M_ = VarSize, Size_T N_ = VarSize, typename T, typename F, typename Int = Size_T>
+    template<Size_T M_ = VarSize, Size_T N_ = VarSize, typename T, NonIntQ F, IntQ Int = Size_T>
     [[nodiscard]] std::string MatrixString(
         cptr<T> A, const Size_T ldA,
         cref<std::string> header,
@@ -463,7 +466,7 @@ namespace Tools
         return s;
     }
     
-    template<Size_T M_ = VarSize, Size_T N_ = VarSize, typename T, typename Int = Size_T>
+    template<Size_T M_ = VarSize, Size_T N_ = VarSize, typename T, IntQ Int = Size_T>
     [[nodiscard]] std::string MatrixString(
         cptr<T> A, const Size_T ldA,
         cref<std::string> header,
@@ -504,7 +507,6 @@ namespace Tools
         );
     }
     
-    
     template<typename T>
     [[nodiscard]] std::string StringWithLeadingZeroes(
         const T val, const int width
@@ -514,7 +516,6 @@ namespace Tools
         s << std::setw(width) << std::setfill('0') << val;
         return s.str();
     }
-    
 
     [[nodiscard]] std::string BoolString( const bool b )
     {

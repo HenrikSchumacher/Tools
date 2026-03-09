@@ -31,7 +31,7 @@ namespace Tools
     template<
         Scalar::Flag a_flag, Size_T N = VarSize, Parallel_T parQ = Sequential,
         Op op = Op::Id,
-        typename a_T, typename x_T, typename Int = Size_T
+        typename a_T, typename x_T, IntQ Int = Size_T
     >
     TOOLS_FORCE_INLINE void modify_buffer(
         [[maybe_unused]] cref<a_T> a, mptr<x_T> x,

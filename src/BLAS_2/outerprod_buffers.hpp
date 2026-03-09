@@ -27,7 +27,7 @@ namespace Tools
         Parallel_T parQ = Sequential,
         Op op_x = Op::Id, Op op_y = Op::Id,
         typename a_T,  typename x_T, typename y_T,
-        typename b_T, typename C_T, typename Int = Size_T
+        typename b_T, typename C_T, IntQ Int = Size_T
     >
     TOOLS_FORCE_INLINE constexpr void outerprod_buffers(
         cref<a_T> a, cptr<x_T> x, cptr<y_T> y,
@@ -70,8 +70,6 @@ namespace Tools
 //        TOOLS_DUMP(m)
 //        TOOLS_DUMP(n)
 //
-        
-//        valprint("C",ArrayToString(C,{m,n}));
         
         Do<M,parQ>(
             [=](const Int i )

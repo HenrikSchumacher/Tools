@@ -63,7 +63,7 @@ namespace Tools
     template <
         Size_T N = VarSize, Parallel_T parQ = Sequential,
         typename F, typename T_a, typename T_b, typename T_c,
-        typename Int = Size_T
+        IntQ Int = Size_T
     >
     TOOLS_FORCE_INLINE void zip_buffers(
         F && zip, cptr<T_a> a, cptr<T_b> b, mptr<T_c> c,

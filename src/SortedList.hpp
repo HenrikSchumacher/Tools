@@ -1,11 +1,9 @@
 
 namespace Tools
 {
-    template<typename T, typename Int>
+    template<typename T, SignedIntQ Int>    // TODO: Why signed integer?
     class SortedList final
     {
-        static_assert(SignedIntQ<Int>,"");
-        
         std::vector<T> list;
         
         // TODO: Replace by
@@ -285,7 +283,7 @@ namespace Tools
         
         [[nodiscard]] friend std::string ToString( cref<SortedList> L )
         {
-            return ArrayToString( &L.list[0], {L.list.size()} );
+            return OutString( &L.list[0], L.list.size() );
         }
         
     };

@@ -4,7 +4,7 @@ namespace Tools
 {
     template <
         Size_T N = VarSize, Parallel_T parQ = Sequential,
-        typename a_T, typename x_T, typename Int = Size_T
+        typename a_T, typename x_T, IntQ Int = Size_T
     >
     TOOLS_FORCE_INLINE void scale_buffer(
         cref<a_T> a, mptr<x_T> x,

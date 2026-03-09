@@ -3,12 +3,11 @@
 namespace Tools
 {
     
-    template<typename T, typename Int>
+    template<typename T, IntQ Int>
     void reverse_buffer(
         mptr<T> x, const Int n
     )
     {
-        static_assert(IntQ<Int>, "");
         T buffer;
         
         for( Int i = 0; i < n/2; ++i )
@@ -20,13 +19,11 @@ namespace Tools
 //        std::reverse(&x[0],&x[n]);
     }
     
-    template<Side dir, typename T, typename Int>
+    template<Side dir, typename T, IntQ Int>
     void rotate_buffer(
         mptr<T> x, const Int shift, const Int n
     )
     {
-        static_assert(IntQ<Int>, "");
-
         if( n <= Int(1) )
         {
             return;

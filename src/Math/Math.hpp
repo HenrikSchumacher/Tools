@@ -2,17 +2,15 @@
 
 namespace Tools
 {
-    template<typename Real, typename T>
-    typename std::enable_if_t<!std::is_integral_v<T>,Real>
-    inline Power( const Real base, const T exponent )
+    template<typename Real, NonIntQ T>
+    inline Real Power( const Real base, const T exponent )
     {
         // Warning: Use only for positive base! This is basically pow with certain checks and cases deactivated
         return (base > Scalar::Zero<Real>) ? std::exp2( static_cast<Real>(exponent) * std::log2(base) ) : ( static_cast<Real>(exponent)!=Scalar::Zero<Real> ? Scalar::Zero<Real> : Scalar::One<Real> );
     } // Power
     
-    template<typename Real, typename Int>
-    typename std::enable_if_t<std::is_integral_v<Int>,Real>
-    inline Power( const Real base, const Int exponent)
+    template<typename Real, IntQ Int>
+    inline Real Power( const Real base, const Int exponent)
     {
         if( exponent >= Int(0))
         {

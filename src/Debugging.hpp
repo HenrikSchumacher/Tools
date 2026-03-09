@@ -3,12 +3,9 @@
 namespace Tools
 {
     // From https://stackoverflow.com/a/49658950/8248900.
-    template<typename Int_1, typename Int_0>
+    template<IntQ Int_1, IntQ Int_0>
     TOOLS_FORCE_INLINE constexpr Int_1 int_cast( const Int_0 n )
     {
-        static_assert(IntQ<Int_1>,"");
-        static_assert(IntQ<Int_0>,"");
-        
         if( !std::in_range<Int_1>( n ) )
         {
             eprint(std::string("int_cast<") + TypeName<Int_1> + "," + TypeName<Int_0> + "> reports integer overflow for n = " + ToString(n) + ".");

@@ -4,51 +4,23 @@
 
 namespace Tools
 {
-    
-    template<bool reverseQ = false, typename T, typename C = std::less<T>>
-    TOOLS_FORCE_INLINE void CompSwap( mref<T> a, mref<T> b, C comp = C() )
+   
+    template<bool reverseQ = false, std::integral T, typename C = std::less<T>>
+    TOOLS_FORCE_INLINE void CompSwap( mref<T> a, mref<T> b, C && comp = C() )
     {
-        if constexpr ( IntQ<T> || FloatQ<T> )
+        if constexpr ( reverseQ )
         {
-            // TODO: This is suitable only for things that are easy to copy.
-            if constexpr ( reverseQ )
-            {
-                std::tie(b,a) = std::minmax({a,b},comp);
-            }
-            else
-            {
-                std::tie(a,b) = std::minmax({a,b},comp);
-            }
+            std::tie(b,a) = std::minmax({a,b},std::forward<C>(comp));
         }
         else
         {
-            // For generic objects we use std::swap (or customizd swap routines) and rely on move semantics.
-            // There will probably be a branch in the code, but that is well worth it for bigger data structures.
-            if constexpr ( reverseQ )
-            {
-                if( comp(a,b) )
-                {
-                    using std::swap;
-                    swap(a,b);
-                }
-            }
-            else
-            {
-                if( comp(b,a) )
-                {
-                    using std::swap;
-                    swap(b,a);
-                }
-            }
+            std::tie(a,b) = std::minmax({a,b},std::forward<C>(comp));
         }
     }
     
-    // TODO: Might be overkill.
-    template<bool reverseQ = false, typename C = std::less<double>>
-    TOOLS_FORCE_INLINE void CompSwap( mref<double> a, mref<double> b, C comp = C()  )
+    template<bool reverseQ = false, std::floating_point T, typename C = std::less<T>>
+    TOOLS_FORCE_INLINE void CompSwap( mref<T> a, mref<T> b, C && comp = C()  )
     {
-        using T = double;
-        
         constexpr bool lessQ = SameQ<C,std::less<T>> || SameQ<C,std::less_equal<T>>;
         
         constexpr bool greaterQ = SameQ<C,std::greater<T>> || SameQ<C,std::greater_equal<T>>;
@@ -68,11 +40,37 @@ namespace Tools
         {
             if constexpr ( reverseQ )
             {
-                std::tie(b,a) = std::minmax({a,b},comp);
+                std::tie(b,a) = std::minmax({a,b},std::forward<C>(comp));
             }
             else
             {
-                std::tie(a,b) = std::minmax({a,b},comp);
+                std::tie(a,b) = std::minmax({a,b},std::forward<C>(comp));
+            }
+        }
+    }
+    
+    template<bool reverseQ = false, typename T, typename C = std::less<T>>
+    TOOLS_FORCE_INLINE void CompSwap( mref<T> a, mref<T> b, C && comp = C() )
+    {
+        static_assert(!std::integral<T>,"");
+        static_assert(!std::floating_point<T>,"");
+        
+        // For generic objects we use std::swap (or customized swap routines) and rely on move semantics.
+        // There will probably be a branch in the code, but that is well worth it for bigger data structures.
+        if constexpr ( reverseQ )
+        {
+            if( comp(a,b) )
+            {
+                using std::swap;
+                swap(a,b);
+            }
+        }
+        else
+        {
+            if( comp(b,a) )
+            {
+                using std::swap;
+                swap(b,a);
             }
         }
     }
@@ -82,16 +80,16 @@ namespace Tools
     struct SortNet
     {
         template<typename T, typename C = std::less<T>>
-        void operator()( cptr<T> a, mptr<T> b, C comp = C() )
+        void operator()( cptr<T> a, mptr<T> b, C && comp = C() )
         {
             copy_buffer( a, b, n );
-            this->operator()( b, comp );
+            this->operator()( b, std::forward<C>(comp) );
         }
         
         template<typename T, typename C = std::less<T>>
-        void operator()( mptr<T> a, C comp = C() )
+        void operator()( mptr<T> a, C && comp = C() )
         {
-            std::sort( a, a+n, comp );
+            std::sort( a, a+n, std::forward<C>(comp) );
         }
     };
 
@@ -99,14 +97,14 @@ namespace Tools
     struct SortNet<1,reverseQ>
     {
         template<typename T, typename C = std::less<T>>
-        void operator()( cptr<T> a, mptr<T> b,C comp = C() )
+        void operator()( cptr<T> a, mptr<T> b, C && comp = C() )
         {
             copy_buffer<1>( a, b );
-            this->operator()( b, comp );
+            this->operator()( b, std::forward<C>(comp) );
         }
      
         template<typename T,typename C = std::less<T>>
-        void operator()( mptr<T> a, C comp = C() )
+        void operator()( mptr<T> a, C && comp = C() )
         {
             (void)a;
             (void)comp;
@@ -117,16 +115,19 @@ namespace Tools
     struct SortNet<2,reverseQ>
     {
         template<typename T, typename C = std::less<T>>
-        void operator()( cptr<T> a, mptr<T> b,C comp = C() )
+        void operator()( cptr<T> a, mptr<T> b, C && comp = C() )
         {
             copy_buffer<2>( a, b );
-            this->operator()( b, comp );
+            this->operator()( b, std::forward<C>(comp) );
         }
      
         template<typename T, typename C = std::less<T>>
-        void operator()( mptr<T> a, C comp = C() )
+        void operator()( mptr<T> a, C && comp = C() )
         {
-            auto s = [comp]( T & x, T & y ) { return CompSwap<reverseQ>(x,y,comp); };
+            auto s = [&comp]( T & x, T & y )
+            {
+                return CompSwap<reverseQ>(x,y,std::forward<C>(comp));
+            };
             
             s(a[0],a[1]);
         }
@@ -136,16 +137,19 @@ namespace Tools
     struct SortNet<3,reverseQ>
     {
         template<typename T, typename C = std::less<T>>
-        void operator()( cptr<T> a, mptr<T> b,C comp = C() )
+        void operator()( cptr<T> a, mptr<T> b, C && comp = C() )
         {
             copy_buffer<3>( a, b );
-            this->operator()( b, comp );
+            this->operator()( b, std::forward<C>(comp) );
         }
      
         template<typename T, typename C = std::less<T>>
-        void operator()( mptr<T> a, C comp = C() )
+        void operator()( mptr<T> a, C && comp = C() )
         {
-            auto s = [comp]( T & x, T & y ) { return CompSwap<reverseQ>(x,y,comp); };
+            auto s = [&comp]( T & x, T & y )
+            {
+                return CompSwap<reverseQ>(x,y,std::forward<C>(comp));
+            };
             
             s(a[0],a[1]);
             s(a[0],a[2]);
@@ -157,16 +161,19 @@ namespace Tools
     struct SortNet<4,reverseQ>
     {
         template<typename T, typename C = std::less<T>>
-        void operator()( cptr<T> a, mptr<T> b,C comp = C() )
+        void operator()( cptr<T> a, mptr<T> b, C && comp = C() )
         {
             copy_buffer<4>( a, b );
-            this->operator()( b, comp );
+            this->operator()( b, std::forward<C>(comp) );
         }
      
         template<typename T, typename C = std::less<T>>
-        void operator()( mptr<T> a, C comp = C() )
+        void operator()( mptr<T> a, C && comp = C() )
         {
-            auto s = [comp]( T & x, T & y ) { return CompSwap<reverseQ>(x,y,comp); };
+            auto s = [&comp]( T & x, T & y )
+            {
+                return CompSwap<reverseQ>(x,y,std::forward<C>(comp));
+            };
             
             s(a[0],a[1]);
             s(a[2],a[3]);
@@ -183,16 +190,19 @@ namespace Tools
     struct SortNet<5,reverseQ>
     {
         template<typename T, typename C = std::less<T>>
-        void operator()( cptr<T> a, mptr<T> b,C comp = C() )
+        void operator()( cptr<T> a, mptr<T> b, C && comp = C() )
         {
             copy_buffer<5>( a, b );
             this->operator()( b, comp );
         }
      
         template<typename T, typename C = std::less<T>>
-        void operator()( mptr<T> a, C comp = C() )
+        void operator()( mptr<T> a, C && comp = C() )
         {
-            auto s = [comp]( T & x, T & y ) { return CompSwap<reverseQ>(x,y,comp); };
+            auto s = [&comp]( T & x, T & y )
+            {
+                return CompSwap<reverseQ>(x,y,std::forward<C>(comp));
+            };
             
             s(a[0],a[1]);
             s(a[2],a[3]);
@@ -215,16 +225,19 @@ namespace Tools
     struct SortNet<6,reverseQ>
     {
         template<typename T, typename C = std::less<T>>
-        void operator()( cptr<T> a, mptr<T> b,C comp = C() )
+        void operator()( cptr<T> a, mptr<T> b, C && comp = C() )
         {
             copy_buffer<6>( a, b );
             this->operator()( b, comp );
         }
      
         template<typename T, typename C = std::less<T>>
-        void operator()( mptr<T> a, C comp = C() )
+        void operator()( mptr<T> a, C && comp = C() )
         {
-            auto s = [comp]( T & x, T & y ) { return CompSwap<reverseQ>(x,y,comp); };
+            auto s = [&comp]( T & x, T & y )
+            {
+                return CompSwap<reverseQ>(x,y,std::forward<C>(comp));
+            };
             
             s(a[0],a[1]);
             s(a[2],a[3]);
@@ -251,16 +264,19 @@ namespace Tools
     struct SortNet<7,reverseQ>
     {
         template<typename T, typename C = std::less<T>>
-        void operator()( cptr<T> a, mptr<T> b,C comp = C() )
+        void operator()( cptr<T> a, mptr<T> b, C && comp = C() )
         {
             copy_buffer<7>( a, b );
             this->operator()( b, comp );
         }
      
         template<typename T, typename C = std::less<T>>
-        void operator()( mptr<T> a, C comp = C() )
+        void operator()( mptr<T> a, C && comp = C() )
         {
-            auto s = [comp]( T & x, T & y ) { return CompSwap<reverseQ>(x,y,comp); };
+            auto s = [&comp]( T & x, T & y )
+            {
+                return CompSwap<reverseQ>(x,y,std::forward<C>(comp));
+            };
             
             s(a[1],a[2]);
             s(a[3],a[4]);
@@ -291,16 +307,19 @@ namespace Tools
     struct SortNet<8,reverseQ>
     {
         template<typename T, typename C = std::less<T>>
-        void operator()( cptr<T> a, mptr<T> b,C comp = C() )
+        void operator()( cptr<T> a, mptr<T> b, C && comp = C() )
         {
             copy_buffer<8>( a, b );
             this->operator()( b, comp );
         }
      
         template<typename T, typename C = std::less<T>>
-        void operator()( mptr<T> a, C comp = C() )
+        void operator()( mptr<T> a, C && comp = C() )
         {
-            auto s = [comp]( T & x, T & y ) { return CompSwap<reverseQ>(x,y,comp); };
+            auto s = [&comp]( T & x, T & y )
+            {
+                return CompSwap<reverseQ>(x,y,std::forward<C>(comp));
+            };
             
             s(a[0],a[2]);
             s(a[1],a[3]);
@@ -335,16 +354,19 @@ namespace Tools
     struct SortNet<9,reverseQ>
     {
         template<typename T, typename C = std::less<T>>
-        void operator()( cptr<T> a, mptr<T> b,C comp = C() )
+        void operator()( cptr<T> a, mptr<T> b, C && comp = C() )
         {
             copy_buffer<9>( a, b );
             this->operator()( b, comp );
         }
      
         template<typename T, typename C = std::less<T>>
-        void operator()( mptr<T> a, C comp = C() )
+        void operator()( mptr<T> a, C && comp = C() )
         {
-            auto s = [comp]( T & x, T & y ) { return CompSwap<reverseQ>(x,y,comp); };
+            auto s = [&comp]( T & x, T & y )
+            {
+                return CompSwap<reverseQ>(x,y,std::forward<C>(comp));
+            };
             
             s(a[1],a[8]);
             s(a[2],a[7]);
@@ -385,16 +407,19 @@ namespace Tools
     struct SortNet<10,reverseQ>
     {
         template<typename T, typename C = std::less<T>>
-        void operator()( cptr<T> a, mptr<T> b,C comp = C() )
+        void operator()( cptr<T> a, mptr<T> b, C && comp = C() )
         {
             copy_buffer<10>( a, b );
             this->operator()( b, comp );
         }
      
         template<typename T, typename C = std::less<T>>
-        void operator()( mptr<T> a, C comp = C() )
+        void operator()( mptr<T> a, C && comp = C() )
         {
-            auto s = [comp]( T & x, T & y ) { return CompSwap<reverseQ>(x,y,comp); };
+            auto s = [&comp]( T & x, T & y )
+            {
+                return CompSwap<reverseQ>(x,y,std::forward<C>(comp));
+            };
             
             s(a[0],a[1]);
             s(a[2],a[3]);
@@ -441,16 +466,19 @@ namespace Tools
     struct SortNet<11,reverseQ>
     {
         template<typename T, typename C = std::less<T>>
-        void operator()( cptr<T> a, mptr<T> b,C comp = C() )
+        void operator()( cptr<T> a, mptr<T> b, C && comp = C() )
         {
             copy_buffer<11>( a, b );
             this->operator()( b, comp );
         }
      
         template<typename T, typename C = std::less<T>>
-        void operator()( mptr<T> a, C comp = C() )
+        void operator()( mptr<T> a, C && comp = C() )
         {
-            auto s = [comp]( T & x, T & y ) { return CompSwap<reverseQ>(x,y,comp); };
+            auto s = [&comp]( T & x, T & y )
+            {
+                return CompSwap<reverseQ>(x,y,std::forward<C>(comp));
+            };
             
             s(a[ 0],a[ 9]);
             s(a[ 1],a[ 8]);
@@ -502,16 +530,19 @@ namespace Tools
     struct SortNet<12,reverseQ>
     {
         template<typename T, typename C = std::less<T>>
-        void operator()( cptr<T> a, mptr<T> b,C comp = C() )
+        void operator()( cptr<T> a, mptr<T> b, C && comp = C() )
         {
             copy_buffer<12>( a, b );
             this->operator()( b, comp );
         }
      
         template<typename T, typename C = std::less<T>>
-        void operator()( mptr<T> a, C comp = C() )
+        void operator()( mptr<T> a, C && comp = C() )
         {
-            auto s = [comp]( T & x, T & y ) { return CompSwap<reverseQ>(x,y,comp); };
+            auto s = [&comp]( T & x, T & y )
+            {
+                return CompSwap<reverseQ>(x,y,std::forward<C>(comp));
+            };
             
             s(a[ 0],a[ 6]);
             s(a[ 1],a[ 7]);
@@ -568,7 +599,7 @@ namespace Tools
     struct SortNet<13,reverseQ>
     {
         template<typename T, typename C = std::less<T>>
-        void operator()( cptr<T> a, mptr<T> b,C comp = C() )
+        void operator()( cptr<T> a, mptr<T> b, C && comp = C() )
         {
             copy_buffer<13>( a, b );
             this->operator()( b, comp );
@@ -576,9 +607,12 @@ namespace Tools
      
         // This should be a depth-optimal solution.
         template<typename T, typename C = std::less<T>>
-        void operator()( mptr<T> a, C comp = C() )
+        void operator()( mptr<T> a, C && comp = C() )
         {
-            auto s = [comp]( T & x, T & y ) { return CompSwap<reverseQ>(x,y,comp); };
+            auto s = [&comp]( T & x, T & y )
+            {
+                return CompSwap<reverseQ>(x,y,std::forward<C>(comp));
+            };
             
             s(a[ 3],a[12]);
             s(a[ 4],a[11]);
@@ -643,7 +677,7 @@ namespace Tools
     struct SortNet<14,reverseQ>
     {
         template<typename T, typename C = std::less<T>>
-        void operator()( cptr<T> a, mptr<T> b,C comp = C() )
+        void operator()( cptr<T> a, mptr<T> b, C && comp = C() )
         {
             copy_buffer<14>( a, b );
             this->operator()( b, comp );
@@ -651,9 +685,12 @@ namespace Tools
      
         // This should be a depth-optimal solution.
         template<typename T, typename C = std::less<T>>
-        void operator()( mptr<T> a, C comp = C() )
+        void operator()( mptr<T> a, C && comp = C() )
         {
-            auto s = [comp]( T & x, T & y ) { return CompSwap<reverseQ>(x,y,comp); };
+            auto s = [&comp]( T & x, T & y )
+            {
+                return CompSwap<reverseQ>(x,y,std::forward<C>(comp));
+            };
             
             s(a[ 2],a[13]);
             s(a[ 3],a[12]);
@@ -723,7 +760,7 @@ namespace Tools
     struct SortNet<15,reverseQ>
     
     {   template<typename T, typename C = std::less<T>>
-        void operator()( cptr<T> a, mptr<T> b,C comp = C() )
+        void operator()( cptr<T> a, mptr<T> b, C && comp = C() )
         {
             copy_buffer<15>( a, b );
             this->operator()( b, comp );
@@ -731,9 +768,12 @@ namespace Tools
      
         // This should be a depth-optimal solution.
         template<typename T, typename C = std::less<T>>
-        void operator()( mptr<T> a, C comp = C() )
+        void operator()( mptr<T> a, C && comp = C() )
         {
-            auto s = [comp]( T & x, T & y ) { return CompSwap<reverseQ>(x,y,comp); };
+            auto s = [&comp]( T & x, T & y )
+            {
+                return CompSwap<reverseQ>(x,y,std::forward<C>(comp));
+            };
             
             s(a[ 1],a[14]);
             s(a[ 2],a[13]);
@@ -810,7 +850,7 @@ namespace Tools
     struct SortNet<16,reverseQ>
     {
         template<typename T, typename C = std::less<T>>
-        void operator()( cptr<T> a, mptr<T> b,C comp = C() )
+        void operator()( cptr<T> a, mptr<T> b, C && comp = C() )
         {
             copy_buffer<16>( a, b );
             this->operator()( b, comp );
@@ -818,11 +858,14 @@ namespace Tools
         
         // This should be a depth-optimal solution.
         template<typename T, typename C = std::less<T>>
-        void operator()( mptr<T> a, C comp = C() )
+        void operator()( mptr<T> a, C && comp = C() )
         {
             // https://bertdobbelaere.github.io/sorting_networks.html#N32L185D14
             
-            auto s = [comp]( T & x, T & y ) { return CompSwap<reverseQ>(x,y,comp); };
+            auto s = [&comp]( T & x, T & y )
+            {
+                return CompSwap<reverseQ>(x,y,std::forward<C>(comp));
+            };
             
             s(a[0],a[13]);
             s(a[1],a[12]);
@@ -975,7 +1018,7 @@ namespace Tools
     struct SortNet<32,reverseQ>
     {
         template<typename T, typename C = std::less<T>>
-        void operator()( cptr<T> a, mptr<T> b,C comp = C() )
+        void operator()( cptr<T> a, mptr<T> b, C && comp = C() )
         {
             copy_buffer<32>( a, b );
             this->operator()( b, comp );
@@ -983,9 +1026,12 @@ namespace Tools
         
         // This should be a depth-optimal solution.
         template<typename T, typename C = std::less<T>>
-        void operator()( mptr<T> a, C comp = C() )
+        void operator()( mptr<T> a, C && comp = C() )
         {
-            auto s = [comp]( T & x, T & y ) { return CompSwap<reverseQ>(x,y,comp); };
+            auto s = [&comp]( T & x, T & y )
+            {
+                return CompSwap<reverseQ>(x,y,std::forward<C>(comp));
+            };
             
             s(a[0],a[1]);
             s(a[2],a[3]);
@@ -1193,7 +1239,7 @@ namespace Tools
     struct SortNet<64,reverseQ>
     {
         template<typename T, typename C = std::less<T>>
-        void operator()( cptr<T> a, mptr<T> b,C comp = C() )
+        void operator()( cptr<T> a, mptr<T> b, C && comp = C() )
         {
             copy_buffer<64>( a, b );
             this->operator()( b, comp );
@@ -1201,9 +1247,12 @@ namespace Tools
         
         // This should be a depth-optimal solution.
         template<typename T, typename C = std::less<T>>
-        void operator()( mptr<T> a, C comp = C() )
+        void operator()( mptr<T> a, C && comp = C() )
         {
-            auto s = [comp]( T & x, T & y ) { return CompSwap<reverseQ>(x,y,comp); };
+            auto s = [&comp]( T & x, T & y )
+            {
+                return CompSwap<reverseQ>(x,y,std::forward<C>(comp));
+            };
             
             s(a[0],a[2]);
             s(a[1],a[3]);

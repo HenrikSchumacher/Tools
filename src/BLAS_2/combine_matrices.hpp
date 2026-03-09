@@ -51,7 +51,7 @@ namespace Tools
         Scalar::Flag a_flag, Scalar::Flag b_flag,
         Size_T M, Size_T N, Parallel_T parQ,
         Op opx = Op::Id, Op opy = Op::Id,
-        typename a_T, typename X_T, typename b_T, typename Y_T, typename Int
+        typename a_T, typename X_T, typename b_T, typename Y_T, IntQ Int
     >
     TOOLS_FORCE_INLINE void combine_matrices(
         cref<a_T> a, cptr<X_T> X, const Int ldX,
@@ -116,7 +116,7 @@ namespace Tools
         Scalar::Flag a_flag, Scalar::Flag b_flag,
         Size_T M, Size_T N,
         Op opx = Op::Id, Op opy = Op::Id,
-        typename a_T, typename X_T, typename b_T, typename Y_T, typename Int
+        typename a_T, typename X_T, typename b_T, typename Y_T, IntQ Int
     >
     TOOLS_FORCE_INLINE void combine_matrices(
         cref<a_T> a, cptr<X_T> X, const Int ldX,
@@ -141,7 +141,7 @@ namespace Tools
     template<
         Scalar::Flag a_flag, Scalar::Flag b_flag,
         Op opx = Op::Id, Op opy = Op::Id,
-        typename a_T, typename X_T, typename b_T, typename Y_T, typename Int
+        typename a_T, typename X_T, typename b_T, typename Y_T, IntQ Int
     >
     TOOLS_FORCE_INLINE void combine_matrices(
         cref<a_T> a, cptr<X_T> X, const Int ldX,
@@ -164,7 +164,7 @@ namespace Tools
     template<
         Scalar::Flag a_flag, Scalar::Flag b_flag,
         Op opx = Op::Id, Op opy = Op::Id,
-        typename a_T, typename X_T, typename b_T, typename Y_T, typename Int
+        typename a_T, typename X_T, typename b_T, typename Y_T, IntQ Int
     >
     TOOLS_FORCE_INLINE void combine_matrices(
         cref<a_T> a, cptr<X_T> X, const Int ldX,
@@ -231,7 +231,7 @@ namespace Tools
     template<
         Size_T M, Size_T N, Parallel_T parQ,
         Op opx = Op::Id, Op opy = Op::Id,
-        typename a_T, typename X_T, typename b_T, typename Y_T, typename Int
+        typename a_T, typename X_T, typename b_T, typename Y_T, IntQ Int
     >
     TOOLS_FORCE_INLINE void combine_matrices_auto(
         cref<a_T> a, cptr<X_T> X, const Int ldX,
@@ -361,7 +361,7 @@ namespace Tools
     template<
         Size_T M, Size_T N,
         Op opx = Op::Id, Op opy = Op::Id,
-        typename a_T, typename X_T, typename b_T, typename Y_T, typename Int
+        typename a_T, typename X_T, typename b_T, typename Y_T, IntQ Int
     >
     TOOLS_FORCE_INLINE void combine_matrices(
         cref<a_T> a, cptr<X_T> X, const Int ldX,
@@ -384,7 +384,7 @@ namespace Tools
      */
     template<
         Op opx = Op::Id, Op opy = Op::Id,
-        typename a_T, typename X_T, typename b_T, typename Y_T, typename Int
+        typename a_T, typename X_T, typename b_T, typename Y_T, IntQ Int
     >
     TOOLS_FORCE_INLINE void combine_matrices(
         cref<a_T> a, cptr<X_T> X, const Int ldX,
@@ -406,7 +406,7 @@ namespace Tools
     
     template<
         Op opx = Op::Id, Op opy = Op::Id,
-        typename a_T, typename X_T, typename b_T, typename Y_T, typename Int
+        typename a_T, typename X_T, typename b_T, typename Y_T, IntQ Int
     >
     TOOLS_FORCE_INLINE void combine_matrices(
         cref<a_T> a, cptr<X_T> X, const Int ldX,

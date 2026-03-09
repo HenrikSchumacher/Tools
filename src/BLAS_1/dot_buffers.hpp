@@ -4,7 +4,7 @@ namespace Tools
 {
     template< Size_T N = VarSize, Parallel_T parQ = Sequential,
         Op opx = Op::Id, Op opy = Op::Id,
-        typename x_T, typename y_T, typename Int = Size_T
+        typename x_T, typename y_T, IntQ Int = Size_T
     >
     [[nodiscard]] TOOLS_FORCE_INLINE
     decltype( x_T(1) * y_T(1) ) dot_buffers(
@@ -14,8 +14,6 @@ namespace Tools
         const Int thread_count = 1
     )
     {
-        static_assert(IntQ<Int>, "");
-        
         // Computes inner product <opx(x), opx(y)> of two vectors x and y.
 
         check_sequential<parQ>( "dot_buffers", thread_count );
@@ -52,7 +50,7 @@ namespace Tools
     
     
     template< Size_T N = VarSize, Parallel_T parQ = Sequential,
-        typename x_T, typename y_T, typename Int = Size_T
+        typename x_T, typename y_T, IntQ Int = Size_T
     >
     [[nodiscard]] TOOLS_FORCE_INLINE
     decltype( x_T(1) * y_T(1) ) innerprod(

@@ -6,7 +6,7 @@ namespace Tools
 {
     // We cannot return a char array from a function, therefore we need a wrapper
     template <unsigned N>
-    struct String
+    struct CompileTimeString
     {
         char c[N];
     };
@@ -15,7 +15,7 @@ namespace Tools
     constexpr auto combine_strings( const char (&...strings)[Len] )
     {
         constexpr unsigned N = (... + Len) - sizeof...(Len);
-        String<N + 1> result = {};
+        CompileTimeString<N + 1> result = {};
         result.c[N] = '\0';
         
         char * dst = result.c;

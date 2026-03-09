@@ -4,7 +4,7 @@ namespace Tools
 {
     /*!@brief Returns the first position `p` in the sorted input array `sorted_list` such that `sorted_list[p] > value`. If no such position exists, then `p = n`is returned.
      */
-    template<typename T, typename Int, typename CMP = std::less<T>>
+    template<typename T, IntQ Int, typename CMP = std::less<T>>
     inline Int FindFirstPositionGreater(
         cptr<T> sorted_list, const Int n, cref<T> value, CMP && cmp = CMP()
     )
@@ -50,7 +50,7 @@ namespace Tools
     
     /*!@brief Returns the first position `p` in the sorted input array `sorted_list` such that `sorted_list[p] >= value`. If no such position exists, then `p = n`is returned.
      */
-    template<typename T, typename Int, typename CMP = std::less<T>>
+    template<typename T, IntQ Int, typename CMP = std::less<T>>
     inline Int FindFirstPositionGreaterEqual(
         cptr<T> sorted_list, const Int n, cref<T> value, CMP && cmp = CMP()
     )
@@ -98,7 +98,7 @@ namespace Tools
      * This function requires that `sorted_list` is a sorted array of length at least `n` without duplicates.
      */
     
-    template<typename T, typename Int, typename CMP = std::less<T>>
+    template<typename T, IntQ Int, typename CMP = std::less<T>>
     inline std::pair<Int,Int> FindRange(
         cptr<T> sorted_list, const Int n, cref<T> a, cref<T> b, CMP && cmp = CMP()
     )
@@ -109,8 +109,6 @@ namespace Tools
 //        TOOLS_DUMP(n);
         
         if( !cmp(a,b) ) { return std::pair{Int(0),Int(0)}; }
-
-//        valprint("sorted_list",ArrayToString(sorted_list,{n}));
         
         Int end = FindFirstPositionGreaterEqual(sorted_list,n,b,cmp);
         
@@ -143,7 +141,7 @@ namespace Tools
     
 //    /*!@brief Returns the first position `pos` in the sorted input array `sorted_list` such that `sorted_list[pos] >= value`. If such a position exists, then `std::pair(true,pos)`is returned. Otherwise `std::pair(false,n)` is returned.
 //     */
-//    template<typename T, typename Int, typename CMP = std::less<T>>
+//    template<typename T, IntQ Int, typename CMP = std::less<T>>
 //    inline std::pair<bool,Int> FindFirstPositionGreaterEqual(
 //        cptr<T> sorted_list, const Int n, cref<T> value, CMP && cmp = CMP()
 //    )
@@ -164,7 +162,7 @@ namespace Tools
 
     //    /*!@brief Returns the largest position `pos` in the input array such that `sorted_list[pos] <= value`. If `value` is found, then `true` is returned. Otherwise `false` is returned.
     //     */
-    //    template<typename T, typename Int>
+    //    template<typename T, IntQ Int>
     //    TOOLS_FORCE_INLINE bool BinarySearch(
     //        cptr<T> sorted_list, const Int n, cref<T> value, mref<Int> pos
     //    )

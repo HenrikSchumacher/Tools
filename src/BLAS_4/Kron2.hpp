@@ -25,7 +25,7 @@ namespace Tools
                 typename A_T, typename B_T, typename C_T,
                 typename a_T = Scalar::Real<A_T>,
                 typename b_T = Scalar::Real<C_T>,
-                typename Int = Size_T
+                IntQ     Int = Size_T
             >
             struct Arg
             {
@@ -52,7 +52,7 @@ namespace Tools
 //            // deduction guide
 //            template <
 //                typename A_T, typename B_T, typename C_T,
-//                typename a_T, typename b_T, typename Int
+//                typename a_T, typename b_T, IntQ Int
 //            >
 //            Arg( a_T, A_T const *, Int, Int, Int, B_T const *, Int, Int, Int, b_T, C_T *, Int, Int )
 //            ->
@@ -69,7 +69,7 @@ namespace Tools
             
             template<
                 typename A_T, typename B_T, typename C_T,
-                typename a_T, typename b_T, typename Int
+                typename a_T, typename b_T, IntQ Int
             >
             void operator()( Arg<A_T,B_T,C_T,a_T,b_T,Int> arg )
             {
@@ -123,7 +123,7 @@ namespace Tools
     template <
         KronProd_TArgs targs,
         typename a_T, typename A_T, typename B_T,
-        typename b_T, typename C_T, typename Int
+        typename b_T, typename C_T, IntQ Int
     >
     struct KronProd_Args
     {
@@ -149,7 +149,7 @@ namespace Tools
     template <
         KronProd_TArgs targs,
         typename a_T, typename A_T, typename B_T,
-        typename b_T, typename C_T, typename Int = Size_T
+        typename b_T, typename C_T, IntQ Int = Size_T
     >
     TOOLS_FORCE_INLINE constexpr void KronProd(
         KronProd_Args<targs,a_T,A_T,B_T,b_T,C_T,Int> args

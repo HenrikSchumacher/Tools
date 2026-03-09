@@ -4,7 +4,7 @@ namespace Tools
 {
     // TODO: Make the job pointers respect the size of the cache line somehow.
     
-    template<typename Int_>
+    template<IntQ Int_>
     class JobPointers final
     {
         static_assert(IntQ<Int_>,"");
@@ -170,7 +170,7 @@ namespace Tools
                 TOOLS_DDUMP(job_count);
                 TOOLS_DDUMP(thread_count);
                 
-                logvalprint( "acc_costs", ArrayToString( acc_costs, {job_count + 1} ) );
+                logvalprint( "acc_costs", OutString( acc_costs, job_count + 1 ) );
                 
                 std::fill( job_ptr.begin(), job_ptr.end(), Int(0));
                             
@@ -235,7 +235,7 @@ namespace Tools
 
         [[nodiscard]] std::string friend ToString( const JobPointers & J)
         {
-            return ArrayToString( &J.job_ptr[0], {J.Size()} );
+            return OutString( &J.job_ptr[0], J.Size() );
         }
         
     private:

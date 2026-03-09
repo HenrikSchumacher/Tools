@@ -4,7 +4,7 @@ namespace Tools
 {
     template <
         Size_T N = VarSize, Parallel_T parQ = Sequential,
-        typename T, typename Int = Size_T
+        typename T, IntQ Int = Size_T
     >
     TOOLS_FORCE_INLINE constexpr void swap_buffers(
         mptr<T> x, mptr<T> y,

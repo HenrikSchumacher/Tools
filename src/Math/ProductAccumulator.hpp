@@ -2,7 +2,7 @@
 
 namespace Tools
 {
-    template<typename Scal_, typename Int_ = Int64>
+    template<typename Scal_, IntQ Int_ = Int64>
     class ProductAccumulator final
     {
         using Scal    = Scal_;
