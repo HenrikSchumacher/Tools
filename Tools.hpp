@@ -234,20 +234,20 @@ namespace Tools
     constexpr Size_T VarSize = 0;
     
     template<typename T>
-    concept IntQ = std::integral<T>;
+    concept IntQ = std::integral<T> || std::integral<typename std::remove_reference<T>::type>;
     
     template<typename T>
-    concept NonIntQ = !std::integral<T>;
+    concept NonIntQ = !IntQ<T>;
     
 #define ASSERT_INT(I) static_assert( IntQ<I>, "Template parameter " #I " must be an integral type." );
     
     template<typename T> 
-    concept UnsignedIntQ = std::integral<T> && std::is_unsigned_v<T>;
+    concept UnsignedIntQ = IntQ<T> && std::is_unsigned_v<T>;
     
 #define ASSERT_UINT(I) static_assert( UnsignedIntQ<I>, "Template parameter " #I " must be a unsigned integral type." );
     
     template<typename T>
-    concept SignedIntQ = std::integral<T> && std::is_signed_v<T>;
+    concept SignedIntQ = IntQ<T> && std::is_signed_v<T>;
     
     template<typename T>
     using ToSigned = std::make_signed_t<T>;
