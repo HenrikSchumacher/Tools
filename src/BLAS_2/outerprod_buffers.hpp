@@ -37,8 +37,6 @@ namespace Tools
         const Int thread_count = Int(1)
     )
     {
-        static_assert( IntQ<Int>, "" );
-        
         static_assert( NotTransposedQ(op_x), "" );
         static_assert( NotTransposedQ(op_y), "" );
         

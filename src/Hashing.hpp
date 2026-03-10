@@ -4,11 +4,9 @@ namespace Tools {
     
     // https://stackoverflow.com/a/9729747/8248900
 
-    template<typename T>
+    template<IntQ T>
     struct hash
     {
-        static_assert(IntQ<T>,"");
-        
         using is_avalanching = std::true_type; // instruct Boost.Unordered to not use post-mixing
         
         inline std::size_t operator()( cref<T> x_0 ) const

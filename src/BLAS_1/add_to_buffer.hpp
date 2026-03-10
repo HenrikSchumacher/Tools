@@ -11,8 +11,6 @@ namespace Tools
         const Int n = static_cast<Int>(N), const Int thread_count = 1
     )
     {
-        static_assert( IntQ<Int>, "" );
-        
         combine_buffers<Scalar::Flag::Plus,Scalar::Flag::Plus,N,parQ,Op::Id,Op::Id>(
             Scalar::One<y_T>, x,
             Scalar::One<y_T>, y,

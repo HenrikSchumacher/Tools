@@ -23,7 +23,6 @@ namespace Tools
         >
         struct Kernel
         {
-            static_assert( IntQ<Int>, "" );
             static_assert( NotTransposedQ(t.opx), "" );
             static_assert( NotTransposedQ(t.opy), "" );
             
@@ -47,8 +46,6 @@ namespace Tools
             
             void operator()()
             {
-                static_assert( IntQ<Int>, "" );
-
                 constexpr Scalar::Flag x_flag =
                     (t.a_flag == Scalar::Flag::Zero)
                     ? Scalar::Flag::Zero

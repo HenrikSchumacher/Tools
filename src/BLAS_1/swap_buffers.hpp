@@ -14,8 +14,6 @@ namespace Tools
     {
         check_sequential<parQ>( "swap_buffers", thread_count );
         
-        static_assert(IntQ<Int>,"");
-        
         if constexpr ( N <= VarSize )
         {
             if constexpr ( parQ == Sequential )

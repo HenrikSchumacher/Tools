@@ -7,8 +7,6 @@ namespace Tools
     template<IntQ Int_>
     class JobPointers final
     {
-        static_assert(IntQ<Int_>,"");
-        
     public:
         
         using Int = Int_;
@@ -34,7 +32,7 @@ namespace Tools
         }
         
         template<typename T, typename I>
-        JobPointers( const Int job_count, cptr<T> costs, const I thread_count, bool accumulate = true )
+        JobPointers( const Int job_count, cptr<T> costs, const I thread_count, bool accumulateQ = true )
         :   job_ptr (
                 std::vector<Int>(
                     static_cast<Size_T>(thread_count+1),
@@ -42,7 +40,7 @@ namespace Tools
                 )
             )
         {
-            if( accumulate )
+            if( accumulateQ )
             {
                 BalanceWorkLoad_Accumulated( job_count, costs );
             }
@@ -132,12 +130,13 @@ namespace Tools
             
 //            TOOLS_PTIMER(timer,MethodName("BalanceWorkLoad_Accumulated"));
             
-            T * restrict acc_costs = nullptr;
+            T * acc_costs = nullptr;
             
             safe_alloc( acc_costs, static_cast<Size_T>(job_count + 1) );
             
             acc_costs[0] = Int(0);
-            parallel_accumulate( &costs[0], &acc_costs[1], job_count, thread_count );
+            // Is parallel accumuation really a good idea here?
+            Accumulate<Parallel>( &costs[0], &acc_costs[1], job_count, thread_count );
 
             BalanceWorkLoad( job_count, acc_costs);
             

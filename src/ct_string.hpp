@@ -73,16 +73,12 @@ namespace Tools
         template<IntQ Int>
         constexpr char & operator[](const Int i)
         {
-            static_assert(IntQ<Int>,"");
-            
             return bytes[i];
         }
         
         template<IntQ Int>
         constexpr char const & operator[](const Int i) const
         {
-            static_assert(IntQ<Int>,"");
-            
             return bytes[i];
         }
         

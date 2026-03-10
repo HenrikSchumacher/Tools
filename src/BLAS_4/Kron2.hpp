@@ -73,8 +73,6 @@ namespace Tools
             >
             void operator()( Arg<A_T,B_T,C_T,a_T,b_T,Int> arg )
             {
-                static_assert( IntQ<Int>, "" );
-
                 constexpr Scalar::Flag A_flag =
                     (targ.a_flag == Scalar::Flag::Zero)
                     ? Scalar::Flag::Zero
@@ -155,8 +153,6 @@ namespace Tools
         KronProd_Args<targs,a_T,A_T,B_T,b_T,C_T,Int> args
     )
     {
-        static_assert( IntQ<Int>, "" );
-        
         constexpr Scalar::Flag A_flag =
             (targs.a_flag == Scalar::Flag::Zero)
             ? Scalar::Flag::Zero

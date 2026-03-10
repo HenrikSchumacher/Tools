@@ -26,8 +26,6 @@ namespace Tools
         const Int thread_count = Int(1)
     )
     {
-        static_assert( IntQ<Int>, "" );
-        
 //        const Int mC = mA * mB;
 //        const Int nC = nA * nB;
         

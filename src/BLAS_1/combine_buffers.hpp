@@ -67,8 +67,6 @@ namespace Tools
         
         using namespace Scalar;
         
-        static_assert( IntQ<Int>,"");
-        
         check_sequential<parQ>( "combine_buffers", thread_count );
         
         
@@ -204,8 +202,6 @@ namespace Tools
         // If b_flag == Flag::Generic, then it assumes generic values for b.
         
         using namespace Scalar;
-        
-        static_assert( IntQ<Int>, "" );
         
         check_sequential<parQ>( "combine_buffers3", thread_count );
         

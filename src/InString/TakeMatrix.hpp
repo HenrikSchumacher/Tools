@@ -20,8 +20,6 @@ InString & TakeMatrixFunction( MatrixFun_T && a, Int m, Int n,
     FromChars_T && from_chars = FromChars_T()
 )
 {
-    static_assert(IntQ<Int>,"");
-
     SkipChars(prefix_0);
     if( m > Int(0) )
     {

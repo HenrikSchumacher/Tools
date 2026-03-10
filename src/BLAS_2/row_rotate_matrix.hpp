@@ -15,8 +15,6 @@ namespace Tools
         Fun && fun
     )
     {
-        static_assert(IntQ<Int>, "");
-        
         if constexpr ( M > VarSize )
         {
             const Int half = M/2;
@@ -65,7 +63,6 @@ namespace Tools
     )
     {
         // rotate_buffer(A,shift * n, m * n) would also work, but this does it i chunks.
-        static_assert(IntQ<Int>, "");
         T * scratch = nullptr;
         
         auto fun = [n]( cptr<T> from, mptr<T> to )
@@ -95,8 +92,6 @@ namespace Tools
         PostScan && post_scan
     )
     {
-        static_assert(IntQ<Int>, "");
-
         if( m <= Int(0) ) { return; }
         
         Int s = (dir == Side::Left) ? (shift % m) : (-shift % m);

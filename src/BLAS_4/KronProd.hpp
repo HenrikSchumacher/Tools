@@ -25,8 +25,6 @@ namespace Tools
         >
         struct Kernel
         {
-            static_assert( IntQ<Int>, "" );
-            
             using F_T = Scalar::Flag;
          
             // We initialize this to 1 if we have no reason to do otherwise.
@@ -49,8 +47,6 @@ namespace Tools
             
             void operator()()
             {
-                static_assert( IntQ<Int>, "" );
-
                 constexpr Scalar::Flag A_flag =
                     (t.a_flag == Scalar::Flag::Zero)
                     ? Scalar::Flag::Zero

@@ -49,8 +49,6 @@ OutString & PutMatrixFunction( MatrixFun_T && a, Int d_0, Int d_1,
     ToChars_T && to_chars = ToChars_T()
 )
 {
-    static_assert(IntQ<Int>,"");
-    
     static_assert(ToChars_T::implementedQ,"");
     
     if ( check_sizeQ )
@@ -156,8 +154,6 @@ OutString & PutMatrixFunction2( MatrixFun_T && a, Int d_0, Int d_1,
     ToChars_T && to_chars = ToChars_T()
 )
 {
-    static_assert(IntQ<Int>,"");
-    
     static_assert(ToChars_T::implementedQ,"");
     
     if ( check_sizeQ )

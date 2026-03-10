@@ -53,8 +53,6 @@ namespace Tools
         F && fun, const Int begin, const Int end, const Int thread_count
     )
     {
-        static_assert(IntQ<Int>,"");
-        
         ParallelDo(
             [&fun,begin,end,thread_count]( const Int thread )
             {
@@ -77,8 +75,6 @@ namespace Tools
         F && fun, const Int n, const Int thread_count
     )
     {
-        static_assert(IntQ<Int>,"");
-        
         ParallelDo(
             [&fun,n,thread_count]( const Int thread )
             {
@@ -101,8 +97,6 @@ namespace Tools
         const Int begin, const Int end, const Int thread_count
     )
     {
-        static_assert(IntQ<Int>,"");
-        
         return ParallelDoReduce(
             [&fun,&reducer,begin,end,thread_count,&init]( const Int thread ) -> T
             {

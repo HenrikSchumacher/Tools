@@ -269,12 +269,9 @@ namespace Tools
     template<> constexpr bool ArithmeticQ<std::complex<float>>  = true;
     template<> constexpr bool ArithmeticQ<std::complex<double>> = true;
 
-    template<typename I, typename J>
+    template<IntQ I, IntQ J>
     inline bool IntFitsIntoTypeQ( J x )
     {
-        static_assert(IntQ<I>,"");
-        static_assert(IntQ<J>,"");
-        
         return (
             std::cmp_less_equal( x, std::numeric_limits<I>::max() )
             &&
@@ -436,10 +433,9 @@ namespace Tools
 //#include "src/Scalars/combine_scalars_mat.hpp"
 
 #include "src/ParallelDo_Thread.hpp"
-
-#include "src/ParallelAlgorithms.hpp"
 #include "src/ParallelDo_Common.hpp"
 #include "src/Do.hpp"
+#include "src/ParallelAlgorithms.hpp"
 
 #include "src/BLAS_1.hpp"
 #include "src/BLAS_2.hpp"

@@ -9,8 +9,6 @@ namespace Tools
         cptr<T> sorted_list, const Int n, cref<T> value, CMP && cmp = CMP()
     )
     {
-        static_assert(IntQ<Int>,"");
-        
         if( n <= Int(0) ) { return Int(0); }
         
         Int L = Int(0);
@@ -55,8 +53,6 @@ namespace Tools
         cptr<T> sorted_list, const Int n, cref<T> value, CMP && cmp = CMP()
     )
     {
-        static_assert(IntQ<Int>,"");
-        
         if( n <= Int(0) ) { return Int(0); }
         
         Int L = Int(0);
@@ -167,8 +163,6 @@ namespace Tools
     //        cptr<T> sorted_list, const Int n, cref<T> value, mref<Int> pos
     //    )
     //    {
-    //        static_assert(IntQ<Int>,"");
-    //
     //        if( n == Int(0) )
     //        {
     //            pos = Int(0);
