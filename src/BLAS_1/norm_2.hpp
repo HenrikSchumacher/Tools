@@ -17,15 +17,10 @@ namespace Tools
             TOOLS_MAKE_FP_FAST()
             
             return DoReduce<N,parQ>(
-                [x]( const Int i )
-                {
-                    return AbsSquared(x[i]);
-                },
-                []( const T & value, T & result )
-                {
-                    result += value;
-                },
-                Scalar::Zero<T>, n, thread_count
+                [x]( const Int i ) { return AbsSquared(x[i]); },
+                []( const T & value, T & result ) { result += value; },
+                Scalar::Zero<T>,
+                n, thread_count
             );
         }
     }

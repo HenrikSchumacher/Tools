@@ -33,10 +33,7 @@ namespace Tools
 //        );
         
         return DoReduce<N,parQ>(
-            [&f]( const Int i ) -> S
-            {
-                return f(i);
-            },
+            std::forward<F>(f),
             []( cref<S> value, mref<T> result )
             {
                 result.first  = Min( value,  result.first  );
@@ -75,14 +72,8 @@ namespace Tools
         using T = decltype(f(Int(0)));
         
         return DoReduce<N,parQ>(
-            [&f]( const Int i ) -> T
-            {
-                return f(i);
-            },
-            []( cref<T> value, mref<T> result )
-            {
-                result = Min( result, value );
-            },
+            std::forward<F>(f),
+            []( cref<T> value, mref<T> result ) { result = Min( result, value ); },
             std::numeric_limits<T>::max(), n, thread_count
         );
     }
@@ -111,10 +102,7 @@ namespace Tools
             },
             []( cref<T> value, mref<T> result )
             {
-                if( value.second < result.second )
-                {
-                    result = value;
-                }
+                if( value.second < result.second ) { result = value; }
             },
             init, n, thread_count
         );
@@ -165,10 +153,7 @@ namespace Tools
         using S = decltype(f(Int(0)));
         
         return DoReduce<N,parQ>(
-            [&f]( const Int i ) -> S
-            {
-                return f(i);
-            },
+            std::forward<F>(f),
             []( cref<S> value, mref<S> result )
             {
                 result = Max( result, value );
@@ -193,18 +178,10 @@ namespace Tools
         T init { Int(0), std::numeric_limits<S>::lowest() };
         
         return DoReduce<N,parQ>(
-            [&f]( const Int i ) -> T
-            {
-                const S f_i = f(i);
-                
-                return std::pair(i,f_i);
-            },
+            [&f]( const Int i ) -> T { return T{i,f(i)}; },
             []( cref<T> value, mref<T> result )
             {
-                if( value.second > result.second )
-                {
-                    result = value;
-                }
+                if( value.second > result.second ) { result = value; }
             },
             init, n, thread_count
         );

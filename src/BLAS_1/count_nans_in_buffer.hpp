@@ -31,8 +31,7 @@ namespace Tools
                     
                     return counter;
                 },
-                AddReducer<Int,Size_T>(),
-                Scalar::Zero<Int>,
+                AddReducer<Int,Size_T>(), Scalar::Zero<Int>,
                 thread_count
             );
         }

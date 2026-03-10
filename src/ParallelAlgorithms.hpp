@@ -4,6 +4,29 @@
 
 namespace Tools
 {
+    enum class Parallel_T : bool
+    {
+        True  = true,
+        False = false
+    };
+    
+    static constexpr Parallel_T Parallel   = Parallel_T::True;
+    static constexpr Parallel_T Sequential = Parallel_T::False;
+    
+    std::string ToString( const Parallel_T & parQ )
+    {
+        switch (parQ)
+        {
+            case Parallel:   return "Parallel";
+            case Sequential: return "Sequential";
+        }
+    }
+        template<IntQ Int, Parallel_T parQ, IntQ I>
+    constexpr inline Int TruncateThreadCount( const I thread_count )
+    {
+        return (parQ == Parallel) ? Ramp_1(static_cast<Int>(thread_count)) : Int(1);
+    }
+    
     
     template<typename T, IntQ I, typename F>
     inline void parallel_prefix_scan(

@@ -432,18 +432,18 @@ namespace Tools
 // Overloads of combine_scalars for complex types; uses mat_T.
 //#include "src/Scalars/combine_scalars_mat.hpp"
 
-#include "src/ParallelDo_Thread.hpp"
-#include "src/ParallelDo_Common.hpp"
-#include "src/Do.hpp"
+#include "src/ParallelDo.hpp"
+#include "src/ParallelDoReduce.hpp"
 #include "src/ParallelAlgorithms.hpp"
+#include "src/JobPointers.hpp"
+#include "src/Do.hpp"
+#include "src/DoReduce.hpp"
 
 #include "src/BLAS_1.hpp"
 #include "src/BLAS_2.hpp"
 #include "src/BLAS_4.hpp"
 
 #include "src/AlignedAllocator.hpp"
-#include "src/JobPointers.hpp"
-#include "src/ParallelDo_JobPointers.hpp"
 
 // TODO: get rid of std::vector here
 #include "src/SortedList.hpp"

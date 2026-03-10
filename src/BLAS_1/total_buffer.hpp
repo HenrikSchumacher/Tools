@@ -14,15 +14,10 @@ namespace Tools
             TOOLS_MAKE_FP_FAST()
             
             return DoReduce<N,parQ>(
-                [x]( const Int i )
-                {
-                    return x[i];
-                },
-                []( const x_T & value, x_T & result )
-                {
-                    result += value;
-                },
-                x_T(0), n, thread_count
+                [x]( const Int i ) { return x[i]; },
+                []( const x_T & value, x_T & result ) { result += value; },
+                x_T(0),
+                n, thread_count
             );
         }
     }

@@ -43,7 +43,8 @@ namespace Tools
                 {
                     result += value;
                 },
-                T(0), n, thread_count
+                T(0),
+                n, thread_count
             );
         }
     }
