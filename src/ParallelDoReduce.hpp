@@ -33,7 +33,7 @@ namespace Tools
             
             for( Int thread = 0; thread < thread_count; ++thread )
             {
-                futures[static_cast<Size_T>(thread)] = std::async( std::forward<F>(f), thread );
+                futures[static_cast<Size_T>(thread)] = std::async( std::launch::async, std::forward<F>(f), thread );
             }
             
             for( Int thread = 0; thread < thread_count; ++thread )

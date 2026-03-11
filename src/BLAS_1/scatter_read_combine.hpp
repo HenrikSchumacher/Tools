@@ -53,7 +53,7 @@ namespace Tools
             TOOLS_MAKE_FP_FAST()
             
             Do<N,parQ>(
-                [=]( const Size_T k )
+                [a,x,b,y,idx]( const Size_T k )
                 {
                     combine_scalars<a_flag,b_flag>( a, x[idx[k]], b, y[k] );
                 },

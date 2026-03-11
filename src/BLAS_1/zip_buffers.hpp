@@ -76,10 +76,7 @@ namespace Tools
             TOOLS_MAKE_FP_FAST()
             
             Do<N,parQ>(
-                [=]( const Int i )
-                {
-                    zip( a[i], b[i], c[i] );
-                },
+                [&zip,a,b,c]( const Int i ) { std::invoke( zip, a[i], b[i], c[i] ); },
                 n, thread_count
             );
         }

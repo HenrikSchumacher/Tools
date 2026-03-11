@@ -17,7 +17,7 @@ namespace Tools
         using namespace Scalar;
   
         Do<N,parQ>(
-            [&]( const Size_T i )
+            [x,y,z]( const Size_T i )
             {
                 z[i] = Tools::Min( static_cast<z_T>(x[i]), static_cast<z_T>(y[i]) );
             },
@@ -40,7 +40,7 @@ namespace Tools
         using namespace Scalar;
         
         Do<N,parQ>(
-            [&]( const Size_T i )
+            [x,lo]( const Size_T i )
             {
                 lo[i] = Tools::Min(static_cast<z_T>(x[i]),lo[i]);
             },
@@ -61,7 +61,7 @@ namespace Tools
         TOOLS_MAKE_FP_STRICT();
         
         Do<N,parQ>(
-            [=]( const Size_T i )
+            [x,y,z]( const Size_T i )
             {
                 z[i] = Tools::Max( static_cast<z_T>(x[i]), static_cast<z_T>(y[i]) );
             },
@@ -82,7 +82,7 @@ namespace Tools
         TOOLS_MAKE_FP_STRICT();
         
         Do<N,parQ>(
-            [=]( const Size_T i )
+            [x,z]( const Size_T i )
             {
                 z[i] = Tools::Max( static_cast<z_T>(x[i]),z[i] );
             },
@@ -103,7 +103,7 @@ namespace Tools
         TOOLS_MAKE_FP_STRICT();
         
         Do<N,parQ>(
-            [=]( const Size_T i )
+            [x,y,lo,hi]( const Size_T i )
             {
                 std::tie(lo[i],hi[i]) = Tools::MinMax( static_cast<z_T>(x[i]), static_cast<z_T>(y[i]) );
             },
@@ -124,7 +124,7 @@ namespace Tools
         TOOLS_MAKE_FP_STRICT()
         
         Do<N,parQ>(
-            [=]( const Size_T i )
+            [x,lo,hi]( const Size_T i )
             {
                 lo[i] = Tools::Min(static_cast<z_T>(x[i]),lo[i]);
                 hi[i] = Tools::Max(static_cast<z_T>(x[i]),hi[i]);

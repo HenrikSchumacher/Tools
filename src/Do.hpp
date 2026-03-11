@@ -1,14 +1,7 @@
 #pragma once
 
-//Do(fun,n) equals Do<VarSize,Sequential>fun(fun,n)
-//Do<VarSize,Parallel>(fun,n,thread_count) equals Do<Variable,Parallel,Static>(fun,n,thread_count)
-//Do<VarSize,Parallel,Dynamic>(fun,n,thread_count)
-//Do<N>(fun)
-
-
 namespace Tools
 {
-    
     enum struct Dynamic_T : bool
     {
         True  = true,
@@ -119,6 +112,15 @@ namespace Tools
         static_assert(function_traits<F>::arity >= 1, "");
         static_assert(function_traits<F>::arity <= 2, "");
         
+//        // DEBUGGING
+//        if constexpr ( parQ == Parallel )
+//        {
+//            if( thread_count <= Int(1) )
+//            {
+//                wprint("Do: In parallel mode, but thread_count <= 1.");
+//            }
+//        }
+        
         if constexpr ( N <= VarSize )
         {
             Do<parQ,dynQ>( std::forward<F>(f), {Int(0), n}, thread_count );
@@ -150,6 +152,15 @@ namespace Tools
     {
         static_assert(function_traits<F>::arity >= 1, "");
         static_assert(function_traits<F>::arity <= 2, "");
+        
+//        // DEBUGGING
+//        if constexpr ( parQ == Parallel )
+//        {
+//            if( thread_count <= Int(1) )
+//            {
+//                wprint("Do: In parallel mode, but thread_count <= 1.");
+//            }
+//        }
         
         Do<parQ,dynQ>( std::forward<F>(f), {Int(0), n}, thread_count );
     }

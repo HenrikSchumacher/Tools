@@ -83,7 +83,7 @@ namespace Tools
             TOOLS_MAKE_FP_FAST()
             
             Do<N,parQ,Static>(
-                [=]( const Int i )
+                [x,a]( const Int i )
                 {
                     x[i] = Scalar::Op<a_flag,op>(a,x[i]);
                 },

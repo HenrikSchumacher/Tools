@@ -73,9 +73,7 @@ namespace Tools
                 Do<M,parQ,Static>(
                     [=]( const Int i )
                     {
-                        modify_buffer<a_flag,N,Sequential,opx>(
-                            a, &X[ldX * i], n_
-                        );
+                        modify_buffer<a_flag,N,Sequential,opx>( a, &X[ldX * i], n_ );
                     },
                     m_, thread_count
                 );

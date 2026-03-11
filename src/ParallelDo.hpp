@@ -22,7 +22,7 @@ namespace Tools
             
             for( Int thread = 0; thread < thread_count; ++thread )
             {
-                futures[static_cast<Size_T>(thread)] = std::async( std::forward<F>(fun), thread );
+                futures[static_cast<Size_T>(thread)] = std::async( std::launch::async, std::forward<F>(fun), thread );
             }
             
             for( auto & future : futures ) { future.get(); }
@@ -102,13 +102,13 @@ namespace Tools
                 Int i_end   = end;
                 
                 {
-                    const std::lock_guard<std::mutex> lock_iter( iter_mutex );
+                    const std::lock_guard<std::mutex> lock_iter(iter_mutex);
                 
                     if( iter < end )
                     {
                         // Iterator `iter` is not out of bounds. Assign a new chunk to worker.
                         i_begin = iter;
-                        iter        = Min( iter + inc, end );
+                        iter    = Min( iter + inc, end );
                         i_end   = iter;
                     }
                     else
@@ -124,13 +124,25 @@ namespace Tools
                 
                 TOOLS_DEBUG_PRINT( "ParallelDo_Dynamic: thread " + ToString(thread) + " processes tasks [" + ToString(i_begin) + "," + ToString(i_end)  + "[." );
                 // Let the worker process its assigned chunk.
-                SequentialDo(std::forward<F>(f), i_begin, i_end, thread );
+//                SequentialDo( std::forward<F>(f), i_begin, i_end, thread );
+
+                for( Int i = i_begin; i < i_end; ++i )
+                {
+                    if constexpr( function_traits<F>::arity == 2 )
+                    {
+                        std::invoke(f, thread, i);
+                    }
+                    else
+                    {
+                        std::invoke(f, i);
+                    }
+                }
             }
         };
         
         for( Int thread = 0; thread < thread_count; ++thread )
         {
-            futures[static_cast<Size_T>(thread)] = std::async( worker, thread );
+            futures[static_cast<Size_T>(thread)] = std::async(std::launch::async, worker, thread);
         }
         
         for( auto & future : futures ) { future.get(); }

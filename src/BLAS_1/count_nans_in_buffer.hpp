@@ -14,50 +14,11 @@ namespace Tools
     {
         check_sequential<parQ>( "count_nans_in_buffer", thread_count );
         
-        if constexpr ( parQ == Parallel )
-        {
-            return DoReduce(
-                [=]( const Int thread ) -> Size_T
-                {
-                    const Size_T i_begin = JobPointer( n, thread_count, thread     );
-                    const Size_T i_end   = JobPointer( n, thread_count, thread + 1 );
-
-                    Int counter = 0;
-                    
-                    for( Size_T i = i_begin; i < i_end; ++i )
-                    {
-                        counter += NaNQ(a[i]);
-                    }
-                    
-                    return counter;
-                },
-                AddReducer<Int,Size_T>(), Scalar::Zero<Int>,
-                thread_count
-            );
-        }
-        else if constexpr ( N <= VarSize )
-        {
-            Size_T counter = 0;
-            
-            for( Size_T i = 0; i < n; ++i )
-            {
-                counter += NaNQ(a[i]);
-            }
-            
-            return counter;
-        }
-        else if constexpr ( N > VarSize )
-        {
-            Size_T counter = 0;
-            
-            for( Size_T i = 0; i < N; ++i )
-            {
-                counter += NaNQ(a[i]);
-            }
-            
-            return counter;
-        }
-    
+        return DoReduce<VarSize,parQ>(
+            [=]( const Int i ) -> Int { return NaNQ(a[i]); },
+            AddReducer<Int,Int>(), Scalar::Zero<Int>,
+            n, thread_count
+        );
     }
     
 } // namespace Tools

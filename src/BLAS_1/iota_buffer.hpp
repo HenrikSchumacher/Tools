@@ -15,10 +15,7 @@ namespace Tools
         check_sequential<parQ>( "iota_buffer", thread_count );
         
         Do<N,parQ>(
-            [=]( const Int i )
-            {
-                a[i] = static_cast<T>(i);
-            },
+            [a]( const Int i ) { a[i] = static_cast<T>(i); },
             n, thread_count
         );
     }
@@ -36,10 +33,7 @@ namespace Tools
         check_sequential<parQ>( "fill_range_buffer", thread_count );
         
         Do<N,parQ>(
-            [=]( const Size_T i )
-            {
-                a[i] = start + static_cast<T>(i);
-            },
+            [a,start]( const Size_T i ) { a[i] = start + static_cast<T>(i); },
             n, thread_count
         );
     }
