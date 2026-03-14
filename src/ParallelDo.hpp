@@ -6,7 +6,7 @@
 namespace Tools
 {
     // Executes the function `fun` of the form `[]( const Int thread ) -> S {...}` parallelized over `thread_count` threads.
-    template<typename F, IntQ Int>
+    template<typename F, IntQ Int> requires std::invocable<F,Int>
     TOOLS_FORCE_INLINE void ParallelDo( F && fun, const Int thread_count )
     {
         if( thread_count <= Int(1) )
@@ -33,28 +33,45 @@ namespace Tools
     
 
     // Executes the function `f` of the form `[]( Int thread, Int i ) {...}` or `[]( Int i ) {...}` over the range [begin,end[, using just one thread, but using the thread id given by the argument `thread`.
+//    template<typename F, IntQ Int = Size_T>
+//    requires std::invocable<F,Int> || std::invocable<F,Int,Int>
+//    TOOLS_FORCE_INLINE void SequentialDo( F && f, const Int begin, const Int end, const Int thread )
+//    {
+//        static_assert(function_traits<F>::arity >= 1, "");
+//        static_assert(function_traits<F>::arity <= 2, "");
+//
+//        for( Int i = begin; i < end; ++i )
+//        {
+//            if constexpr( function_traits<F>::arity == 2 )
+//            {
+//                std::invoke(f, thread, i);
+//            }
+//            else
+//            {
+//                std::invoke(f, i);
+//            }
+//        }
+//    }
+    
     template<typename F, IntQ Int = Size_T>
+    requires std::invocable<F,Int>
     TOOLS_FORCE_INLINE void SequentialDo( F && f, const Int begin, const Int end, const Int thread )
     {
-        static_assert(function_traits<F>::arity >= 1, "");
-        static_assert(function_traits<F>::arity <= 2, "");
-
-        for( Int i = begin; i < end; ++i )
-        {
-            if constexpr( function_traits<F>::arity == 2 )
-            {
-                std::invoke(f, thread, i);
-            }
-            else
-            {
-                std::invoke(f, i);
-            }
-        }
+        (void)thread;
+        for( Int i = begin; i < end; ++i ) { std::invoke(f, i); }
+    }
+    
+    template<typename F, IntQ Int = Size_T>
+    requires std::invocable<F,Int,Int>
+    TOOLS_FORCE_INLINE void SequentialDo( F && f, const Int begin, const Int end, const Int thread )
+    {
+        for( Int i = begin; i < end; ++i ) { std::invoke(f, thread, i); }
     }
     
     
     // Executes the function `f` of the form `[]( Int thread, Int i ) {...}` or `[]( Int i ) {...}` over the range [begin,end[, using `thread_count` threads.
     template<typename F, IntQ Int>
+    requires std::invocable<F,Int> || std::invocable<F,Int,Int>
     TOOLS_FORCE_INLINE void ParallelDo_Static(
         F && f, const Int begin, const Int end, const Int thread_count
     )
@@ -73,6 +90,7 @@ namespace Tools
     
     // Executes the function `f` of the form `[]( Int thread, Int i ) {...}` or `[]( Int i ) {...}` over the range [begin,end[, using `thread_count` threads.
     template<typename F, IntQ Int = Size_T>
+    requires std::invocable<F,Int> || std::invocable<F,Int,Int>
     TOOLS_FORCE_INLINE void ParallelDo_Dynamic(
         F && f, const Int begin, const Int end, const Int inc, const Int thread_count
     )
@@ -124,19 +142,19 @@ namespace Tools
                 
                 TOOLS_DEBUG_PRINT( "ParallelDo_Dynamic: thread " + ToString(thread) + " processes tasks [" + ToString(i_begin) + "," + ToString(i_end)  + "[." );
                 // Let the worker process its assigned chunk.
-//                SequentialDo( std::forward<F>(f), i_begin, i_end, thread );
+                SequentialDo( std::forward<F>(f), i_begin, i_end, thread );
 
-                for( Int i = i_begin; i < i_end; ++i )
-                {
-                    if constexpr( function_traits<F>::arity == 2 )
-                    {
-                        std::invoke(f, thread, i);
-                    }
-                    else
-                    {
-                        std::invoke(f, i);
-                    }
-                }
+//                for( Int i = i_begin; i < i_end; ++i )
+//                {
+//                    if constexpr( function_traits<F>::arity == 2 )
+//                    {
+//                        std::invoke(f, thread, i);
+//                    }
+//                    else
+//                    {
+//                        std::invoke(f, i);
+//                    }
+//                }
             }
         };
         
