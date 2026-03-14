@@ -7,12 +7,8 @@ namespace Tools
     {
         for( Int i = a; i < b; i += inc )
         {
-            if( f(i) )
-            {
-                return i;
-            }
+            if( std::invoke(f,i) ) { return i; }
         }
-        
         return b;
     }
     
@@ -21,12 +17,8 @@ namespace Tools
     {
         for( Int i = b; i --> a;  )
         {
-            if( f(i) )
-            {
-                return i;
-            }
+            if( std::invoke(f,i) ) { return i; }
         }
-        
         return b;
     }
     
@@ -35,12 +27,8 @@ namespace Tools
     {
         for( Int i = a; i < b; i += inc )
         {
-            if( !f(i) )
-            {
-                return false;
-            }
+            if( !std::invoke(f,i) ) { return false; }
         }
-        
         return true;
     }
     
@@ -49,12 +37,8 @@ namespace Tools
     {
         for( Int i = a; i < b; i += inc )
         {
-            if( f(i) )
-            {
-                return true;
-            }
+            if( std::invoke(f,i) ) { return true; }
         }
-        
         return false;
     }
 }

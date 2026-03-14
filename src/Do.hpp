@@ -124,11 +124,11 @@ namespace Tools
             {
                 if constexpr ( std::invocable<F,Int,Int> )
                 {
-                    f(Int(0),i);
+                    std::invoke(f,Int(0),i);
                 }
                 else if constexpr ( std::invocable<F,Int> )
                 {
-                    f(i);
+                    std::invoke(f,i);
                 }
             }
         }

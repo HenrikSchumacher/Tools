@@ -61,8 +61,8 @@ static OutString FromCube( A && a, C && to_chars, Int_0 d_0, Int_1 d_1, Int_2 d_
         d_1, Fmt::prefix_1, Fmt::infix_1, Fmt::suffix_1,
         d_2, Fmt::prefix_2, Fmt::infix_2, Fmt::suffix_2
     ) };
-    
-    out.PutCube<Fmt>(std::forward<A>(a), std::forward<C>(to_chars), d_0, d_1, d_2, false);
+
+    out.PutCubeFun<Fmt>(std::forward<A>(a), std::forward<C>(to_chars), d_0, d_1, d_2, false);
     
     return out;
 }

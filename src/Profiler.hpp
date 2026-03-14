@@ -166,13 +166,17 @@ namespace Tools
         
         
         template<bool tabsQ = true>
-        inline void logprint( const std::string & s )
+        inline void logprint( std::string_view s )
         {
             const std::lock_guard<std::mutex> lock( log_mutex );
             if constexpr ( tabsQ )
             {
 #if defined(TOOLS_ENABLE_PROFILER)
-                Profiler::log << std::string( 2 * (Profiler::stack.size()+1), ' ' );
+                for( Size_T i = 0; i < 2 * (Profiler::stack.size()+1); ++i )
+                {
+                    Profiler::log <<  ' ';
+                }
+//                Profiler::log << std::string( 2 * (Profiler::stack.size()+1), ' ' );
 #endif
             }
             Profiler::log << s << "\n" << std::endl;
@@ -184,9 +188,28 @@ namespace Tools
             logprint<tabsQ>( s.data() );
         }
         
-        inline void eprint( const std::string & s )
+        
+        template<bool tabsQ = true, typename T>
+        inline void logvalprint( std::string_view tag, const T & value )
         {
-            std::string msg ( std::string("ERROR: ") + s );
+            const std::lock_guard<std::mutex> lock( log_mutex );
+            if constexpr ( tabsQ )
+            {
+#if defined(TOOLS_ENABLE_PROFILER)
+                for( Size_T i = 0; i < 2 * (Profiler::stack.size()+1); ++i )
+                {
+                    Profiler::log <<  ' ';
+                }
+//                Profiler::log << std::string( 2 * (Profiler::stack.size()+1), ' ' );
+#endif
+            }
+            Profiler::log << tag << " = " << ToString(value) << "\n" << std::endl;
+        }
+        
+        inline void eprint( std::string_view s )
+        {
+            std::string msg ("ERROR: ");
+            msg += s;
             
     #if defined(LTEMPLATE_H) || defined(TENSORS_MMA_HPP)
 
@@ -204,9 +227,10 @@ namespace Tools
         }
         
         
-        inline void error( const std::string & s )
+        inline void error( std::string_view s )
         {
-            std::string msg ( std::string("ERROR: ") + s );
+            std::string msg ("ERROR: ");
+            msg += s;
             eprint(msg);
             throw std::runtime_error(msg);
         }
@@ -218,7 +242,7 @@ namespace Tools
         }
         
         
-        inline void Tic(const std::string & tag)
+        inline void Tic( const std::string & tag)
         {
     #ifdef TOOLS_ENABLE_PROFILER
             
@@ -251,7 +275,7 @@ namespace Tools
     #endif
         }
         
-        inline void Toc(const std::string & tag)
+        inline void Toc( const std::string & tag)
         {
     #ifdef TOOLS_ENABLE_PROFILER
             
@@ -289,12 +313,12 @@ namespace Tools
                 }
                 else
                 {
-                    eprint( "Unmatched TOOLS_PTOC detected. Tag requested = " + tag + ". Tag found = " + node.tag + ".");
+                    eprint( std::string("Unmatched TOOLS_PTOC detected. Tag requested = ") + tag + ". Tag found = " + node.tag + ".");
                 }
             }
             else
             {
-                eprint( "Unmatched TOOLS_PTOC detected. Stack empty. Label = " + tag + ".");
+                eprint( std::string("Unmatched TOOLS_PTOC detected. Stack empty. Label = ") + tag + ".");
             }
     #else
             (void)tag;
@@ -321,36 +345,35 @@ namespace Tools
         public:
             
 #ifdef TOOLS_ENABLE_PROFILER
-            Timer( const std::string & tag_ )
+            Timer( std::string_view tag_ )
             :   tag { tag_ }
             ,   activeQ( blocker_count <= 0 )
             {
-
                 if( activeQ ) { Tic(tag); };
             }
-            
-            Timer( std::string && tag_ )
-            :   tag { std::move(tag_) }
-            ,   activeQ( blocker_count <= 0 )
-            {
-                if( activeQ ) { Tic(tag); };
-            }
+//            
+//            Timer( std::string_view && tag_ )
+//            :   tag { std::move(tag_) }
+//            ,   activeQ( blocker_count <= 0 )
+//            {
+//                if( activeQ ) { Tic(tag); };
+//            }
 
             ~Timer()
             {
                 if( activeQ ) { Toc(tag); };
             }
 #else
-            Timer( const std::string & tag_ )
+            Timer( std::string_view tag_ )
             {
 
                 (void)tag_;
             }
-            
-            Timer( std::string && tag_ )
-            {
-                (void)tag_;
-            }
+//            
+//            Timer( std::string && tag_ )
+//            {
+//                (void)tag_;
+//            }
 #endif
         };
         
@@ -364,7 +387,7 @@ namespace Tools
      */
     
     template<bool tabsQ = true>
-    inline void logprint( const std::string & s )
+    inline void logprint( std::string_view s )
     {
         Profiler::logprint<tabsQ>(s);
     }
@@ -379,7 +402,7 @@ namespace Tools
     /*!@brief Print an error to `std::cout` and `std::cerr`.
      */
     
-    inline void eprint( const std::string & s )
+    inline void eprint( std::string_view s )
     {
         Profiler::eprint(s);
     }
@@ -393,7 +416,7 @@ namespace Tools
     /*!@brief Print log message and throw a `std::runtime_error`.
      */
     
-    inline void error( const std::string & s )
+    inline void error( std::string_view s )
     {
         Profiler::error(s);
     }
@@ -410,62 +433,65 @@ namespace Tools
      */
     
     template<typename T>
-    inline void logvalprint( const std::string & s, const T & value)
+    inline void logvalprint( std::string_view s, const T & value )
     {
-        logprint( s + " = " + ToString(value) );
+//        logprint( s + " = " + ToString(value) );
+        Profiler::logvalprint(s,value);
     }
     
     template<Size_T N, typename T>
-    inline void logvalprint( const ct_string<N> & s, const T & value)
+    inline void logvalprint( const ct_string<N> & s, const T & value )
     {
-        logvalprint( s.data(), value );
+        Profiler::logvalprint( s.data(), value );
     }
 
-    /*!
-     * @brief Print to log file specified in `Profiler::log_file`.
-     */
+//    /*!
+//     * @brief Print to log file specified in `Profiler::log_file`.
+//     */
+//    
+//    template<typename T>
+//    inline void logvalprint( const std::string & s, const T & value, const int p )
+//    {
+//        Profiler::logvalprint( s, ToString(value, p) );
+//    }
+//    
+//    template<Size_T N, typename T>
+//    inline void logvalprint( const ct_string<N> & s, const T & value, const int p )
+//    {
+//        Profiler::logvalprint( s.data(), value, p  );
+//    }
     
-    template<typename T>
-    inline void logvalprint( const std::string & s, const T & value, const int p)
-    {
-        logprint( s + " = " + ToString(value, p) );
-    }
-    
-    template<Size_T N, typename T>
-    inline void logvalprint( const ct_string<N> & s, const T & value, const int p)
-    {
-        logvalprint( s.data(), value, p  );
-    }
-    
-    /*!
-     * @brief Print to log file specified in `Profiler::log_file`.
-     */
-    
-    inline void logvalprint( const std::string & s, const std::string & value)
-    {
-        logprint( s + " = " + value );
-    }
-    
-    template<Size_T N>
-    inline void logvalprint( const ct_string<N> & s, const std::string & value)
-    {
-        logvalprint( s.data(), value  );
-    }
+//    /*!
+//     * @brief Print to log file specified in `Profiler::log_file`.
+//     */
+//    
+//    inline void logvalprint( const std::string & s, const std::string & value )
+//    {
+//        Profiler::logvalprint( s, value );
+//    }
+//    
+//    template<Size_T N>
+//    inline void logvalprint( const ct_string<N> & s, const std::string & value )
+//    {
+//        Profiler::logvalprint( s.data(), value  );
+//    }
     
     
-#define TOOLS_LOGDUMP(x) Tools::logvalprint( std::string(#x), x );
+#define TOOLS_LOGDUMP(x) Tools::logvalprint( std::string_view(#x), x );
     
-#define TOOLS_DDUMP(x) Tools::logvalprint( std::string(#x), x ); Tools::valprint( std::string(#x), x );
+#define TOOLS_DDUMP(x) Tools::logvalprint( std::string_view(#x), x ); Tools::valprint( std::string_view(#x), x );
     
 
     
     /*!@brief Print a warning to `std::cout`.
      */
     
-    inline void wprint( const std::string & s )
+    inline void wprint( std::string_view s )
     {
-        print( std::string("WARNING: ") + s );
-        logprint<false>( std::string("WARNING: ") + s );
+        std::string msg ("WARNING: ");
+        msg += s;
+        print(msg);
+        logprint<false>(msg);
     }
     
     template<Size_T N>
@@ -478,10 +504,12 @@ namespace Tools
      * @brief Print a note to `std::cout`.
      */
     
-    inline void nprint( const std::string & s )
+    inline void nprint( std::string_view s )
     {
-        print( std::string("NOTE: ") + s );
-        logprint<false>( std::string("NOTE: ") + s );
+        std::string msg ("NOTE: ");
+        msg += s;
+        print(msg);
+        logprint<false>(msg);
     }
     
     template<Size_T N>
@@ -494,7 +522,7 @@ namespace Tools
      * It prints to the log file specified in `Profiler::log_file`.
      */
     
-    inline void pprint( const std::string & s )
+    inline void pprint( std::string_view s )
     {
 #ifdef TOOLS_ENABLE_PROFILER
         const std::lock_guard<std::mutex> lock( Profiler::log_mutex );
@@ -509,10 +537,11 @@ namespace Tools
      */
     
     template<typename T>
-    inline void pvalprint( const std::string & s, const T & value)
+    inline void pvalprint( std::string_view s, const T & value)
     {
 #ifdef TOOLS_ENABLE_PROFILER
-        pprint( s + " = " + ToString(value) );
+        const std::lock_guard<std::mutex> lock( Profiler::log_mutex );
+        Profiler::log << s << " = " << ToString(value) << "\n" << std::endl;
 #else
         (void)s;
         (void)value;
@@ -524,10 +553,10 @@ namespace Tools
      */
     
     template<typename T>
-    inline void pvalprint( const std::string & s, const T & value, const int p)
+    inline void pvalprint( std::string_view s, const T & value, const int p)
     {
 #ifdef TOOLS_ENABLE_PROFILER
-        pprint( s + " = " + ToString(value, p) );
+        Profiler::log << s << " = " << ToString(value,p) << "\n" << std::endl;
 #else
         (void)s;
         (void)value;
@@ -539,17 +568,17 @@ namespace Tools
      * It prints to the log file specified in `Profiler::log_file`.
      */
     
-    inline void pvalprint( const std::string & s, const std::string & value)
+    inline void pvalprint( std::string_view s, std::string_view value)
     {
 #ifdef TOOLS_ENABLE_PROFILER
-        pprint( s + " = " + value );
+        Profiler::log << s << " = " << value << "\n" << std::endl;
 #else
         (void)s;
         (void)value;
 #endif
     }
     
-#define TOOLS_PDUMP(x) pvalprint( std::string(#x), x );
+#define TOOLS_PDUMP(x) pvalprint( std::string_view(#x), x );
 
     
 #ifdef TOOLS_ENABLE_PROFILER

@@ -47,20 +47,44 @@ namespace Tools
         print( s.data() );
     }
     
+//    template<Size_T align = 0, typename T>
+//    inline void valprint( const std::string & s, const T & value)
+//    {
+//        const Size_T len = (align > Size_T(0)) ? std::max(s.size(),align) : s.size();
+//        
+//        std::string s_out (len + 3, ' ');
+//        std::copy_n( s.begin(), s.size(), s_out.begin() );
+//        s_out[len+1] = '=';
+//        s_out += COND(FloatQ<T>,ToStringFPGeneral(value),ToString(value));
+//        print(s_out);
+//    }
+//    
+//    template<Size_T align = 0, typename T>
+//    inline void valprint( const std::string & s, const std::string & value)
+//    {
+//        const Size_T len = (align > Size_T(0)) ? std::max(s.size(),align) : s.size();
+//        
+//        std::string s_out (len + 3 + value.size(),' ');
+//        std::copy_n( s.begin(), s.size(), s_out.begin() );
+//        s_out[len+1] = '=';
+//        std::copy_n( value.begin(), value.size(), &s_out[len + 3] );
+//        print(s_out);
+//    }
+    
     template<Size_T align = 0, typename T>
-    inline void valprint( const std::string & s, const T & value)
+    inline void valprint( std::string_view s, const T & value)
     {
         const Size_T len = (align > Size_T(0)) ? std::max(s.size(),align) : s.size();
         
         std::string s_out (len + 3, ' ');
         std::copy_n( s.begin(), s.size(), s_out.begin() );
         s_out[len+1] = '=';
-        s_out += COND(FloatQ<T>,ToStringFPGeneral(value),ToString(value));
+        s_out += ToString(value);
         print(s_out);
     }
     
     template<Size_T align = 0, typename T>
-    inline void valprint( const std::string & s, const std::string & value)
+    inline void valprint( std::string_view s, std::string_view value)
     {
         const Size_T len = (align > Size_T(0)) ? std::max(s.size(),align) : s.size();
         
@@ -74,8 +98,8 @@ namespace Tools
 } // namespace Tools
 
 
-#define TOOLS_DUMP(x) Tools::valprint( std::string(#x), x )
+#define TOOLS_DUMP(x) Tools::valprint( std::string_view(#x), x )
 
-#define TOOLS_MEM_DUMP_STRING(x) "\"" + std::string(#x) + "\" -> " + ToMathematicaScientificString( static_cast<double>((x).AllocatedByteCount()) )
+#define TOOLS_MEM_DUMP_STRING(x) "\"" + std::string(#x) + "\" -> " + ToMathematicaString( static_cast<double>((x).AllocatedByteCount()) )
 
 #define TOOLS_MEM_DUMP(x) Tools::print( TOOLS_MEM_DUMP_STRING(x) )

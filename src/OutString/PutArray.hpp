@@ -48,27 +48,30 @@ template<
     IntQ Int, ArrayFun<Int> A, CharConv<Result_T<A>> C,
     Stringy Prefix_T, typename ...Args
 >
-OutString( A && a, C && to_chars, Int n, Prefix_T && prefix, Args&&... args )
-:  OutString{ ArrayCharCount(
-    std::forward<C>(to_chars), n,
-    std::forward<Prefix_T>(prefix), std::forward<Args>(args)...
-   ) }
+static OutString FromArray( A && a, C && to_chars, Int n, Prefix_T && prefix, Args&&... args )
 {
-    PutArray(
+    OutString out { ArrayCharCount(
+        std::forward<C>(to_chars), n,
+        std::forward<Prefix_T>(prefix), std::forward<Args>(args)...
+    ) };
+    
+    out.PutArray(
         std::forward<A>(a),
         std::forward<C>(to_chars), false, n,
         std::forward<Prefix_T>(prefix), std::forward<Args>(args)...
     );
+    
+    return out;
 }
 
 template< IntQ Int, ArrayFun<Int> A, Stringy Prefix_T, typename ...Args>
-OutString( A && a, Int n, Prefix_T && prefix, Args&&... args )
-:   OutString{
+static OutString FromArray( A && a, Int n, Prefix_T && prefix, Args&&... args )
+{
+    return FromArray(
         std::forward<A>(a), ToChars<Result_T<A>>(), n,
         std::forward<Prefix_T>(prefix), std::forward<Args>(args)...
-    }
-{}
-
+    );
+}
 
 private:
 

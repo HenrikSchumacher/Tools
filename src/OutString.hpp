@@ -18,14 +18,20 @@ namespace Tools
   
 //    template<typename C, typename T>
 //    concept CharConv = std::invocable<C,char*, const char*, const T&>;
+//    template<typename C, typename T>
+//    concept CharConv = NonPointerQ<C> && NonIntQ<C>;
+    
     template<typename C, typename T>
-    concept CharConv = NonPointerQ<C> && NonIntQ<C>;
+    concept CharConv = NonIntQ<C>;
     
 //    template<typename F, typename ...Int>
 //    concept ArrayFun = std::invocable<F,Int...>;
     
+//    template<typename A, typename ...Int>
+//    concept ArrayFun = NonPointerQ<A> && NonIntQ<A>;
+    
     template<typename A, typename ...Int>
-    concept ArrayFun = NonPointerQ<A> && NonIntQ<A>;
+    concept ArrayFun = NonPointerQ<A>;
     
     template<class T>
     concept Stringy = std::is_convertible_v<T, std::string_view>;
@@ -499,6 +505,22 @@ namespace Tools
         
     }; // OutString
 
+    
+    
+    
+    template<typename T, NonIntQ F>
+    [[nodiscard]] OutString ToString( cref<std::vector<T>> v )
+    {
+        return OutString::FromVector( &v[0], v.size() );
+    }
+    
+    template<typename T, Size_T N, NonIntQ F>
+    [[nodiscard]] OutString ToString( const std::array<T,N> & v )
+    {
+        return OutString::FromVector( &v[0], N );
+    }
+    
+    
 } // Tools
 
 
