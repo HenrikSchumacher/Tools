@@ -379,6 +379,10 @@ namespace Tools
 #include "src/ct_string.hpp"
 #include "src/ToString.hpp"
 #include "src/combine_strings.hpp"
+
+#include "src/FunctionTraits.hpp"
+#include "src/OutString.hpp"
+
 #include "src/Print.hpp"
 #include "src/Time.hpp"
 #include "src/Profiler.hpp"
@@ -386,13 +390,12 @@ namespace Tools
 #include "src/Integers.hpp"
 #include "src/Scalars.hpp"
 #include "src/TypeName.hpp"
-
 #include "src/Memory.hpp"
+
 
 #include "src/BitFiddling.hpp"
 
-#include "src/FunctionTraits.hpp"
-#include "src/OutString.hpp"
+
 #include "src/InString.hpp"
 
 #define _USE_MATH_DEFINES

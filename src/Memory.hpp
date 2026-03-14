@@ -8,7 +8,7 @@ namespace Tools
         #else
             #define prefetch( a, b, c )
         #endif
-    #endif
+#endif // !defined(prefetch)
     
     // length of cache line measured in bytes
     constexpr Size_T CacheLineWidth = 64;

@@ -4,8 +4,8 @@ template<bool checkQ = true>
 OutString & PutChar( const char & c )
 {
     if constexpr( checkQ ) { RequireFreeSpace( 1 ); }
-    *ptr = c;
-    ++ptr;
+    buffer[size] = c;
+    ++size;
     return *this;
 }
 
@@ -20,8 +20,8 @@ template<bool checkQ = true>
 OutString & PutChars( const char * c, const Size_T n )
 {
     if constexpr( checkQ ) { RequireFreeSpace( n ); }
-    std::copy_n(c, n, ptr);
-    ptr += n;
+    std::copy_n(c, n, &buffer[size]);
+    size += n;
     return *this;
 }
 

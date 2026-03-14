@@ -144,6 +144,8 @@ namespace Tools
     {
     public:
         
+        using Int = Size_T;
+        
         template<typename A>
         using Result_T = typename std::remove_reference<typename function_traits<A>::return_type>::type;
     
@@ -163,65 +165,45 @@ namespace Tools
     public:
 
         OutString()
-        :   OutString { Size_T(16) }
+        :   OutString { Int(16) }
         {}
         
-        OutString( Size_T n )
+    
+        OutString( Int n )
         {
-            safe_alloc(first,n);
-            ptr = first;
-            last = &first[n];
+            Allocate(n);
         }
 
-        OutString( const char * c, Size_T n )
+        OutString( const char * c, Int size_, Int capacity_ )
         {
-            safe_alloc(first,n);
-            last = &first[n];
-            std::copy_n(c,n,first);
-            ptr = last;
+            Allocate(capacity);
+            std::copy_n(c,size_,buffer);
+            size = size_;
         }
+        
+        OutString( const char * c, Int size_ )
+        :   OutString( c, size_, size_ )
+        {}
         
         OutString( const std::string_view s )
         :   OutString( &s[0], s.size() )
         {}
-        
-//        OutString( std::string && s )
-//        {
-//            safe_alloc(first,s.size());
-//            last = &first[s.size()];
-//            std::copy_n(&s[0],s.size(),first);
-//            ptr = last;
-//        }
-//        
-//        template<typename ...Args>
-//        OutString( std::string_view && s, Args... args )
-//        :   OutString( &s[0], s.size() )
-//        {
-//            PutChars(std::forward<Args>(args)...);
-//        }
-        
-        OutString( Size_T n, const char & x )
-        :   OutString { Size_T(n) }
+
+        OutString( Size_T size_, char  x )
+        :   OutString { Size_T(size_) }
         {
-            std::fill(first,last,x);
-            ptr = last;
+            std::fill_n(buffer,size_,x);
         }
-    
         
         ~OutString() noexcept
         {
-            safe_free(first);
+            Deallocate();
         }
-        
         
         // Copy constructor
         OutString( const OutString & other ) noexcept
-        :   OutString( &other[0], other.Capacity() )
-        {
-            std::copy( other.first, other.last, first);
-            last = first + other.Capacity();
-            ptr = first + other.Size();
-        }
+        :   OutString( &other[0], other.Size(), other.Capacity() )
+        {}
 
         inline friend void swap( OutString & A, OutString & B ) noexcept
         {
@@ -229,9 +211,9 @@ namespace Tools
             
             if( &A != &B )
             {
-                swap( A.first, B.first );
-                swap( A.ptr  , B.ptr   );
-                swap( A.last , B.last  );
+                swap( A.buffer  , B.buffer   );
+                swap( A.size    , B.size     );
+                swap( A.capacity, B.capacity );
             }
         }
 
@@ -264,40 +246,90 @@ namespace Tools
         
     private:
         
-        char * first = nullptr; // This is the owning pointer.
-        char * last  = nullptr;
-        char * ptr   = nullptr;
+        char * buffer = nullptr; // This is the owning pointer.
+        Int size      = 0;
+        Int capacity  = 0;
+        
+        
+    private:
+       
+        
+        void Deallocate()
+        {
+            if( buffer != nullptr )
+            {
+                free(buffer);
+                buffer   = nullptr;
+                size     = 0;
+                capacity = 0;
+            }
+        }
+        
+        void Allocate( Int size_ )
+        {
+            Deallocate();
+
+            buffer = (char*)malloc(ToSize_T(size_));
+
+            if( buffer == nullptr )
+            {
+                std::cerr << "OutString(" << size_ << ") failed to allocate memory" << std::endl;
+                std::exit(1);
+            }
+            
+            capacity = size_;
+        }
         
     public:
         
-        Size_T Size() const
+        Int Size() const
         {
-            return static_cast<Size_T>(std::distance(first,ptr));
+            return size;
         }
         
-        Size_T Capacity() const
+        Int Capacity() const
         {
-            return static_cast<Size_T>(std::distance(first,last));
+            return capacity;
+        }
+
+        char * begin()
+        {
+            return buffer;
+        }
+        
+        char * ptr()
+        {
+            return &buffer[size];
+        }
+        
+        char * end()
+        {
+            return &buffer[capacity];
         }
         
         const char * begin() const
         {
-            return first;
+            return buffer;
+        }
+        
+        const char * ptr() const
+        {
+            return &buffer[size];
         }
         
         const char * end() const
         {
-            return last;
+            return &buffer[capacity];
         }
         
-        char & operator[]( const Size_T i )
+        char & operator[]( const Int i )
         {
-            return first[i];
+            return buffer[i];
         }
         
-        const char & operator[]( const Size_T i ) const
+        const char & operator[]( const Int i ) const
         {
-            return first[i];
+            return buffer[i];
         }
         
 #include "OutString/Put.hpp"
@@ -309,41 +341,36 @@ namespace Tools
     public:
         
         template<bool checkQ = true>
-        OutString & Skip( const Size_T n )
+        OutString & Skip( const Int n )
         {
             if constexpr ( checkQ )
             {
-                RequireFreeSpace( Size_T(n) );
+                RequireFreeSpace( Int(n) );
             }
-            ptr += n;
+            size += n;
             
             return *this;
         }
         
         OutString & Pop()
         {
-            if( ptr > first )
+            if( size > Int(0) )
             {
-                --ptr;
-            }
-            else
-            {
-                eprint(MethodName("Pop") + ": String buffer is empty. Doing nothing.");
+                --size;
             }
             
             return *this;
         }
         
-        OutString & Pop( Size_T n )
+        OutString & Pop( Int n )
         {
-            if( ptr >= first + n )
+            if( size >= n )
             {
-                ptr -= n;
+                size -= n;
             }
             else
             {
-                ptr = first;
-                eprint(MethodName("Pop") + ": Buffer size was smaller than n = " + ToString(n) + ". Emptying it completely.");
+                size = 0;
             }
             
             return *this;
@@ -351,89 +378,96 @@ namespace Tools
         
         OutString & Clear()
         {
-            ptr = first;
+            size = 0;
             return *this;
         }
         
         bool EmptyQ() const
         {
-            return ptr == first;
+            return size == Size_T(0);
         }
         
         bool FullQ() const
         {
-            return ptr == last;
+            return size >= capacity;
         }
         
-        std::ptrdiff_t FreeSpace() const
+        Int FreeSpace() const
         {
-            return std::distance(ptr,last);
+            return capacity - size;
         }
         
-        OutString & RequireFreeSpace( Size_T n )
+        
+    private:
+        
+        
+        OutString & Resize( const Int & n )
         {
-            if( &ptr[n] > last )
+            OutString other ( buffer, size, std::max(capacity,n) );
+
+            swap(*this,other);
+            return *this;
+        }
+        
+    public:
+        
+
+        OutString & RequireCapacity( Int n )
+        {
+            if( n > capacity )
             {
-                Resize(Size_T(2) * Capacity() + static_cast<Size_T>(std::distance(last,&ptr[n])));
+                Resize(Int(2) * capacity + size + n);
             }
             return *this;
         }
         
-    
-        
-        OutString & Expand()
+        OutString & RequireFreeSpace( Int n )
         {
-            Resize( Size_T(2) * Capacity() );
+            if( size + n > capacity )
+            {
+                Resize( capacity + size + n );
+            }
             return *this;
         }
         
-        OutString & Resize( const Size_T & n )
+        OutString & Expand()
         {
-//            print("Resize");
-            char * s = nullptr;
-            Size_T capacity = std::max(Capacity(),n);
-            Size_T size     = Size();
-            safe_alloc(s,capacity);
-            std::copy(first,ptr,s);
-            safe_free(first);
-            first = s;
-            last = &first[capacity];
-            ptr = &first[size];
-            
+            RequireCapacity( Int(2) * capacity );
             return *this;
         }
         
         char & Front()
         {
-            return *first;
+            return buffer[0];
         }
         
         const char & Front() const
         {
-            return *first;
+            return buffer[0];
         }
         
         char & Back()
         {
-            return *ptr;
+            return buffer[size];
         }
         
         const char & Back() const
         {
-            return *ptr;
+            return buffer[size];
         }
         
     private:
 
         constexpr bool TryEmplaceChar( const char & c )
         {
-            if( ptr >= last )
+            if( size >= capacity )
             {
                 return true;
             }
             else
             {
-                *ptr = c;
+                buffer[size] = c;
+                ++size;
                 return false;
             }
         }
@@ -441,14 +475,15 @@ namespace Tools
         template<typename T, CharConv<T> C = ToChars<T>>
         constexpr bool TryEmplace( const T & x, C && to_chars )
         {
-            auto r = to_chars(ptr, last, x);
+            char * p = ptr();
+            auto r = to_chars(p, end(), x);
             if( r.failedQ )
             {
                 return true;
             }
             else
             {
-                ptr = r.ptr;
+                size = static_cast<Size_T>(std::distance(p,r.ptr));
                 return false;
             }
         }
@@ -473,12 +508,12 @@ namespace Tools
 
         operator std::string_view () const
         {
-            return std::string_view(first,ptr);
+            return std::string_view(begin(),ptr());
         }
         
         operator std::string () const
         {
-            return std::string(first,ptr);
+            return std::string(begin(),ptr());
         }
         
         friend std::ostream & operator<<( std::ostream & out, const OutString & in )
@@ -508,13 +543,13 @@ namespace Tools
     
     
     
-    template<typename T, NonIntQ F>
+    template<typename T>
     [[nodiscard]] OutString ToString( cref<std::vector<T>> v )
     {
         return OutString::FromVector( &v[0], v.size() );
     }
     
-    template<typename T, Size_T N, NonIntQ F>
+    template<typename T, Size_T N>
     [[nodiscard]] OutString ToString( const std::array<T,N> & v )
     {
         return OutString::FromVector( &v[0], N );

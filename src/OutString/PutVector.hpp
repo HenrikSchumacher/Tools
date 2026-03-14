@@ -1,7 +1,5 @@
 public:
 
-
-
 template<
     typename Fmt = Format::Vector::Default,
     IntQ Int_0, ArrayFun<Int_0> A, CharConv<Result_T<A>> C
