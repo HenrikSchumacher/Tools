@@ -68,11 +68,9 @@ namespace Tools
     // Executes the function `fun` of the form `[]( Int i ) {...}` or `[]( thread i, Int i )  {...}` on the range [begin,end[, parallelized over `thread_count` threads.
     // Parallelization will be turned off if `parQ` is set to `Sequential`. This guarantees that no threaded code is generated.
     template<Parallel_T parQ = Sequential, Dynamic_T dynQ = Static, typename F, IntQ Int>
+    requires Doable<F,Int>
     TOOLS_FORCE_INLINE void Do( F && f, cref<DoRange<Int>> range, const Int thread_count = 1 )
     {
-        static_assert(function_traits<F>::arity >= 1, "");
-        static_assert(function_traits<F>::arity <= 2, "");
-        
         if constexpr (parQ == Parallel)
         {
             if( thread_count <= Int(0) )
@@ -107,20 +105,9 @@ namespace Tools
     template<
         Size_T N, Parallel_T parQ = Sequential, Dynamic_T dynQ = Static, typename F, IntQ Int = Size_T
     >
+    requires Doable<F,Int>
     TOOLS_FORCE_INLINE void Do( F && f, const Int n = static_cast<Int>(N), const Int thread_count = 1)
     {
-        static_assert(function_traits<F>::arity >= 1, "");
-        static_assert(function_traits<F>::arity <= 2, "");
-        
-//        // DEBUGGING
-//        if constexpr ( parQ == Parallel )
-//        {
-//            if( thread_count <= Int(1) )
-//            {
-//                wprint("Do: In parallel mode, but thread_count <= 1.");
-//            }
-//        }
-        
         if constexpr ( N <= VarSize )
         {
             Do<parQ,dynQ>( std::forward<F>(f), {Int(0), n}, thread_count );
@@ -135,11 +122,11 @@ namespace Tools
             constexpr Int N_ = static_cast<Int>(N);
             for( Int i = 0; i < N_; ++i )
             {
-                if constexpr( function_traits<F>::arity == 2 )
+                if constexpr ( std::invocable<F,Int,Int> )
                 {
                     f(Int(0),i);
                 }
-                else
+                else if constexpr ( std::invocable<F,Int> )
                 {
                     f(i);
                 }
@@ -148,26 +135,16 @@ namespace Tools
     }
     
     template<Parallel_T parQ = Sequential, Dynamic_T dynQ = Static, typename F, IntQ Int = Size_T>
+    requires Doable<F,Int>
     TOOLS_FORCE_INLINE void Do( F && f, const Int n, const Int thread_count = 1 )
     {
-        static_assert(function_traits<F>::arity >= 1, "");
-        static_assert(function_traits<F>::arity <= 2, "");
-        
-//        // DEBUGGING
-//        if constexpr ( parQ == Parallel )
-//        {
-//            if( thread_count <= Int(1) )
-//            {
-//                wprint("Do: In parallel mode, but thread_count <= 1.");
-//            }
-//        }
-        
         Do<parQ,dynQ>( std::forward<F>(f), {Int(0), n}, thread_count );
     }
     
     
     // Executes the function `f` of the form `[]( Int thread, Int i ) {...}` or `[]( Int i ) {...}` over the range [begin,end[, using `thread_count` threads.
     template<Parallel_T parQ = Parallel, typename F, IntQ Int>
+    requires Doable<F,Int>
     TOOLS_FORCE_INLINE void Do( F && f, cref<JobPointers<Int>> job_ptr )
     {
         if constexpr ( parQ == Parallel )

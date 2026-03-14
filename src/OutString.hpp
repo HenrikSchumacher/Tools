@@ -6,27 +6,153 @@
 
 namespace Tools
 {
+    
+//    template<typename F, typename T>
+//    concept CharConv = std::invocable<F,T> && SameQ<std::invoke_result_t<F,T>,ToCharResult>;
+    
+//    template<typename F, typename T>
+//    concept CharConv = std::invocable<F,T> && SameQ<std::invoke_result_t<F,T>,ToCharResult>;
+    
+//    template<typename F, typename T>
+//    concept CharConv = SameQ<std::invoke_result_t<F, char *, char *, T&>,ToCharResult>;
+  
+//    template<typename C, typename T>
+//    concept CharConv = std::invocable<C,char*, const char*, const T&>;
+    template<typename C, typename T>
+    concept CharConv = NonPointerQ<C> && NonIntQ<C>;
+    
+//    template<typename F, typename ...Int>
+//    concept ArrayFun = std::invocable<F,Int...>;
+    
+    template<typename A, typename ...Int>
+    concept ArrayFun = NonPointerQ<A> && NonIntQ<A>;
+    
+    template<class T>
+    concept Stringy = std::is_convertible_v<T, std::string_view>;
+    
+    template<class T>
+    concept NonStringy = !Stringy<T>;
+    
+    namespace Format
+    {
+        namespace Vector
+        {
+            struct Default
+            {
+                static constexpr char prefix_0 [3] = "{ ";
+                static constexpr char infix_0  [3] = ", ";
+                static constexpr char suffix_0 [3] = " }";
+            };
+        }
+        
+        namespace Matrix
+        {
+            struct Tall
+            {
+                static constexpr char prefix_0 [3] = "{\n";
+                static constexpr char infix_0  [3] = ",\n";
+                static constexpr char suffix_0 [3] = "\n}";
+                static constexpr char prefix_1 [4] = " { ";
+                static constexpr char infix_1  [3] = ", ";
+                static constexpr char suffix_1 [3] = " }";
+            };
+            
+            struct Wide
+            {
+                static constexpr char prefix_0 [3] = "{ ";
+                static constexpr char infix_0  [3] = ", ";
+                static constexpr char suffix_0 [3] = " }";
+                static constexpr char prefix_1 [4] = "{ ";
+                static constexpr char infix_1  [3] = ", ";
+                static constexpr char suffix_1 [3] = " }";
+            };
+            
+            struct TSV
+            {
+                static constexpr char prefix_0 [1] = "";
+                static constexpr char infix_0  [2] = "\n";
+                static constexpr char suffix_0 [1] = "";
+                static constexpr char prefix_1 [1] = "";
+                static constexpr char infix_1  [2] = "\t";
+                static constexpr char suffix_1 [1] = "";
+            };
+            
+            struct CSV
+            {
+                static constexpr char prefix_0 [1] = "";
+                static constexpr char infix_0  [2] = "\n";
+                static constexpr char suffix_0 [1] = "";
+                static constexpr char prefix_1 [1] = "";
+                static constexpr char infix_1  [2] = ",";
+                static constexpr char suffix_1 [1] = "";
+            };
+        }
+        
+        
+        namespace Cube
+        {
+            struct Tall
+            {
+                static constexpr char prefix_0 [3] = "{\n";
+                static constexpr char infix_0  [3] = ",\n";
+                static constexpr char suffix_0 [3] = "\n}";
+                static constexpr char prefix_1 [4] = " {\n";
+                static constexpr char infix_1  [3] = ",\n";
+                static constexpr char suffix_1 [4] = "\n }";
+                static constexpr char prefix_2 [5] = "  { ";
+                static constexpr char infix_2  [3] = ", ";
+                static constexpr char suffix_2 [3] = " }";
+            };
+            
+            struct Wide
+            {
+                static constexpr char prefix_0 [3] = "{ ";
+                static constexpr char infix_0  [3] = ", ";
+                static constexpr char suffix_0 [3] = " }";
+                static constexpr char prefix_1 [3] = "{ ";
+                static constexpr char infix_1  [3] = ", ";
+                static constexpr char suffix_1 [3] = " }";
+                static constexpr char prefix_2 [3] = "{ ";
+                static constexpr char infix_2  [3] = ", ";
+                static constexpr char suffix_2 [3] = " }";
+            };
+            
+            struct Medium
+            {
+                static constexpr char prefix_0 [3] = "{\n";
+                static constexpr char infix_0  [3] = ",\n";
+                static constexpr char suffix_0 [3] = "\n}";
+                static constexpr char prefix_1 [4] = " { ";
+                static constexpr char infix_1  [3] = ", ";
+                static constexpr char suffix_1 [3] = " }";
+                static constexpr char prefix_2 [3] = "{ ";
+                static constexpr char infix_2  [3] = ", ";
+                static constexpr char suffix_2 [3] = " }";
+            };
+        }
+    }
+    
+
+    
     class OutString
     {
     public:
         
-        enum class MatrixFormat: UInt8
-        {
-            Tall   = 0,
-            Wide   = 1,
-            TSV    = 2,
-            CSV    = 3
-        };
+        template<typename A>
+        using Result_T = typename std::remove_reference<typename function_traits<A>::return_type>::type;
+    
         
-        enum class CubeFormat: UInt8
-        {
-            Tall   = 0,
-            Medium = 1,
-            Wide   = 2
-        };
+//        template<typename A, typename ...Int>
+////        requires ArrayFun<A,Int...>
+//        using Result_T = typename std::remove_reference<typename function_traits<A>::return_type>::type;
+//        
         
-        template<NonPointerQ EntryFun_T>
-        using Result_T = typename std::remove_reference<typename function_traits<EntryFun_T>::return_type>::type;
+//        template<typename A, typename ...Int>
+//        requires ArrayFun<A,Int...>
+//        using Result_T = typename std::remove_reference<typename std::invoke_result_t<A,Int...>>;
+
+        
+        
         
     public:
 
@@ -60,13 +186,13 @@ namespace Tools
 //            std::copy_n(&s[0],s.size(),first);
 //            ptr = last;
 //        }
-        
-        template<typename ...Args>
-        OutString( std::string && s, Args... args )
-        :   OutString( &s[0], s.size() )
-        {
-            PutChars(std::forward<Args>(args)...);
-        }
+//        
+//        template<typename ...Args>
+//        OutString( std::string_view && s, Args... args )
+//        :   OutString( &s[0], s.size() )
+//        {
+//            PutChars(std::forward<Args>(args)...);
+//        }
         
         OutString( Size_T n, const char & x )
         :   OutString { Size_T(n) }
@@ -306,8 +432,8 @@ namespace Tools
             }
         }
         
-        template<typename T, typename ToChars_T = ToChars<T>>
-        constexpr bool TryEmplace( const T & x, ToChars_T && to_chars )
+        template<typename T, CharConv<T> C = ToChars<T>>
+        constexpr bool TryEmplace( const T & x, C && to_chars )
         {
             auto r = to_chars(ptr, last, x);
             if( r.failedQ )
@@ -329,118 +455,16 @@ namespace Tools
         
     public:
 
-        template<
-            NonPointerQ EntryFun_T, NonIntQ ToChars_T, IntQ Int,
-            NonIntQ Prefix_T, typename ...Args
-        >
-        OutString(
-            EntryFun_T && a, ToChars_T && to_chars, Int n, Prefix_T && prefix, Args&&... args
-        )
-        :  OutString{ ArrayCharCount(
-            std::forward<ToChars_T>(to_chars), n,
-            std::forward<Prefix_T>(prefix), std::forward<Args>(args)...
-           ) }
+        friend Size_T CharCount( const OutString & s )
         {
-            PutArray(
-                std::forward<EntryFun_T>(a),
-                std::forward<ToChars_T>(to_chars), false, n,
-                std::forward<Prefix_T>(prefix), std::forward<Args>(args)...
-            );
+            return s.Size();
         }
-        
-        template<NonPointerQ EntryFun_T, IntQ Int, NonIntQ Prefix_T, typename ...Args>
-        OutString( EntryFun_T && a, Int n, Prefix_T && prefix, Args&&... args )
-        :   OutString{
-                std::forward<EntryFun_T>(a), ToChars<Result_T<EntryFun_T>>(), n,
-                std::forward<Prefix_T>(prefix), std::forward<Args>(args)...
-            }
-        {}
-        
-        
-        
-
-        template< typename T, IntQ Int_0, NonIntQ ToChars_T = ToChars<T> >
-        OutString( cptr<T> a, Int_0 d_0, ToChars_T && to_chars = ToChars_T() )
-        {
-            PutVector( a, d_0, std::forward<ToChars_T>(to_chars) );
-        }
-        
-        template<
-            NonPointerQ EntryFun_T, IntQ Int_0, NonIntQ ToChars_T = ToChars<Result_T<EntryFun_T>>
-        >
-        OutString( EntryFun_T && a, Int_0 d_0, ToChars_T && to_chars = ToChars_T() )
-        {
-            PutVectorFun(std::forward<EntryFun_T>(a), d_0, std::forward<ToChars_T>(to_chars));
-        }
-        
-        
-        
-        
-        template<
-            MatrixFormat format = MatrixFormat::Tall,
-            typename T, IntQ Int_0, IntQ Int_1,
-            NonIntQ ToChars_T = ToChars<T>
-        >
-        OutString(
-            cptr<T> a, Int_0 d_0, Int_1 d_1, ToChars_T && to_chars = ToChars_T()
-        )
-        {
-            PutMatrix<format>( a, d_0, d_1, std::forward<ToChars_T>(to_chars) );
-        }
-        
-        template<
-            MatrixFormat format = MatrixFormat::Tall,
-            NonPointerQ EntryFun_T, IntQ Int_0, IntQ Int_1,
-            NonIntQ ToChars_T = ToChars<Result_T<EntryFun_T>>
-        >
-        OutString(
-            EntryFun_T && a, Int_0 d_0, Int_1 d_1, ToChars_T && to_chars = ToChars_T()
-        )
-        {
-            PutMatrixFun<format>(std::forward<EntryFun_T>(a), d_0, d_1, std::forward<ToChars_T>(to_chars));
-        }
-        
-        
-        
-        template<
-            CubeFormat format = CubeFormat::Medium,
-            typename T, IntQ Int_0, IntQ Int_1, IntQ Int_2,
-            NonIntQ ToChars_T = ToChars<T>
-        >
-        OutString(
-            cptr<T> a, Int_0 d_0, Int_1 d_1, Int_2 d_2, ToChars_T && to_chars = ToChars_T()
-        )
-        {
-            PutCube<format>(
-                a, d_0, d_1, d_2, std::forward<ToChars_T>(to_chars)
-            );
-        }
-        
-        template<
-            CubeFormat format = CubeFormat::Medium,
-            NonPointerQ EntryFun_T, IntQ Int_0, IntQ Int_1, IntQ Int_2,
-            NonIntQ ToChars_T = ToChars<Result_T<EntryFun_T>>
-        >
-        OutString(
-            EntryFun_T && a, Int_0 d_0, Int_1 d_1, Int_2 d_2, ToChars_T && to_chars = ToChars_T()
-        )
-        {
-            PutCubeFun<format>(
-                std::forward<EntryFun_T>(a), d_0, d_1, d_2, std::forward<ToChars_T>(to_chars)
-            );
-        }
-        
-        
-        
-//        CubeFormat format = CubeFormat::Medium,
-        
-        
         
 //        std::string_view View() const
 //        {
 //            return std::string_view(first,ptr);
 //        }
-//        
+
         operator std::string_view () const
         {
             return std::string_view(first,ptr);

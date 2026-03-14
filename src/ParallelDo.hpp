@@ -5,6 +5,10 @@
 
 namespace Tools
 {
+    template<typename F, typename Int>
+    concept Doable = IntQ<Int> && (std::invocable<F,Int> || std::invocable<F,Int,Int>);
+    
+    
     // Executes the function `fun` of the form `[]( const Int thread ) -> S {...}` parallelized over `thread_count` threads.
     template<typename F, IntQ Int> requires std::invocable<F,Int>
     TOOLS_FORCE_INLINE void ParallelDo( F && fun, const Int thread_count )
@@ -53,25 +57,27 @@ namespace Tools
 //        }
 //    }
     
-    template<typename F, IntQ Int = Size_T>
-    requires std::invocable<F,Int>
+    template<typename F, IntQ Int = Size_T> requires std::invocable<F,Int>
     TOOLS_FORCE_INLINE void SequentialDo( F && f, const Int begin, const Int end, const Int thread )
     {
         (void)thread;
         for( Int i = begin; i < end; ++i ) { std::invoke(f, i); }
     }
     
-    template<typename F, IntQ Int = Size_T>
-    requires std::invocable<F,Int,Int>
+    template<typename F, IntQ Int = Size_T> requires std::invocable<F,Int,Int>
     TOOLS_FORCE_INLINE void SequentialDo( F && f, const Int begin, const Int end, const Int thread )
     {
         for( Int i = begin; i < end; ++i ) { std::invoke(f, thread, i); }
     }
     
     
+//    namespace Details
+//    {
+//        template<>
+//    }
+    
     // Executes the function `f` of the form `[]( Int thread, Int i ) {...}` or `[]( Int i ) {...}` over the range [begin,end[, using `thread_count` threads.
-    template<typename F, IntQ Int>
-    requires std::invocable<F,Int> || std::invocable<F,Int,Int>
+    template<typename F, IntQ Int> requires Doable<F,Int>
     TOOLS_FORCE_INLINE void ParallelDo_Static(
         F && f, const Int begin, const Int end, const Int thread_count
     )
@@ -89,8 +95,7 @@ namespace Tools
     }
     
     // Executes the function `f` of the form `[]( Int thread, Int i ) {...}` or `[]( Int i ) {...}` over the range [begin,end[, using `thread_count` threads.
-    template<typename F, IntQ Int = Size_T>
-    requires std::invocable<F,Int> || std::invocable<F,Int,Int>
+    template<typename F, IntQ Int = Size_T> requires Doable<F,Int>
     TOOLS_FORCE_INLINE void ParallelDo_Dynamic(
         F && f, const Int begin, const Int end, const Int inc, const Int thread_count
     )

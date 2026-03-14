@@ -1,27 +1,69 @@
 public:
 
+
+
 template<
-    NonPointerQ EntryFun_T, IntQ Int_0, NonIntQ ToChars_T = ToChars<Result_T<EntryFun_T>>
+    typename Fmt = Format::Vector::Default,
+    IntQ Int_0, ArrayFun<Int_0> A, CharConv<Result_T<A>> C
 >
-OutString & PutVectorFun(
-    EntryFun_T && a, Int_0 d_0, ToChars_T && to_chars = ToChars_T()
-)
+OutString & PutVectorFun( A && a, C && to_chars, Int_0 d_0, bool check_sizeQ = true )
 {
-    char prefix_0 [3] = "{ ";
-    char infix_0  [3] = ", ";
-    char suffix_0 [3] = " }";
-    
     return PutArray(
-        std::forward<EntryFun_T>(a), std::forward<ToChars_T>(to_chars), true,
-        d_0, prefix_0, infix_0, suffix_0
+        std::forward<A>(a), std::forward<C>(to_chars), check_sizeQ, d_0,
+        Fmt::prefix_0, Fmt::infix_0, Fmt::suffix_0
     );
 }
 
-template<typename T, IntQ Int_0, NonIntQ ToChars_T = ToChars<T>>
-OutString & PutVector( cptr<T> a, Int_0 d_0, ToChars_T && to_chars = ToChars_T() )
+template<typename Fmt = Format::Vector::Default, IntQ Int_0, ArrayFun<Int_0> A>
+OutString & PutVectorFun( A && a, Int_0 d_0, bool check_sizeQ = true )
 {
-    return PutVectorFun(
-        [a]( const Int_0 i_0 ) { return a[i_0]; },
-        d_0, std::forward<ToChars_T>(to_chars)
-    );
+    return PutVectorFun<Fmt>(std::forward<A>(a), ToChars<Result_T<A>>(), d_0, check_sizeQ );
+}
+
+template<typename Fmt = Format::Vector::Default, typename T, IntQ Int_0, CharConv<T> C>
+OutString & PutVector( cptr<T> a, C && to_chars, Int_0 d_0, bool check_sizeQ = true )
+{
+    return PutVectorFun<Fmt>( [a]( const Int_0 i_0 ) { return a[i_0]; }, std::forward<C>(to_chars), d_0, check_sizeQ );
+}
+
+template<typename Fmt = Format::Vector::Default, typename T, IntQ Int_0>
+OutString & PutVector( cptr<T> a, Int_0 d_0, bool check_sizeQ = true )
+{
+    return PutVectorFun<Fmt>( [a]( const Int_0 i_0 ) { return a[i_0]; }, ToCharS<T>(), d_0, check_sizeQ );
+}
+
+
+
+template<
+    typename Fmt = Format::Vector::Default,
+    IntQ Int_0, ArrayFun<Int_0> A, CharConv<Result_T<A>> C
+>
+static OutString FromVector( A && a, C && to_chars, Int_0 d_0 )
+{
+    OutString out { ArrayCharCount(
+        std::forward<C>(to_chars),
+        d_0, Fmt::prefix_0, Fmt::infix_0, Fmt::suffix_0
+    )};
+    
+    out.PutVectorFun<Fmt>( std::forward<A>(a), std::forward<C>(to_chars), d_0, false );
+    
+    return out;
+}
+
+template<typename Fmt = Format::Vector::Default, IntQ Int_0, ArrayFun<Int_0> A>
+static OutString FromVector( A && a, Int_0 d_0 )
+{
+    return FromVector<Fmt>(std::forward<A>(a), ToChars<Result_T<A>>(), d_0);
+}
+
+template<typename Fmt = Format::Vector::Default,  typename T, IntQ Int_0, CharConv<T> C>
+static OutString FromVector( cptr<T> a, C && to_chars, Int_0 d_0 )
+{
+    return FromVector<Fmt>([a]( const Int_0 i_0 ) { return a[i_0]; }, std::forward<C>(to_chars), d_0);
+}
+
+template<typename Fmt = Format::Vector::Default, typename T, IntQ Int_0>
+static OutString FromVector( cptr<T> a, Int_0 d_0 )
+{
+    return FromVector<Fmt>([a]( const Int_0 i_0 ) { return a[i_0]; }, ToChars<T>(), d_0);
 }

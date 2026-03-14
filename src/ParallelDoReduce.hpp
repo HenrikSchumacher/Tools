@@ -2,24 +2,40 @@
 
 namespace Tools
 {
+    template<typename F, typename R, typename T, typename Int>
+    concept DoReducible = IntQ<Int> && (
+        (
+            std::invocable<F,Int> && (
+                std::invocable<R, std::invoke_result_t<F,Int>, T&>
+                ||
+                std::invocable<R, Int, std::invoke_result_t<F,Int>, T&>
+            )
+        )
+        ||
+        (
+            std::invocable<F,Int,Int> && (
+                std::invocable<R, std::invoke_result_t<F,Int,Int>, T&>
+                ||
+                std::invocable<R, Int, std::invoke_result_t<F,Int,Int>, T&>
+            )
+        )
+    );
+    
+    
     // Executes the function `f` of the `form []( Int thread ) {...}` parallelized over `thread_count` threads.
     // Afterwards, reduces with the reducer function `r` of the form `[]( Int thread, cref<S> value, mref<T> result ) {...}` or `[]( cref<S> value, mref<T> result ) {...}`.
-    template<typename F, typename R, typename T, IntQ Int>
+    template<typename F, typename R, typename T, IntQ Int> requires DoReducible<F,R,T,Int>
     TOOLS_FORCE_INLINE T ParallelDoReduce( F && f, R && r, cref<T> init, const Int thread_count )
     {
-        static_assert(function_traits<R>::arity >= 2, "");
-        static_assert(function_traits<R>::arity <= 3, "");
-        constexpr bool r_wants_threadQ = (function_traits<F>::arity == 3);
-        
         T result (init);
         
         if( thread_count <= Int(1) )
         {
-            if constexpr ( r_wants_threadQ )
+            if constexpr ( std::invocable<F,Int,Int> )
             {
                 std::invoke( r, Int(0), f(Int(0)), result );
             }
-            else
+            else if constexpr ( std::invocable<F,Int> )
             {
                 std::invoke( r, f(Int(0)), result );
             }
@@ -38,7 +54,7 @@ namespace Tools
             
             for( Int thread = 0; thread < thread_count; ++thread )
             {
-                if constexpr ( r_wants_threadQ )
+                if constexpr ( function_traits<R>::arity == 3 )
                 {
                     std::invoke( r, thread, futures[static_cast<Size_T>(thread)].get(), result );
                 }
@@ -54,17 +70,11 @@ namespace Tools
     
     // Executes the function `f` of the form `[]( Int thread, Int i ) -> S  {...}` or `[]( Int i ) -> S {...}` over the range [begin,end[, using just one thread, but using the thread id given by the argument `thread`.
     // Then it runs the reducer function `r` of the form `[]( Int thread, Int i, cref<S>, mref<T> ) {...}` or `[]( cref<S>, mref<T> ) {...}` over the results and the value `init` to create one result that is returned.
-    template<typename F, typename R, typename T, IntQ Int = Size_T>
+    template<typename F, typename R, typename T, IntQ Int = Size_T> requires DoReducible<F,R,T,Int>
     TOOLS_FORCE_INLINE T SequentialDoReduce(
         F && f, R && r, cref<T> init, const Int begin, const Int end, const Int thread
     )
     {
-        static_assert(function_traits<F>::arity >= 1, "");
-        static_assert(function_traits<F>::arity <= 2, "");
-        
-        static_assert(function_traits<R>::arity >= 2, "");
-        static_assert(function_traits<R>::arity <= 3, "");
-        
         constexpr bool f_wants_threadQ = (function_traits<F>::arity == 2);
         constexpr bool r_wants_threadQ = (function_traits<F>::arity == 3);
         
@@ -103,7 +113,7 @@ namespace Tools
     // Each thread runs the reducer function `r` of the form `[]( Int thread, Int i, cref<S>, mref<T> ) {...}` or `[]( cref<S>, mref<T> ) {...}` over the the results, initialized by `init` to create one result for the thread.
     // Then the reducer `r` is run over all results of all threads.
     //  CAUTION: `init` is assumed to be a NEUTRAL ELEMENT for the reduction. Each thread is initialized by it!
-    template<typename F, typename R, typename T, IntQ Int>
+    template<typename F, typename R, typename T, IntQ Int> requires DoReducible<F,R,T,Int>
     TOOLS_FORCE_INLINE T ParallelDoReduce_Static(
         F && f, R && r, cref<T> init,
         const Int begin, const Int end, const Int thread_count

@@ -32,7 +32,8 @@ namespace Tools
     // Each thread runs the reducer function `r` of the form `[]( Int thread, Int i, cref<S>, mref<T> ) {...}` or `[]( cref<S>, mref<T> ) {...}` over the the results, initialized by `init` to create one result for the thread.
     // Then the reducer `r` is run over all results of all threads.
     //  CAUTION: `init` is assumed to be a NEUTRAL ELEMENT for the reduction. Each thread is initialized by it!
-    template<Parallel_T parQ = Sequential, typename T, typename F, typename R, IntQ Int>
+    template<Parallel_T parQ = Sequential, typename F, typename R, typename T, IntQ Int>
+    requires DoReducible<F,R,T,Int>
     [[nodiscard]] TOOLS_FORCE_INLINE T DoReduce(
         F && f, R && r, cref<T> init, const DoRange<Int> & range, const Int thread_count = 1
     )
@@ -67,6 +68,7 @@ namespace Tools
     //  CAUTION: `init` is assumed to be a NEUTRAL ELEMENT for the reduction. Each thread is initialized by it!
     // This supports also loops with constant trip counts `N`; if `N > 0`, then the loop will be unrolled and processed sequentially.
     template<Parallel_T parQ = Sequential, typename T, typename F, typename R, IntQ Int>
+    requires DoReducible<F,R,T,Int>
     [[nodiscard]] TOOLS_FORCE_INLINE T DoReduce(
         F && f, R && r, cref<T> init, const Int n, const Int thread_count = 1
     )
@@ -77,6 +79,7 @@ namespace Tools
     template<Size_T N, Parallel_T parQ = Sequential,
         typename T, typename F, typename R, IntQ Int = Size_T
     >
+    requires DoReducible<F,R,T,Int>
     [[nodiscard]] TOOLS_FORCE_INLINE T DoReduce(
         F && f, R && r, cref<T> init, const Int n = static_cast<Int>(N), const Int thread_count = 1
     )
@@ -131,6 +134,7 @@ namespace Tools
     // Then the reducer `r` is run over all results of all threads.
     //  CAUTION: `init` is assumed to be a NEUTRAL ELEMENT for the reduction. Each thread is initialized by it!
     template<Parallel_T parQ = Parallel, typename F, typename R, typename T, IntQ Int>
+    requires DoReducible<F,R,T,Int>
     TOOLS_FORCE_INLINE void DoReduce( F && f, R && r, cref<T> init, cref<JobPointers<Int>> job_ptr )
     {
         if constexpr ( parQ == Parallel )

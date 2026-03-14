@@ -31,32 +31,34 @@ OutString & PutChars( const char(&c)[n] )
     return PutChars<checkQ>( &c[0], n-1 );
 }
 
-template<bool checkQ = true>
-void PutChars( const std::string & s )
-{
-    PutChars<checkQ>( &s[0], s.size() );
-}
-
-template<bool checkQ = true>
-void PutChars( std::string && s )
-{
-    PutChars<checkQ>( &s[0], s.size() );
-}
-
-//template<bool checkQ = true, typename T>
-//void Put( const std::string_view & s )
+//template<bool checkQ = true>
+//OutString & PutChars( const std::string & s )
 //{
-//    PutChars<checkQ>( &s[0], s.size() );
+//    return PutChars<checkQ>( &s[0], s.size() );
 //}
+//
+//template<bool checkQ = true>
+//OutString & PutChars( std::string && s )
+//{
+//    return PutChars<checkQ>( &s[0], s.size() );
+//}
+
+template<bool checkQ = true, typename T>
+OutString & PutChars( std::string_view s )
+{
+    return PutChars<checkQ>( &s[0], s.size() );
+}
 
 
 template<bool checkQ = true>
 OutString & Put( std::string_view s )
 {
-    if constexpr( checkQ ) { RequireFreeSpace( s.size() ); }
-    std::copy_n( &s[0], s.size(), ptr);
-    ptr += s.size();
-    return *this;
+    return PutChars<checkQ>( &s[0], s.size() );
+    
+//    if constexpr( checkQ ) { RequireFreeSpace( s.size() ); }
+//    std::copy_n( &s[0], s.size(), ptr);
+//    ptr += s.size();
+//    return *this;
 }
 
 template<bool checkQ = true, typename T, typename ToChars_T = ToChars<T>>

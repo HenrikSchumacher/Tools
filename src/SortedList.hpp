@@ -283,7 +283,7 @@ namespace Tools
         
         [[nodiscard]] friend std::string ToString( cref<SortedList> L )
         {
-            return OutString( &L.list[0], L.list.size() );
+            return OutString::FromVector( &L.list[0], L.list.size() );
         }
         
     };
