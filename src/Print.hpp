@@ -36,11 +36,6 @@ namespace Tools
         print(std::string_view(&c[0],&c[n-1]));
     }
     
-    inline void print( const std::string & s )
-    {
-        print(std::string_view(s.begin(),s.end()));
-    }
-    
     template<Size_T N>
     inline void print( const ct_string<N> & s )
     {

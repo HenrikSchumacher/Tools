@@ -176,7 +176,7 @@ namespace Tools
 
         OutString( const char * c, Int size_, Int capacity_ )
         {
-            Allocate(capacity);
+            Allocate(capacity_);
             std::copy_n(c,size_,buffer);
             size = size_;
         }
