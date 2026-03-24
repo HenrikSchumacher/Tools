@@ -483,7 +483,7 @@ namespace Tools
             }
             else
             {
-                size = static_cast<Size_T>(std::distance(p,r.ptr));
+                size += static_cast<Size_T>(std::distance(p,r.ptr));
                 return false;
             }
         }

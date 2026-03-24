@@ -50,7 +50,7 @@ namespace Tools
 //        std::string s_out (len + 3, ' ');
 //        std::copy_n( s.begin(), s.size(), s_out.begin() );
 //        s_out[len+1] = '=';
-//        s_out += COND(FloatQ<T>,ToStringFPGeneral(value),ToString(value));
+//        s_out += COND(FloatQ<T>,ToString(value),ToString(value));
 //        print(s_out);
 //    }
 //    
