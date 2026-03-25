@@ -5,7 +5,7 @@ InString & SkipWhiteSpace()
     
     while( !EmptyQ() && std::isspace(*ptr) ) { ++ptr; }
     
-    if( EmptyQ() ) { failedQ = true; }
+//    if( EmptyQ() ) { failedQ = true; }
     
     return *this;
 }

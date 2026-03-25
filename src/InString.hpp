@@ -94,7 +94,7 @@ namespace Tools
         
     public:
 
-        InString(){}
+        InString() = default;
         
         InString( const char * const begin_, const char * const end_ )
         :   begin { begin_ }
@@ -103,23 +103,55 @@ namespace Tools
         {}
         
         InString( const char * const begin_, Size_T size )
-        :   begin { begin_        }
-        ,   ptr   { begin_        }
-        ,   end   { &begin_[size] }
+        :   InString{ begin_, &begin_[size] }
         {}
         
-        InString( std::string_view s )
-        :   InString( &*s.begin(), &*s.end() )
+        explicit InString( std::string_view s )
+        :   InString{ &*s.begin(), &*s.end() }
         {}
+
+        explicit InString( cref<std::string> s )
+        :   InString{ &*s.begin(), &*s.end() }
+        {}
+        
+        explicit InString( std::string && s )
+        :   buffer { std::move(s)     }
+        ,   begin  { &*buffer.begin() }
+        ,   ptr    { &*buffer.begin() }
+        ,   end    { &*buffer.end()   }
+        {}
+        
+        explicit InString ( cref<std::filesystem::path> file )
+        {
+            std::ifstream stream (file, std::ios::in | std::ios::binary);
+            if( !stream )
+            {
+                eprint(ClassName() + "(std::filesystem::path): Opening file " + file.string() + " failed. Returning empty InString.");
+                return;
+            }
+            
+            // Obtain the size of the file.
+            const auto file_size = std::filesystem::file_size(file);
+
+            // Create a buffer.
+            buffer = std::string(file_size, '\0');
+            // Read the whole file into the buffer.
+            stream.read(buffer.data(), static_cast<std::streamsize>(file_size));
+
+            begin = &*buffer.begin();
+            ptr   = &*buffer.begin();
+            end   = &*buffer.end();
+        }
         
         ~InString() = default;
         
     private:
         
-        const char * begin = nullptr;
-        const char * ptr   = nullptr;
-        const char * end   = nullptr;
-        bool failedQ = false;
+        std::string buffer;
+        const char * begin  = nullptr;
+        const char * ptr    = nullptr;
+        const char * end    = nullptr;
+        bool failedQ        = false;
         
     public:
         
@@ -145,6 +177,26 @@ namespace Tools
         
 #include "InString/Take.hpp"
 #include "InString/TakeMatrix.hpp"
+
+//        static InString FromFile( cref<std::filesystem::path> file )
+//        {
+//            std::ifstream stream (file, std::ios::in | std::ios::binary);
+//            if( !stream )
+//            {
+//                eprint(ClassName() + "(std::filesystem::path): Opening file " + file.string() + " failed. Returning empty InString.");
+//                return InString();
+//            }
+//            
+//            // Obtain the size of the file.
+//            const auto file_size = std::filesystem::file_size(file);
+//            
+//            // Create a buffer.
+//            std::string s = std::string(file_size, '\0');
+//            // Read the whole file into the buffer.
+//            stream.read(s.data(), static_cast<std::streamsize>(file_size));
+//
+//            return InString(std::move(s));
+//        }
 
         
         template<bool checkQ = true>
