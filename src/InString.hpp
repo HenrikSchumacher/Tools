@@ -132,7 +132,7 @@ namespace Tools
             
             // Obtain the size of the file.
             const auto file_size = std::filesystem::file_size(file);
-
+            
             // Create a buffer.
             buffer = std::string(file_size, '\0');
             // Read the whole file into the buffer.
@@ -158,6 +158,11 @@ namespace Tools
         Size_T Size() const
         {
             return static_cast<Size_T>(std::distance(ptr,end));
+        }
+        
+        Size_T Capacity() const
+        {
+            return static_cast<Size_T>(std::distance(begin,end));
         }
         
         bool FailedQ() const

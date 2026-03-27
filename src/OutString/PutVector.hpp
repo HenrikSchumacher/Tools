@@ -27,7 +27,7 @@ OutString & PutVector( cptr<T> a, C && to_chars, Int_0 d_0, bool check_sizeQ = t
 template<typename Fmt = Format::Vector::Default, typename T, IntQ Int_0>
 OutString & PutVector( cptr<T> a, Int_0 d_0, bool check_sizeQ = true )
 {
-    return PutVectorFun<Fmt>( [a]( const Int_0 i_0 ) { return a[i_0]; }, ToCharS<T>(), d_0, check_sizeQ );
+    return PutVectorFun<Fmt>( [a]( const Int_0 i_0 ) { return a[i_0]; }, ToChars<T>(), d_0, check_sizeQ );
 }
 
 

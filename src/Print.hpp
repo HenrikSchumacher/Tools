@@ -15,7 +15,7 @@ namespace Tools
         static std::mutex mutex;
     }
     
-    inline void print( const std::string_view & s )
+    inline void print( std::string_view s )
     {
         const std::lock_guard<std::mutex> cout_lock( Tools::cout_mutex  );
         
@@ -25,6 +25,8 @@ namespace Tools
         std::string s_out (len + s.size(), ' ');
         std::copy_n( &s[0], s.size(), &s_out[len] );
         mma::print(s_out);
+        
+//        mma::print( std::string(s) );
 #else
         std::cout << s << std::endl;
 #endif
@@ -76,9 +78,14 @@ namespace Tools
         s_out[len+1] = '=';
         s_out += ToString(value);
         print(s_out);
+        
+//        std::string s_out (s);
+//        s_out += " = ";
+//        s_out += ToString(value);
+//        print(s_out);
     }
     
-    template<Size_T align = 0, typename T>
+    template<Size_T align = 0>
     inline void valprint( std::string_view s, std::string_view value)
     {
         const Size_T len = (align > Size_T(0)) ? std::max(s.size(),align) : s.size();
@@ -88,6 +95,11 @@ namespace Tools
         s_out[len+1] = '=';
         std::copy_n( value.begin(), value.size(), &s_out[len + 3] );
         print(s_out);
+        
+//        std::string s_out (s);
+//        s_out += " = ";
+//        s_out += value;
+//        print(s_out);
     }
 
 } // namespace Tools
@@ -95,6 +107,6 @@ namespace Tools
 
 #define TOOLS_DUMP(x) Tools::valprint( std::string_view(#x), x )
 
-#define TOOLS_MEM_DUMP_STRING(x) "\"" + std::string(#x) + "\" -> " + ToMathematicaString( static_cast<double>((x).AllocatedByteCount()) )
+#define TOOLS_MEM_DUMP_STRING(x) "\"" + std::string(#x) + "\" -> " + Tools::ToMathematicaString( static_cast<double>((x).AllocatedByteCount()) )
 
 #define TOOLS_MEM_DUMP(x) Tools::print( TOOLS_MEM_DUMP_STRING(x) )

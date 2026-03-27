@@ -364,13 +364,20 @@ namespace Tools
         return Scalar::One<R> / scalar_cast<R>(a);
     }
     
-    template<typename S, typename T, typename R = decltype( S(1)*T(1) )>
+    template<typename R, typename S, typename T>
     TOOLS_FORCE_INLINE constexpr R Frac( cref<S> a, cref<T> b )
     {
         return scalar_cast<R>(a) / scalar_cast<R>(b);
     }
     
-    template<typename S, typename T, typename R = decltype( S(1)*T(1) )>
+//    template<typename S, typename T>
+//    TOOLS_FORCE_INLINE constexpr decltype(S(1) * T(1)) Frac( cref<S> a, cref<T> b )
+//    {
+//        using R = decltype(S(1) * T(1));
+//        return scalar_cast<R>(a) / scalar_cast<R>(b);
+//    }
+    
+    template<typename R, typename S, typename T>
     TOOLS_FORCE_INLINE constexpr R Percentage( cref<S> a, cref<T> b )
     {
         static_assert(Scalar::RealQ<S>,"");
@@ -378,6 +385,18 @@ namespace Tools
         static_assert(Scalar::RealQ<R>,"");
         return R(100) * scalar_cast<R>(a) / scalar_cast<R>(b);
     }
+    
+//    template<typename S, typename T>
+//    TOOLS_FORCE_INLINE constexpr decltype(S(1) * T(1)) Percentage( cref<S> a, cref<T> b )
+//    {
+//        using R = decltype(S(1) * T(1));
+//        
+//        static_assert(Scalar::RealQ<S>,"");
+//        static_assert(Scalar::RealQ<T>,"");
+//        static_assert(Scalar::RealQ<R>,"");
+//        
+//        return R(100) * scalar_cast<R>(a) / scalar_cast<R>(b);
+//    }
     
 //    template<typename Scal>
 //    inline constexpr bool NaNQ( cref<Scal> x )

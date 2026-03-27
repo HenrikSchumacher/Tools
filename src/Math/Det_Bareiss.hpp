@@ -44,7 +44,7 @@ namespace Tools
         
         if( n > Int(3) )
         {
-            Int8 sign ( 1 );
+            Int32 sign ( 1 );
             
             for(Int k = 0; k < n - Int(1); ++k )
             {
@@ -54,7 +54,7 @@ namespace Tools
                 
                 if( l != k )
                 {
-                    sign = -sign;
+                    sign = static_cast<Int32>(-sign);
                     
                     for( Int i = 0; i < n; ++i )
                     {

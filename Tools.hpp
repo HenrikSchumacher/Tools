@@ -232,6 +232,9 @@ namespace Tools
     template<typename T>
     concept NonIntQ = !IntQ<T>;
     
+    template<typename T>
+    concept IntNotBoolQ = IntQ<T> && !std::is_same_v<T,bool>;
+    
 #define ASSERT_INT(I) static_assert( IntQ<I>, "Template parameter " #I " must be an integral type." );
     
     template<typename T> 
