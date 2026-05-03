@@ -56,6 +56,13 @@ namespace Tools
                 static constexpr char infix_0  [2] = " ";
                 static constexpr char suffix_0 [1] = "";
             };
+            
+            struct TSV
+            {
+                static constexpr char prefix_0 [1] = "";
+                static constexpr char infix_0  [2] = "\t";
+                static constexpr char suffix_0 [1] = "";
+            };
         }
         
         namespace Matrix

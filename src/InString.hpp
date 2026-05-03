@@ -141,6 +141,12 @@ namespace Tools
             begin = &*buffer.begin();
             ptr   = &*buffer.begin();
             end   = &*buffer.end();
+            
+            if( FailedQ() )
+            {
+                eprint(ClassName() + "(std::filesystem::path): Reading from file " + file.string() + " failed.");
+                return;
+            }
         }
         
         ~InString() = default;
@@ -178,6 +184,16 @@ namespace Tools
         const char & operator[]( const Size_T i ) const
         {
             return ptr[i];
+        }
+        
+        Size_T LineCount() const
+        {
+            Size_T line_count = 1;
+            for( const char * c = ptr; c < end; ++c )
+            {
+                line_count += (*c == '\n');
+            }
+            return line_count;
         }
         
 #include "InString/Take.hpp"

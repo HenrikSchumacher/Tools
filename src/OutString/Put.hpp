@@ -43,7 +43,7 @@ OutString & PutChars( const char(&c)[n] )
 //    return PutChars<checkQ>( &s[0], s.size() );
 //}
 
-template<bool checkQ = true, typename T>
+template<bool checkQ = true>
 OutString & PutChars( std::string_view s )
 {
     return PutChars<checkQ>( &s[0], s.size() );
