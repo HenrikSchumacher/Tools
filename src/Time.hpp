@@ -86,13 +86,12 @@ namespace Tools
 
     inline void tic(const std::string & s)
     {
+        print( s + "..." );
         {
             const std::lock_guard<std::mutex> timer_lock( Timer::mutex );
             
             Timer::stack.push_back(Clock::now());
         }
-        
-        print( s + "..." );
     }
 
     inline double toc(const std::string & s)

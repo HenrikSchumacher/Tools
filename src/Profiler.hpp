@@ -212,7 +212,6 @@ namespace Tools
             msg += s;
             
     #if defined(LTEMPLATE_H) || defined(TENSORS_MMA_HPP)
-
             print( msg );
     #endif
             const std::lock_guard<std::mutex> cerr_lock( Tools::cerr_mutex );
@@ -490,7 +489,11 @@ namespace Tools
     {
         std::string msg ("WARNING: ");
         msg += s;
-        print(msg);
+#if defined(LTEMPLATE_H) || defined(TENSORS_MMA_HPP)
+        print( msg );
+#endif
+        const std::lock_guard<std::mutex> cerr_lock( Tools::cerr_mutex );
+        std::cerr << msg << std::endl;
         logprint<false>(msg);
     }
     
@@ -508,7 +511,11 @@ namespace Tools
     {
         std::string msg ("NOTE: ");
         msg += s;
-        print(msg);
+#if defined(LTEMPLATE_H) || defined(TENSORS_MMA_HPP)
+        print( msg );
+#endif
+        const std::lock_guard<std::mutex> cerr_lock( Tools::cerr_mutex );
+        std::cerr << msg << std::endl;
         logprint<false>(msg);
     }
     

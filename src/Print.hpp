@@ -25,8 +25,6 @@ namespace Tools
         std::string s_out (len + s.size(), ' ');
         std::copy_n( &s[0], s.size(), &s_out[len] );
         mma::print(s_out);
-        
-//        mma::print( std::string(s) );
 #else
         std::cout << s << std::endl;
 #endif
