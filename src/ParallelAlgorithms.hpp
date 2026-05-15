@@ -187,18 +187,18 @@ namespace Tools
         {
             if constexpr (parQ == Parallel)
             {
-                if( thread_count <= Int(0) )
+                if( thread_count > Int(0) )
                 {
                     parallel_accumulate(a,n,thread_count);
                 }
                 else
                 {
-                    for( Int i = 1; i < n; ++i ) { a[i] += a[i-1]; }
+                    for( Int i = 1; i < n; ++i ) { a[i] += a[i-Int(1)]; }
                 }
             }
             else
             {
-                for( Int i = 1; i < n; ++i ) { a[i] += a[i-1]; }
+                for( Int i = 1; i < n; ++i ) { a[i] += a[i-Int(1)]; }
             }
         }
         else
@@ -292,20 +292,20 @@ namespace Tools
             
             if constexpr (parQ == Parallel)
             {
-                if( thread_count <= Int(0) )
+                if( thread_count > Int(0) )
                 {
                     parallel_accumulate(a,b,n,thread_count);
                 }
                 else
                 {
                     b[0] = a[0];
-                    for( Int i = 1; i < n; ++i ) { b[i] += a[i] + b[i-1]; }
+                    for( Int i = 1; i < n; ++i ) { b[i] = a[i] + b[i-Int(1)]; }
                 }
             }
             else
             {
                 b[0] = a[0];
-                for( Int i = 1; i < n; ++i ) { b[i] += a[i] + b[i-1]; }
+                for( Int i = 1; i < n; ++i ) { b[i] = a[i] + b[i-Int(1)]; }
             }
         }
         else
@@ -314,7 +314,7 @@ namespace Tools
             constexpr Int N_ = static_cast<Int>(N);
             if( N_ <= Int(0) ) { return; }
             b[0] = a[0];
-            for( Int i = 1; i < N_; ++i ) { b[i] += a[i] + b[i-1]; }
+            for( Int i = 1; i < N_; ++i ) { b[i] = a[i] + b[i-Int(1)]; }
         }
     }
     

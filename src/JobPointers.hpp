@@ -132,10 +132,10 @@ namespace Tools
             
             T * acc_costs = nullptr;
             
-            safe_alloc( acc_costs, static_cast<Size_T>(job_count + 1) );
+            safe_alloc( acc_costs, static_cast<Size_T>(job_count + Int(1)) );
             
-            acc_costs[0] = Int(0);
-            // Is parallel accumuation really a good idea here?
+            acc_costs[0] = T(0);
+            // Is parallel accumulation really a good idea here?
             Accumulate<Parallel>( &costs[0], &acc_costs[1], job_count, thread_count );
 
             BalanceWorkLoad( job_count, acc_costs);
@@ -162,34 +162,34 @@ namespace Tools
             
             const T total_cost = acc_costs[job_count];
             
-            if( total_cost <=0 )
+            if( total_cost <= T(0) )
             {
-                wprint(MethodName("BalanceWorkLoad") + ": Total cost is 0.");
+                wprint(MethodName("BalanceWorkLoad") + ": Total cost is <= 0.");
                 
                 TOOLS_DDUMP(job_count);
                 TOOLS_DDUMP(thread_count);
                 
-                logvalprint( "acc_costs", OutString::FromVector(acc_costs, job_count + 1) );
+                logvalprint( "acc_costs", OutString::FromVector(acc_costs, job_count + Int(1)) );
                 
                 std::fill( job_ptr.begin(), job_ptr.end(), Int(0));
                             
                 return;
             }
             
-            const T per_thread_cost = (total_cost + thread_count - 1) / thread_count;
+            const T per_thread_cost = (total_cost + thread_count - Int(1)) / thread_count;
 
             // binary search for best work load distribution
             
             //  There is quite a lot false sharing in this loop... so better not parallelize it.
-            for( Int thread = 0; thread < thread_count - 1; ++thread)
+            for( Int thread = 0; thread < thread_count - Int(1); ++thread)
             {
                 // each thread (other than the last one) is required to have at least this accumulated cost
-                T target = Min( total_cost, static_cast<T>(per_thread_cost * (thread + 1)) );
+                T target = Min( total_cost, static_cast<T>(per_thread_cost * (thread + Int(1))) );
                 
                 Int pos;
                 // find an index a such that b_row_acc_costs[ a ] < target;
                 // taking naive_chunk_size * thread as initial guess, because that might be nearly correct for costs that are evenly distributed over the block rows
-                pos = thread + 1;
+                pos = thread + Int(1);
                 Int a = Min(job_count, static_cast<Int>(naive_chunk_size * pos) );
                 while( acc_costs[a] >= target )
                 {
@@ -199,7 +199,7 @@ namespace Tools
                 
                 // find an index  b such that b_row_acc_costs[ b ] >= target;
                 // taking naive_chunk_size * (thread + 1) as initial guess, because that might be nearly correct for costs that are evenly distributed over the block rows
-                pos = thread + 1;
+                pos = thread + Int(1);
                 Int b = Min(job_count, static_cast<Int>(naive_chunk_size * pos) );
                 while( (b < job_count) && (acc_costs[b] < target) )
                 {
@@ -208,7 +208,7 @@ namespace Tools
                 };
                 
                 // binary search
-                while( b > a + 1 )
+                while( b > a + Int(1) )
                 {
                     const Int c = a + (b-a)/2;
                     if( acc_costs[c] > target )
