@@ -73,7 +73,7 @@ namespace Tools
     {
         if constexpr (parQ == Parallel)
         {
-            if( thread_count <= Int(0) )
+            if( thread_count <= Int(1) )
             {
                 SequentialDo( std::forward<F>(f), range.begin, range.end, Int(0) );
             }

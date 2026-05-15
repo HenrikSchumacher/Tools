@@ -20,7 +20,7 @@ namespace Tools
             }
             else
             {
-                if( thread_count <= Scalar::One<Int> )
+                if( thread_count <= Int(1) )
                 {
                     std::fill( &a[0], &a[n], init );
                 }

@@ -187,7 +187,7 @@ namespace Tools
         {
             if constexpr (parQ == Parallel)
             {
-                if( thread_count > Int(0) )
+                if( thread_count > Int(1) )
                 {
                     parallel_accumulate(a,n,thread_count);
                 }
@@ -292,7 +292,7 @@ namespace Tools
             
             if constexpr (parQ == Parallel)
             {
-                if( thread_count > Int(0) )
+                if( thread_count > Int(1) )
                 {
                     parallel_accumulate(a,b,n,thread_count);
                 }

@@ -40,7 +40,7 @@ namespace Tools
     {
         if constexpr (parQ == Parallel)
         {
-            if( thread_count <= Int(0) )
+            if( thread_count <= Int(1) )
             {
                 return SequentialDoReduce(
                     std::forward<F>(f), std::forward<R>(r), init, range.begin, range.end, Int(0)

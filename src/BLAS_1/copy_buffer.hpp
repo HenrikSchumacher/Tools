@@ -43,7 +43,7 @@ namespace Tools
             }
             else
             {
-                if( thread_count <= Scalar::One<Int> )
+                if( thread_count <= Int(1) )
                 {
                     if constexpr ( SameQ<T,S> )
                     {
@@ -129,7 +129,7 @@ namespace Tools
             }
             else
             {
-                if( thread_count <= Scalar::One<Int> )
+                if( thread_count <= Int(1) )
                 {
                     copy_buffer_replace_infty<VarSize,Sequential>(source,target,n);
                 }
