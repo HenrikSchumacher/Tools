@@ -51,7 +51,7 @@ namespace Tools
     using AssociativeContainer = std::unordered_map<Key_T,Val_T,Hash_T>;
 #endif
     
-    template<typename Key_T, typename Val_T, typename Hash_T = Hash<Key_T>>
+    template<typename Key_T, typename Val_T, typename Hash_T>
     std::string ToString( cref<AssociativeContainer<Key_T,Val_T,Hash_T>> a )
     {
         std::string s ("{ ");
@@ -75,7 +75,7 @@ namespace Tools
         return s;
     }
     
-//    template<typename Key_T, IntQ Val_T, typename Hash_T = Tools::hash<Key_T>>
+//    template<typename Key_T, IntQ Val_T, typename Hash_T>
 //    TOOLS_FORCE_INLINE void AddTo(
 //        mref<AssociativeContainer<Key_T,Val_T,Hash_T>> a, cref<Key_T> key, cref<Val_T> val
 //    )
@@ -90,7 +90,7 @@ namespace Tools
 //        }
 //    }
     
-    template<typename Key_T, IntQ Val_T, typename Hash_T = Hash<Key_T>>
+    template<typename Key_T, IntQ Val_T, typename Hash_T>
     TOOLS_FORCE_INLINE void Increment(
         mref<AssociativeContainer<Key_T,Val_T,Hash_T>> a, cref<Key_T> key
     )
@@ -115,7 +115,7 @@ namespace Tools
         }
     }
     
-    template<typename Key_T, IntQ Val_T, typename Hash_T = Hash<Key_T>>
+    template<typename Key_T, IntQ Val_T, typename Hash_T>
     TOOLS_FORCE_INLINE void Decrement(
         mref<AssociativeContainer<Key_T,Val_T,Hash_T>> a, cref<Key_T> key
     )
