@@ -20,6 +20,7 @@
 #include <vector>
 #include <array>
 #include <string>
+#include <string_view>
 #include <chrono>
 #include <iostream>
 #include <sstream>
@@ -410,13 +411,6 @@ namespace Tools
 #include "src/Math/Kahan.hpp"
 //#include "src/Math/CompensatedSummation.hpp"
 
-
-
-//using Tensors::Op;
-//using Tensors::AddTo;
-
-
-
 #include "src/Scalars/combine_scalars.hpp"
 
 // Common dependencies for combine_scalars_vec and combine_buffers_vec.
@@ -442,25 +436,33 @@ namespace Tools
 #include "src/BLAS_2.hpp"
 #include "src/BLAS_4.hpp"
 
-#include "src/AlignedAllocator.hpp"
+//#include "src/AlignedAllocator.hpp"
 
 // TODO: get rid of std::vector here
 #include "src/SortedList.hpp"
 #include "src/BinarySearch.hpp"
-
-#include "src/CachedObject.hpp"
 
 #include "src/Sort/SortNet.hpp"
 //#include "src/Sort/BitonicSort.hpp"
 //#include "src/Sort/BitonicMergeSort.hpp"
 #include "src/Sort/Sort.hpp"
 
+#include "src/Hashing.hpp"
+#include "src/Debugging.hpp"
+
+#ifdef LTEMPLATE_H
+    #include "src/MathematicaTypes.hpp"
+#endif
+
+// Containers.hpp needs MathematicaTypes.hpp if LTEMPLATE_H is defined.
+#include "src/Containers.hpp"
+#include "src/CachedObject.hpp"
+
+
 #include "src/Math/RealCubicSolve.hpp"
 #include "src/Math/Det_Bareiss.hpp"
 #include "src/Math/ProductAccumulator.hpp"
 
-#include "src/Hashing.hpp"
-
-#include "src/Debugging.hpp"
 #include "src/Random.hpp"
+
 
