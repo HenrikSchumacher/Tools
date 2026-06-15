@@ -11,7 +11,7 @@
 namespace Tools
 {
 #ifdef TOOLS_USE_BOOST_UNORDERED
-    template<typename Key_T, typename Hash_T = Tools::Hash<Key_T>>
+    template<typename Key_T, typename Hash_T = boost::hash<Key_T>>
     using SetContainer = boost::unordered_flat_set<Key_T,Hash_T>;
 #else
     template<typename Key_T, typename Hash_T = Tools::Hash<Key_T>>
@@ -44,7 +44,7 @@ namespace Tools
     
     
 #ifdef TOOLS_USE_BOOST_UNORDERED
-    template<typename Key_T, typename Val_T, typename Hash_T = Hash<Key_T>>
+    template<typename Key_T, typename Val_T, typename Hash_T = boost::hash<Key_T>>
     using AssociativeContainer = boost::unordered_flat_map<Key_T,Val_T,Hash_T>;
 #else
     template<typename Key_T, typename Val_T, typename Hash_T = Hash<Key_T>>
