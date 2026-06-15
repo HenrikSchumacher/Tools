@@ -551,6 +551,16 @@ namespace Tools
             }
         }
         
+
+        static std::string_view CacheContainerName()
+        {
+            return PrettyTypeName<CacheContainer_T>();
+        }
+        
+        static std::string_view PersistentCacheContainerName()
+        {
+            return PrettyTypeName<P_CacheContainer_T>();
+        }
         
         static auto ClassName()
         {

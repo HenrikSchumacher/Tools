@@ -46,6 +46,7 @@ namespace Tools
 #ifdef TOOLS_USE_BOOST_UNORDERED
     template<typename Key_T, typename Val_T, typename Hash_T = boost::hash<Key_T>>
     using AssociativeContainer = boost::unordered_flat_map<Key_T,Val_T,Hash_T>;
+
 #else
     template<typename Key_T, typename Val_T, typename Hash_T = Hash<Key_T>>
     using AssociativeContainer = std::unordered_map<Key_T,Val_T,Hash_T>;
@@ -75,20 +76,20 @@ namespace Tools
         return s;
     }
     
-//    template<typename Key_T, IntQ Val_T, typename Hash_T>
-//    TOOLS_FORCE_INLINE void AddTo(
-//        mref<AssociativeContainer<Key_T,Val_T,Hash_T>> a, cref<Key_T> key, cref<Val_T> val
-//    )
-//    {
-//        if( a.contains(key) )
-//        {
-//            a[key] += val;
-//        }
-//        else
-//        {
-//            a[key]  = val;
-//        }
-//    }
+    template<typename Key_T, IntQ Val_T, typename Hash_T>
+    TOOLS_FORCE_INLINE void Increment(
+        mref<AssociativeContainer<Key_T,Val_T,Hash_T>> a, cref<Key_T> key, cref<Val_T> val
+    )
+    {
+        if( a.contains(key) )
+        {
+            a[key] += val;
+        }
+        else
+        {
+            a[key]  = val;
+        }
+    }
     
     template<typename Key_T, IntQ Val_T, typename Hash_T>
     TOOLS_FORCE_INLINE void Increment(
