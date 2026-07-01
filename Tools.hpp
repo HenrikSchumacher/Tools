@@ -2,7 +2,8 @@
 
 #define SCHUMACHER_TOOLS
 
-// Figure out which compiler is in uses. (brittle)
+// Figure out which compiler is in uses.
+// This is somewhat brittle and it is designed to identify only the "big" C++ compilers (gcc, clang, MSVC, and maybe the intel compiler).
 // https://github.com/cpredef/predef/blob/master/Compilers.md
 #if defined(__GNUC__) && !defined(__clang__) && !defined(__INTEL_COMPILER)
     #define TOOLS_COMPILER_IS_GCC
@@ -328,7 +329,7 @@ namespace Tools
     constexpr bool DependentFalse = false;
     
 
-#if ( (!(defined TOOLS_DEACTIVATE_VECTOR_EXTENSIONS)) && (__has_attribute(__ext_vector_type__)) )
+#if ( (!(defined TOOLS_NO_VECTOR_EXTENSIONS)) && (__has_attribute(__ext_vector_type__)) )
     
     constexpr bool vec_enabledQ = true;
     
@@ -354,7 +355,7 @@ namespace Tools
     using vec_T = std::array<T,N>; //Just a dummy; will not be used, actually.
 #endif
 
-#if ( (!(defined TOOLS_DEACTIVATE_MATRIX_EXTENSIONS)) && (__has_attribute(__matrix_type__)) )
+#if ( (!(defined TOOLS_NO_MATRIX_EXTENSIONS)) && (__has_attribute(__matrix_type__)) )
     
     constexpr bool mat_enabledQ = true;
 
@@ -493,5 +494,3 @@ namespace Tools
 #include "src/Math/ProductAccumulator.hpp"
 
 #include "src/Random.hpp"
-
-

@@ -57,11 +57,11 @@ namespace Tools
         TOOLS_DUMP( std::is_pointer<const bool * TOOLS_RESTRICT const>::value );
     }
     
-    void PrintCompilerIndentification()
+    void PrintCompilerIdentification()
     {
         constexpr Size_T a = 30;
         
-        print("\nPrintCompilerIndentification()\n");
+        print("\PrintCompilerIdentification()\n");
 #ifdef __GNUC__
         valprint<a>("__GNUC__",true);
 #else
@@ -119,6 +119,18 @@ namespace Tools
         valprint<b>("TOOLS_COMPILER_IS_GCC",false);
 #endif
         
+#ifdef TOOLS_COMPILER_IS_MSVC
+        valprint<b>("TOOLS_COMPILER_IS_MSVC",true);
+#else
+        valprint<b>("TOOLS_COMPILER_IS_MSVC",false);
+#endif
+        
+#ifdef TOOLS_COMPILER_IS_ICC
+        valprint<b>("TOOLS_COMPILER_IS_ICC",true);
+#else
+        valprint<b>("TOOLS_COMPILER_IS_ICC",false);
+#endif
+        
 #ifdef TOOLS_COMPILER_IS_CLANG
         valprint<b>("TOOLS_COMPILER_IS_CLANG",true);
 #else
@@ -143,21 +155,65 @@ namespace Tools
         valprint<b>("TOOLS_COMPILER_IS_ANY_CLANG",false);
 #endif
         
+        print("");
+    }
+
+    void PrintSettings()
+    {
+        constexpr Size_T a = 30;
         
+        print("\nPrintSettings()\n");
         
-#ifdef TOOLS_COMPILER_IS_MSVC
-        valprint<b>("TOOLS_COMPILER_IS_MSVC",true);
+#ifdef TOOLS_ENABLE_PROFILER
+        valprint<a>("TOOLS_ENABLE_PROFILER",true);
 #else
-        valprint<b>("TOOLS_COMPILER_IS_MSVC",false);
+        valprint<a>("TOOLS_ENABLE_PROFILER",false);
+#endif
+
+#ifdef TOOLS_DEBUG
+        valprint<a>("TOOLS_DEBUG",true);
+#else
+        valprint<a>("TOOLS_DEBUG",false);
 #endif
         
-#ifdef TOOLS_COMPILER_IS_ICC
-        valprint<b>("TOOLS_COMPILER_IS_ICC",true);
+#ifdef TOOLS_AGGRESSIVE_INLINING
+        valprint<a>("TOOLS_AGGRESSIVE_INLINING",true);
 #else
-        valprint<b>("TOOLS_COMPILER_IS_ICC",false);
+        valprint<a>("TOOLS_AGGRESSIVE_INLINING",false);
+#endif
+        
+#ifdef TOOLS_AGGRESSIVE_UNROLLING
+        valprint<a>("TOOLS_AGGRESSIVE_UNROLLING",true);
+#else
+        valprint<a>("TOOLS_AGGRESSIVE_UNROLLING",false);
+#endif
+        
+#ifdef TOOLS_NO_RESTRICT
+        valprint<a>("TOOLS_NO_RESTRICT",true);
+#else
+        valprint<a>("TOOLS_NO_RESTRICT",false);
+#endif
+        
+#ifdef TOOLS_NO_PREFECT
+        valprint<a>("TOOLS_NO_PREFECT",true);
+#else
+        valprint<a>("TOOLS_NO_PREFECT",false);
+#endif
+
+#ifdef TOOLS_NO_VECTOR_EXTENSIONS
+        valprint<a>("TOOLS_NO_VECTOR_EXTENSIONS",true);
+#else
+        valprint<a>("TOOLS_NO_VECTOR_EXTENSIONS",false);
+#endif
+        
+#ifdef TOOLS_NO_MATRIX_EXTENSIONS
+        valprint<a>("TOOLS_NO_MATRIX_EXTENSIONS",true);
+#else
+        valprint<a>("TOOLS_NO_MATRIX_EXTENSIONS",false);
 #endif
         
         print("");
+        
     }
     
 } // namespace Tools
