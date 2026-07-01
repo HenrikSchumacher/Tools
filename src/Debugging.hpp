@@ -36,7 +36,14 @@ namespace Tools
     
     void Check_is_pointer()
     {
+        
         print("\nCheck_is_pointer()\n");
+#ifdef TOOLS_NO_RESTRICT
+        print("TOOLS_NO_RESTRICT is defined.\n");
+#else
+        print("TOOLS_NO_RESTRICT is undefined.\n");
+#endif
+        
         TOOLS_DUMP( std::is_pointer<bool *>::value );
         TOOLS_DUMP( std::is_pointer<bool * const>::value );
         TOOLS_DUMP( std::is_pointer<const bool * const>::value );

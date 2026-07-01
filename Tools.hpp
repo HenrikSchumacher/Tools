@@ -141,34 +141,38 @@
 
 #endif
 
-
-#if !defined(restrict)
-    #if defined(__GNUC__)
-        #define restrict __restrict__                     // for gcc
-        #ifndef TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
-            #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 1
+#ifdef TOOLS_NO_RESTRICT
+    #define restrict
+#else
+    #if !defined(restrict)
+        #if defined(__GNUC__)
+            #define restrict __restrict__                     // for gcc
+            #ifndef TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
+                #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 1
+            #endif
+        #elif defined(__clang__) && defined(_MSC_VER)         // for clang-cl
+            #define restrict __restrict
+            #ifndef TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
+                #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 1
+            #endif
+        #elif defined(__clang__) && !defined(_MSC_VER)        // for pure clang
+            #define restrict __restrict
+            #ifndef TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
+                #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 0
+            #endif
+        #elif !defined(__clang__) && defined(_MSC_VER)        // for pure MSVC
+            #define restrict __restrict
+            #ifndef TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
+                #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 0
+            #endif
+        #else
+            #ifndef TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
+                #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 0
+            #endif
         #endif
-    #elif defined(__clang__) && defined(_MSC_VER)         // for clang-cl
-        #define restrict __restrict
-        #ifndef TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
-            #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 1
-        #endif
-    #elif defined(__clang__) && !defined(_MSC_VER)        // for pure clang
-        #define restrict __restrict
-        #ifndef TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
-            #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 0
-        #endif
-    #elif !defined(__clang__) && defined(_MSC_VER)        // for pure MSVC
-        #define restrict __restrict
-        #ifndef TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
-            #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 0
-        #endif
-    #else
-        #ifndef TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
-            #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 0
-        #endif
-    #endif
+    #endif // !defined(restrict)
 #endif
+
 
 // Use TOOLS_MAKE_FP_FAST() only in block scope.
 #if defined(_MSC_VER)
