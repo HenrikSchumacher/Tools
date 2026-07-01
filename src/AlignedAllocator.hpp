@@ -27,8 +27,8 @@ namespace Tools
         }
         
 #if TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
-        // overload function for restrict qualifier
-        TOOLS_FORCE_INLINE static int Free( T * restrict & ptr )
+        // overload function for TOOLS_RESTRICT qualifier
+        TOOLS_FORCE_INLINE static int Free( T * TOOLS_RESTRICT & ptr )
         {
             const int wasallocated = (ptr != nullptr);
             
@@ -79,9 +79,9 @@ namespace Tools
         
         
 #if TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
-        // overload function for restrict qualifier
+        // overload function for TOOLS_RESTRICT qualifier
         TOOLS_FORCE_INLINE static int Alloc(
-            T * restrict & ptr, const Size_T n, const Size_T aligment = DefaultAlignment
+            T * TOOLS_RESTRICT & ptr, const Size_T n, const Size_T aligment = DefaultAlignment
         )
         {
             int wasallocated = (ptr != nullptr);

@@ -122,9 +122,9 @@ namespace Tools
     }
 
 #if TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
-    // overload function for restrict qualifier
+    // overload function for TOOLS_RESTRICT qualifier
     template <typename T>
-    TOOLS_FORCE_INLINE int safe_free( T * restrict & ptr_ )
+    TOOLS_FORCE_INLINE int safe_free( T * TOOLS_RESTRICT & ptr_ )
     {
         int wasallocated = (ptr_ != nullptr);
         if( wasallocated )
@@ -166,10 +166,10 @@ namespace Tools
     }
 
 #if TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
-    // overload function for restrict qualifier
+    // overload function for TOOLS_RESTRICT qualifier
     template <typename T>
     TOOLS_FORCE_INLINE int safe_alloc(
-        T * restrict & ptr_, const Size_T n, const Size_T aligment = DefaultAlignment
+        T * TOOLS_RESTRICT & ptr_, const Size_T n, const Size_T aligment = DefaultAlignment
     )
     {
         int wasallocated = (ptr_ != nullptr);

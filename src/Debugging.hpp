@@ -48,13 +48,13 @@ namespace Tools
         TOOLS_DUMP( std::is_pointer<bool * const>::value );
         TOOLS_DUMP( std::is_pointer<const bool * const>::value );
         print("");
-        TOOLS_DUMP( std::is_pointer<bool * restrict>::value );
-        TOOLS_DUMP( std::is_pointer<bool * const restrict>::value );
-        TOOLS_DUMP( std::is_pointer<const bool * const restrict>::value );
+        TOOLS_DUMP( std::is_pointer<bool * TOOLS_RESTRICT>::value );
+        TOOLS_DUMP( std::is_pointer<bool * const TOOLS_RESTRICT>::value );
+        TOOLS_DUMP( std::is_pointer<const bool * const TOOLS_RESTRICT>::value );
         print("");
-        TOOLS_DUMP( std::is_pointer<bool * restrict>::value );
-        TOOLS_DUMP( std::is_pointer<bool * restrict const>::value );
-        TOOLS_DUMP( std::is_pointer<const bool * restrict const>::value );
+        TOOLS_DUMP( std::is_pointer<bool * TOOLS_RESTRICT>::value );
+        TOOLS_DUMP( std::is_pointer<bool * TOOLS_RESTRICT const>::value );
+        TOOLS_DUMP( std::is_pointer<const bool * TOOLS_RESTRICT const>::value );
     }
     
     void PrintCompilerIndentification()

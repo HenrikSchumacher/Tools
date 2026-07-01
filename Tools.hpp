@@ -34,41 +34,39 @@
 #endif
 
 #ifdef TOOLS_NO_RESTRICT
-    #define restrict
+    #define TOOLS_RESTRICT
 #else
-    #if !defined(restrict)
-        #if defined(TOOLS_COMPILER_IS_GCC )
-            #define restrict __restrict__
-            #ifndef TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
-                #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 1
-            #endif
-        #elif defined(TOOLS_COMPILER_IS_CLANG)
-            #define restrict __restrict
-            #ifndef TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
-                #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 0
+    #if defined(TOOLS_COMPILER_IS_GCC )
+        #define TOOLS_RESTRICT __restrict__
+        #ifndef TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
+            #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 1
         #endif
-        #elif defined(TOOLS_COMPILER_IS_APPLE_CLANG)
-            #define restrict __restrict
-            #ifndef TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
-                #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 0
+    #elif defined(TOOLS_COMPILER_IS_CLANG)
+        #define TOOLS_RESTRICT __restrict
+        #ifndef TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
+            #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 0
+    #endif
+    #elif defined(TOOLS_COMPILER_IS_APPLE_CLANG)
+        #define TOOLS_RESTRICT __restrict
+        #ifndef TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
+            #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 0
+    #endif
+    #elif defined(TOOLS_COMPILER_IS_CLANGCL)
+        #define TOOLS_RESTRICT __restrict
+        #ifndef TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
+            #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 1 //  !!!
         #endif
-        #elif defined(TOOLS_COMPILER_IS_CLANGCL)
-            #define restrict __restrict
-            #ifndef TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
-                #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 1 //  !!!
-            #endif
 
-        #elif defined(TOOLS_COMPILER_IS_MSVC)
-            #define restrict __restrict
-            #ifndef TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
-                #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 0
-            #endif
-        #else
-            #ifndef TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
-                #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 0
-            #endif
+    #elif defined(TOOLS_COMPILER_IS_MSVC)
+        #define TOOLS_RESTRICT __restrict
+        #ifndef TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
+            #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 0
         #endif
-    #endif // !defined(restrict)
+    #else
+        #ifndef TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
+            #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 0
+        #endif
+    #endif
 #endif
 
 
@@ -243,16 +241,16 @@
 namespace Tools
 {
     // immutable, unaliased pointer to immutable type
-    template<typename T> using cptr = const T * restrict const;
+    template<typename T> using cptr = const T * TOOLS_RESTRICT const;
 
     // immutable, unaliased pointer to mutable type
-    template<typename T> using mptr =       T * restrict const;
+    template<typename T> using mptr =       T * TOOLS_RESTRICT const;
 
     // unaliased reference to immutable type
-    template<typename T> using cref = const T & restrict;
+    template<typename T> using cref = const T & TOOLS_RESTRICT;
 
     // unaliased reference to immutable type
-    template<typename T> using mref =       T & restrict;
+    template<typename T> using mref =       T & TOOLS_RESTRICT;
     
     using Size_T = std::size_t;
     
