@@ -61,7 +61,7 @@ namespace Tools
     {
         constexpr Size_T a = 30;
         
-        print("\PrintCompilerIdentification()\n");
+        print("\nPrintCompilerIdentification()\n");
 #ifdef __GNUC__
         valprint<a>("__GNUC__",true);
 #else
