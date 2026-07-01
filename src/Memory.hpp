@@ -3,7 +3,7 @@
 namespace Tools
 {
     #if !defined(prefetch)
-        #if defined(__GNUC__) || defined(__clang__)
+        #if defined(TOOLS_COMPILER_IS_GCC) || defined(TOOLS_COMPILER_IS_ANY_CLANG)
             #define prefetch __builtin_prefetch
         #else
             #define prefetch( a, b, c )
@@ -133,7 +133,7 @@ namespace Tools
         }
         return !wasallocated;
     }
-#endif
+#endif // TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
 
 
     template <typename T>
@@ -185,7 +185,7 @@ namespace Tools
 
         return wasallocated;
     }
-#endif
+#endif // TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
     
     
     template<int readwrite, int locality, typename T>

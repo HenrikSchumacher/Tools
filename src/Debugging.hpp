@@ -57,5 +57,107 @@ namespace Tools
         TOOLS_DUMP( std::is_pointer<const bool * restrict const>::value );
     }
     
-} // namespace Tools
+    void PrintCompilerIndentification()
+    {
+        constexpr Size_T a = 30;
+        
+        print("\nPrintCompilerIndentification()\n");
+#ifdef __GNUC__
+        valprint<a>("__GNUC__",true);
+#else
+        valprint<a>("__GNUC__",false);
+#endif
+        
+#ifdef __clang__
+        valprint<a>("__clang__",true);
+#else
+        valprint<a>("__clang__",false);
+#endif
+        
+#ifdef __llvm__
+        valprint<a>("__llvm__",true);
+#else
+        valprint<a>("__llvm__",false);
+#endif
+        
+#ifdef __apple_build_version__
+        valprint<a>("__apple_build_version__",true);
+#else
+        valprint<a>("__apple_build_version__",false);
+#endif
+        
+#ifdef _MSC_VER
+        valprint<a>("_MSC_VER",true);
+#else
+        valprint<a>("_MSC_VER",false);
+#endif
 
+#ifdef __INTEL_COMPILER
+        valprint<a>("__INTEL_COMPILER",true);
+#else
+        valprint<a>("__INTEL_COMPILER",false);
+#endif
+        
+#ifdef __ICC
+        valprint<a>("__ICC",true);
+#else
+        valprint<a>("__ICC",false);
+#endif
+        
+#ifdef __ICL
+        valprint<a>("__ICL",true);
+#else
+        valprint<a>("__ICL",false);
+#endif
+        print("");
+        
+        constexpr Size_T b = 30;
+        
+#ifdef TOOLS_COMPILER_IS_GCC
+        valprint<b>("TOOLS_COMPILER_IS_GCC",true);
+#else
+        valprint<b>("TOOLS_COMPILER_IS_GCC",false);
+#endif
+        
+#ifdef TOOLS_COMPILER_IS_CLANG
+        valprint<b>("TOOLS_COMPILER_IS_CLANG",true);
+#else
+        valprint<b>("TOOLS_COMPILER_IS_CLANG",false);
+#endif
+        
+#ifdef TOOLS_COMPILER_IS_APPLE_CLANG
+        valprint<b>("TOOLS_COMPILER_IS_APPLE_CLANG",true);
+#else
+        valprint<b>("TOOLS_COMPILER_IS_APPLE_CLANG",false);
+#endif
+        
+#ifdef TOOLS_COMPILER_IS_CLANGCL
+        valprint<b>("TOOLS_COMPILER_IS_CLANGCL",true);
+#else
+        valprint<b>("TOOLS_COMPILER_IS_CLANGCL",false);
+#endif
+        
+#ifdef TOOLS_COMPILER_IS_ANY_CLANG
+        valprint<b>("TOOLS_COMPILER_IS_ANY_CLANG",true);
+#else
+        valprint<b>("TOOLS_COMPILER_IS_ANY_CLANG",false);
+#endif
+        
+        
+        
+#ifdef TOOLS_COMPILER_IS_MSVC
+        valprint<b>("TOOLS_COMPILER_IS_MSVC",true);
+#else
+        valprint<b>("TOOLS_COMPILER_IS_MSVC",false);
+#endif
+        
+#ifdef TOOLS_COMPILER_IS_ICC
+        valprint<b>("TOOLS_COMPILER_IS_ICC",true);
+#else
+        valprint<b>("TOOLS_COMPILER_IS_ICC",false);
+#endif
+        
+        print("");
+    }
+    
+} // namespace Tools

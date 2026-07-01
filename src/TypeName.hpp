@@ -202,15 +202,15 @@ namespace Tools
     constexpr auto PrettyTypeName()
     {
         std::string_view name, prefix, suffix;
-    #ifdef __clang__
+    #if defined(TOOLS_COMPILER_IS_ANY_CLANG)
         name = __PRETTY_FUNCTION__;
         prefix = "auto Tools::PrettyTypeName() [T =";
         suffix = "]";
-    #elif defined(__GNUC__)
+    #elif defined(TOOLS_COMPILER_IS_GCC)
         name = __PRETTY_FUNCTION__;
         prefix = "constexpr auto Tools::PrettyTypeName() [with T = ";
         suffix = "]";
-    #elif defined(_MSC_VER)
+    #elif defined(TOOLS_COMPILER_IS_MSVC)
         name = __FUNCSIG__;
         prefix = "auto __cdecl Tools::PrettyTypeName<";
         suffix = ">(void)";

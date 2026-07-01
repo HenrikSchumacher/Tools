@@ -2,6 +2,76 @@
 
 #define SCHUMACHER_TOOLS
 
+// Figure out which compiler is in uses. (brittle)
+// https://github.com/cpredef/predef/blob/master/Compilers.md
+#if defined(__GNUC__) && !defined(__clang__) && !defined(__INTEL_COMPILER)
+    #define TOOLS_COMPILER_IS_GCC
+#endif
+
+#if defined(_MSC_VER) && !defined(__clang__) && !defined(__INTEL_COMPILER)
+    #define TOOLS_COMPILER_IS_MSVC
+#endif
+
+// We do not treat Apple Clang, ClangCL and clang as three different compilers.
+#if defined(__clang__) && !defined(__apple_build_version__) && !defined(_MSC_VER)
+    #define TOOLS_COMPILER_IS_CLANG
+#endif
+
+#if defined(__clang__) && !defined(__apple_build_version__) && defined(_MSC_VER)
+    #define TOOLS_COMPILER_IS_CLANGCL
+#endif
+
+#if defined(__clang__) && defined(__apple_build_version__) && !defined(_MSC_VER)
+    #define TOOLS_COMPILER_IS_APPLE_CLANG
+#endif
+
+#if defined(TOOLS_COMPILER_IS_CLANG) || defined(TOOLS_COMPILER_IS_APPLE_CLANG) || defined(TOOLS_COMPILER_IS_CLANGCL) && !defined(_MSC_VER)
+    #define TOOLS_COMPILER_IS_ANY_CLANG
+#endif
+
+#if defined(__INTEL_COMPILER)
+    #define TOOLS_COMPILER_IS_ICC
+#endif
+
+#ifdef TOOLS_NO_RESTRICT
+    #define restrict
+#else
+    #if !defined(restrict)
+        #if defined(TOOLS_COMPILER_IS_GCC )
+            #define restrict __restrict__
+            #ifndef TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
+                #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 1
+            #endif
+        #elif defined(TOOLS_COMPILER_IS_CLANG)
+            #define restrict __restrict
+            #ifndef TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
+                #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 0
+        #endif
+        #elif defined(TOOLS_COMPILER_IS_APPLE_CLANG)
+            #define restrict __restrict
+            #ifndef TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
+                #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 0
+        #endif
+        #elif defined(TOOLS_COMPILER_IS_CLANGCL)
+            #define restrict __restrict
+            #ifndef TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
+                #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 1 //  !!!
+            #endif
+
+        #elif defined(TOOLS_COMPILER_IS_MSVC)
+            #define restrict __restrict
+            #ifndef TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
+                #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 0
+            #endif
+        #else
+            #ifndef TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
+                #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 0
+            #endif
+        #endif
+    #endif // !defined(restrict)
+#endif
+
+
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
     //define something for Windows (32-bit and 64-bit, this part is common)
     #include <io.h>
@@ -71,18 +141,18 @@
 #define TOOLS_CONCAT3_IMPL(id1, id2, id3) id1##id2##id3
 #define TOOLS_CONCAT3(id1, id2, id3) TOOLS_CONCAT3_IMPL(id1, id2, id3)
 
-#define TOOLS_IF #if
-#define TOOLS_ELSE #else
-#define TOOLS_ENDIF #endif
-#define TOOLS_NEWLINE /*
-*/
-
-#define TOOLS_DEFINEDQ( S )                                 \
-    TOOLS_IF defined((S))          TOOLS_NEWLINE            \
-                1                                           \
-    TOOLS_ELSE                     TOOLS_NEWLINE            \
-                0                                           \
-    TOOLS_ENDIF
+//#define TOOLS_IF #if
+//#define TOOLS_ELSE #else
+//#define TOOLS_ENDIF #endif
+//#define TOOLS_NEWLINE /*
+//*/
+//
+//#define TOOLS_DEFINEDQ( S )                                 \
+//    TOOLS_IF defined((S))          TOOLS_NEWLINE            \
+//                1                                           \
+//    TOOLS_ELSE                     TOOLS_NEWLINE            \
+//                0                                           \
+//    TOOLS_ENDIF
 
 #ifdef TOOLS_AGGRESSIVE_INLINING
 
@@ -107,22 +177,22 @@
 // Define loop unrolling depending on the compiler
 #ifdef TOOLS_AGGRESSIVE_UNROLLING
 
-    #if defined(__ICC) || defined(__ICL)
+    #if defined(TOOLS_COMPILER_IS_ICC)
 
         #define TOOLS_LOOP_UNROLL_FULL    _Pragma(TOOLS_STRINGIFY(unroll))
         #define TOOLS_LOOP_UNROLL(n)      _Pragma(TOOLS_STRINGIFY(unroll (n)))
 
-    #elif defined(__clang__)
+    #elif defined(TOOLS_COMPILER_IS_ANY_CLANG)
 
         #define TOOLS_LOOP_UNROLL_FULL    _Pragma(TOOLS_STRINGIFY(clang loop unroll(enable)))
         #define TOOLS_LOOP_UNROLL(n)      _Pragma(TOOLS_STRINGIFY(clang loop unroll_count(n)))
 
-    #elif defined(__GNUC__) && !defined(__clang__)
+    #elif defined(TOOLS_COMPILER_IS_GCC)
 
         #define TOOLS_LOOP_UNROLL_FULL
         #define TOOLS_LOOP_UNROLL(n)      _Pragma(TOOLS_STRINGIFY(GCC unroll (n)))
 
-    #elif defined(_MSC_BUILD)
+    #elif defined(TOOLS_COMPILER_IS_MSVC)
         //  #pragma message ("Microsoft Visual C++ (MSVC) detected: Loop unrolling not supported!")
         #define TOOLS_LOOP_UNROLL_FULL
         #define TOOLS_LOOP_UNROLL(n)
@@ -141,76 +211,33 @@
 
 #endif
 
-#ifdef TOOLS_NO_RESTRICT
-    #define restrict
-#else
-    #if !defined(restrict)
-        #if defined(__GNUC__)
-            #define restrict __restrict__                     // for gcc
-            #ifndef TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
-                #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 1
-            #endif
-        #elif defined(__clang__) && defined(_MSC_VER)         // for clang-cl
-            #define restrict __restrict
-            #ifndef TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
-                #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 1
-            #endif
-        #elif defined(__clang__) && !defined(_MSC_VER)        // for pure clang
-            #define restrict __restrict
-            #ifndef TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
-                #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 0
-            #endif
-        #elif !defined(__clang__) && defined(_MSC_VER)        // for pure MSVC
-            #define restrict __restrict
-            #ifndef TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
-                #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 0
-            #endif
-        #else
-            #ifndef TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT
-                #define TOOLS_COMPILER_IS_ANAL_ABOUT_RESTRICT 0
-            #endif
-        #endif
-    #endif // !defined(restrict)
-#endif
 
 
 // Use TOOLS_MAKE_FP_FAST() only in block scope.
-#if defined(_MSC_VER)
-
-// see https://learn.microsoft.com/en-us/cpp/preprocessor/float-control?view=msvc-170
-
-#define TOOLS_MAKE_FP_FAST()
-
-#elif defined(__clang__) && !defined(_MSC_VER)        // for pure clang
+#if defined(TOOLS_COMPILER_IS_ANY_CLANG)
 
     #define TOOLS_MAKE_FP_FAST() _Pragma(TOOLS_STRINGIFY(float_control(precise, off)))
 
-#else
-
-    // TODO: Define something better for gcc.
+#elif defined(TOOLS_COMPILER_IS_MSVC)
+    // see https://learn.microsoft.com/en-us/cpp/preprocessor/float-control?view=msvc-170
 
     #define TOOLS_MAKE_FP_FAST()
-
+#else
+    #define TOOLS_MAKE_FP_FAST()
 #endif
 
+
 // Use TOOLS_MAKE_FP_STRICT() only in block scope.
-#if defined(_MSC_VER)
+#if defined(TOOLS_COMPILER_IS_ANY_CLANG)
 
-// see https://learn.microsoft.com/en-us/cpp/preprocessor/float-control?view=msvc-170
+    #define TOOLS_MAKE_FP_STRICT() _Pragma(TOOLS_STRINGIFY(float_control(precise, on)))
+#elif defined(TOOLS_COMPILER_IS_MSVC)
 
-    #define TOOLS_MAKE_FP_STRICT()     
+    // see https://learn.microsoft.com/en-us/cpp/preprocessor/float-control?view=msvc-170
 
-
-#elif defined(__clang__) && !defined(_MSC_VER)        // for pure clang
-
-    #define TOOLS_MAKE_FP_STRICT()                              \
-        _Pragma(TOOLS_STRINGIFY(float_control(precise, on)))
-
-#else
-
-    // TODO: Define something better for gcc.
     #define TOOLS_MAKE_FP_STRICT()
-
+#else
+    #define TOOLS_MAKE_FP_STRICT()
 #endif
 
 namespace Tools
