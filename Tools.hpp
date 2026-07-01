@@ -258,10 +258,10 @@ namespace Tools
     concept FloatQ = std::floating_point<T>;
     
     template<typename T>
-    concept NonPointerQ = !std::is_pointer_v<T> && !std::is_pointer_v<typename std::remove_reference<T>::type>;
+    concept NonPointerQ = !std::is_pointer<T>::value && !std::is_pointer<typename std::remove_reference<T>::type>::value;
     
     template<typename T>
-    constexpr bool ArithmeticQ = std::is_arithmetic_v<T>;
+    constexpr bool ArithmeticQ = std::is_arithmetic<T>::value;
     
     template<> constexpr bool ArithmeticQ<std::complex<float>>  = true;
     template<> constexpr bool ArithmeticQ<std::complex<double>> = true;

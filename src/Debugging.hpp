@@ -33,5 +33,22 @@ namespace Tools
 #endif
     }
     
+    
+    void Check_is_pointer()
+    {
+        print("\nCheck_is_pointer()\n");
+        TOOLS_DUMP( std::is_pointer<bool *>::value );
+        TOOLS_DUMP( std::is_pointer<bool * const>::value );
+        TOOLS_DUMP( std::is_pointer<const bool * const>::value );
+        print("");
+        TOOLS_DUMP( std::is_pointer<bool * restrict>::value );
+        TOOLS_DUMP( std::is_pointer<bool * const restrict>::value );
+        TOOLS_DUMP( std::is_pointer<const bool * const restrict>::value );
+        print("");
+        TOOLS_DUMP( std::is_pointer<bool * restrict>::value );
+        TOOLS_DUMP( std::is_pointer<bool * restrict const>::value );
+        TOOLS_DUMP( std::is_pointer<const bool * restrict const>::value );
+    }
+    
 } // namespace Tools
 
