@@ -2,13 +2,14 @@
 
 namespace Tools
 {
-    #if !defined(prefetch)
-        #if defined(TOOLS_COMPILER_IS_GCC) || defined(TOOLS_COMPILER_IS_ANY_CLANG)
-            #define prefetch __builtin_prefetch
-        #else
-            #define prefetch( a, b, c )
-        #endif
-#endif // !defined(prefetch)
+    
+#if !defined(TOOLS_NO_PREFETCH) && (defined(TOOLS_COMPILER_IS_GCC) || defined(TOOLS_COMPILER_IS_ANY_CLANG))
+    #define TOOLS_PREFETCH __builtin_prefetch
+#else
+    #define TOOLS_PREFETCH( a )
+    #define TOOLS_PREFETCH( a, b )
+    #define TOOLS_PREFETCH( a, b, c )
+#endif
     
     // length of cache line measured in bytes
     constexpr Size_T CacheLineWidth = 64;
@@ -197,7 +198,7 @@ namespace Tools
     
         for( Size_T offset = 0; offset < prefetch_size; offset += PrefetchStride )
         {
-            prefetch( &ptr_[offset], readwrite, locality );
+            TOOLS_PREFETCH( &ptr_[offset], readwrite, locality );
         }
     }
     
@@ -211,7 +212,7 @@ namespace Tools
         TOOLS_LOOP_UNROLL_FULL
         for( Size_T offset = 0; offset < prefetch_size; offset += PrefetchStride )
         {
-            prefetch( &ptr_[offset], readwrite, locality );
+            TOOLS_PREFETCH( &ptr_[offset], readwrite, locality );
         }
     }
     
