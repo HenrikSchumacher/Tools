@@ -56,7 +56,6 @@ namespace Tools
         
         FromCharResult operator()( const char * const begin, const char * const end, T & x ) const
         {
-            
             if constexpr ( from_chars_availableQ<T> )
             {
                 auto r = std::from_chars( begin, end, x, std::chars_format::general );
@@ -64,7 +63,9 @@ namespace Tools
             }
             else
             {
-                // Dirty hack: create a new std::string that internally creates a zero-terminated string. Then apply std::stod.
+                // Create a new std::string that internally creates a zero-terminated string. Then apply std::stod.
+                
+                // TODO: This is an extremely dirty hack because it may cause a HUGE string buffer to be copied over and over again just to append a zero. The function std::stod is ill-designed. Full stop. I am inclined to remove this work-around sooner than later.
                 
                 std::string s (begin, end);
                 T value = 0;

@@ -75,12 +75,32 @@ OutString & Put( const T & x, ToChars_T && to_chars = ToChars_T()  )
     return *this;
 }
 
+
+template<bool checkQ = true, typename T, Size_T n, typename ToChars_T = ToChars<T>>
+OutString & PutWithPrefix( const char(&c)[n], const T & x, ToChars_T && to_chars = ToChars_T() )
+{
+    if constexpr( checkQ ) { RequireFreeSpace( to_chars.char_count + n - Size_T(1) ); }
+    PutChars<false>(c);
+    Put     <false>(x,std::forward<ToChars_T>(to_chars));
+    return *this;
+}
+
 template<bool checkQ = true, typename T, typename ToChars_T = ToChars<T>>
 OutString & PutWithPrefix( std::string_view s, const T & x, ToChars_T && to_chars = ToChars_T() )
 {
     if constexpr( checkQ ) { RequireFreeSpace( to_chars.char_count + s.size() ); }
     Put<false>(s);
     Put<false>(x,std::forward<ToChars_T>(to_chars));
+    return *this;
+}
+
+
+template<bool checkQ = true, typename T, Size_T n, typename ToChars_T = ToChars<T>>
+OutString & PutWithSuffix( const T & x, const char(&c)[n], ToChars_T && to_chars = ToChars_T() )
+{
+    if constexpr( checkQ ) { RequireFreeSpace( to_chars.char_count + n - Size_T(1) ); }
+    Put     <false>(x,std::forward<ToChars_T>(to_chars));
+    PutChars<false>(c);
     return *this;
 }
 
@@ -95,39 +115,14 @@ OutString & PutWithSuffix( const T & x, std::string_view s, ToChars_T && to_char
 
 
 
-//template<bool checkQ = true, typename T, typename ToChars_T = ToChars<T>>
-//OutString & PutWithSuffix( const T & x, char c, ToChars_T && to_chars = ToChars_T() )
-//{
-//    if constexpr( checkQ ) { RequireFreeSpace( to_chars.CharCount(x) + Size_T(1) ); }
-//    (void)TryEmplace(x,std::forward<ToChars_T>(to_chars));  // Will always be true, unless allocation fails.
-//    PutChar<false>(c);
-//    return *this;
-//}
-
-//template<bool checkQ = true, typename T, Size_T n, typename ToChars_T = ToChars<T>>
-//OutString & PutWithSuffix( const T & x, const char(&c)[n], ToChars_T && to_chars = ToChars_T() )
-//{
-//    if constexpr( checkQ ) { RequireFreeSpace( to_chars.char_count + n - Size_T(1) ); }
-//    Put     <false>(x,std::forward<ToChars_T>(to_chars));
-//    PutChars<false>(c);
-//    return *this;
-//}
-
-
-//template<bool checkQ = true, typename T, typename ToChars_T = ToChars<T>>
-//OutString & PutWithPrefix( char c, const T & x, ToChars_T && to_chars = ToChars_T() )
-//{
-//    if constexpr( checkQ ) { RequireFreeSpace( to_chars.char_count + Size_T(1) ); }
-//    PutChar<false>(c);
-//    Put    <false>(x,std::forward<ToChars_T>(to_chars));
-//    return *this;
-//}
-
-template<bool checkQ = true, typename T, Size_T n, typename ToChars_T = ToChars<T>>
-OutString & PutWithPrefix( const char(&c)[n], const T & x, ToChars_T && to_chars = ToChars_T() )
+template<bool checkQ = true, typename T, Size_T m, Size_T n, typename ToChars_T = ToChars<T>>
+OutString & PutWithPrefixAndSuffix(
+    const char(&prefix)[m], const T & x, const char(&suffix)[n],
+    ToChars_T && to_chars = ToChars_T() )
 {
-    if constexpr( checkQ ) { RequireFreeSpace( to_chars.char_count + n - Size_T(1) ); }
-    PutChars<false>(c);
+    if constexpr( checkQ ) { RequireFreeSpace( to_chars.char_count + m + n - Size_T(2) ); }
+    PutChars<false>(prefix);
     Put     <false>(x,std::forward<ToChars_T>(to_chars));
+    PutChars<false>(suffix);
     return *this;
 }
