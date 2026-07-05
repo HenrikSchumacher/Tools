@@ -13,6 +13,29 @@ namespace Tools
     {
         static constexpr bool implementedQ = false;
     };
+    
+    // Fix for older versions from https://www.cppstories.com/2019/07/detect-overload-from-chars/
+    
+    // In herit from false_type per default.
+    template <typename T, typename = void>
+    struct is_from_chars_convertible : std::false_type {};
+    
+    // SFINAE: if lookup is successful, inherit from true_type.
+    template <typename T>
+    struct is_from_chars_convertible<
+        T,
+        std::void_t<decltype(
+            std::from_chars(
+                std::declval<const char*>(),
+                std::declval<const char*>(),
+                declval<T&>()
+            )
+        )>
+    > : std::true_type {};
+    
+    // Making requests less awkward
+    template< class T> inline constexpr bool from_chars_availableQ = is_from_chars_convertible<T>::value;
+    
 
     template<IntQ T>
     struct FromChars<T>
@@ -33,60 +56,52 @@ namespace Tools
         
         FromCharResult operator()( const char * const begin, const char * const end, T & x ) const
         {
-            auto r = std::from_chars( begin, end, x, std::chars_format::general );
-            return FromCharResult{ .ptr = r.ptr, .failedQ = (r.ec != std::errc{})};
+            
+            if constexpr ( from_chars_availableQ<T> )
+            {
+                auto r = std::from_chars( begin, end, x, std::chars_format::general );
+                return FromCharResult{.ptr = r.ptr, .failedQ = (r.ec != std::errc{})};
+            }
+            else
+            {
+                // Dirty hack: create a new std::string that internally creates a zero-terminated string. Then apply std::stod.
+                
+                std::string s (begin, end);
+                T value = 0;
+                Size_T length = 0;
+                bool failedQ = false;
+                
+                try
+                {
+                    if constexpr (std::is_same_v<T,float>)
+                    {
+                        value = std::stof(s, &length);
+                    }
+                    else if constexpr (std::is_same_v<T,double>)
+                    {
+                        value = std::stod(s, &length);
+                    }
+                    else if constexpr (std::is_same_v<T,long double>)
+                    {
+                        value = std::stold(s, &length);
+                    }
+                    else
+                    {
+                        failedQ = true;
+                    }
+                }
+                catch (...)
+                {
+                    failedQ = true;
+                }
+                
+                // We change the value of x only if no issues occurred, to emulate the behavior of std::from_chars.
+                if( !failedQ ) { x = value; }
+                
+                return FromCharResult{.ptr = &begin[length], .failedQ = failedQ};
+            }
         }
     };
-    
-//    template<std::floating_point T>
-//    struct ToChars<T>
-//    {
-//        static constexpr bool implementedQ = true;
-//        
-//        static Size_T CharCount( const T & x )
-//        {
-//            (void)x;
-//            return std::numeric_limits<T>::max_digits10 + Size_T(7);
-//        }
-//        
-//        ToCharResult operator()( char * & begin, char * end, const T & x ) const
-//        {
-//            auto r = std::to_chars( begin, end, x, std::chars_format::general, std::numeric_limits<T>::max_digits10 );
-//            return ToCharResult{ .ptr = r.ptr, .failedQ = (r.ec == std::errc::value_too_large)};
-//        }
-//    };
-    
-//    template<std::floating_point T>
-//    struct ToChars<std::complex<T>>
-//    {
-//        static constexpr bool implementedQ = true;
-//        
-//        static Size_T CharCount( const T & x )
-//        {
-//            (void)x;
-//            return Size_T(2) * ToChars<T>::CharCount() + Size_T(2);
-//        }
-//        
-//        ToCharResult operator()( char * & begin, char * end, const T & x ) const
-//        {
-//            if( begin + CharCount() > end )
-//            {
-//                return {.ptr = begin, .failedQ = true};
-//            }
-//            else
-//            {
-//                auto r = std::to_chars( begin, end, Re(x), std::chars_format::general, std::numeric_limits<T>::max_digits10 );
-//                char * ptr = r.ptr;
-//                *ptr = '+';
-//                ++ptr;
-//                r = std::to_chars( begin, end, Im(x), std::chars_format::general, std::numeric_limits<T>::max_digits10 );
-//                *ptr = 'I';
-//                ++ptr;
-//                return {.ptr = begin, .failedQ = false};
-//            }
-//        }
-//    };
-    
     
     
     class InString
