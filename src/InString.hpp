@@ -28,7 +28,7 @@ namespace Tools
             std::from_chars(
                 std::declval<const char*>(),
                 std::declval<const char*>(),
-                declval<T&>()
+                std::declval<T&>()
             )
         )>
     > : std::true_type {};
