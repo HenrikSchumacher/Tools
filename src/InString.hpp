@@ -63,11 +63,34 @@ namespace Tools
             }
             else
             {
+                auto valid_charQ = []( const char c )
+                {
+                    return std::isalnum(c) || (c == '.') || (c == '-') || (c == '+');
+                };
+                
+                if( (begin == end) || (*begin == '\0') )
+                {
+                    return FromCharResult{.ptr = begin, .failedQ = true};
+                }
+                
+                // Find first non-whitespace character.
+                const char * b = begin;
+                while( std::isspace(*b) )
+                {
+                    ++b;
+                    
+                    if( (b == end) || (*b == '\0') )
+                    {
+                        return FromCharResult{.ptr = b, .failedQ = true};
+                    }
+                }
+
+                // Find first character that cannot be part of floating-point number.
+                const char * e = b;
+                while( valid_charQ(*e) && (e < end) ) { ++e; }
+                
                 // Create a new std::string that internally creates a zero-terminated string. Then apply std::stod.
-                
-                // TODO: This is an extremely dirty hack because it may cause a HUGE string buffer to be copied over and over again just to append a zero. The function std::stod is ill-designed. Full stop. I am inclined to remove this work-around sooner than later.
-                
-                std::string s (begin, end);
+                std::string s (b, e);
                 T value = 0;
                 Size_T length = 0;
                 bool failedQ = false;
@@ -185,6 +208,11 @@ namespace Tools
         Size_T Capacity() const
         {
             return static_cast<Size_T>(std::distance(begin,end));
+        }
+        
+        Size_T Position() const
+        {
+            return static_cast<Size_T>(std::distance(begin,ptr));
         }
         
         bool FailedQ() const
