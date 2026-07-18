@@ -8,6 +8,8 @@ namespace Tools
         const Real c, const Real d
     )
     {
+        TOOLS_MAKE_FP_STRICT()
+        
         // https://www.johndcook.com/blog/2020/05/31/kahan-determinant/
         
         // Computes a * d - b * c with less rounding error.
@@ -17,9 +19,7 @@ namespace Tools
 //        const Real e = std::fma(-b,c, w);
 //        const Real f = std::fma( a,d,-w);
 //
-        // Precise determinat would be e + f;
-        
-        TOOLS_MAKE_FP_STRICT()
+        // Precise determinant would be e + f;
         
         // This should use one negation less than the above.
         const Real w = b * c;

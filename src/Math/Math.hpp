@@ -572,6 +572,12 @@ namespace Tools
         }
     }
 
+    
+    template<IntQ Int, FloatQ Real>
+    Int Round( cref<Real> x )
+    {
+        return static_cast<Int>(std::round(x));
+    }
 }
 
  
