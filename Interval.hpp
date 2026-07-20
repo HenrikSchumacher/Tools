@@ -45,44 +45,6 @@ namespace Tools
         }
     }
     
-    class RoundingModeBarrier
-    {
-    protected:
-
-        int prev_state;
-        int state;
-
-        
-    public:
-        
-        RoundingModeBarrier() = delete;
-        
-        explicit RoundingModeBarrier( int state_ )
-        :   prev_state( std::fegetround() )
-        ,   state ( state_ )
-        {
-            std::fesetround( state );
-            
-//            TOOLS_DUMP( prev_state );
-//            
-//            TOOLS_DUMP( state );
-//            
-//            TOOLS_DUMP( std::fegetround() );
-        }
-        
-        ~RoundingModeBarrier()
-        {
-            std::fesetround( prev_state );
-            
-//            TOOLS_DUMP( prev_state );
-//            
-//            TOOLS_DUMP( state );
-//            
-//            TOOLS_DUMP( std::fegetround() );
-        }
-        
-    }; // class RoundingModeBarrier
-    
     
     template<typename Real_, RoundingPolicy RP_>
     class Interval;

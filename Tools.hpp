@@ -439,6 +439,7 @@ namespace Tools
 #include "src/Math/BisectionSearch.hpp"
 #include "src/Math/RegulaFalsi.hpp"
 #include "src/Math/Kahan.hpp"
+#include "src/Math/RoundingMode.hpp"
 //#include "src/Math/CompensatedSummation.hpp"
 
 #include "src/Scalars/combine_scalars.hpp"
