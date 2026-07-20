@@ -2,14 +2,6 @@
 
 namespace Tools
 {
-#ifdef TOOLS_NO_STDFORMAT
-#include "fmt/format.h"
-    using fmt::format;
-#else
-    using std::format;
-#endif
-    
-    
     [[nodiscard]] std::string ToString( const std::string & s )
     {
         return s;
@@ -27,22 +19,22 @@ namespace Tools
     
     [[nodiscard]] std::string ToString( const double & value )
     {
-        return format("{: .17g}",value);
+        return std::format("{: .17g}",value);
     }
     
     [[nodiscard]] std::string ToString( const float & value )
     {
-        return format("{: .8g}",value);
+        return std::format("{: .8g}",value);
     }
     
     [[nodiscard]] std::string ToString( const std::complex<double> & z )
     {
-        return format("{: .17g} {:+.17g}I",std::real(z),std::imag(z));
+        return std::format("{: .17g} {:+.17g}I",std::real(z),std::imag(z));
     }
                            
     [[nodiscard]] std::string ToString( const std::complex<float> & z )
     {
-        return format("{: .8g} {:+.8g}I",std::real(z),std::imag(z));
+        return std::format("{: .8g} {:+.8g}I",std::real(z),std::imag(z));
     }
     
     template<FloatQ T>
@@ -68,19 +60,19 @@ namespace Tools
     template<typename T>
     [[nodiscard]] std::string ToString( T * ptr )
     {
-        return format( "{:p}", (void *)ptr );
+        return std::format( "{:p}", (void *)ptr );
     }
     
     template<typename T>
     [[nodiscard]] std::string ToString( T const * ptr )
     {
-        return format( "{:p}", (void const *)ptr );
+        return std::format( "{:p}", (void const *)ptr );
     }
 
     template<IntQ T>
     [[nodiscard]] std::string ToString( const T & value )
     {
-        return format("{:d}",value);
+        return std::format("{:d}",value);
     }
     
     
