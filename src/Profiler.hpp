@@ -350,13 +350,6 @@ namespace Tools
             {
                 if( activeQ ) { Tic(tag); };
             }
-//            
-//            Timer( std::string_view && tag_ )
-//            :   tag { std::move(tag_) }
-//            ,   activeQ( blocker_count <= 0 )
-//            {
-//                if( activeQ ) { Tic(tag); };
-//            }
 
             ~Timer()
             {
@@ -365,14 +358,8 @@ namespace Tools
 #else
             Timer( std::string_view tag_ )
             {
-
                 (void)tag_;
             }
-//            
-//            Timer( std::string && tag_ )
-//            {
-//                (void)tag_;
-//            }
 #endif
         };
         

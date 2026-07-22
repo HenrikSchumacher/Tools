@@ -576,6 +576,7 @@ namespace Tools
     template<IntQ Int, FloatQ Real>
     Int Round( cref<Real> x )
     {
+        // Rounds ties way from 0, i.e., std::round(0.5) == 1. and std::round(-0.5) == -1.
         return static_cast<Int>(std::round(x));
     }
 }
