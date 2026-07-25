@@ -19,9 +19,7 @@ namespace Tools
         
         ScopedUnlock() = delete;
         
-        /*!@brief This is the class's constructor. It needs access to the object it references to.
-         */
-        
+        /*!@brief This is the class's constructor. It needs access to the object it references to.*/
         explicit ScopedUnlock(  T & object_to_unlock  )
         :   object       { object_to_unlock }
         ,   prev_lockedQ { object.LockedQ() }
@@ -51,16 +49,19 @@ namespace Tools
             }
         }
 
-        int LockedQ() const
+        /*!@brief Whether the associated object is locked.*/
+        bool LockedQ() const
         {
             return object.LockedQ();
         }
         
-        int PreviouslyLockedQ() const
+        /*!@brief Whether the associated object was previously locked.*/
+        bool PreviouslyLockedQ() const
         {
             return prev_lockedQ;
         }
         
+        /*!@brief Check whether the locking state of the associated object is what it is supposed to be.*/
         bool BehavesAsIntendedQ() const
         {
             return !object.LockedQ();
