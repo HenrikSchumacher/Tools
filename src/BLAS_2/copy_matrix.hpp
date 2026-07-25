@@ -2,8 +2,7 @@
 
 namespace Tools
 {
-    /*!
-     * @brief Computes `Y = X`, where `X` and `Y` are matrices of size `m` x `n`.
+    /*!@brief Computes `Y = X`, where `X` and `Y` are matrices of size `m` x `n`.
      *
      * @tparam M Compile-time knowledge of the number of rows.
      *   `M > 0` asks to use fixed-size loops that can be optimized by the compiler.

@@ -241,38 +241,44 @@
 
 namespace Tools
 {
-    // immutable, unaliased pointer to immutable type
+    /*!@brief Immutable, unaliased pointer to immutable objects. */
     template<typename T> using cptr = const T * TOOLS_RESTRICT const;
 
-    // immutable, unaliased pointer to mutable type
+     /*!@brief Immutable, unaliased pointer to mutable objects. */
     template<typename T> using mptr =       T * TOOLS_RESTRICT const;
 
-    // unaliased reference to immutable type
+    /*!@brief Unaliased reference to immutable object. */
     template<typename T> using cref = const T & TOOLS_RESTRICT;
 
-    // unaliased reference to immutable type
+    /*!@brief Unaliased reference to mutable object. */
     template<typename T> using mref =       T & TOOLS_RESTRICT;
     
+    /*!@brief Biggest unsigned integer type the system supports. */
     using Size_T = std::size_t;
     
     constexpr Size_T VarSize = 0;
     
+    /*!@brief Concept for integral types. */
     template<typename T>
     concept IntQ = std::integral<T> || std::integral<typename std::remove_reference<T>::type>;
     
+    /*!@brief Concept for non-integral types. */
     template<typename T>
     concept NonIntQ = !IntQ<T>;
     
+    /*!@brief Concept for non-integral types that are not Booleans. */
     template<typename T>
     concept IntNotBoolQ = IntQ<T> && !std::is_same_v<T,bool>;
     
 #define ASSERT_INT(I) static_assert( IntQ<I>, "Template parameter " #I " must be an integral type." );
     
-    template<typename T> 
+    /*!@brief Concept for unsigned integral types. */
+    template<typename T>
     concept UnsignedIntQ = IntQ<T> && std::is_unsigned_v<T>;
     
 #define ASSERT_UINT(I) static_assert( UnsignedIntQ<I>, "Template parameter " #I " must be a unsigned integral type." );
     
+    /*!@brief Concept for signed integral types. */
     template<typename T>
     concept SignedIntQ = IntQ<T> && std::is_signed_v<T>;
     
@@ -284,12 +290,15 @@ namespace Tools
     
 #define ASSERT_SIGNED_INT(I) static_assert( SignedIntQ<I>, "Template parameter " #I " must be a signed integral type." );
     
+    /*!@brief Concepts of floating-point types (`float` and `double`).*/
     template<typename T>
     concept FloatQ = std::floating_point<T>;
     
+    /*!@brief Concepts of something that is not a pointer or a reference to a pointer.*/
     template<typename T>
     concept NonPointerQ = !std::is_pointer<T>::value && !std::is_pointer<typename std::remove_reference<T>::type>::value;
     
+    /*!@brief Concepts of arithmetic numbers.*/
     template<typename T>
     constexpr bool ArithmeticQ = std::is_arithmetic<T>::value;
     
@@ -488,10 +497,11 @@ namespace Tools
 // Containers.hpp needs MathematicaTypes.hpp if LTEMPLATE_H is defined.
 #include "src/Containers.hpp"
 #include "src/CachedObject.hpp"
-
+#include "src/ScopedUnlock.hpp"
 
 #include "src/Math/RealCubicSolve.hpp"
 #include "src/Math/Det_Bareiss.hpp"
 #include "src/Math/ProductAccumulator.hpp"
 
 #include "src/Random.hpp"
+

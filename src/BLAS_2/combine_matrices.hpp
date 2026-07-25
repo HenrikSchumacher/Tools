@@ -2,8 +2,7 @@
 
 namespace Tools
 {
-    /*!
-     * @brief Computes Y = a * opx(X) + b * opy(Y), where `X` and `Y`
+    /*!@brief Computes Y = a * opx(X) + b * opy(Y), where `X` and `Y`
      * are matrices of size `m` x `n` and `a` and `b` are scalars.
      *
      * @tparam a_flag Specify code optimizations for the scalar `a`.
@@ -108,8 +107,7 @@ namespace Tools
 
     }
     
-    /*!
-     * @brief Overload for fixed sizes.
+    /*!@brief Overload for fixed sizes.
      */
     
     template<
@@ -134,8 +132,7 @@ namespace Tools
     }
     
     
-    /*!
-     * @brief Overload for variable sizes, parallel evaluation.
+    /*!@brief Overload for variable sizes, parallel evaluation.
      */
     
     template<
@@ -157,8 +154,7 @@ namespace Tools
     }
     
     
-    /*!
-     * @brief Overload for variable sizes, sequential evaluation.
+    /*!@brief Overload for variable sizes, sequential evaluation.
      */
 
     template<
@@ -186,8 +182,7 @@ namespace Tools
     
     
     
-    /*!
-     * @brief Computes `Y = a * opx(X) + b * opy(Y)`, where `X` and `Y` are matrices of size `m` x `n` and `a` and `b` are scalars. Automatic detection of `a_flag` and `b_flag` at runtime.
+    /*!@brief Computes `Y = a * opx(X) + b * opy(Y)`, where `X` and `Y` are matrices of size `m` x `n` and `a` and `b` are scalars. Automatic detection of `a_flag` and `b_flag` at runtime.
      *
      * to different precompiled branches.
      *
@@ -354,8 +349,7 @@ namespace Tools
         }
     }
     
-    /*!
-     * @brief Overload for fixed sizes. Automatic detection of `a_flag` and `b_flag` at runtime.
+    /*!@brief Overload for fixed sizes. Automatic detection of `a_flag` and `b_flag` at runtime.
      */
     
     template<
@@ -379,8 +373,7 @@ namespace Tools
     }
     
     
-    /*!
-     * @brief Overload for variable sizes, parallel evaluation. Automatic detection of `a_flag` and `b_flag` at runtime.
+    /*!@brief Overload for variable sizes, parallel evaluation. Automatic detection of `a_flag` and `b_flag` at runtime.
      */
     template<
         Op opx = Op::Id, Op opy = Op::Id,
@@ -400,8 +393,7 @@ namespace Tools
     }
     
     
-    /*!
-     * @brief Overload for variable sizes, sequential evaluation. Automatic detection of `a_flag` and `b_flag` at runtime.
+    /*!@brief Overload for variable sizes, sequential evaluation. Automatic detection of `a_flag` and `b_flag` at runtime.
      */
     
     template<

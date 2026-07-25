@@ -2,8 +2,7 @@
 
 namespace Tools
 {
-    /*!
-     * @brief Computes X = a * opx(X), where `X`
+    /*!@brief Computes X = a * opx(X), where `X`
      * is a matrix of size `m` x `n` and `a` is a scalar.
      *
      * @tparam a_flag Specify code optimizations for the scalar `a`.
@@ -81,8 +80,7 @@ namespace Tools
         }
     }
     
-    /*!
-     * @brief Overload for fixed sizes.
+    /*!@brief Overload for fixed sizes.
      */
     
     template<
@@ -105,8 +103,7 @@ namespace Tools
     }
     
     
-    /*!
-     * @brief Overload for variable sizes, parallel evaluation.
+    /*!@brief Overload for variable sizes, parallel evaluation.
      */
     
     template<
@@ -126,8 +123,7 @@ namespace Tools
     }
     
     
-    /*!
-     * @brief Overload for variable sizes, sequential evaluation.
+    /*!@brief Overload for variable sizes, sequential evaluation.
      */
 
     template<
@@ -153,8 +149,7 @@ namespace Tools
     
     
     
-    /*!
-     * @brief Computes `X = a * opx(X)`, where `X` is a matrix of size `m` x `n` and `a` is a scalar. Automatic detection of `a_flag` and `b_flag` at runtime.
+    /*!@brief Computes `X = a * opx(X)`, where `X` is a matrix of size `m` x `n` and `a` is a scalar. Automatic detection of `a_flag` and `b_flag` at runtime.
      *
      * to different precompiled branches.
      *
@@ -224,8 +219,7 @@ namespace Tools
         }
     }
     
-    /*!
-     * @brief Overload for fixed sizes. Automatic detection of `a_flag` at runtime.
+    /*!@brief Overload for fixed sizes. Automatic detection of `a_flag` at runtime.
      */
     
     template<
@@ -247,8 +241,7 @@ namespace Tools
     }
     
     
-    /*!
-     * @brief Overload for variable sizes, parallel evaluation. Automatic detection of `a_flag` at runtime.
+    /*!@brief Overload for variable sizes, parallel evaluation. Automatic detection of `a_flag` at runtime.
      */
     template<
         Op opx = Op::Id,
@@ -266,8 +259,7 @@ namespace Tools
     }
     
     
-    /*!
-     * @brief Overload for variable sizes, sequential evaluation. Automatic detection of `a_flag` at runtime.
+    /*!@brief Overload for variable sizes, sequential evaluation. Automatic detection of `a_flag` at runtime.
      */
     
     template<

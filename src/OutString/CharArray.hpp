@@ -54,12 +54,14 @@ namespace Tools
         }
         
         
-        constexpr ToCharResult ToChars( char * begin, const char * end )
+        constexpr ToCharResult ToChars( char * const begin, const char * const end )
         {
-            if( begin + Size() <= end )
+            char * const ptr = &begin[Size()];
+            
+            if( ptr <= end )
             {
                 std::copy_n( &a[0], Size(), begin );
-                return { .ptr = begin + Size(), .failedQ = false };
+                return { .ptr = ptr, .failedQ = false };
             }
             else
             {

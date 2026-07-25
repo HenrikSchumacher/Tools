@@ -2,8 +2,7 @@
 
 namespace Tools
 {
-    /*!
-     * @brief Computes `y = a * opx(x) + b * opy(y)`, where `x` and `y`
+    /*!@brief Computes `y = a * opx(x) + b * opy(y)`, where `x` and `y`
      * are vectors of size `n` and `a` and `b` are scalars.
      *
      * @tparam a_flag Compile-time knowledge for the scalar `a`.
@@ -136,8 +135,7 @@ namespace Tools
     
     
     
-    /*!
-     * @brief Computes `z = a * opx(x) + b * opy(y)`, where `x`, `y` and `z`
+    /*!@brief Computes `z = a * opx(x) + b * opy(y)`, where `x`, `y` and `z`
      * are vectors of size `n` and `a` and `b` are scalars.
      *
      * @tparam a_flag Compile-time knowledge for the scalar `a`.

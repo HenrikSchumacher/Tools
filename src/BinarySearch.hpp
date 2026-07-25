@@ -2,7 +2,7 @@
 
 namespace Tools
 {
-    /*!@brief Returns the first position `p` in the sorted input array `sorted_list` such that `sorted_list[p] > value`. If no such position exists, then `p = n`is returned.
+    /*!@brief Return the first position `p` in the sorted input array `sorted_list` such that `sorted_list[p] > value`. If no such position exists, then `p = n`is returned.
      */
     template<typename T, IntQ Int, typename CMP = std::less<T>>
     inline Int FindFirstPositionGreater(
@@ -46,7 +46,7 @@ namespace Tools
     } // FindFirstPositionGreater
     
     
-    /*!@brief Returns the first position `p` in the sorted input array `sorted_list` such that `sorted_list[p] >= value`. If no such position exists, then `p = n`is returned.
+    /*!@brief Return the first position `p` in the sorted input array `sorted_list` such that `sorted_list[p] >= value`. If no such position exists, then `p = n`is returned.
      */
     template<typename T, IntQ Int, typename CMP = std::less<T>>
     inline Int FindFirstPositionGreaterEqual(
@@ -90,7 +90,7 @@ namespace Tools
     } // FindFirstPositionGreaterEqual
     
     
-    /*!@brief Returns the largest integer interval `[begin,end[` in `[0,n]`  such that each `i`, `begin <= i < end` satisfies `a <= sorted_list[i] < b`. The empty interval is represented by`[n,n[`.
+    /*!@brief Return the largest integer interval `[begin,end[` in `[0,n]`  such that each `i`, `begin <= i < end` satisfies `a <= sorted_list[i] < b`. The empty interval is represented by`[n,n[`.
      * This function requires that `sorted_list` is a sorted array of length at least `n` without duplicates.
      */
     
@@ -135,7 +135,7 @@ namespace Tools
     } // FindRange
     
     
-//    /*!@brief Returns the first position `pos` in the sorted input array `sorted_list` such that `sorted_list[pos] >= value`. If such a position exists, then `std::pair(true,pos)`is returned. Otherwise `std::pair(false,n)` is returned.
+//    /*!@brief Return the first position `pos` in the sorted input array `sorted_list` such that `sorted_list[pos] >= value`. If such a position exists, then `std::pair(true,pos)`is returned. Otherwise `std::pair(false,n)` is returned.
 //     */
 //    template<typename T, IntQ Int, typename CMP = std::less<T>>
 //    inline std::pair<bool,Int> FindFirstPositionGreaterEqual(
@@ -156,7 +156,7 @@ namespace Tools
 //    } // FindFirstPositionGreaterEqual
     
 
-    //    /*!@brief Returns the largest position `pos` in the input array such that `sorted_list[pos] <= value`. If `value` is found, then `true` is returned. Otherwise `false` is returned.
+    //    /*!@brief Return the largest position `pos` in the input array such that `sorted_list[pos] <= value`. If `value` is found, then `true` is returned. Otherwise `false` is returned.
     //     */
     //    template<typename T, IntQ Int>
     //    TOOLS_FORCE_INLINE bool BinarySearch(

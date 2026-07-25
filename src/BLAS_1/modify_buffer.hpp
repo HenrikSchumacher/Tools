@@ -3,8 +3,7 @@
 namespace Tools
 {
     
-    /*!
-     * @brief Computes `x = a * op(x)`, where `x` is a vector of size `n`
+    /*!@brief Computes `x = a * op(x)`, where `x` is a vector of size `n`
      * and `a` is a scalar.
      *
      * @tparam a_flag Compile-time knowledge for the scalar `a`.

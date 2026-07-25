@@ -2,8 +2,7 @@
 
 namespace Tools
 {
-    /*!
-     * @brief Computes `Y = beta * Y`, where `X` is a matrix of size `m` x `n`.
+    /*!@brief Computes `Y = beta * Y`, where `X` is a matrix of size `m` x `n`.
      *
      * @tparam M Compile-time knowledge of the number of rows.
      *   `M > 0` asks to use fixed-size loops that can be optimized by the compiler.

@@ -174,8 +174,7 @@ namespace Tools
         
     };
     
-    /*!brief Wrapped Gaussian distribution with center `mu`, standard deviation `sigma`, and period `L`. Returns values in the half-open interval [0,L).
-     */
+    /*!@brief Wrapped Gaussian distribution with center `mu`, standard deviation `sigma`, and period `L`. Returns values in the half-open interval [0,L).*/
     template<typename Real>
     class WrappedGaussianDistribution
     {
@@ -235,8 +234,7 @@ namespace Tools
     };
     
     
-    /*!brief Discrete wrapped Gaussian distribution with center `mu`, standard deviation `sigma`, and period `L`. Returns values in the half-open interval [0,L).
-     */
+    /*!@brief Discrete wrapped Gaussian distribution with center `mu`, standard deviation `sigma`, and period `L`. Returns values in the half-open interval [0,L).*/
     template<IntQ Int, FloatQ Real>
     class DiscreteWrappedGaussianDistribution
     {
@@ -284,8 +282,7 @@ namespace Tools
     
     
     
-    /*!brief Wrapped Laplace distribution with center `mu`, scale parameter `beta`, and period `L`. Returns values in the half-open interval [0,L).  Here the Laplace distribution is given by f(x) = 1/(2 * beta) * exp( - |x-mu|/beta ).
-     */
+    /*!@brief Wrapped Laplace distribution with center `mu`, scale parameter `beta`, and period `L`. Returns values in the half-open interval [0,L).  Here the Laplace distribution is given by f(x) = 1/(2 * beta) * exp( - |x-mu|/beta ).*/
     template<typename Real>
     class WrappedLaplaceDistribution
     {
@@ -346,8 +343,7 @@ namespace Tools
         }
     };
     
-    /*!brief Discrete wrapped Laplace distribution with center `mu`, scale parametr `beta`, and period `L`. Returns values in the half-open interval [0,L).
-     */
+    /*!@brief Discrete wrapped Laplace distribution with center `mu`, scale parametr `beta`, and period `L`. Returns values in the half-open interval [0,L).*/
     template<IntQ Int, FloatQ Real>
     class DiscreteWrappedLaplaceDistribution
     {

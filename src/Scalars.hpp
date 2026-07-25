@@ -2,7 +2,6 @@
 
 namespace Tools
 {
-    
     using Real32  = float;
     using Real64  = double;
 //    using Real128 = long double;
@@ -333,6 +332,11 @@ namespace Tools
         }
     }
     
+    template<typename T>
+    typename std::enable_if_t<!Scalar::ScalarQ<T>,T> scalar_cast( T x )
+    {
+        return x;
+    }
     
     // scalar_cast<T>(x) cast x to the precision of T, but preserves Real/Complex
     template<typename T, typename S>

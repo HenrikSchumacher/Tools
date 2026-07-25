@@ -368,8 +368,7 @@ namespace Tools
     
 // Print functions that are always active and print to the log file.
     
-    /*!
-     * @brief Print to log file specified in `Profiler::log_file`.
+    /*!@brief Print to log file specified in `Profiler::log_file`.
      */
     
     template<bool tabsQ = true>
@@ -414,8 +413,7 @@ namespace Tools
     }
 
     
-    /*!
-     * @brief Print to log file specified in `Profiler::log_file`.
+    /*!@brief Print to log file specified in `Profiler::log_file`.
      */
     
     template<typename T>
@@ -490,8 +488,7 @@ namespace Tools
         wprint(s.data());
     }
     
-    /*!
-     * @brief Print a note to `std::cout`.
+    /*!@brief Print a note to `std::cout`.
      */
     
     inline void nprint( std::string_view s )

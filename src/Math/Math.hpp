@@ -546,7 +546,7 @@ namespace Tools
         }
     }
 
-    /*!@brief Checks whether `i` is contained in the interval defined by `a` and `b`.
+    /*!@brief Check whether `i` is contained in the interval defined by `a` and `b`.
      */
     template<
         bool left_closedQ = true, bool right_closedQ = false,
