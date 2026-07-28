@@ -542,12 +542,12 @@ namespace Tools
         
     public:
         
-        static std::string MethodName( const std::string & tag )
+        static constexpr std::string MethodName( const std::string & tag )
         {
             return ClassName() + "::" + tag;
         }
         
-        static std::string ClassName()
+        static constexpr std::string ClassName()
         {
             return "OutString";
         }

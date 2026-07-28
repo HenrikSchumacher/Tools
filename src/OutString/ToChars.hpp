@@ -53,7 +53,7 @@ namespace Tools
     };
     
     
-    template<EnumClass T>
+    template<EnumClassQ T>
     struct ToChars<T>
     {
         using U = std::underlying_type_t<T>;

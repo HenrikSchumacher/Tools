@@ -11,7 +11,7 @@ namespace Tools
     static constexpr Dynamic_T Dynamic = Dynamic_T::True;
     static constexpr Dynamic_T Static  = Dynamic_T::False;
     
-    std::string ToString( const Dynamic_T & parQ )
+    constexpr std::string ToString( const Dynamic_T & parQ )
     {
         switch (parQ)
         {

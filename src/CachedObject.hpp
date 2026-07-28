@@ -562,9 +562,9 @@ namespace Tools
             return PrettyTypeName<P_CacheContainer_T>();
         }
         
-        static auto ClassName()
+        static constexpr std::string ClassName()
         {
-            return ct_string("CachedObject");
+            return std::string("CachedObject");
         }
     
     }; // CachedObject

@@ -2,17 +2,17 @@
 
 namespace Tools
 {
-    [[nodiscard]] std::string ToString( const std::string & s )
+    [[nodiscard]] constexpr std::string ToString( const std::string & s )
     {
         return s;
     }
     
-    [[nodiscard]] std::string ToString( const char * ptr )
+    [[nodiscard]] constexpr std::string ToString( const char * ptr )
     {
         return std::string(ptr);
     }
     
-    [[nodiscard]] std::string ToString( char * ptr )
+    [[nodiscard]] constexpr std::string ToString( char * ptr )
     {
         return std::string(ptr);
     }
@@ -70,9 +70,16 @@ namespace Tools
     }
 
     template<IntQ T>
-    [[nodiscard]] std::string ToString( const T & value )
+    [[nodiscard]] constexpr std::string ToString( const T & value )
     {
-        return std::format("{:d}",value);
+        if( std::is_constant_evaluated() )
+        {
+            return std::string(to_ct_string(value));
+        }
+        else
+        {
+            return std::format("{:d}",value);
+        }
     }
     
     
@@ -80,17 +87,17 @@ namespace Tools
 //    constexpr bool EnumClassQ = std::is_enum<T>::value && !std::is_convertible<T,int>::value;
     
     template<typename T>
-    concept EnumClass = std::is_enum<T>::value && !std::is_convertible<T,int>::value;
+    concept EnumClassQ = std::is_enum<T>::value && !std::is_convertible<T,int>::value;
     
     
-    template <EnumClass T>
-    [[nodiscard]] std::string ToString( const T & value )
+    template <EnumClassQ T>
+    [[nodiscard]] constexpr std::string ToString( const T & value )
     {
         return ToString( ToUnderlying(value) );
     }
     
     template <typename S, typename T>
-    [[nodiscard]] std::string ToString( const std::pair<S,T> & p )
+    [[nodiscard]] constexpr std::string ToString( const std::pair<S,T> & p )
     {
         std::string s ("{ ");
         s += ToString(p.first);
@@ -151,7 +158,7 @@ namespace Tools
         return s.str();
     }
 
-    [[nodiscard]] std::string BoolString( const bool b )
+    [[nodiscard]] constexpr std::string BoolString( const bool b )
     {
         return b ? "True" : "False";
     }

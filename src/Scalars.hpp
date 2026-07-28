@@ -116,7 +116,7 @@ namespace Tools
     
     
     
-    [[nodiscard]] TOOLS_FORCE_INLINE std::string ToString( const Scalar::Flag flag )
+    [[nodiscard]] TOOLS_FORCE_INLINE constexpr std::string ToString( const Scalar::Flag flag )
     {
         switch( flag )
         {

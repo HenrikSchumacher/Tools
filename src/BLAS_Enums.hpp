@@ -119,7 +119,7 @@ namespace Tools
         }
     }
     
-    [[nodiscard]] inline std::string ToString( const Op op )
+    [[nodiscard]] inline constexpr std::string ToString( const Op op )
     {
         switch( op )
         {
@@ -196,7 +196,7 @@ namespace Tools
     }
     
     
-    [[nodiscard]] inline std::string ToString( const Layout & layout )
+    [[nodiscard]] inline constexpr std::string ToString( const Layout & layout )
     {
         switch( layout )
         {
@@ -220,7 +220,7 @@ namespace Tools
     };
     
     
-    [[nodiscard]] inline std::string ToString( const UpLo & uplo )
+    [[nodiscard]] inline constexpr std::string ToString( const UpLo & uplo )
     {
         switch( uplo )
         {
@@ -271,7 +271,7 @@ namespace Tools
         return ( s == Side::Left ) ? Side::Right : Side::Left;
     }
 
-    std::string ToString( Side s )
+    constexpr std::string ToString( Side s )
     {
         return ( s == Side::Left ) ? "Left" : "Right";
     }

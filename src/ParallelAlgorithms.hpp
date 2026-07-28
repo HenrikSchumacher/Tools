@@ -13,7 +13,7 @@ namespace Tools
     static constexpr Parallel_T Parallel   = Parallel_T::True;
     static constexpr Parallel_T Sequential = Parallel_T::False;
     
-    std::string ToString( const Parallel_T & parQ )
+    constexpr std::string ToString( const Parallel_T & parQ )
     {
         switch (parQ)
         {
