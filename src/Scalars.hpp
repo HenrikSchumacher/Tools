@@ -158,15 +158,21 @@ namespace Tools
         template<> constexpr bool RealQ<Real64 >       = true;
         
         template<> constexpr bool RealQ<bool   >       = true;
+        
         template<> constexpr bool RealQ<Int8   >       = true;
         template<> constexpr bool RealQ<Int16  >       = true;
         template<> constexpr bool RealQ<Int32  >       = true;
         template<> constexpr bool RealQ<Int64  >       = true;
+        
         template<> constexpr bool RealQ<UInt8  >       = true;
         template<> constexpr bool RealQ<UInt16 >       = true;
         template<> constexpr bool RealQ<UInt32 >       = true;
         template<> constexpr bool RealQ<UInt64 >       = true;
-
+        
+#ifdef TOOLS_INT128_AVAILABLE
+        template<> constexpr bool RealQ<Int128 >       = true;
+        template<> constexpr bool RealQ<UInt128>       = true;
+#endif
         
         //        template<> constexpr bool RealQ<Real128>       = true;
         template<> constexpr bool RealQ<Complex32 >    = false;
@@ -177,10 +183,10 @@ namespace Tools
         
         template<> constexpr bool ScalarQ<Real32 >     = true;
         template<> constexpr bool ScalarQ<Real64 >     = true;
-        //        template<> constexpr bool ScalarQ<Real128>     = true;
+//        template<> constexpr bool ScalarQ<Real128>     = true;
         template<> constexpr bool ScalarQ<Complex32 >  = true;
         template<> constexpr bool ScalarQ<Complex64 >  = true;
-        //        template<> constexpr bool ScalarQ<Complex128>  = true;
+//        template<> constexpr bool ScalarQ<Complex128>  = true;
         
         
         template<> constexpr bool ScalarQ<bool>     = true;
@@ -188,10 +194,16 @@ namespace Tools
         template<> constexpr bool ScalarQ<Int16>    = true;
         template<> constexpr bool ScalarQ<Int32>    = true;
         template<> constexpr bool ScalarQ<Int64>    = true;
+
         template<> constexpr bool ScalarQ<UInt8>    = true;
         template<> constexpr bool ScalarQ<UInt16>   = true;
         template<> constexpr bool ScalarQ<UInt32>   = true;
         template<> constexpr bool ScalarQ<UInt64>   = true;
+        
+#ifdef TOOLS_INT128_AVAILABLE
+        template<> constexpr bool ScalarQ<Int128>   = true;
+        template<> constexpr bool ScalarQ<UInt128>  = true;
+#endif
         
         template<typename T> constexpr bool FloatQ = false;
         
@@ -333,6 +345,7 @@ namespace Tools
     }
     
     template<typename T>
+    TOOLS_FORCE_INLINE constexpr
     typename std::enable_if_t<!Scalar::ScalarQ<T>,T> scalar_cast( T x )
     {
         return x;

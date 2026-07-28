@@ -1,6 +1,13 @@
+
+#if defined(__SIZEOF_INT128__) && !defined(TOOLS_NO_INT128)
+
+    #define TOOLS_INT128_AVAILABLE
+
+#endif
+
+
 namespace Tools
 {
-    
     using Int8    = std::int8_t;
     using Int16   = std::int16_t;
     using Int32   = std::int32_t;
@@ -20,6 +27,19 @@ namespace Tools
     using FastUInt16 = std::uint_fast16_t;
     using FastUInt32 = std::uint_fast32_t;
     using FastUInt64 = std::uint_fast64_t;
+    
+#ifdef TOOLS_INT128_AVAILABLE
+    constexpr bool Int128_availableQ = true;
+
+    using Int128      = signed __int128;
+    using FastInt128  = signed __int128;
+    
+    using UInt128     = unsigned __int128;
+    using FastUInt128 = unsigned __int128;
+#else
+    constexpr bool Int128_availableQ = false;
+#endif // TOOLS_INT128_AVAILABLE
+    
     
     namespace Scalar
     {
@@ -76,6 +96,16 @@ namespace Tools
             static constexpr const char * full_name = "std::int64_t";
         };
         
+#ifdef TOOLS_INT128_AVAILABLE
+        template<> struct IntegralTypeTraits<Int128>
+        {
+            static constexpr bool         realQ     = true;
+            static constexpr bool         complexQ  = false;
+            static constexpr const char * type_name = "I128";
+            static constexpr const char * full_name = "signed __int128_t";
+        };
+#endif // TOOLS_INT128_AVAILABLE
+        
         template<> struct IntegralTypeTraits<UInt8>
         {
             static constexpr bool         realQ     = true;
@@ -108,6 +138,15 @@ namespace Tools
             static constexpr const char * full_name = "std::uint64_t";
         };
         
+#ifdef TOOLS_INT128_AVAILABLE
+        template<> struct IntegralTypeTraits<UInt128>
+        {
+            static constexpr bool         realQ     = true;
+            static constexpr bool         complexQ  = false;
+            static constexpr const char * type_name = "UI128";
+            static constexpr const char * full_name = "unsigned __int128_t";
+        };
+#endif // TOOLS_INT128_AVAILABLE
         
         template<typename T>
         struct IntegralTypeTraits<
@@ -120,6 +159,10 @@ namespace Tools
                 !std::is_same_v<T,Int32>
                 &&
                 !std::is_same_v<T,Int16>
+#ifdef TOOLS_INT128_AVAILABLE
+                &&
+                !std::is_same_v<T,Int128>
+#endif // TOOLS_INT128_AVAILABLE
             >
         >
         {

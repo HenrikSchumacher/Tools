@@ -2,7 +2,7 @@ namespace Tools
 {
     
     template<std::size_t N>
-    struct ct_string
+    class ct_string
     {
         // Taken from https://stackoverflow.com/a/77803192/8248900
         
@@ -59,17 +59,6 @@ namespace Tools
             return N;
         }
         
-        
-//        constexpr char & operator[](std::size_t i)
-//        {
-//            return bytes[i];
-//        }
-//        
-//        constexpr char const & operator[](std::size_t i) const
-//        {
-//            return bytes[i];
-//        }
-
         template<IntQ Int>
         constexpr char & operator[](const Int i)
         {
@@ -92,6 +81,16 @@ namespace Tools
             return data();
         }
         
+        
+        constexpr const char * c_str() const
+        {
+            char b [N];
+            for( Size_T i = 0; i < N; ++i )
+            {
+                b[i] = bytes[i];
+            }
+            return b;
+        }
     };
     
     
@@ -126,14 +125,16 @@ namespace Tools
         return lhs + ct_string<N>( rhs );
     }
     
+    // constexpr string concatenation is a C++20 feature. Older compilers might not support it.
     template<std::size_t N>
-    [[nodiscard]] std::string operator+( ct_string<N> lhs, const std::string & rhs )
+    [[nodiscard]] constexpr std::string operator+( ct_string<N> lhs, const std::string & rhs )
     {
         return lhs.data() + rhs;
     }
     
+    // constexpr string concatenation is a C++20 feature. Older compilers might not support it.
     template<std::size_t N>
-    [[nodiscard]] std::string operator+( const std::string & lhs, ct_string<N> rhs  )
+    [[nodiscard]] constexpr std::string operator+( const std::string & lhs, ct_string<N> rhs  )
     {
         return lhs + rhs.data();
     }
