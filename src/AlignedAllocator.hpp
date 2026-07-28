@@ -110,7 +110,7 @@ namespace Tools
         }
 #endif
         
-        static std::string ClassName()
+        static constexpr std::string ClassName()
         {
             return std::string("AlignedAllocator")+"<" + TypeName<T> + "," + ToString(verboseQ) + ">";
         }

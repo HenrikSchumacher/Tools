@@ -129,7 +129,7 @@ namespace Tools
             }
         }
         
-        static std::string ClassName()
+        static constexpr std::string ClassName()
         {
             return std::string("Rounding_T<") + TypeName<Real> + ", " + ToString(RP) + ">";
         }
@@ -296,7 +296,7 @@ namespace Tools
             return I_T::Create( std::fma( r.x, -s.x, -t.x ), std::fma( r.x, s.x, t.x ) );
         }
         
-        static std::string ClassName()
+        static constexpr std::string ClassName()
         {
             return std::string("Singleton<") + TypeName<Real> + ">";
         }
@@ -1042,7 +1042,7 @@ namespace Tools
         }
         
         
-        static std::string ClassName()
+        static constexpr std::string ClassName()
         {
             return std::string("Interval<") + TypeName<Real> + ", " + ToString(RP) + ">";
         }

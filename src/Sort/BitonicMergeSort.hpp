@@ -243,7 +243,7 @@ namespace Tools
         }
         
         
-        static std::string ClassName()
+        static constexpr std::string ClassName()
         {
             return std::string("BitonicMergeSorter")+"<"+ToString(vector_size)+","+ToString(reverseQ)+">";
         }
