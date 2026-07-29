@@ -22,7 +22,8 @@ namespace Tools
     {
         static constexpr bool implementedQ = true;
         
-        static constexpr Size_T char_count = std::numeric_limits<T>::digits10 + std::is_signed_v<T>;
+        // digits10 is the number of actual decimal digits _rounded down_.
+        static constexpr Size_T char_count = std::numeric_limits<T>::digits10 + Size_T(1) +  std::is_signed_v<T>;
 
         ToCharResult operator()( char * begin, char * end, const T & x ) const
         {
@@ -60,7 +61,8 @@ namespace Tools
         
         static constexpr bool implementedQ = true;
         
-        static constexpr Size_T char_count = std::numeric_limits<U>::digits10 + std::is_signed_v<U>;
+        // digits10 is the number of actual decimal digits _rounded down_.
+        static constexpr Size_T char_count = std::numeric_limits<U>::digits10 + Size_T(1) + std::is_signed_v<U>;
 
         ToCharResult operator()( char * begin, char * end, const T & x ) const
         {
