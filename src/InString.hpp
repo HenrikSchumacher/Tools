@@ -279,9 +279,9 @@ namespace Tools
         {
             if( failedQ ) return *this;
             
-            while( !s.EmptyQ() && (s.CurrentChar() != '\n') ) { s.Skip(); }
+            while( !EmptyQ() && (CurrentChar() != '\n') ) { Skip(); }
             
-            if( !s.EmptyQ() ) { s.Skip(); }
+            if( !EmptyQ() ) { Skip(); }
             
             return *this;
         }

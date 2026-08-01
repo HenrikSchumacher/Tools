@@ -264,7 +264,6 @@ namespace Tools
         Int size      = 0;
         Int capacity  = 0;
         
-        
     private:
        
         
