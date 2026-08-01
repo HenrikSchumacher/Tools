@@ -263,11 +263,26 @@ namespace Tools
 //            return InString(std::move(s));
 //        }
 
+        InString & Skip()
+        {
+            ptr = std::min(ptr + Size_T(1), end);
+            return *this;
+        }
         
-        template<bool checkQ = true>
         InString & Skip( const Size_T n )
         {
             ptr = std::min(ptr + n, end);   
+            return *this;
+        }
+        
+        InString & SkipToLineEnd()
+        {
+            if( failedQ ) return *this;
+            
+            while( !s.EmptyQ() && (s.CurrentChar() != '\n') ) { s.Skip(); }
+            
+            if( !s.EmptyQ() ) { s.Skip(); }
+            
             return *this;
         }
         
