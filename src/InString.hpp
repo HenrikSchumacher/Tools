@@ -235,7 +235,21 @@ namespace Tools
             Size_T line_count = 1;
             for( const char * c = ptr; c < end; ++c )
             {
-                line_count += (*c == '\n');
+                if( *c == '\n' )
+                {
+                    ++line_count;
+                }
+                else if( *c == '\r' )
+                {
+                    ++line_count;
+                    
+                    if( (c < end) && (c[1] == '\n') )
+                    {
+                        // CAUTION: We increment the loop variable `c` here.
+                        // We have to do that because we must not count `\r\n` as two newlines.
+                        ++c;
+                    }
+                }
             }
             return line_count;
         }
@@ -275,13 +289,14 @@ namespace Tools
             return *this;
         }
         
-        InString & SkipToLineEnd()
+        /*!@brief Skip all characters until a newline character sequences is found or until the buffer end is reached. If a newline character sequence is found, then it is skipped. Does _not_ fail if no newline character sequence is found. */
+        InString & SkipLine()
         {
             if( failedQ ) return *this;
             
-            while( !EmptyQ() && (CurrentChar() != '\n') ) { Skip(); }
+            while( !EmptyQ() && !NewlineQ() ) { Skip(); }
             
-            if( !EmptyQ() ) { Skip(); }
+            if( !EmptyQ() ) { SkipNewline(); }
             
             return *this;
         }
