@@ -96,7 +96,7 @@ InString & SkipNewline()
 {
     if( failedQ ) return *this;
     
-    if( !EmptyQ() )
+    if( EmptyQ() )
     {
         failedQ = true;
         return *this;
