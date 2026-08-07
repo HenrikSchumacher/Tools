@@ -36,7 +36,28 @@ namespace Tools
         static std::filesystem::path prof_file = HomeDirectory() / "Tools_Profile.tsv";
         
         static std::mutex log_mutex;
-        static std::ofstream log  ( log_file );
+
+        /*!@brief The log stream, opened on first use.
+         *
+         * `Tools_Profile.tsv` is only created when profiling is switched on
+         * (see the `TOOLS_ENABLE_PROFILER` guards below). This gives
+         * `Tools_Log.txt` the same property by a route that does not need a
+         * macro: the stream is a function-local static, so the file is created
+         * the first time something actually logs. A program that never calls
+         * `logprint`/`logvalprint` -- directly or through `eprint`/`wprint` --
+         * no longer leaves an empty `Tools_Log.txt` behind, and no longer
+         * truncates one that a previous run wrote.
+         *
+         * As a side effect the stream is now a single object per program. The
+         * previous namespace-scope `static` had internal linkage, so every
+         * translation unit including this header got its own stream on the same
+         * file.
+         */
+        inline std::ofstream & Log()
+        {
+            static std::ofstream s ( log_file );
+            return s;
+        }
         
         // Only used in builds with TOOLS_ENABLE_PROFILER.
         [[maybe_unused]] static int blocker_count = 0;
@@ -100,18 +121,18 @@ namespace Tools
             
             Profiler::log_file = dir / "Tools_Log.txt";
             
-            Profiler::log.close();
+            Profiler::Log().close();
 
             if( appendQ )
             {
-                Profiler::log.open( Profiler::log_file, std::ios_base::app );
+                Profiler::Log().open( Profiler::log_file, std::ios_base::app );
             }
             else
             {
-                Profiler::log.open( Profiler::log_file );
+                Profiler::Log().open( Profiler::log_file );
             }
             
-            if( Profiler::log.good() )
+            if( Profiler::Log().good() )
             {
                 if( !silentQ )
                 {
@@ -123,7 +144,7 @@ namespace Tools
                 print( std::string("ERROR: Profiler failed to open file ") + Profiler::log_file.string() + "." );
             }
 
-            Profiler::log << std::setprecision(16);
+            Profiler::Log() << std::setprecision(16);
             
 #if defined(TOOLS_ENABLE_PROFILER)
             const std::lock_guard<std::mutex> prof_lock( prof_mutex );
@@ -174,12 +195,12 @@ namespace Tools
 #if defined(TOOLS_ENABLE_PROFILER)
                 for( Size_T i = 0; i < 2 * (Profiler::stack.size()+1); ++i )
                 {
-                    Profiler::log <<  ' ';
+                    Profiler::Log() <<  ' ';
                 }
-//                Profiler::log << std::string( 2 * (Profiler::stack.size()+1), ' ' );
+//                Profiler::Log() << std::string( 2 * (Profiler::stack.size()+1), ' ' );
 #endif
             }
-            Profiler::log << s << "\n" << std::endl;
+            Profiler::Log() << s << "\n" << std::endl;
         }
         
         template<bool tabsQ = true, Size_T N>
@@ -198,12 +219,12 @@ namespace Tools
 #if defined(TOOLS_ENABLE_PROFILER)
                 for( Size_T i = 0; i < 2 * (Profiler::stack.size()+1); ++i )
                 {
-                    Profiler::log <<  ' ';
+                    Profiler::Log() <<  ' ';
                 }
-//                Profiler::log << std::string( 2 * (Profiler::stack.size()+1), ' ' );
+//                Profiler::Log() << std::string( 2 * (Profiler::stack.size()+1), ' ' );
 #endif
             }
-            Profiler::log << tag << " = " << ToString(value) << "\n" << std::endl;
+            Profiler::Log() << tag << " = " << ToString(value) << "\n" << std::endl;
         }
         
         inline void eprint( std::string_view s )
@@ -517,7 +538,7 @@ namespace Tools
     {
 #ifdef TOOLS_ENABLE_PROFILER
         const std::lock_guard<std::mutex> lock( Profiler::log_mutex );
-        Profiler::log << s << "\n" << std::endl;
+        Profiler::Log() << s << "\n" << std::endl;
 #else
         (void)s;
 #endif
@@ -532,7 +553,7 @@ namespace Tools
     {
 #ifdef TOOLS_ENABLE_PROFILER
         const std::lock_guard<std::mutex> lock( Profiler::log_mutex );
-        Profiler::log << s << " = " << ToString(value) << "\n" << std::endl;
+        Profiler::Log() << s << " = " << ToString(value) << "\n" << std::endl;
 #else
         (void)s;
         (void)value;
@@ -547,7 +568,7 @@ namespace Tools
     inline void pvalprint( std::string_view s, const T & value, const int p)
     {
 #ifdef TOOLS_ENABLE_PROFILER
-        Profiler::log << s << " = " << ToString(value,p) << "\n" << std::endl;
+        Profiler::Log() << s << " = " << ToString(value,p) << "\n" << std::endl;
 #else
         (void)s;
         (void)value;
@@ -562,7 +583,7 @@ namespace Tools
     inline void pvalprint( std::string_view s, std::string_view value)
     {
 #ifdef TOOLS_ENABLE_PROFILER
-        Profiler::log << s << " = " << value << "\n" << std::endl;
+        Profiler::Log() << s << " = " << value << "\n" << std::endl;
 #else
         (void)s;
         (void)value;
