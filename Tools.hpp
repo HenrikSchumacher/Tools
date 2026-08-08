@@ -428,7 +428,8 @@ namespace Tools
 
 #include "src/Print.hpp"
 #include "src/Time.hpp"
-#include "src/Profiler.hpp"
+//#include "src/Profiler.hpp"
+#include "src/Logger.hpp"
 #include "src/BLAS_Enums.hpp"
 #include "src/Integers.hpp"
 #include "src/Scalars.hpp"
