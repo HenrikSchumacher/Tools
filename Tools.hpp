@@ -140,18 +140,6 @@
 #define TOOLS_CONCAT3_IMPL(id1, id2, id3) id1##id2##id3
 #define TOOLS_CONCAT3(id1, id2, id3) TOOLS_CONCAT3_IMPL(id1, id2, id3)
 
-//#define TOOLS_IF #if
-//#define TOOLS_ELSE #else
-//#define TOOLS_ENDIF #endif
-//#define TOOLS_NEWLINE /*
-//*/
-//
-//#define TOOLS_DEFINEDQ( S )                                 \
-//    TOOLS_IF defined((S))          TOOLS_NEWLINE            \
-//                1                                           \
-//    TOOLS_ELSE                     TOOLS_NEWLINE            \
-//                0                                           \
-//    TOOLS_ENDIF
 
 #ifdef TOOLS_AGGRESSIVE_INLINING
 
@@ -305,17 +293,6 @@ namespace Tools
     template<> constexpr bool ArithmeticQ<std::complex<float>>  = true;
     template<> constexpr bool ArithmeticQ<std::complex<double>> = true;
 
-    template<IntQ I, IntQ J>
-    inline bool IntFitsIntoTypeQ( J x )
-    {
-        return (
-            std::cmp_less_equal( x, std::numeric_limits<I>::max() )
-            &&
-            std::cmp_greater_equal( x, std::numeric_limits<I>::lowest() )
-        );
-    }
-    
-    
     template <typename E>
     using Underlying_T = typename std::underlying_type<E>::type;
     
@@ -428,7 +405,6 @@ namespace Tools
 
 #include "src/Print.hpp"
 #include "src/Time.hpp"
-//#include "src/Profiler.hpp"
 #include "src/Logger.hpp"
 #include "src/BLAS_Enums.hpp"
 #include "src/Integers.hpp"
@@ -505,4 +481,3 @@ namespace Tools
 #include "src/Math/ProductAccumulator.hpp"
 
 #include "src/Random.hpp"
-

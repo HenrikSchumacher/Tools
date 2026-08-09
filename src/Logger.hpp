@@ -15,6 +15,7 @@ namespace Tools
             if( s != nullptr ) { return std::filesystem::path { s }; }
         }
         
+        // Should be the home directory on Windows.
         {
             const char * s = std::getenv("USERPROFILE");
             
@@ -29,31 +30,11 @@ namespace Tools
     /*!@brief Singleton class to handle files for logs and profiling. */
     class Logger
     {
-    private:
-        
-        Logger() {}
-        
     public:
-        
-        Logger(const Logger &) = delete;
-        Logger & operator=(const Logger &) = delete;
-        
-        friend class Profiler;
-        //        friend class Profiler::Blocker;
-        //        friend class Profiler::Timer;
-        
-    private:
         
         using Int = std::int64_t;
         
-        std::filesystem::path log_file;
-        std::filesystem::path prof_file;
-        
-        std::mutex log_mutex;
-        std::ofstream log;
-        
-        // Only used in builds with TOOLS_ENABLE_PROFILER.
-        [[maybe_unused]] int blocker_count = 0;
+        friend class Profiler;
         
         struct StackNode
         {
@@ -63,10 +44,10 @@ namespace Tools
             Time time;
             
             StackNode(
-                      Int id_,
-                      Int parent_,
-                      const std::string & tag_
-                      )
+                Int id_,
+                Int parent_,
+                const std::string & tag_
+            )
             :   id    ( id_     )
             ,   parent( parent_ )
             ,   tag   ( tag_    )
@@ -74,17 +55,47 @@ namespace Tools
             {}
         };
         
-#if defined(TOOLS_ENABLE_PROFILER)
+        
+    private:
+        
+        // Private constructor so that nobody outside the class can construct an instance.
+        Logger() {}
+        
+    public:
+        
+        // Make this class uncopyable.
+        Logger(const Logger &) = delete;
+        Logger & operator=(const Logger &) = delete;
+        
+        
+        /*!@brief Whether code was compiled with prepreocessor macro `TOOLS_ENABLE_PROFILER`.*/
+        static constexpr bool ProfilingQ()
+        {
+#ifdef TOOLS_ENABLE_PROFILER
+            return true;
+#else
+            return false;
+#endif
+        }
+        
+    private:
+        
+        std::filesystem::path log_file;
+        std::filesystem::path prof_file;
+        
+        std::mutex log_mutex;
+        std::ofstream log;
+        
+#ifdef TOOLS_ENABLE_PROFILER
         std::mutex prof_mutex;
         std::ofstream prof;
         
         Int id_counter = 1;
+        Int blocker_count = 0;
         
-        std::vector<StackNode> stack {
-            Size_T{1}, StackNode{ 0, Int(-1), "root" }
-        };
+        std::vector<StackNode> stack { Size_T{1}, StackNode{ 0, Int(-1), "root" } };
         
-#endif // defined(TOOLS_ENABLE_PROFILER)
+#endif // TOOLS_ENABLE_PROFILER
         
     private:
         
@@ -189,17 +200,15 @@ namespace Tools
             const bool appendQ = false
         )
         {
-            
             std::string log_name;
 #ifdef TOOLS_LOG_NAME
-            log_name = std::filesystem::path(TOOLS_PROFILE_NAME);
+            log_name = TOOLS_LOG_NAME;
 #else
             log_name = "Tools_Log";
 #endif
-            
             std::string prof_name;
 #ifdef TOOLS_PROFILE_NAME
-            prof_name = std::filesystem::path(TOOLS_PROFILE_NAME);
+            prof_name = TOOLS_PROFILE_NAME;
 #else
             prof_name = "Tools_Profile";
 #endif
@@ -209,9 +218,6 @@ namespace Tools
         void Clear_Private( const bool silentQ = false, const bool appendQ = false )
         {
             std::filesystem::path dir;
-            std::string log_name;
-            std::string prof_name;
-            
 #ifdef TOOLS_LOG_DIR
             dir = std::filesystem::path(TOOLS_LOG_DIR);
 #else
@@ -250,7 +256,7 @@ namespace Tools
         {
 #ifdef TOOLS_ENABLE_PROFILER
             
-            if( blocker_count > 0 ) { return; }
+            if( blocker_count > Int(0) ) { return; }
             
             const std::lock_guard<std::mutex> prof_lock( prof_mutex );
             
@@ -322,46 +328,58 @@ namespace Tools
         
         static void Block()
         {
+#ifdef TOOLS_ENABLE_PROFILER
             ++Get().blocker_count;
+#endif
         }
         
         static void ReleaseBlock()
         {
+#ifdef TOOLS_ENABLE_PROFILER
             --Get().blocker_count;
+#endif
         }
         
         static bool BlockedQ()
         {
-            return (Get().blocker_count > 0);
+#ifdef TOOLS_ENABLE_PROFILER
+            return (Get().blocker_count > Int(0));
+#else
+            return false;
+#endif
         }
         
     public:
         
-        static int BlockedCount()
+        static Int BlockedCount()
         {
+#ifdef TOOLS_ENABLE_PROFILER
             return Get().blocker_count;
+#else
+            return 0;
+#endif
         }
         
     public:
         
         /*!@brief Clear all logging and profiling records and creates new records in the directory `dir`. Logging information will be written to `log_name + ".txt"`; profiling information is sent to `prof_name + ".tsv".*/
         static void Clear(
-                          const std::filesystem::path & dir,
-                          const std::string & log_name,
-                          const std::string & prof_name,
-                          const bool silentQ = false,
-                          const bool appendQ = false
-                          )
+            const std::filesystem::path & dir,
+            const std::string & log_name,
+            const std::string & prof_name,
+            const bool silentQ = false,
+            const bool appendQ = false
+        )
         {
             Logger::Get().Clear_Private(dir,log_name,prof_name,silentQ,appendQ);
         }
         
         /*!@brief Clear all logging and profiling records and create new records in the directory `dir`. If the preprocessor macro `TOOLS_LOG_NAME` is set, then the logs will be recorded in the file `TOOLS_LOG_NAME + ".txt"`; otherwise in `dir / "Tools_Log.txt"`. Likewise, if `TOOLS_PROFILE_NAME` is set, then the profiling information will be written to `TOOLS_PROFILE_NAME + ".tsv"`; otherwise `"Tools_Profile.tsv"` will be used.*/
         static void Clear(
-                          const std::filesystem::path & dir,
-                          const bool silentQ = false,
-                          const bool appendQ = false
-                          )
+            const std::filesystem::path & dir,
+            const bool silentQ = false,
+            const bool appendQ = false
+        )
         {
             Logger::Get().Clear_Private(dir,silentQ,appendQ);
         }
@@ -435,16 +453,6 @@ namespace Tools
             return Logger::GetInstance().log_file;
         }
         
-        /*!@brief Whether code was compiled with prepreocessor macro `TOOLS_ENABLE_PROFILER`.*/
-        static constexpr bool ProfilingQ()
-        {
-#ifdef TOOLS_ENABLE_PROFILER
-            return true;
-#else
-            return false;
-#endif
-        }
-        
     }; // class Logger
     
     
@@ -461,14 +469,14 @@ namespace Tools
             
             Blocker()
             {
-#if defined(TOOLS_ENABLE_PROFILER)
+#ifdef TOOLS_ENABLE_PROFILER
                 Logger::Block();
 #endif
             }
             
             ~Blocker()
             {
-#if defined(TOOLS_ENABLE_PROFILER)
+#ifdef TOOLS_ENABLE_PROFILER
                 Logger::ReleaseBlock();
 #endif
             }
