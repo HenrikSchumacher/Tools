@@ -150,7 +150,6 @@ namespace Tools
     
 #define TOOLS_PDUMP(x) pvalprint( std::string_view(#x), x );
 
-    // DEBUGGING
 #ifdef TOOLS_ENABLE_PROFILER
     #define TOOLS_PTIC(tag) Tools::Profiler::GetLogger().Tic(tag)
     #define TOOLS_PTOC(tag) Tools::Profiler::GetLogger().Toc(tag)

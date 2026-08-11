@@ -80,7 +80,7 @@ namespace Tools
         
     private:
         
-        std::string construction_date { DateString() };   // DEBUGGING
+        std::string construction_date { DateString() };
         std::filesystem::path log_file;
         std::filesystem::path prof_file;
         
