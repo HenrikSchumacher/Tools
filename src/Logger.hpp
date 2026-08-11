@@ -1,125 +1,51 @@
 #pragma once
 
-#include <mutex>
-#include <filesystem>
-
 namespace Tools
 {
-    /*!@brief Return user's home directory.*/
-    static std::filesystem::path HomeDirectory(void)
-    {
-        // Should work on all POSIX systems.
-        {
-            const char * s = std::getenv("HOME");
-            
-            if( s != nullptr ) { return std::filesystem::path { s }; }
-        }
-        
-        // Should be the home directory on Windows.
-        {
-            const char * s = std::getenv("USERPROFILE");
-            
-            if( s != nullptr ) { return std::filesystem::path { s }; }
-        }
-        
-        return std::filesystem::temp_directory_path();
-    }
+    /*!@brief Class to handle files for logs and profiling with locks. We deliberately do not make this a singleton class because `static` variables may have strange and unpredicted effects in shared library settings. The intended use of this class is to instantiate one instance in `Tools::Profiler` to be used globally. But in principle, it is possible to have several instances of this class to log different things.
+     *
+     * @tparam profileQ_ Whether also profiles shall be logged. This activates the member function `Logger::Tic(tag)` and `Logger::Toc(tag)` and some other functions related to profiling. Beware that this means typical some considerable overhead, in particular, in parallel sections of code as the locks need to be synchronized. So better use this only in test code and avoid it in production code.
+     */
     
-    class Profiler;
-    
-    /*!@brief Singleton class to handle files for logs and profiling. */
-    class Logger
+    template<bool profileQ_ = false>
+    class Logger final
     {
     public:
         
         using Int = std::int64_t;
+        static constexpr bool profileQ = profileQ_;
         
-        friend class Profiler;
+        static constexpr bool verboseQ = false; // Only meant for debugging
+        
+        using Lock_T = std::lock_guard<std::mutex>;
         
         struct StackNode
         {
-            Int id;
-            Int parent;
+            Int         id;
+            Int         parent;
             std::string tag;
-            Time time;
+            Time        time;
             
             StackNode(
                 Int id_,
                 Int parent_,
                 const std::string & tag_
             )
-            :   id    ( id_     )
-            ,   parent( parent_ )
-            ,   tag   ( tag_    )
-            ,   time  ( Tools::Clock::now() )
+            :   id    { id_     }
+            ,   parent{ parent_ }
+            ,   tag   { tag_    }
+            ,   time  { Tools::Clock::now() }
             {}
         };
         
-        
-    private:
-        
-        // Private constructor so that nobody outside the class can construct an instance.
-        Logger() {}
-        
     public:
         
-        // Make this class uncopyable.
-        Logger(const Logger &) = delete;
-        Logger & operator=(const Logger &) = delete;
-        
-        
-        /*!@brief Whether code was compiled with prepreocessor macro `TOOLS_ENABLE_PROFILER`.*/
-        static constexpr bool ProfilingQ()
+        Logger()
         {
-#ifdef TOOLS_ENABLE_PROFILER
-            return true;
-#else
-            return false;
-#endif
+            Clear( HomeDirectory(), "Tools_Log", "Tools_Profile", false, true );
         }
         
-    private:
-        
-        std::filesystem::path log_file;
-        std::filesystem::path prof_file;
-        
-        std::mutex log_mutex;
-        std::ofstream log;
-        
-#ifdef TOOLS_ENABLE_PROFILER
-        std::mutex prof_mutex;
-        std::ofstream prof;
-        
-        Int id_counter = 1;
-        Int blocker_count = 0;
-        
-        std::vector<StackNode> stack { Size_T{1}, StackNode{ 0, Int(-1), "root" } };
-        
-#endif // TOOLS_ENABLE_PROFILER
-        
-    private:
-        
-        /*!@brief Return instance without initialization.*/
-        static Logger & Get()
-        {
-            static Logger profiler;
-            return profiler;
-        }
-        
-        /*!@brief Return instance; make sure that it is initialized.*/
-        static Logger & GetInstance()
-        {
-            Logger & profiler = Logger::Get();
-            
-            if( !profiler.log.good() )
-            {
-                profiler.Clear_Private(false,false);
-            }
-            
-            return profiler;
-        }
-        
-        void Clear_Private(
+        Logger(
             const std::filesystem::path & dir,
             const std::string & log_name,
             const std::string & prof_name,
@@ -127,7 +53,64 @@ namespace Tools
             const bool appendQ = false
         )
         {
-            const std::lock_guard<std::mutex> log_lock ( log_mutex  );
+            Clear( dir, log_name, prof_name, silentQ, appendQ );
+        }
+        
+        ~Logger()
+        {
+            if constexpr ( verboseQ )
+            {
+                print("~Logger()");
+                print(Info());
+            }
+        }
+        
+        // Make this class uncopyable and unmovable.
+        Logger(const Logger &) = delete;
+        Logger(Logger &&) = delete;
+        Logger & operator=(const Logger &) = delete;
+        Logger & operator=(Logger &&) = delete;
+        
+        
+        /*!@brief Whether profiling code is active.*/
+        static constexpr bool ProfilingQ()
+        {
+            return profileQ;
+        }
+        
+    private:
+        
+        std::string construction_date { DateString() };   // DEBUGGING
+        std::filesystem::path log_file;
+        std::filesystem::path prof_file;
+        
+        std::mutex    log_mutex;
+        std::ofstream log;
+        
+        std::mutex    prof_mutex;
+        std::ofstream prof;
+        
+        Int id_counter = 1;
+        Int blocker_count = 0;
+        
+        std::vector<StackNode> stack { Size_T{1}, StackNode{ 0, Int(-1), "root" } };
+        
+    public:
+        
+        /*!@brief Clear all logging and profiling records and creates new records in the directory `dir`. Logging information will be written to `log_name + ".txt"`; profiling information is sent to `prof_name + ".tsv"`.*/
+        void Clear(
+            const std::filesystem::path & dir,
+            const std::string & log_name,
+            const std::string & prof_name,
+            const bool silentQ = false,
+            const bool appendQ = false
+        )
+        {
+            if constexpr ( verboseQ ) { print(MethodName("Clear") + "(dir,log_name,prof_name,silentQ,appendQ)"); }
+            
+            const Lock_T log_lock { log_mutex };
+            
+            construction_date = DateString();
             
             log_file = dir / (log_name + ".txt");
             log.close();
@@ -139,301 +122,104 @@ namespace Tools
                 {
                     print( std::string("Log     will be written to ") + log_file.string() + "." );
                 }
+                log << std::setprecision(16);
             }
             else
             {
                 std::string msg = std::string("ERROR: Logger failed to open file ") + log_file.string() + ".";
                 {
-                    const std::lock_guard<std::mutex> cerr_lock( Tools::cerr_mutex );
+                    const Lock_T cerr_lock { Tools::cerr_mutex };
                     std::cerr << msg << std::endl;
                 }
                 throw std::runtime_error(msg);
             }
-            
-            log << std::setprecision(16);
-            
-#ifdef TOOLS_ENABLE_PROFILER
-            const std::lock_guard<std::mutex> prof_lock( prof_mutex );
-            
-            prof_file = dir / (prof_name + ".tsv");
-            
-            prof.close();
-            
-            if( appendQ )
+
+            if constexpr ( profileQ )
             {
-                prof.open( prof_file, std::ios_base::app );
+                const Lock_T prof_lock { prof_mutex };
+                prof_file = dir / (prof_name + ".tsv");
+                prof.close();
+                prof.open( prof_file, appendQ ? std::ios_base::app : std::ios_base::trunc );
+                
+                if( prof.good() )
+                {
+                    if( !silentQ )
+                    {
+                        print( std::string("Profile will be written to ") + prof_file.string() + ".");
+                    }
+                }
+                else
+                {
+                    std::string msg = std::string("ERROR: Logger failed to open file ") + prof_file.string() + "." ;
+                    {
+                        const Lock_T cerr_lock { Tools::cerr_mutex };
+                        std::cerr << msg << std::endl;
+                    }
+                    throw std::runtime_error(msg);
+                }
+                
+                blocker_count = 0;
+                id_counter = 0;
+                stack.clear();
+                stack.emplace_back(id_counter++,Int(-1),"root");
             }
             else
             {
-                prof.open( prof_file );
+                (void)prof_name;
             }
             
-            if( prof.good() )
-            {
-                if( !silentQ )
-                {
-                    print( std::string("Profile will be written to ") + prof_file.string() + ".");
-                }
-            }
-            else
-            {
-                std::string msg = std::string("ERROR: Logger failed to open file ") + prof_file.string() + "." ;
-                {
-                    const std::lock_guard<std::mutex> cerr_lock( Tools::cerr_mutex );
-                    std::cerr << msg << std::endl;
-                }
-                throw std::runtime_error(msg);
-            }
-            
-            blocker_count = 0;
-            id_counter = 0;
-            stack.clear();
-            stack.emplace_back(id_counter++,Int(-1),"root");
-#else
-            (void)prof_name;
-#endif // TOOLS_ENABLE_PROFILER
+            if constexpr ( verboseQ ) { print(Info()); }
         }
         
-        void Clear_Private(
-            const std::filesystem::path & dir,
-            const bool silentQ = false,
-            const bool appendQ = false
-        )
-        {
-            std::string log_name;
-#ifdef TOOLS_LOG_NAME
-            log_name = TOOLS_LOG_NAME;
-#else
-            log_name = "Tools_Log";
-#endif
-            std::string prof_name;
-#ifdef TOOLS_PROFILE_NAME
-            prof_name = TOOLS_PROFILE_NAME;
-#else
-            prof_name = "Tools_Profile";
-#endif
-            Clear_Private( dir, log_name, prof_name, silentQ, appendQ );
-        }
-        
-        void Clear_Private( const bool silentQ = false, const bool appendQ = false )
-        {
-            std::filesystem::path dir;
-#ifdef TOOLS_LOG_DIR
-            dir = std::filesystem::path(TOOLS_LOG_DIR);
-#else
-            dir = HomeDirectory();
-#endif
-            Clear_Private( dir, silentQ, appendQ );
-        }
-        
+        /*!@brief Print message `s` to log file.*/
         template<bool tabsQ = true>
-        inline void LogPrint_Private( std::string_view s )
+        void LogPrint( std::string_view s )
         {
-            const std::lock_guard<std::mutex> lock( log_mutex );
-            if constexpr ( tabsQ )
+            if constexpr ( verboseQ )
             {
-#if defined(TOOLS_ENABLE_PROFILER)
+                print(MethodName("LogPrint"));
+                print(Info());
+            }
+            
+            const Lock_T log_lock { log_mutex };
+            
+            if constexpr ( tabsQ && profileQ)
+            {
                 for( Size_T i = 0; i < stack.size()+1; ++i ) { log << "  "; }
-#endif // defined(TOOLS_ENABLE_PROFILER)
             }
             log << s << "\n" << std::endl;
         }
         
+        /*!@brief Print value of `value` associated to tag `tag` to log file.*/
         template<bool tabsQ = true, typename T>
-        inline void LogValPrint_Private( std::string_view tag, const T & value )
+        void LogValPrint( std::string_view tag, const T & value )
         {
-            const std::lock_guard<std::mutex> lock( log_mutex );
-            if constexpr ( tabsQ )
+            if constexpr ( verboseQ )
             {
-#if defined(TOOLS_ENABLE_PROFILER)
+                print(MethodName("LogValPrint"));
+                print(Info());
+            }
+            
+            const Lock_T log_lock { log_mutex };
+            
+            if constexpr ( tabsQ && profileQ )
+            {
                 for( Size_T i = 0; i < stack.size()+1; ++i ) { log <<  "  "; }
-#endif // defined(TOOLS_ENABLE_PROFILER)
             }
             log << tag << " = " << ToString(value) << "\n" << std::endl;
         }
         
-        inline void Tic_Private( const std::string & tag )
-        {
-#ifdef TOOLS_ENABLE_PROFILER
-            
-            if( blocker_count > Int(0) ) { return; }
-            
-            const std::lock_guard<std::mutex> prof_lock( prof_mutex );
-            
-            stack.emplace_back( id_counter++, stack.back().id, tag );
-            
-            double start_time = Tools::Duration( stack[0].time, stack.back().time );
-            
-            const std::lock_guard<std::mutex> log_lock( log_mutex );
-            
-            for( Size_T i = 0; i < stack.size(); ++i ) { log <<  "  "; }
-            
-            log << tag << "\t started at \t" << start_time << "\n" << std::endl;
-#else
-            (void)tag;
-#endif
-        }
         
-        inline void Toc_Private( const std::string & tag )
-        {
-#ifdef TOOLS_ENABLE_PROFILER
-            
-            if( blocker_count > 0 ) { return; }
-            
-            const std::lock_guard<std::mutex> prof_lock( prof_mutex );
-            
-            if( !stack.empty() )
-            {
-                StackNode & node = stack.back();
-                
-                if( tag == node.tag )
-                {
-                    Time & init_time  = stack[0].time;
-                    double start_time = Tools::Duration( init_time, node.time );
-                    double stop_time  = Tools::Duration( init_time, Clock::now() );
-                    
-                    prof
-                    << node.id <<  "\t"
-                    << node.tag << "\t"
-                    << node.parent << "\t"
-                    << start_time << "\t"
-                    << stop_time << "\t"
-                    << stop_time-start_time << "\t"
-                    << stack.size()-1
-                    << std::endl;
-                    
-                    const std::lock_guard<std::mutex> log_lock( log_mutex );
-                    
-                    for( Size_T i = 0; i < stack.size(); ++i ) { log << "  "; }
-                    
-                    log << node.tag << "\t ended   at \t" << stop_time << "\n" << std::endl;
-                    
-                    stack.pop_back();
-                }
-                else
-                {
-                    ErrorPrint( std::string("Unmatched Logger::Toc detected. Tag requested = ") + tag + ". Tag found = " + node.tag + ".");
-                }
-            }
-            else
-            {
-                ErrorPrint( std::string("Unmatched Logger::Toc detected. Stack empty. Label = ") + tag + ".");
-            }
-#else
-            (void)tag;
-#endif
-        }
-        
-    private:
-        
-        static void Block()
-        {
-#ifdef TOOLS_ENABLE_PROFILER
-            ++Get().blocker_count;
-#endif
-        }
-        
-        static void ReleaseBlock()
-        {
-#ifdef TOOLS_ENABLE_PROFILER
-            --Get().blocker_count;
-#endif
-        }
-        
-        static bool BlockedQ()
-        {
-#ifdef TOOLS_ENABLE_PROFILER
-            return (Get().blocker_count > Int(0));
-#else
-            return false;
-#endif
-        }
-        
-    public:
-        
-        static Int BlockedCount()
-        {
-#ifdef TOOLS_ENABLE_PROFILER
-            return Get().blocker_count;
-#else
-            return 0;
-#endif
-        }
-        
-    public:
-        
-        /*!@brief Clear all logging and profiling records and creates new records in the directory `dir`. Logging information will be written to `log_name + ".txt"`; profiling information is sent to `prof_name + ".tsv".*/
-        static void Clear(
-            const std::filesystem::path & dir,
-            const std::string & log_name,
-            const std::string & prof_name,
-            const bool silentQ = false,
-            const bool appendQ = false
-        )
-        {
-            Logger::Get().Clear_Private(dir,log_name,prof_name,silentQ,appendQ);
-        }
-        
-        /*!@brief Clear all logging and profiling records and create new records in the directory `dir`. If the preprocessor macro `TOOLS_LOG_NAME` is set, then the logs will be recorded in the file `TOOLS_LOG_NAME + ".txt"`; otherwise in `dir / "Tools_Log.txt"`. Likewise, if `TOOLS_PROFILE_NAME` is set, then the profiling information will be written to `TOOLS_PROFILE_NAME + ".tsv"`; otherwise `"Tools_Profile.tsv"` will be used.*/
-        static void Clear(
-            const std::filesystem::path & dir,
-            const bool silentQ = false,
-            const bool appendQ = false
-        )
-        {
-            Logger::Get().Clear_Private(dir,silentQ,appendQ);
-        }
-        
-        /*!@brief Clear all logging and profiling records and creates new records.
-         If `TOOLS_LOG_DIR` is set, then logging and profiling information will be recorded in the directory `TOOLS_LOG_DIR` in the files  `"Tools_Log.txt"` and  `"Tools_Profile.tsv"`, respectively.*/
-        static inline void Clear(
-            const bool silentQ = false,
-            const bool appendQ = false
-        )
-        {
-            Logger::Get().Clear_Private(silentQ,appendQ);
-        }
-        
-        
-        /*!@brief Record the start time of an event with tag `tag`.*/
-        static inline void Tic( const std::string & tag )
-        {
-#ifdef TOOLS_ENABLE_PROFILER
-            Logger::GetInstance().Tic_Private(tag);
-#else
-            (void)tag;
-#endif
-        }
-        
-        /*!@brief Record the end time of an event with tag `tag`.*/
-        static inline void Toc( const std::string & tag )
-        {
-#ifdef TOOLS_ENABLE_PROFILER
-            Logger::GetInstance().Toc_Private(tag);
-#else
-            (void)tag;
-#endif
-        }
-        
-        
-        /*!@brief Print message `s` to log file specified in `Logger::File()`.*/
+        /*!@brief Print message `s` to `std::cerr` and to log file.*/
         template<bool tabsQ = true>
-        static inline void LogPrint( std::string_view s )
+        void ErrorPrint( std::string_view s )
         {
-            Logger::GetInstance().template LogPrint_Private<tabsQ>(s);
-        }
-        
-        /*!@brief Print value of `value` associated to tag `tag` to file specified by `Logger::File()`.*/
-        template<bool tabsQ = true, typename T>
-        static inline void LogValPrint( std::string_view tag, const T & value )
-        {
-            Logger::GetInstance().template LogValPrint_Private<tabsQ>(tag,value);
-        }
-        
-        /*!@brief Print message `s` to `std::cerr` and to log file specified in `Logger::File()`.*/
-        template<bool tabsQ = true>
-        static inline void ErrorPrint( std::string_view s )
-        {
+            if constexpr ( verboseQ )
+            {
+                print(MethodName("ErrorPrint"));
+                print(Info());
+            }
+            
             std::string msg ("ERROR: ");
             msg += s;
             
@@ -441,249 +227,353 @@ namespace Tools
             print( msg );
     #endif
             {
-                const std::lock_guard<std::mutex> cerr_lock( Tools::cerr_mutex );
+                const Lock_T cerr_lock { Tools::cerr_mutex };
                 std::cerr << msg << std::endl;
             }
-            Logger:: template LogPrint<false>( msg );
+            this->template LogPrint<false>( msg );
         }
         
-        /*!@brief Return the path of the currently used log file.*/
-        static cref<std::filesystem::path> File()
+        
+        /*!@brief Print message `s` to log file.*/
+        template<bool tabsQ = true>
+        void ProfilePrint( std::string_view s )
         {
-            return Logger::GetInstance().log_file;
+            if constexpr ( profileQ )
+            {
+                this->LogPrint<tabsQ>(s);
+            }
+            else
+            {
+                (void) s;
+            }
+        }
+        
+        /*!@brief Print message `s` to log file.*/
+        template<bool tabsQ = true, typename T>
+        void ProfileValPrint( std::string_view tag, const T & value )
+        {
+            if constexpr ( profileQ )
+            {
+                this->LogValPrint<tabsQ>(tag,value);
+            }
+            else
+            {
+                (void)tag;
+                (void)value;
+            }
+        }
+        
+        /*!@brief Record the start time of an event with tag `tag`.*/
+        void Tic( const std::string & tag )
+        {
+            if constexpr ( profileQ )
+            {
+                if constexpr ( verboseQ )
+                {
+                    print(MethodName("Tic") + "(" + tag + ")");
+                    print(Info());
+                }
+                
+                if( BlockedQ() ) { return; }
+                
+                const Lock_T prof_lock { prof_mutex };
+                
+                stack.emplace_back( id_counter++, stack.back().id, tag );
+                
+                double start_time = Tools::Duration( stack[0].time, stack.back().time );
+                
+                const Lock_T log_lock { log_mutex };
+                
+                for( Size_T i = 0; i < stack.size(); ++i ) { log <<  "  "; }
+                
+                log << tag << "\t started at \t" << start_time << "\n" << std::endl;
+            }
+            else
+            {
+                (void)tag;
+            }
+        }
+        
+        /*!@brief Record the end time of an event with tag `tag`.*/
+        void Toc( const std::string & tag )
+        {
+            if constexpr ( profileQ )
+            {
+                if constexpr ( verboseQ )
+                {
+                    print(MethodName("Toc") + "(" + tag + ")");
+                    print(Info());
+                }
+                
+                if( BlockedQ() ) { return; }
+                
+                //            print("X");
+                const Lock_T prof_lock { prof_mutex };
+                //            print("Y");
+                
+                if( !stack.empty() )
+                {
+                    StackNode & node = stack.back();
+                    
+                    if( tag == node.tag )
+                    {
+                        Time & init_time  = stack[0].time;
+                        double start_time = Tools::Duration( init_time, node.time );
+                        double stop_time  = Tools::Duration( init_time, Clock::now() );
+                        
+                        prof
+                        << node.id <<  "\t"
+                        << node.tag << "\t"
+                        << node.parent << "\t"
+                        << start_time << "\t"
+                        << stop_time << "\t"
+                        << stop_time-start_time << "\t"
+                        << stack.size()-1
+                        << std::endl;
+                        
+                        const Lock_T log_lock { log_mutex };
+                        
+                        for( Size_T i = 0; i < stack.size(); ++i ) { log << "  "; }
+                        
+                        log << node.tag << "\t ended   at \t" << stop_time << "\n" << std::endl;
+                        
+                        stack.pop_back();
+                    }
+                    else
+                    {
+                        ErrorPrint( std::string("Unmatched Toc detected. Tag requested = ") + tag + ". Tag found = " + node.tag + ".");
+                    }
+                }
+                else
+                {
+                    ErrorPrint( std::string("Unmatched Toc detected. Stack empty. Label = ") + tag + ".");
+                }
+            }
+            else
+            {
+                (void)tag;
+            }
+        }
+        
+        void Block()
+        {
+            if constexpr ( profileQ )
+            {
+                if constexpr ( verboseQ )
+                {
+                    print(MethodName("Block"));
+                    print(Info());
+                }
+                
+                ++blocker_count;
+            }
+        }
+        
+        void ReleaseBlock()
+        {
+            if constexpr ( profileQ )
+            {
+                if constexpr ( verboseQ )
+                {
+                    print(MethodName("ReleaseBlock"));
+                    print(Info());
+                }
+                
+                --blocker_count;
+            }
+        }
+        
+        bool BlockedQ()
+        {
+            if constexpr ( profileQ )
+            {
+                if constexpr ( verboseQ )
+                {
+                    print(MethodName("BlockedQ"));
+                    print(Info());
+                }
+                
+                return (blocker_count > Int(0));
+            }
+            else
+            {
+                return false;
+            }
+        }
+        
+        Int BlockedCount()
+        {
+            if constexpr ( profileQ )
+            {
+                if constexpr ( verboseQ )
+                {
+                    print(MethodName("BlockedCount"));
+                    print(Info());
+                }
+                
+                return blocker_count;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+        
+    public:
+
+            const std::filesystem::path & LogFile()
+            {
+                return log_file;
+            }
+            
+            const std::filesystem::path & ProfileFile()
+            {
+                return prof_file;
+            }
+            
+            std::string Info() const
+            {
+                std::string s;
+                
+                s += "Info for instance of ";
+                s += ClassName();
+                s += "\n";
+                
+                s += "construction_date = " ;
+                s += construction_date;
+                s += "\n";
+                
+                s += "log_file = " ;
+                s += log_file.string();
+                s += "\n";
+                
+                s += "prof_file = " ;
+                s += prof_file.string();
+                s += "\n";
+                
+                s += "blocker_count = " ;
+                s += Tools::ToString(blocker_count);
+                s += "\n";
+                
+                return s;
+            }
+            
+            const StackNode & StackTop() const
+            {
+                return stack.back();
+            }
+        
+        
+    public:
+        
+        static constexpr std::string MethodName( const std::string & tag )
+        {
+            return ClassName() + "::" + tag;
+        }
+        
+        static constexpr std::string ClassName()
+        {
+            return std::string("Logger") + "<" + ToString(profileQ) + ">";
         }
         
     }; // class Logger
     
+
     
-    /*!@brief A slim wrapper class around `Logger` to handle profiling. */
-    class Profiler
+    /*!@brief Declare a local object that prevents profiling calls to a `Logger` during its lifetime. Use this in multi-threaded code passages to prevent misleading info in the profiles (or even file corruption). Constructor and destructor of this class do nothing if  if not set, so the compiler should be able optimize them away.*/
+    template<bool profileQ>
+    class LoggerBlocker final
     {
+    public:
+        
+        using Logger_T = Logger<profileQ>;
+        
+    private:
+        
+        Logger_T & logger;
         
     public:
         
-        /*!@brief Declare a local object that prevents profiling calls during its lifetime. Use this in multi-threaded code passages to prevent misleading info in the profiles (or even file corruption). Constructor and destructor of this class do absolutely nothing if `TOOLS_ENABLE_PROFILER` if not set, so the compiler should be able optimize them away.*/
-        class Blocker
+        LoggerBlocker( Logger_T & logger_ )
+        :   logger { logger_ }
         {
-        public:
-            
-            Blocker()
+            if constexpr ( Logger_T::profileQ )
             {
-#ifdef TOOLS_ENABLE_PROFILER
-                Logger::Block();
-#endif
+                logger.Block();
             }
-            
-            ~Blocker()
-            {
-#ifdef TOOLS_ENABLE_PROFILER
-                Logger::ReleaseBlock();
-#endif
-            }
-            
-        }; // Blocker
-        
-        /*!@brief Use this to declare a RAII-style timer that writes records time at construction and destruction and writes according records to `Logger::ProfilerFile()`. This class is declared only if `TOOLS_ENABLE_PROFILER` is set. Use the macro `TOOLS_PTIMER(name,tag)` instead of `Timer name(tag)` to get clean no-ops if `TOOLS_ENABLE_PROFILER` is not set. (Not creating this class if `TOOLS_ENABLE_PROFILER` is not set is deliberate.)*/
-        class Timer final
-        {
-        private:
-            
-            const std::string tag;
-            bool activeQ = false;
-            
-        public:
-            
-            const std::string & Tag() const
-            {
-                return tag;
-            }
-            
-            bool ActiveQ() const
-            {
-                return activeQ;
-            }
-            
-#ifdef TOOLS_ENABLE_PROFILER
-            Timer( std::string_view tag_ )
-            :   tag { tag_ }
-            ,   activeQ( !Logger::BlockedQ() )
-            {
-                if( activeQ ) { Logger::Tic(tag); };
-            }
-            
-            ~Timer()
-            {
-                if( activeQ ) { Logger::Toc(tag); };
-            }
-#else
-            Timer( std::string_view tag_ )
-            {
-                (void)tag_;
-            }
-            
-            ~Timer() = default;
-#endif
-        }; // Timer
-        
-        
-        /*!@brief Return the path of the currently used profiling file.*/
-        static const std::filesystem::path & File()
-        {
-            return Logger::GetInstance().prof_file;
         }
         
-        // Backward compatibility; redirected to Logger::Clear.
-        static void Clear(
-            const std::filesystem::path & dir,
-            const bool silentQ = false,
-            const bool appendQ = false
-        )
+        ~LoggerBlocker()
         {
-            Logger::Clear(dir, silentQ, appendQ );
+            if constexpr ( Logger_T::profileQ )
+            {
+                logger.ReleaseBlock();
+            }
         }
         
-        // Backward compatibility; redirected to Logger::Clear.
-        static void Clear(
-            const bool silentQ = false,
-            const bool appendQ = false
-        )
+        // Make this class uncopyable and unmovable.
+        LoggerBlocker(const LoggerBlocker &) = delete;
+        LoggerBlocker(LoggerBlocker &&) = delete;
+        LoggerBlocker & operator=(const LoggerBlocker &) = delete;
+        LoggerBlocker & operator=(LoggerBlocker &&) = delete;
+        
+    }; // LoggerBlocker
+    
+    
+    /*!@brief Use this to declare a RAII-style timer that records time at construction and destruction and writes according records to the supplied `Logger` instance.*/
+    template<bool profileQ>
+    class LoggerTimer final
+    {
+    public:
+        
+        using Logger_T = Logger<profileQ>;
+        
+    private:
+        
+        Logger_T &  logger;
+        std::string tag;
+        bool        activeQ = false;
+        
+    public:
+
+        LoggerTimer( Logger_T & logger_, std::string_view tag_ )
+        :   logger { logger_ }
         {
-            Logger::Clear(silentQ, appendQ );
+            if constexpr ( Logger_T::profileQ )
+            {
+                tag = tag_;
+                activeQ = !logger.BlockedQ();
+                if( activeQ ) { logger.Tic(tag); };
+            }
+            else
+            {
+                (void)tag;
+            }
         }
         
-    }; // Profiler
-
-    
-    /*!@brief Print message `s` to log file specified in `Logger::File()`.*/
-    template<bool tabsQ = true>
-    inline void logprint( std::string_view s )
-    {
-        Logger::template LogPrint<tabsQ>(s);
-    }
-    
-    /*!@brief Print value of `value` associated to tag `tag` to file specified by `Logger::File()`.*/
-    template<bool tabsQ = true, typename T>
-    inline void logvalprint( std::string_view tag, const T & value )
-    {
-        Logger::template LogValPrint<tabsQ>(tag,value);
-    }
-    
-    
-#define TOOLS_LOGDUMP(x) Tools::logvalprint( std::string_view(#x), x );
-    
-#define TOOLS_DDUMP(x) Tools::logvalprint( std::string_view(#x), x ); Tools::valprint( std::string_view(#x), x );
-    
-    /*!@brief Print WARNING message with text `s`. This is sent to `std::cerr` and to the log file specified in `Logger::File()`.*/
-    inline void wprint( std::string_view s )
-    {
-        std::string msg ("WARNING: ");
-        msg += s;
-#if defined(LTEMPLATE_H) || defined(TENSORS_MMA_HPP)
-        print( msg );
-#endif
+        ~LoggerTimer()
         {
-            const std::lock_guard<std::mutex> cerr_lock( Tools::cerr_mutex );
-            std::cerr << msg << std::endl;
+            if constexpr ( Logger_T::profileQ )
+            {
+                if( activeQ ) { logger.Toc(tag); };
+            }
         }
-        logprint<false>(msg);
-    }
-    
-    /*!@brief Print a NOTE message with text `s`. This is sent to the log file specified in `Logger::File()`.*/
-    inline void nprint( std::string_view s )
-    {
-        std::string msg ("NOTE: ");
-        msg += s;
-#if defined(LTEMPLATE_H) || defined(TENSORS_MMA_HPP)
-        print( msg );
-#endif
-        logprint<false>(msg);
-    }
-    
-    /*!@brief Print a ERROR message with text `s`. This is sent to `std::cout` and `std::cerr` and to the log file specified in `Logger::File()`.*/
-    inline void eprint( std::string_view s )
-    {
-        Logger::ErrorPrint(s);
-    }
-    
-    /*!@brief Created an error with `s`. A message is sent to `std::cerr` and to the log file specified in `Logger::File()`. Afterwards, a `std::runtime_error` is throw with this message attached.*/
-    inline void error( std::string_view s )
-    {
-        std::string msg ("ERROR: ");
-        msg += s;
         
-#if defined(LTEMPLATE_H) || defined(TENSORS_MMA_HPP)
-        print( msg );
-#endif
+        // Make this class uncopyable and unmovable.
+        LoggerTimer(const LoggerTimer &) = delete;
+        LoggerTimer(LoggerTimer &&) = delete;
+        LoggerTimer & operator=(const LoggerTimer &) = delete;
+        LoggerTimer & operator=(LoggerTimer &&) = delete;
+    
+        const std::string & Tag() const
         {
-            const std::lock_guard<std::mutex> cerr_lock( Tools::cerr_mutex );
-            std::cerr << msg << std::endl;
+            return tag;
         }
-        logprint<false>( msg );
-        throw std::runtime_error(msg);
-    }
+        
+        bool ActiveQ() const
+        {
+            return activeQ;
+        }
+    }; // LoggerTimer
     
-   
-    /*!@brief Like `logprint`, but only active if macro `TOOLS_ENABLE_PROFILER` is defined.*/
-    
-    inline void pprint( std::string_view s )
-    {
-#ifdef TOOLS_ENABLE_PROFILER
-        logprint(s);
-#else
-        (void)s;
-#endif
-    }
-
-/*!@brief Like `logvalprint`, but only active if macro `TOOLS_ENABLE_PROFILER` is defined.*/
-    
-    template<typename T>
-    inline void pvalprint( std::string_view s, const T & value)
-    {
-#ifdef TOOLS_ENABLE_PROFILER
-        logvalprint(s,value);
-#else
-        (void)s;
-        (void)value;
-#endif
-    }
-
-    
-#define TOOLS_PDUMP(x) pvalprint( std::string_view(#x), x );
-
-    
-#ifdef TOOLS_ENABLE_PROFILER
-    #define TOOLS_PTIC(s) Tools::Logger::Tic(s)
-    #define TOOLS_PTOC(s) Tools::Logger::Toc(s)
-    #define TOOLS_PTIMER(name, s) Tools::Profiler::Timer name (s);
-#else
-    #define TOOLS_PTIC(s)
-    #define TOOLS_PTOC(s)
-#define TOOLS_PTIMER(name, s)
-#endif
-    
-    
-#ifdef TOOLS_DEBUG
-    #define TOOLS_DEBUG_TIC(tag) TOOLS_PTIC(tag);
-#else
-    #define TOOLS_DEBUG_TIC(tag)
-#endif
-    
-#ifdef TOOLS_DEBUG
-    #define TOOLS_DEBUG_TOC(tag) TOOLS_PTOC(tag);
-#else
-    #define TOOLS_DEBUG_TOC(tag)
-#endif
-    
-#ifdef TOOLS_DEBUG
-    #define TOOLS_DEBUG_PRINT(s) logprint(s);
-#else
-    #define TOOLS_DEBUG_PRINT(s)
-#endif
-    
-#ifdef TOOLS_DEBUG
-    #define TOOLS_DEBUG_ASSERT(condition, s) if( ! condition ) { eprint(s); }
-#else
-    #define TOOLS_DEBUG_ASSERT(condition, s)
-#endif
-
 } // namespace Tools

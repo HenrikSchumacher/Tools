@@ -55,6 +55,7 @@ namespace Tools
 
     protected:
             
+        // Use [[no_unique_address]] to delete filler bytes.
         [[no_unique_address]] mutable CacheContainer_T   cache;
         [[no_unique_address]] mutable P_CacheContainer_T p_cache;
         [[no_unique_address]] mutable CacheMutex_T       cache_mutex;

@@ -43,7 +43,7 @@ namespace Tools
         else
         {
             // I want to avoid the profiler messing up, so I silence it for the duration of the parallel region.
-            Profiler::Blocker blocker;
+            LoggerBlocker blocker { Tools::Profiler::GetLogger() };
             
             std::vector<std::future<T>> futures ( ToSize_T(thread_count) );
             

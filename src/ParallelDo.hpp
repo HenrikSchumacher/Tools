@@ -20,7 +20,7 @@ namespace Tools
         else
         {
             // We want to avoid the profiler messing up, so I silence it for the duration of the parallel region.
-            Profiler::Blocker blocker;
+            LoggerBlocker blocker { Tools::Profiler::GetLogger() };
             
             std::vector<std::future<void>> futures ( ToSize_T(thread_count) );
             
@@ -103,7 +103,7 @@ namespace Tools
         if( end <= begin ) { return; }
         
         // We want to avoid the profiler messing up, so we silence it for the duration of the parallel region.
-        Profiler::Blocker blocker;
+        LoggerBlocker blocker { Tools::Profiler::GetLogger() };
         
         // Global index that is supposed to run from begin to end; shared by all threads.
         Int iter = begin;
