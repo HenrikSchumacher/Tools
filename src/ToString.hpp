@@ -106,47 +106,18 @@ namespace Tools
         s += " }";
         return s;
     }
-
     
-//    template<typename T, NonIntQ F>
-//    [[nodiscard]] std::string ToString(
-//        cref<std::vector<T>> v,
-//        F && fun,
-//        std::string line_prefix
-//    )
-//    {
-//        const Size_T dim = v.size();
-//        return ArrayToString( &v[0], &dim, Size_T(1), fun, line_prefix );
-//    }
-//    
-//    template<typename T>
-//    [[nodiscard]] std::string ToString(
-//        const std::vector<T> & v,
-//        std::string line_prefix = ""
-//    )
-//    {
-//        return ToString( v, []( cref<T> a ){ return ToString(a); }, line_prefix );
-//    }
+    // Some forward declarations. We can implement `ToString` only after we have `OutString`. And for `OutString` it would be nice to have things like `print` etc. for debugging and error handling.
+    class OutString;
     
-//    template<typename T, Size_T N, NonIntQ F>
-//    [[nodiscard]] std::string ToString(
-//        const std::array<T,N> & v,
-//        F && fun,
-//        std::string line_prefix = ""
-//    )
-//    {
-//        const Size_T dim = N;
-//        return ArrayToString( &v[0], &dim, Size_T(1), fun, line_prefix );
-//    }
-//    
-//    template<typename T, Size_T N>
-//    [[nodiscard]] std::string ToString(
-//        const std::array<T,N> & v,
-//        std::string line_prefix = ""
-//    )
-//    {
-//        return ToString( v, []( cref<T> a ){ return ToString(a); }, line_prefix );
-//    }
+    template<typename T>
+    [[nodiscard]] OutString ToString( cref<std::vector<T>> v );
+    
+    template<typename T, Size_T N>
+    [[nodiscard]] OutString ToString( const std::array<T,N> & v );
+    
+    
+    
     
     template<typename T>
     [[nodiscard]] std::string StringWithLeadingZeroes(
@@ -162,5 +133,6 @@ namespace Tools
     {
         return b ? "True" : "False";
     }
+    
     
 } // namespace Tools
