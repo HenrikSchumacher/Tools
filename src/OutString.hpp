@@ -6,29 +6,9 @@
 
 namespace Tools
 {
-    
-//    template<typename F, typename T>
-//    concept CharConv = std::invocable<F,T> && SameQ<std::invoke_result_t<F,T>,ToCharResult>;
-    
-//    template<typename F, typename T>
-//    concept CharConv = std::invocable<F,T> && SameQ<std::invoke_result_t<F,T>,ToCharResult>;
-    
-//    template<typename F, typename T>
-//    concept CharConv = SameQ<std::invoke_result_t<F, char *, char *, T&>,ToCharResult>;
-  
-//    template<typename C, typename T>
-//    concept CharConv = std::invocable<C,char*, const char*, const T&>;
-//    template<typename C, typename T>
-//    concept CharConv = NonPointerQ<C> && NonIntQ<C>;
-    
+    // Not a really good discriminator, but good enough to distinguish a char converter class from an integral type.
     template<typename C, typename T>
     concept CharConv = NonIntQ<C>;
-    
-//    template<typename F, typename ...Int>
-//    concept ArrayFun = std::invocable<F,Int...>;
-    
-//    template<typename A, typename ...Int>
-//    concept ArrayFun = NonPointerQ<A> && NonIntQ<A>;
     
     template<typename A, typename ...Int>
     concept ArrayFun = NonPointerQ<A>;
@@ -153,9 +133,14 @@ namespace Tools
     }
     
 
-    
+    /*!@brief A class to resemble `std::ostringstream`, except being faster for big arrays at the cost of somewhat limited capabilities.
+     *
+     * This class uses overloads of `ToChars` or interface-compatible type-to-chars converters to do its job.
+     * */
     class OutString
     {
+        // TODO: Maybe OutString needs better error handling. In particular, we need an internal `failed` flag and a function `bool FailedQ()` that returns it. All operations have to check the flag `failed` first. This does not have super high priority for writing operations since `ToChars` never writes out of bounds. But the allocation routines may fail (and throw). Maybe it would be nice if we could move to non-throw behavior.
+        
     public:
         
         using Int = Size_T;
@@ -163,27 +148,13 @@ namespace Tools
         template<typename A>
         using Result_T = typename std::remove_reference<typename function_traits<A>::return_type>::type;
     
-        
-//        template<typename A, typename ...Int>
-////        requires ArrayFun<A,Int...>
-//        using Result_T = typename std::remove_reference<typename function_traits<A>::return_type>::type;
-//        
-        
-//        template<typename A, typename ...Int>
-//        requires ArrayFun<A,Int...>
-//        using Result_T = typename std::remove_reference<typename std::invoke_result_t<A,Int...>>;
-
-        
-        
-        
     public:
 
         OutString()
         :   OutString { Int(16) }
         {}
-        
     
-        OutString( Int n )
+        explicit OutString( Int n )
         {
             Allocate(n);
         }
@@ -265,7 +236,6 @@ namespace Tools
         Int capacity  = 0;
         
     private:
-       
         
         void Deallocate()
         {
@@ -286,8 +256,11 @@ namespace Tools
 
             if( buffer == nullptr )
             {
-                std::cerr << "OutString(" << size_ << ") failed to allocate memory" << std::endl;
-                std::exit(1);
+                std::string msg;
+                msg += "OutString(";
+                msg += ToString(size_);
+                msg += ") failed to allocate memory.";
+                throw std::runtime_error(msg);
             }
             
             capacity = size_;
@@ -413,9 +386,12 @@ namespace Tools
         
     private:
         
-        
         OutString & Resize( const Int & n )
         {
+            // We really want to enforce here that the size after calling this function equals `n`.
+            
+            if( std::cmp_equal(capacity,n) ) { return *this; }
+            
             OutString other ( buffer, size, std::max(capacity,n) );
 
             swap(*this,other);
@@ -424,7 +400,6 @@ namespace Tools
         
     public:
         
-
         OutString & RequireCapacity( Int n )
         {
             if( n > capacity )
@@ -514,10 +489,10 @@ namespace Tools
             return s.Size();
         }
         
-//        std::string_view View() const
-//        {
-//            return std::string_view(first,ptr);
-//        }
+        std::string_view View() const
+        {
+            return std::string_view(begin(),ptr());
+        }
 
         operator std::string_view () const
         {
@@ -534,11 +509,6 @@ namespace Tools
             return (out << std::string_view(in));
         }
         
-//        friend std::ofstream & operator<<( std::ofstream & out, OutString && in )
-//        {
-//            return (out << in.View());
-//        }
-        
     public:
         
         static constexpr std::string MethodName( const std::string & tag )
@@ -553,7 +523,6 @@ namespace Tools
         
     }; // OutString
 
-    
     
     
     template<typename T>

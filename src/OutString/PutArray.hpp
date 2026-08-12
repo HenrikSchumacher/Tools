@@ -1,23 +1,26 @@
 public:
 
-
-template<bool allocatedQ = false, NonPointerQ A, NonPointerQ C, typename ...Args>
+/*!@brief Put an array on the stream.
+ *
+ * @param a A read access function. The entry of the array at position `{i,j,...}` must be returned by `a(i,j,k,...)`.
+ *
+ * @param to_chars A converter that convertes array entries to chars; must have the same interface as the classes `ToChars`.
+ *
+ * @param check_sizeQ If `true`, then an upper bound for the number of characters needed for the array is computed and `RequireFreeSpace` is called to guarantee that the internal character buffer is large enough. CAUTION: If set to `false`, the routine will blindly write without any bound checks. _Use this only if you are sure that you reserved sufficient capacity in `OutString`, e.g., by calling `RequireFreeSpace` manually._
+ *
+ * @param args A sequence of groups of 4 arguments, each group being of the form `n`, `prefix`, `infix`, `suffix`. Here `n` must be of integral type and `prefix`, `infix`, `suffix` must satisfy the `Stringy` concept. (Typically, one wants to put string literals here.)
+ */
+template<NonPointerQ A, NonPointerQ C, typename ...Args>
 OutString & PutArray( A && a, C && to_chars, bool check_sizeQ, Args&&... args)
 {
     static_assert(C::implementedQ,"");
     
-    if constexpr ( allocatedQ )
+    if ( check_sizeQ )
     {
-    }
-    else
-    {
-        if ( check_sizeQ )
-        {
-            const Size_T full_size = ArrayCharCount(
-                std::forward<C>(to_chars), std::forward<Args>(args)...
-            );
-            RequireFreeSpace(full_size);
-        }
+        const Size_T full_size = ArrayCharCount(
+            std::forward<C>(to_chars), std::forward<Args>(args)...
+        );
+        RequireFreeSpace(full_size);
     }
     
     putArray(
@@ -120,26 +123,14 @@ constexpr void putArray(
     PutChars<false>(suffix);
 }
 
-//template<
-//    typename A, typename C
-//>
-//void putArray(
-//    A && a, C && to_chars
-//)
-//{
-//    Put<false>(a(),std::forward<C>(to_chars));
-//}
-
-
-
 public:
 
 
-//template<typename T, IntQ Int, typename ...Args>
-//static constexpr Size_T ArrayCharCount( Int n, Args&&... args )
-//{
-//    return arrayCharCount( ToChars<T>(), n, std::forward<Args>(args)... );
-//}
+template<typename T, IntQ Int, typename ...Args>
+static constexpr Size_T ArrayCharCount( Int n, Args&&... args )
+{
+    return arrayCharCount( ToChars<T>(), n, std::forward<Args>(args)... );
+}
 
 template<NonIntQ C, typename ...Args>
 static constexpr Size_T ArrayCharCount( C && to_chars, Args&&... args )

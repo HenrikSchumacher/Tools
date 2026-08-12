@@ -401,7 +401,6 @@ namespace Tools
 #include "src/combine_strings.hpp"
 
 #include "src/FunctionTraits.hpp"
-#include "src/OutString.hpp"
 
 #include "src/Print.hpp"
 #include "src/Time.hpp"
@@ -417,7 +416,7 @@ namespace Tools
 
 #include "src/BitFiddling.hpp"
 
-
+#include "src/OutString.hpp"
 #include "src/InString.hpp"
 
 #define _USE_MATH_DEFINES

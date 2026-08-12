@@ -32,45 +32,6 @@ namespace Tools
         }
     };
     
-    
-    template<> struct ToChars<bool>
-    {
-        static constexpr bool implementedQ = true;
-        
-        static constexpr Size_T char_count = 1;
-
-        ToCharResult operator()( char * begin, char * end, bool x ) const
-        {
-            if( begin < end )
-            {
-                *begin = x ? '1' : '0';
-                return ToCharResult{ .ptr = begin + 1, .failedQ = false };
-            }
-            else
-            {
-                return ToCharResult{ .ptr = begin, .failedQ = true };
-            }
-        }
-    };
-    
-    
-    template<EnumClassQ T>
-    struct ToChars<T>
-    {
-        using U = std::underlying_type_t<T>;
-        
-        static constexpr bool implementedQ = true;
-        
-        // digits10 is the number of actual decimal digits _rounded down_.
-        static constexpr Size_T char_count = std::numeric_limits<U>::digits10 + Size_T(1) + std::is_signed_v<U>;
-
-        ToCharResult operator()( char * begin, char * end, const T & x ) const
-        {
-            auto r = std::to_chars( begin, end, ToUnderlying(x), 10 );
-            return ToCharResult{ .ptr = r.ptr, .failedQ = (r.ec == std::errc::value_too_large)};
-        }
-    };
-    
     template<std::floating_point T>
     struct ToChars<T>
     {
@@ -82,6 +43,24 @@ namespace Tools
         {
             auto r = std::to_chars( begin, end, x, std::chars_format::general, std::numeric_limits<T>::max_digits10 );
             return ToCharResult{ .ptr = r.ptr, .failedQ = (r.ec == std::errc::value_too_large)};
+        }
+    };
+    
+    template<> struct ToChars<bool>
+    {
+        static constexpr bool implementedQ = true;
+        
+        static constexpr Size_T char_count = 1;
+
+        ToCharResult operator()( char * begin, char * end, bool x ) const
+        {
+            if( begin >= end )
+            {
+                return ToCharResult{ .ptr = begin, .failedQ = true };
+            }
+            
+            *begin = x ? '1' : '0';
+            return ToCharResult{ .ptr = begin + 1, .failedQ = false };
         }
     };
     
@@ -98,17 +77,33 @@ namespace Tools
             {
                 return {.ptr = begin, .failedQ = true};
             }
-            else
-            {
-                auto r = std::to_chars( begin, end, Re(x), std::chars_format::general, std::numeric_limits<T>::max_digits10 );
-                char * ptr = r.ptr;
-                *ptr = '+';
-                ++ptr;
-                r = std::to_chars( begin, end, Im(x), std::chars_format::general, std::numeric_limits<T>::max_digits10 );
-                *ptr = 'I';
-                ++ptr;
-                return {.ptr = begin, .failedQ = false};
-            }
+
+            auto r = std::to_chars( begin, end, Re(x), std::chars_format::general, std::numeric_limits<T>::max_digits10 );
+            char * ptr = r.ptr;
+            *ptr = '+';
+            ++ptr;
+            r = std::to_chars( begin, end, Im(x), std::chars_format::general, std::numeric_limits<T>::max_digits10 );
+            *ptr = 'I';
+            ++ptr;
+            return {.ptr = begin, .failedQ = false};
+        }
+    };
+    
+    template<EnumClassQ X>
+    struct ToChars<X>
+    {
+        using U = std::underlying_type_t<X>;
+        static_assert(IntQ<U>, "");
+        
+        static constexpr bool implementedQ = true;
+        
+        // digits10 is the number of actual decimal digits _rounded down_.
+        static constexpr Size_T char_count = std::numeric_limits<U>::digits10 + Size_T(1) + std::is_signed_v<U>;
+
+        ToCharResult operator()( char * begin, char * end, const X & x ) const
+        {
+            auto r = std::to_chars( begin, end, ToUnderlying(x), 10 );
+            return ToCharResult{ .ptr = r.ptr, .failedQ = (r.ec == std::errc::value_too_large)};
         }
     };
 
