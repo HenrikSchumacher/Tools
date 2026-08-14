@@ -227,6 +227,12 @@
     #define TOOLS_MAKE_FP_STRICT()
 #endif
 
+
+
+#if defined(__SIZEOF_INT128__) && !defined(TOOLS_NO_INT128)
+    #define TOOLS_INT128_AVAILABLE
+#endif
+
 namespace Tools
 {
     /*!@brief Immutable, unaliased pointer to immutable objects. */
@@ -248,7 +254,17 @@ namespace Tools
     
     /*!@brief Concept for integral types. */
     template<typename T>
-    concept IntQ = std::integral<T> || std::integral<typename std::remove_reference<T>::type>;
+    concept IntQ = std::integral<T>
+        || std::integral<typename std::remove_reference<T>::type>
+#ifdef TOOLS_INT128_AVAILABLE
+        || (
+                std::is_same_v<T,signed   __int128>
+             || std::is_same_v<T,unsigned __int128>
+             || std::is_same_v<typename std::remove_reference<T>::type,signed   __int128>
+             || std::is_same_v<typename std::remove_reference<T>::type,unsigned __int128>
+           )
+#endif // TOOLS_INT128_AVAILABLE
+    ;
     
     /*!@brief Concept for non-integral types. */
     template<typename T>

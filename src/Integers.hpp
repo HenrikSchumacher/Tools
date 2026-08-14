@@ -1,11 +1,3 @@
-
-#if defined(__SIZEOF_INT128__) && !defined(TOOLS_NO_INT128)
-
-    #define TOOLS_INT128_AVAILABLE
-
-#endif
-
-
 namespace Tools
 {
     using Int8    = std::int8_t;
