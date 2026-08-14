@@ -20,19 +20,6 @@ namespace Tools
     using FastUInt32 = std::uint_fast32_t;
     using FastUInt64 = std::uint_fast64_t;
     
-#ifdef TOOLS_INT128_AVAILABLE
-    constexpr bool Int128_availableQ = true;
-
-    using Int128      = signed __int128;
-    using FastInt128  = signed __int128;
-    
-    using UInt128     = unsigned __int128;
-    using FastUInt128 = unsigned __int128;
-#else
-    constexpr bool Int128_availableQ = false;
-#endif // TOOLS_INT128_AVAILABLE
-    
-    
     namespace Scalar
     {
         template<typename T> constexpr bool ComplexQ = false;

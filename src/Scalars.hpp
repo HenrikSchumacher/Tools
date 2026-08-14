@@ -45,9 +45,6 @@ namespace Tools
     using std::real;
     using std::imag;
     
-    template<typename S, typename T>
-    constexpr bool SameQ = std::is_same_v<S,T>;
-    
     template<typename T>
     constexpr bool VectorizableQ = vec_enabledQ && ( SameQ<T,Real32> || SameQ<T,Real64> || SameQ<T,Int16> || SameQ<T, Int32> || SameQ<T,Int64> || SameQ<T,UInt16> ||SameQ<T,UInt32> || SameQ<T,UInt64> );
     

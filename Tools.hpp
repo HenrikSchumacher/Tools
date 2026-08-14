@@ -235,6 +235,17 @@
 
 namespace Tools
 {
+    
+#ifdef TOOLS_INT128_AVAILABLE
+    constexpr bool Int128_availableQ = true;
+
+    using Int128      = signed __int128;
+    
+    using UInt128     = unsigned __int128;
+#else
+    constexpr bool Int128_availableQ = false;
+#endif // TOOLS_INT128_AVAILABLE
+    
     /*!@brief Immutable, unaliased pointer to immutable objects. */
     template<typename T> using cptr = const T * TOOLS_RESTRICT const;
 
@@ -252,16 +263,19 @@ namespace Tools
     
     constexpr Size_T VarSize = 0;
     
+    template<typename S, typename T>
+    constexpr bool SameQ = std::is_same_v<S,T>;
+    
     /*!@brief Concept for integral types. */
     template<typename T>
     concept IntQ = std::integral<T>
         || std::integral<typename std::remove_reference<T>::type>
 #ifdef TOOLS_INT128_AVAILABLE
         || (
-                std::is_same_v<T,signed   __int128>
-             || std::is_same_v<T,unsigned __int128>
-             || std::is_same_v<typename std::remove_reference<T>::type,signed   __int128>
-             || std::is_same_v<typename std::remove_reference<T>::type,unsigned __int128>
+                SameQ<T,Int128>
+             || SameQ<T,UInt128>
+             || SameQ<typename std::remove_reference<T>::type,Int128>
+             || SameQ<typename std::remove_reference<T>::type,UInt128>
            )
 #endif // TOOLS_INT128_AVAILABLE
     ;
@@ -278,12 +292,9 @@ namespace Tools
     
     /*!@brief Concept for unsigned integral types. */
     template<typename T>
-    concept UnsignedIntQ = IntQ<T> && std::is_unsigned_v<T>
+    concept UnsignedIntQ = (IntQ<T> && std::is_unsigned_v<T>)
 #ifdef TOOLS_INT128_AVAILABLE
-        || (
-                std::is_same_v<T,unsigned   __int128>
-             || std::is_same_v<typename std::remove_reference<T>::type,unsigned   __int128>
-           )
+        || ( SameQ<T,UInt128> || SameQ<typename std::remove_reference<T>::type,UInt128> )
 #endif // TOOLS_INT128_AVAILABLE
     ;
     
@@ -291,28 +302,33 @@ namespace Tools
     
     /*!@brief Concept for signed integral types. */
     template<typename T>
-    concept SignedIntQ = IntQ<T> && std::is_signed_v<T>
+    concept SignedIntQ = (IntQ<T> && std::is_signed_v<T>)
 #ifdef TOOLS_INT128_AVAILABLE
-        || (
-                std::is_same_v<T,signed   __int128>
-             || std::is_same_v<typename std::remove_reference<T>::type,signed   __int128>
-           )
+        || ( SameQ<T,Int128> || SameQ<typename std::remove_reference<T>::type,Int128> )
 #endif // TOOLS_INT128_AVAILABLE
     ;
     
+#ifdef TOOLS_INT128_AVAILABLE
+    template<typename T>
+    using ToSigned = std::conditional_t<
+        SameQ<T,Int128> || SameQ<T,UInt128>,
+        Int128,
+        std::make_signed_t<T>
+    >;
+    
+    template<typename T>
+    using ToUnsigned = std::conditional_t<
+        SameQ<T,Int128> || SameQ<T,UInt128>,
+        UInt128,
+        std::make_unsigned_t<T>
+    >;
+#else
     template<typename T>
     using ToSigned = std::make_signed_t<T>;
     
     template<typename T>
     using ToUnsigned = std::make_unsigned_t<T>;
-    
-#ifdef TOOLS_INT128_AVAILABLE
-    template<> using ToSigned  <signed   __int128> = signed   __int128;
-    template<> using ToSigned  <unsigned __int128> = signed   __int128;
-    
-    template<> using ToUnsigned<signed   __int128> = unsigned __int128;
-    template<> using ToUnsigned<unsigned __int128> = unsigned __int128;
-#endif // TOOLS_INT128_AVAILABLE
+#endif
     
 #define ASSERT_SIGNED_INT(I) static_assert( SignedIntQ<I>, "Template parameter " #I " must be a signed integral type." );
     
@@ -330,6 +346,11 @@ namespace Tools
     
     template<> constexpr bool ArithmeticQ<std::complex<float>>  = true;
     template<> constexpr bool ArithmeticQ<std::complex<double>> = true;
+    
+#ifdef TOOLS_INT128_AVAILABLE
+    template<> constexpr bool ArithmeticQ<signed   __int128> = true;
+    template<> constexpr bool ArithmeticQ<unsigned __int128> = true;
+#endif // TOOLS_INT128_AVAILABLE
 
     template <typename E>
     using Underlying_T = typename std::underlying_type<E>::type;
