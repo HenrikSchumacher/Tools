@@ -307,51 +307,21 @@ namespace Tools
 #endif // TOOLS_INT128_AVAILABLE
         (IntQ<T> && std::is_signed_v<T>);
     
-    
-    template <bool Condition, typename Then, typename Else>
-    struct Lazy_Conditional;
 
-    template <typename Then, typename Else>
-    struct Lazy_Conditional<true, Then, Else>
-    {
-        using Type = Then;
-    };
-
-    template <typename Then, typename Else>
-    struct Lazy_Conditional<false, Then, Else>
-    {
-        using Type = Else;
-    };
-
-    template <bool Condition, typename Then, typename Else>
-    using lazy_conditional = Lazy_Conditional<Condition, Then, Else>;
-
-    template <bool Condition, typename Then, typename Else>
-    using lazy_conditional_t = typename lazy_conditional<Condition, Then, Else>::Type;
-    
-    
 #ifdef TOOLS_INT128_AVAILABLE
     template<typename T>
-    using ToSigned = lazy_conditional_t<
-        std::is_same_v<T,signed __int128>,
-        signed __int128,
-        lazy_conditional_t<
-            std::is_same_v<T,unsigned __int128>,
-            signed __int128,
-            std::make_signed_t<T>
-        >
-    >;
+    using ToSigned = std::conditional_t<
+        SameQ<T,Int128> || SameQ<T,UInt128>,
+        std::type_identity<Int128>,
+        std::make_signed<T>
+    >::type;
     
     template<typename T>
-    using ToUnsigned = lazy_conditional_t<
-        std::is_same_v<T,signed __int128>,
-        unsigned __int128,
-        lazy_conditional_t<
-            std::is_same_v<T,unsigned __int128>,
-            unsigned __int128,
-            std::make_unsigned_t<T>
-        >
-    >;
+    using ToUnsigned = std::conditional_t<
+        SameQ<T,Int128> || SameQ<T,UInt128>,
+        std::type_identity<UInt128>,
+        std::make_unsigned<T>
+    >::type;
 #else
     template<typename T>
     using ToSigned = std::make_signed_t<T>;
