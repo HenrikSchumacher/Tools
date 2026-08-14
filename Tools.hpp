@@ -307,42 +307,20 @@ namespace Tools
 #endif // TOOLS_INT128_AVAILABLE
         (IntQ<T> && std::is_signed_v<T>);
     
-
-template<bool Condition, typename Then, typename Else>
-using Conditional_T = std::conditional_t<
-    Condition,
-    std::type_identity<Then>,
-    std::type_identity<Else>
->::type;
-    
 #ifdef TOOLS_INT128_AVAILABLE
     template<typename T>
-    using ToSigned = Conditional_T<
+    using ToSigned = std::conditional_t<
         SameQ<T,Int128> || SameQ<T,UInt128>,
-        Int128,
-        std::make_signed_t<T>
-    >;
+        std::type_identity<Int128>,
+        std::make_signed<T>
+    >::type;
     
     template<typename T>
-    using ToUnsigned = Conditional_T<
+    using ToUnsigned = std::conditional_t<
         SameQ<T,Int128> || SameQ<T,UInt128>,
-        UInt128,
-        std::make_unsigned_t<T>
-    >;
-    
-//    template<typename T>
-//    using ToSigned = std::conditional_t<
-//        SameQ<T,Int128> || SameQ<T,UInt128>,
-//        std::type_identity<Int128>,
-//        std::make_signed<T>
-//    >::type;
-//    
-//    template<typename T>
-//    using ToUnsigned = std::conditional_t<
-//        SameQ<T,Int128> || SameQ<T,UInt128>,
-//        std::type_identity<UInt128>,
-//        std::make_unsigned<T>
-//    >::type;
+        std::type_identity<UInt128>,
+        std::make_unsigned<T>
+    >::type;
 #else
     template<typename T>
     using ToSigned = std::make_signed_t<T>;
