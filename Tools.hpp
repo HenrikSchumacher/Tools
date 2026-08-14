@@ -264,6 +264,7 @@ namespace Tools
     template<typename S, typename T>
     constexpr bool SameQ = std::is_same_v<S,T>;
     
+    
     /*!@brief Concept for integral types. */
     template<typename T>
     concept IntQ = std::integral<T>
@@ -308,26 +309,26 @@ namespace Tools
     
 #ifdef TOOLS_INT128_AVAILABLE
     template<typename T>
-    using ToSigned = std::conditional_t<
-        std::is_same_v<T,Int128>,
-        Int128,
-        std::conditional_t<
-            std::is_same_v<T,UInt128>,
-            Int128,
+    using ToSigned = std::conditional<
+        std::is_same_v<T,signed __int128>,
+        signed __int128,
+        typename std::conditional<
+            std::is_same_v<T,unsigned __int128>,
+            signed __int128,
             std::make_signed_t<T>
-        >
-    >;
+        >::type
+    >::type;
     
     template<typename T>
-    using ToUnsigned = std::conditional_t<
-        std::is_same_v<T,Int128>,
-        UInt128,
-        std::conditional_t<
-            std::is_same_v<T,UInt128>,
-            UInt128,
+    using ToUnsigned = std::conditional<
+        std::is_same_v<T,signed __int128>,
+        unsigned __int128,
+        typename std::conditional<
+            std::is_same_v<T,unsigned __int128>,
+            unsigned __int128,
             std::make_unsigned_t<T>
-        >
-    >;
+        >::type
+    >::type;
 #else
     template<typename T>
     using ToSigned = std::make_signed_t<T>;
