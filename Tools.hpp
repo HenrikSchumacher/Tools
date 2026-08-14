@@ -278,19 +278,41 @@ namespace Tools
     
     /*!@brief Concept for unsigned integral types. */
     template<typename T>
-    concept UnsignedIntQ = IntQ<T> && std::is_unsigned_v<T>;
+    concept UnsignedIntQ = IntQ<T> && std::is_unsigned_v<T>
+#ifdef TOOLS_INT128_AVAILABLE
+        || (
+                std::is_same_v<T,unsigned   __int128>
+             || std::is_same_v<typename std::remove_reference<T>::type,unsigned   __int128>
+           )
+#endif // TOOLS_INT128_AVAILABLE
+    ;
     
 #define ASSERT_UINT(I) static_assert( UnsignedIntQ<I>, "Template parameter " #I " must be a unsigned integral type." );
     
     /*!@brief Concept for signed integral types. */
     template<typename T>
-    concept SignedIntQ = IntQ<T> && std::is_signed_v<T>;
+    concept SignedIntQ = IntQ<T> && std::is_signed_v<T>
+#ifdef TOOLS_INT128_AVAILABLE
+        || (
+                std::is_same_v<T,signed   __int128>
+             || std::is_same_v<typename std::remove_reference<T>::type,signed   __int128>
+           )
+#endif // TOOLS_INT128_AVAILABLE
+    ;
     
     template<typename T>
     using ToSigned = std::make_signed_t<T>;
     
     template<typename T>
     using ToUnsigned = std::make_unsigned_t<T>;
+    
+#ifdef TOOLS_INT128_AVAILABLE
+    template<> using ToSigned  <signed   __int128> = signed   __int128;
+    template<> using ToSigned  <unsigned __int128> = signed   __int128;
+    
+    template<> using ToUnsigned<signed   __int128> = unsigned __int128;
+    template<> using ToUnsigned<unsigned __int128> = unsigned __int128;
+#endif // TOOLS_INT128_AVAILABLE
     
 #define ASSERT_SIGNED_INT(I) static_assert( SignedIntQ<I>, "Template parameter " #I " must be a signed integral type." );
     
