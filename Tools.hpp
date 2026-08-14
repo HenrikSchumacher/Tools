@@ -238,9 +238,7 @@ namespace Tools
     
 #ifdef TOOLS_INT128_AVAILABLE
     constexpr bool Int128_availableQ = true;
-
-    using Int128      = signed __int128;
-    
+    using Int128      = signed   __int128;
     using UInt128     = unsigned __int128;
 #else
     constexpr bool Int128_availableQ = false;
@@ -286,41 +284,49 @@ namespace Tools
     
     /*!@brief Concept for non-integral types that are not Booleans. */
     template<typename T>
-    concept IntNotBoolQ = IntQ<T> && !std::is_same_v<T,bool>;
+    concept IntNotBoolQ = IntQ<T> && !SameQ<T,bool>;
     
 #define ASSERT_INT(I) static_assert( IntQ<I>, "Template parameter " #I " must be an integral type." );
     
     /*!@brief Concept for unsigned integral types. */
     template<typename T>
-    concept UnsignedIntQ = (IntQ<T> && std::is_unsigned_v<T>)
+    concept UnsignedIntQ =
 #ifdef TOOLS_INT128_AVAILABLE
-        || ( SameQ<T,UInt128> || SameQ<typename std::remove_reference<T>::type,UInt128> )
+        ( SameQ<T,UInt128> || SameQ<typename std::remove_reference<T>::type,UInt128> ) ||
 #endif // TOOLS_INT128_AVAILABLE
-    ;
+    (IntQ<T> && std::is_unsigned_v<T>);
     
 #define ASSERT_UINT(I) static_assert( UnsignedIntQ<I>, "Template parameter " #I " must be a unsigned integral type." );
     
     /*!@brief Concept for signed integral types. */
     template<typename T>
-    concept SignedIntQ = (IntQ<T> && std::is_signed_v<T>)
+    concept SignedIntQ =
 #ifdef TOOLS_INT128_AVAILABLE
-        || ( SameQ<T,Int128> || SameQ<typename std::remove_reference<T>::type,Int128> )
+        ( SameQ<T,Int128> || SameQ<typename std::remove_reference<T>::type,Int128> ) ||
 #endif // TOOLS_INT128_AVAILABLE
-    ;
+        (IntQ<T> && std::is_signed_v<T>);
     
 #ifdef TOOLS_INT128_AVAILABLE
     template<typename T>
     using ToSigned = std::conditional_t<
-        SameQ<T,Int128> || SameQ<T,UInt128>,
+        std::is_same_v<T,Int128>,
         Int128,
-        std::make_signed_t<T>
+        std::conditional_t<
+            std::is_same_v<T,UInt128>,
+            Int128,
+            std::make_signed_t<T>
+        >
     >;
     
     template<typename T>
     using ToUnsigned = std::conditional_t<
-        SameQ<T,Int128> || SameQ<T,UInt128>,
+        std::is_same_v<T,Int128>,
         UInt128,
-        std::make_unsigned_t<T>
+        std::conditional_t<
+            std::is_same_v<T,UInt128>,
+            UInt128,
+            std::make_unsigned_t<T>
+        >
     >;
 #else
     template<typename T>
