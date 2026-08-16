@@ -369,5 +369,30 @@ namespace Tools
         
     } // namespace Scalar
     
+    
+    template<SignedIntQ Int>
+    TOOLS_FORCE_INLINE constexpr bool NegativeQ( cref<Int> a )
+    {
+        return (a < Int{0});
+    }
+    
+    template<UnsignedIntQ Int>
+    TOOLS_FORCE_INLINE constexpr bool NegativeQ( cref<Int> a )
+    {
+        (void)a;
+        return false;
+    }
+    
+    template<IntQ Int>
+    TOOLS_FORCE_INLINE constexpr bool PositiveQ( cref<Int> a )
+    {
+        return (a > Int{0});
+    }
+    
+    template<IntQ Int>
+    TOOLS_FORCE_INLINE constexpr bool ZeroQ( cref<Int> a )
+    {
+        return a == Int{0};
+    }
 }
 
