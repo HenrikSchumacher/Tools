@@ -610,5 +610,24 @@ namespace Tools
     } // namespace Scalar
     
     
+    
+    
+    
+    template<IntQ Int>
+    double ToDouble( cref<Int> a )
+    {
+        return static_cast<double>(a);
+    }
+
+    double ToDouble( float x )
+    {
+        return static_cast<double>(x);
+    }
+    
+    double ToDouble( double x )
+    {
+        return x;
+    }
+    
 } // namespace Tools
 
