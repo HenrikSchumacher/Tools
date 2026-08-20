@@ -10,61 +10,35 @@
 
 namespace Tools
 {
-#ifdef TOOLS_USE_BOOST_UNORDERED
-    
+#ifdef TOOLS_USE_MIMALLOC
+    template<typename T>
+    using Allocator = mi_stl_allocator<T>;
 #else
-    
+    template<typename T>
+    using Allocator = std::allocator<T>;
 #endif
     
     
-    
-    
 #ifdef TOOLS_USE_BOOST_UNORDERED
-    #ifdef TOOLS_USE_MIMALLOC
-        template<typename Key_T, typename Hash_T = boost::hash<Key_T>>
-        using SetContainer = boost::unordered_flat_set<
-            Key_T, Hash_T, std::equal_to<Key_T>, mi_stl_allocator<Key_T>
-        >;
-    
-        template<typename Key_T, typename Val_T, typename Hash_T = boost::hash<Key_T>>
-        using AssociativeContainer = boost::unordered_flat_map<
-            Key_T, Val_T, Hash_T, std::equal_to<Key_T>, mi_stl_allocator<std::pair<Key_T,Val_T>>
-        >;
-    #else
-    
-        template<typename Key_T, typename Hash_T = boost::hash<Key_T>>
-        using SetContainer = boost::unordered_flat_set<
-            Key_T, Hash_T
-        >;
-    
-        template<typename Key_T, typename Val_T, typename Hash_T = boost::hash<Key_T>>
-        using AssociativeContainer = boost::unordered_flat_map<
-            Key_T, Val_T, Hash_T
-        >;
-    #endif
+    template<typename Key_T, typename Hash_T = boost::hash<Key_T>>
+    using SetContainer = boost::unordered_flat_set<
+        Key_T, Hash_T, std::equal_to<Key_T>, Allocator<Key_T>
+    >;
+
+    template<typename Key_T, typename Val_T, typename Hash_T = boost::hash<Key_T>>
+    using AssociativeContainer = boost::unordered_flat_map<
+        Key_T, Val_T, Hash_T, std::equal_to<Key_T>, Allocator<std::pair<Key_T,Val_T>>
+    >;
 #else
-    #ifdef TOOLS_USE_MIMALLOC
-    
-        template<typename Key_T, typename Hash_T = Tools::Hash<Key_T>>
-        using SetContainer = std::unordered_set<
-            Key_T, Hash_T, std::equal_to<Key_T>, mi_stl_allocator<Key_T>
-        >;
-    
-        template<typename Key_T, typename Val_T, typename Hash_T = Hash<Key_T>>
-        using AssociativeContainer = std::unordered_map<
-            Key_T, Val_T, Hash_T, std::equal_to<Key_T>, mi_stl_allocator<std::pair<const Key_T,Val_T>>
-        >;
-    #else
-        template<typename Key_T, typename Val_T, typename Hash_T = Hash<Key_T>>
-        using AssociativeContainer = std::unordered_map<
-            Key_T, Val_T, Hash_T
-        >;
-    
-        template<typename Key_T, typename Hash_T = Tools::Hash<Key_T>>
-        using SetContainer = std::unordered_set<
-            Key_T, Hash_T
-        >;
-    #endif
+    template<typename Key_T, typename Hash_T = Tools::Hash<Key_T>>
+    using SetContainer = std::unordered_set<
+        Key_T, Hash_T, std::equal_to<Key_T>, Allocator<Key_T>
+    >;
+
+    template<typename Key_T, typename Val_T, typename Hash_T = Hash<Key_T>>
+    using AssociativeContainer = std::unordered_map<
+        Key_T, Val_T, Hash_T, std::equal_to<Key_T>, Allocator<std::pair<const Key_T,Val_T>>
+    >;
 #endif
     
     template<typename Key_T, typename Hash_T = Tools::Hash<Key_T>>
