@@ -16,8 +16,6 @@ namespace Tools
     {
         // Computes inner product <opx(x), opx(y)> of two vectors x and y.
 
-        check_sequential<parQ>( "dot_buffers", thread_count );
-        
         static_assert( (opx == Op::Id) || (opx == Op::Conj),
             "dot_buffers: Only the values Op::Id and Op::Conj are allowed for opx."
         );

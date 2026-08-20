@@ -26,8 +26,6 @@ namespace Tools
         const Int thread_count = Int(1)
     )
     {
-        check_sequential<parQ>( "copy_buffer", thread_count );
-        
         if constexpr ( N <= VarSize )
         {
             if constexpr ( parQ == Sequential )
@@ -101,8 +99,6 @@ namespace Tools
         const Int thread_count = Int(1)
     )
     {
-        check_sequential<parQ>( "copy_buffer_replace_infty", thread_count );
-        
         if constexpr ( N <= VarSize )
         {
             if constexpr ( parQ == Sequential )

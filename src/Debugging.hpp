@@ -194,10 +194,10 @@ namespace Tools
         valprint<a>("TOOLS_NO_RESTRICT",false);
 #endif
         
-#ifdef TOOLS_NO_PREFECT
-        valprint<a>("TOOLS_NO_PREFECT",true);
+#ifdef TOOLS_NO_PREFETCH
+        valprint<a>("TOOLS_NO_PREFETCH",true);
 #else
-        valprint<a>("TOOLS_NO_PREFECT",false);
+        valprint<a>("TOOLS_NO_PREFETCH",false);
 #endif
 
 #ifdef TOOLS_NO_VECTOR_EXTENSIONS

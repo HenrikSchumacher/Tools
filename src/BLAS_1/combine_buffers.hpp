@@ -66,9 +66,6 @@ namespace Tools
         
         using namespace Scalar;
         
-        check_sequential<parQ>( "combine_buffers", thread_count );
-        
-        
         static_assert( NotTransposedQ(opx),
             "combine_scalars: Only those values of Op that do not inlude transposition are allowed for template argument opx."
         );
@@ -200,8 +197,6 @@ namespace Tools
         // If b_flag == Flag::Generic, then it assumes generic values for b.
         
         using namespace Scalar;
-        
-        check_sequential<parQ>( "combine_buffers3", thread_count );
         
         static_assert( (opx == Op::Id) || (opx == Op::Conj),
             "combine_buffers3: Only the values Op::Id and Op::Conj are allowed for opx."

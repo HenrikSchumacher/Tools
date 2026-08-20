@@ -12,8 +12,6 @@ namespace Tools
         cref<b_T> b, mptr<y_T> y, cptr<Int> idx, Int n = static_cast<Int>(N), Int thread_count = 1
     )
     {
-        check_sequential<parQ>( "combine_scatter_write", thread_count );
-        
         using namespace Scalar;
         
         // This routine computes y[i] = a * x[i] + b * y[i].

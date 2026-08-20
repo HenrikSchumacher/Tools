@@ -10,8 +10,6 @@ namespace Tools
         mptr<T> a, const T init, const Int n = static_cast<Size_T>(N), const Int thread_count = 1
     )
     {
-        check_sequential<parQ>( "fill_buffer", thread_count );
-        
         if constexpr ( N <= VarSize )
         {
             if constexpr ( parQ == Sequential )

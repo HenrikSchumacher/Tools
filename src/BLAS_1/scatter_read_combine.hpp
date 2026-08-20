@@ -12,8 +12,6 @@ namespace Tools
         cref<R_1> b, mptr<S_1> y,                 Size_T n = N, Size_T thread_count = 1
     )
     {
-        check_sequential<parQ>( "scatter_read_combine", thread_count );
-        
         using namespace Scalar;
         
         // This routine computes y[k] = a * x[idx[k]] + b * y[k].

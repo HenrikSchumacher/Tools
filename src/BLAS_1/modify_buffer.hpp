@@ -48,8 +48,6 @@ namespace Tools
         
         using namespace Scalar;
         
-        check_sequential<parQ>( "modify_buffer", thread_count );
-        
         static_assert( (op == Op::Id) || (op == Op::Conj) || (op == Op::Re) || (op == Op::Im),
             "combine_buffers: Only the values Op::Id, Op::Conj, Op::Re, and Op::Im are allowed for op."
         );

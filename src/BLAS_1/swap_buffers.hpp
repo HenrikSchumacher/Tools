@@ -12,8 +12,6 @@ namespace Tools
         const Int thread_count = Int(1)
     )
     {
-        check_sequential<parQ>( "swap_buffers", thread_count );
-        
         if constexpr ( N <= VarSize )
         {
             if constexpr ( parQ == Sequential )

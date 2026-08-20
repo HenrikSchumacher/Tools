@@ -70,8 +70,6 @@ namespace Tools
         const Int n = static_cast<Int>(N), const Int thread_count = Int(1)
     )
     {
-        check_sequential<parQ>( "zip_buffers", thread_count );
-        
         {
             TOOLS_MAKE_FP_FAST()
             

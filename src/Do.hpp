@@ -43,23 +43,6 @@ namespace Tools
     {
         static_assert(dynQ == Static, "This method ignores dynamic scheduling; it is always static.");
     }
-    
-    template<Parallel_T parQ, IntQ Int >
-    void check_sequential( std::string tag, Int thread_count )
-    {
-#ifdef TOOLS_DEBUG
-        if constexpr ( parQ == Sequential )
-        {
-            if ( thread_count > Int(1) )
-            {
-                wprint(std::string("check_sequential: method ") + tag + " is marked as sequential, but more than one thread is requested.");
-            }
-        }
-#else
-        (void)tag;
-        (void)thread_count;
-#endif
-    }
 
     //###########################################################
     //##  Do
