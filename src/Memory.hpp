@@ -1,5 +1,15 @@
 #pragma once
 
+#ifdef TOOLS_USE_MIMALLOC
+    // Don't forget to link against -lmimalloc.
+    #ifndef MIMALLOC_H
+        #include <mimalloc.h>
+    #endif
+    #ifndef MIMALLOC_NEW_DELETE_H
+        #include <mimalloc-new-delete.h>
+    #endif
+#endif // TOOLS_USE_MIMALLOC
+
 namespace Tools
 {
     
@@ -77,10 +87,14 @@ namespace Tools
     {
         const Size_T padded_size = RoundUpTo(size, alignment);
 
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
-        void * ptr_ = _aligned_malloc(padded_size, alignment);
+#ifdef TOOLS_USE_MIMALLOC
+        void * ptr_ = mi_malloc_aligned(padded_size, alignment);
 #else
+    #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+        void * ptr_ = _aligned_malloc(padded_size, alignment);
+    #else
         void * ptr_ = std::aligned_alloc(alignment, padded_size);
+    #endif
 #endif
 
         if( ptr_ == nullptr )
@@ -99,11 +113,15 @@ namespace Tools
     
     TOOLS_FORCE_INLINE void aligned_free( void * ptr_ )
     {
-        #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
-            _aligned_free( ptr_ );
-        #else
-            std::free( ptr_ );
-        #endif
+#ifdef TOOLS_USE_MIMALLOC
+        mi_free( ptr_ );
+#else
+    #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+        _aligned_free( ptr_ );
+    #else
+        std::free( ptr_ );
+    #endif
+#endif
     }
 
 
