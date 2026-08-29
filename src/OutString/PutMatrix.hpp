@@ -1,11 +1,10 @@
 public:
 
-//= ToChars<Result_T<A>>
 template<
     typename Fmt = Format::Matrix::Tall,
     IntQ Int_0, IntQ Int_1, ArrayFun<Int_0,Int_1> A, CharConv<Result_T<A>> C
 >
-OutString & PutMatrixFun( A && a, C && to_chars, Int_0 d_0, Int_1 d_1, bool check_sizeQ = true )
+OutString & PutMatrix( A && a, C && to_chars, Int_0 d_0, Int_1 d_1, bool check_sizeQ = true )
 {
     return PutArray(
         std::forward<A>(a), std::forward<C>(to_chars), check_sizeQ,
@@ -15,22 +14,21 @@ OutString & PutMatrixFun( A && a, C && to_chars, Int_0 d_0, Int_1 d_1, bool chec
 }
 
 template<typename Fmt = Format::Matrix::Tall, IntQ Int_0, IntQ Int_1, ArrayFun<Int_0,Int_1> A>
-OutString & PutMatrixFun( A && a, Int_0 d_0, Int_1 d_1, bool check_sizeQ = true  )
+OutString & PutMatrix( A && a, Int_0 d_0, Int_1 d_1, bool check_sizeQ = true  )
 {
-    return PutMatrixFun<Fmt>(a, ToChars<Result_T<A>>(), d_0, d_1, check_sizeQ );
+    return PutMatrix<Fmt>(std::forward<A>(a), ToChars<Result_T<A>>(), d_0, d_1, check_sizeQ );
 }
 
 template<typename Fmt = Format::Matrix::Tall, typename T, IntQ Int_0, IntQ Int_1, CharConv<T> C>
 OutString & PutMatrix( cptr<T> a, C && to_chars, Int_0 d_0, Int_1 d_1, bool check_sizeQ = true )
 {
-    return PutMatrixFun<Fmt>(
+    return PutMatrix<Fmt>(
         [a,d_1]( const Int_0 i_0, const Int_1 i_1 ) -> T { return a[i_0 * d_1 + i_1]; },
         std::forward<C>(to_chars), d_0, d_1, check_sizeQ
     );
 }
 
-
-template<typename Fmt = Format::Matrix::Tall,typename T, IntQ Int_0, IntQ Int_1>
+template<typename Fmt = Format::Matrix::Tall, typename T, IntQ Int_0, IntQ Int_1>
 OutString & PutMatrix( cptr<T> a, Int_0 d_0, Int_1 d_1, bool check_sizeQ = true )
 {
     return PutMatrix<Fmt>(a, ToChars<T>(), d_0, d_1, check_sizeQ);
@@ -52,7 +50,7 @@ static OutString FromMatrix( A && a, C && to_chars, Int_0 d_0, Int_1 d_1 )
         d_1, Fmt::prefix_1, Fmt::infix_1, Fmt::suffix_1
     ) };
     
-    out.PutMatrixFun<Fmt>(std::forward<A>(a), std::forward<C>(to_chars), d_0, d_1, false);
+    out.PutMatrix<Fmt>(std::forward<A>(a), std::forward<C>(to_chars), d_0, d_1, false);
     
     return out;
 }

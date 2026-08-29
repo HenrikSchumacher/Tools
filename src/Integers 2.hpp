@@ -29,101 +29,101 @@ namespace Tools
         template<typename T, typename Enable = void>
         struct IntegralTypeTraits
         {
-            static constexpr bool realQ     = false;
-            static constexpr bool complexQ  = false;
-            static constexpr auto type_name = ct_string("UnknownType");
-            static constexpr auto full_name = ct_string("UnknownType");
+            static constexpr bool         realQ     = false;
+            static constexpr bool         complexQ  = false;
+            static constexpr const char * type_name = "UnknownType";
+            static constexpr const char * full_name = "UnknownType";
         };
 
         template<> struct IntegralTypeTraits<bool>
         {
-            static constexpr bool realQ     = true;
-            static constexpr bool complexQ  = false;
-            static constexpr auto type_name = ct_string("Bool");
-            static constexpr auto full_name = ct_string("bool");
+            static constexpr bool         realQ     = true;
+            static constexpr bool         complexQ  = false;
+            static constexpr const char * type_name = "Bool";
+            static constexpr const char * full_name = "bool";
         };
 
         template<> struct IntegralTypeTraits<Int8>
         {
-            static constexpr bool realQ     = true;
-            static constexpr bool complexQ  = false;
-            static constexpr auto type_name = ct_string("I8");
-            static constexpr auto full_name = ct_string("std::int8_t");
+            static constexpr bool         realQ     = true;
+            static constexpr bool         complexQ  = false;
+            static constexpr const char * type_name = "I8";
+            static constexpr const char * full_name = "std::int8_t";
         };
         
         template<> struct IntegralTypeTraits<Int16>
         {
-            static constexpr bool realQ     = true;
-            static constexpr bool complexQ  = false;
-            static constexpr auto type_name = ct_string("I16");
-            static constexpr auto full_name = ct_string("std::int16_t");
+            static constexpr bool         realQ     = true;
+            static constexpr bool         complexQ  = false;
+            static constexpr const char * type_name = "I16";
+            static constexpr const char * full_name = "std::int16_t";
         };
         
         template<> struct IntegralTypeTraits<Int32>
         {
-            static constexpr bool realQ     = true;
-            static constexpr bool complexQ  = false;
-            static constexpr auto type_name = ct_string("I32");
-            static constexpr auto full_name = ct_string("std::int32_t");
+            static constexpr bool         realQ     = true;
+            static constexpr bool         complexQ  = false;
+            static constexpr const char * type_name = "I32";
+            static constexpr const char * full_name = "std::int32_t";
         };
         
         template<> struct IntegralTypeTraits<Int64>
         {
-            static constexpr bool realQ     = true;
-            static constexpr bool complexQ  = false;
-            static constexpr auto type_name = ct_string("I64");
-            static constexpr auto full_name = ct_string("std::int64_t");
+            static constexpr bool         realQ     = true;
+            static constexpr bool         complexQ  = false;
+            static constexpr const char * type_name = "I64";
+            static constexpr const char * full_name = "std::int64_t";
         };
         
 #ifdef TOOLS_INT128_AVAILABLE
         template<> struct IntegralTypeTraits<Int128>
         {
-            static constexpr bool realQ     = true;
-            static constexpr bool complexQ  = false;
-            static constexpr auto type_name = ct_string("I128");
-            static constexpr auto full_name = ct_string("signed __int128_t");
+            static constexpr bool         realQ     = true;
+            static constexpr bool         complexQ  = false;
+            static constexpr const char * type_name = "I128";
+            static constexpr const char * full_name = "signed __int128_t";
         };
 #endif // TOOLS_INT128_AVAILABLE
         
         template<> struct IntegralTypeTraits<UInt8>
         {
-            static constexpr bool realQ     = true;
-            static constexpr bool complexQ  = false;
-            static constexpr auto type_name = ct_string("U8");
-            static constexpr auto full_name = ct_string("std::uint8_t");
+            static constexpr bool         realQ     = true;
+            static constexpr bool         complexQ  = false;
+            static constexpr const char * type_name = "U8";
+            static constexpr const char * full_name = "std::uint8_t";
         };
         
         template<> struct IntegralTypeTraits<UInt16>
         {
-            static constexpr bool realQ     = true;
-            static constexpr bool complexQ  = false;
-            static constexpr auto type_name = ct_string("U16");
-            static constexpr auto full_name = ct_string("std::uint16_t");
+            static constexpr bool         realQ     = true;
+            static constexpr bool         complexQ  = false;
+            static constexpr const char * type_name = "U16";
+            static constexpr const char * full_name = "std::uint16_t";
         };
         
         template<> struct IntegralTypeTraits<UInt32>
         {
-            static constexpr bool realQ     = true;
-            static constexpr bool complexQ  = false;
-            static constexpr auto type_name = ct_string("U32");
-            static constexpr auto full_name = ct_string("std::uint32_t");
+            static constexpr bool         realQ     = true;
+            static constexpr bool         complexQ  = false;
+            static constexpr const char * type_name = "U32";
+            static constexpr const char * full_name = "std::uint32_t";
         };
         
         template<> struct IntegralTypeTraits<UInt64>
         {
-            static constexpr bool realQ     = true;
-            static constexpr bool complexQ  = false;
-            static constexpr auto type_name = ct_string("U64");
-            static constexpr auto full_name = ct_string("std::uint64_t");
+            static constexpr bool         realQ     = true;
+            static constexpr bool         complexQ  = false;
+            static constexpr const char * type_name = "U64";
+            static constexpr const char * full_name = "std::uint64_t";
         };
         
 #ifdef TOOLS_INT128_AVAILABLE
         template<> struct IntegralTypeTraits<UInt128>
         {
-            static constexpr bool realQ     = true;
-            static constexpr bool complexQ  = false;
-            static constexpr auto type_name = ct_string("UI128");
-            static constexpr auto full_name = ct_string("unsigned __int128_t");
+            static constexpr bool         realQ     = true;
+            static constexpr bool         complexQ  = false;
+            static constexpr const char * type_name = "UI128";
+            static constexpr const char * full_name = "unsigned __int128_t";
         };
 #endif // TOOLS_INT128_AVAILABLE
         
@@ -145,10 +145,10 @@ namespace Tools
             >
         >
         {
-            static constexpr bool realQ     = true;
-            static constexpr bool complexQ  = false;
-            static constexpr auto type_name = ct_string("Size_T");
-            static constexpr auto full_name = ct_string("std::size_t");
+            static constexpr bool         realQ     = true;
+            static constexpr bool         complexQ  = false;
+            static constexpr const char * type_name = "Size_T";
+            static constexpr const char * full_name = "std::size_t";
         };
 
         template<typename T>
@@ -163,10 +163,10 @@ namespace Tools
             >
         >
         {
-            static constexpr bool realQ     = true;
-            static constexpr bool complexQ  = false;
-            static constexpr auto type_name = ct_string("char");
-            static constexpr auto full_name = ct_string("char");
+            static constexpr bool         realQ     = true;
+            static constexpr bool         complexQ  = false;
+            static constexpr const char * type_name = "char";
+            static constexpr const char * full_name = "char";
         };
         
         template<typename T>
@@ -181,10 +181,10 @@ namespace Tools
             >
         >
         {
-            static constexpr bool realQ     = true;
-            static constexpr bool complexQ  = false;
-            static constexpr auto type_name = ct_string("signed char");
-            static constexpr auto full_name = ct_string("signed char");
+            static constexpr bool         realQ     = true;
+            static constexpr bool         complexQ  = false;
+            static constexpr const char * type_name = "signed char";
+            static constexpr const char * full_name = "signed char";
         };
         
         template<typename T>
@@ -199,10 +199,10 @@ namespace Tools
             >
         >
         {
-            static constexpr bool realQ     = true;
-            static constexpr bool complexQ  = false;
-            static constexpr auto type_name = ct_string("unsigned char");
-            static constexpr auto full_name = ct_string("unsigned char");
+            static constexpr bool         realQ     = true;
+            static constexpr bool         complexQ  = false;
+            static constexpr const char * type_name = "unsigned char";
+            static constexpr const char * full_name = "unsigned char";
         };
         
         template<typename T>
@@ -219,10 +219,10 @@ namespace Tools
             >
         >
         {
-            static constexpr bool realQ     = true;
-            static constexpr bool complexQ  = false;
-            static constexpr auto type_name = ct_string("int");
-            static constexpr auto full_name = ct_string("int");
+            static constexpr bool         realQ     = true;
+            static constexpr bool         complexQ  = false;
+            static constexpr const char * type_name = "int";
+            static constexpr const char * full_name = "int";
         };
         
         template<typename T>
@@ -237,10 +237,10 @@ namespace Tools
             >
         >
         {
-            static constexpr bool realQ     = true;
-            static constexpr bool complexQ  = false;
-            static constexpr auto type_name = ct_string("unsigned int");
-            static constexpr auto full_name = ct_string("unsigned int");
+            static constexpr bool         realQ     = true;
+            static constexpr bool         complexQ  = false;
+            static constexpr const char * type_name = "unsigned int";
+            static constexpr const char * full_name = "unsigned int";
         };
         
         template<typename T>
@@ -259,10 +259,10 @@ namespace Tools
             >
         >
         {
-            static constexpr bool realQ     = true;
-            static constexpr bool complexQ  = false;
-            static constexpr auto type_name = ct_string("short int");
-            static constexpr auto full_name = ct_string("short int");
+            static constexpr bool       realQ       = true;
+            static constexpr bool       complexQ    = false;
+            static constexpr const char * type_name = "short int";
+            static constexpr const char * full_name = "short int";
         };
         
         template<typename T>
@@ -281,10 +281,10 @@ namespace Tools
             >
         >
         {
-            static constexpr bool realQ     = true;
-            static constexpr bool complexQ  = false;
-            static constexpr auto type_name = ct_string("unsigned short int");
-            static constexpr auto full_name = ct_string("unsigned short int");
+            static constexpr bool         realQ     = true;
+            static constexpr bool         complexQ  = false;
+            static constexpr const char * type_name = "unsigned short int";
+            static constexpr const char * full_name = "unsigned short int";
         };
         
         
@@ -302,10 +302,10 @@ namespace Tools
             >
         >
         {
-            static constexpr bool realQ     = true;
-            static constexpr bool complexQ  = false;
-            static constexpr auto type_name = ct_string("L");
-            static constexpr auto full_name = ct_string("signed long int");
+            static constexpr bool         realQ     = true;
+            static constexpr bool         complexQ  = false;
+            static constexpr const char * type_name = "L";
+            static constexpr const char * full_name = "signed long int";
         };
         
         template<typename T>
@@ -318,10 +318,10 @@ namespace Tools
             >
         >
         {
-            static constexpr bool realQ     = true;
-            static constexpr bool complexQ  = false;
-            static constexpr auto type_name = ct_string("LL");
-            static constexpr auto full_name = ct_string("signed long long int");
+            static constexpr bool         realQ     = true;
+            static constexpr bool         complexQ  = false;
+            static constexpr const char * type_name = "LL";
+            static constexpr const char * full_name = "signed long long int";
         };
         
         template<typename T>
@@ -338,10 +338,10 @@ namespace Tools
             >
         >
         {
-            static constexpr bool realQ     = true;
-            static constexpr bool complexQ  = false;
-            static constexpr auto type_name = ct_string("UL");
-            static constexpr auto full_name = ct_string("unsigned long int");
+            static constexpr bool         realQ     = true;
+            static constexpr bool         complexQ  = false;
+            static constexpr const char * type_name = "UL";
+            static constexpr const char * full_name = "unsigned long int";
         };
         
         template<typename T>
@@ -354,10 +354,10 @@ namespace Tools
             >
         >
         {
-            static constexpr bool realQ     = true;
-            static constexpr bool complexQ  = false;
-            static constexpr auto type_name = ct_string("ULL");
-            static constexpr auto full_name = ct_string("unsigned long long int");
+            static constexpr bool         realQ     = true;
+            static constexpr bool         complexQ  = false;
+            static constexpr const char * type_name = "ULL";
+            static constexpr const char * full_name = "unsigned long long int";
         };
         
         template<typename T> requires std::is_integral_v<T>

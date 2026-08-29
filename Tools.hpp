@@ -107,6 +107,7 @@
 #include <bit>
 #include <concepts>
 #include <charconv>
+#include <format>
 
 // In case somebody got the idea to ruin all other people's code.
 #ifdef True
@@ -475,6 +476,7 @@ namespace Tools
 
 #include "src/BitFiddling.hpp"
 
+#include "src/Strings.hpp"
 #include "src/OutString.hpp"
 #include "src/InString.hpp"
 

@@ -10,37 +10,43 @@ namespace Tools
     
     // default implementation
     template<typename T>
-    constexpr auto TypeName = ct_string("UnknownType");
+    constexpr const char * TypeName = "UnknownType";
     
-    template<> constexpr auto TypeName<Real32>      = ct_string("R32");
-    template<> constexpr auto TypeName<Real64>      = ct_string("R64");
-    template<> constexpr auto TypeName<Complex32>   = ct_string("C32");
-    template<> constexpr auto TypeName<Complex64>   = ct_string("C64");
-    template<> constexpr auto TypeName<std::string> = ct_string("String");
+    template<> constexpr const char * TypeName<Real32>  = "R32";
     
-    template<typename S, typename T> auto TypeName<std::pair<S,T>> = ct_string("pair<") + TypeName<S> + "," + TypeName<T> + ">";
+    template<> constexpr const char * TypeName<Real64>  = "R64";
+    
+    template<> constexpr const char * TypeName<Complex32>  = "C32";
+    
+    template<> constexpr const char * TypeName<Complex64>  = "C64";
+    
+    template<> constexpr const char * TypeName<std::string>  = "String";
+    
+    template<typename S, typename T> const char * TypeName<std::pair<S,T>> = "pair<?,?>";
     
     
     template<typename T> requires std::is_integral_v<T>
-    constexpr auto TypeName<T> = Scalar::IntegralTypeTraits<T>::type_name;
+    constexpr const char * TypeName<T> = Scalar::IntegralTypeTraits<T>::type_name;
     
     // default implementation
     template<typename T>
-    constexpr auto FullTypeName = ct_string("UnknownType");
+    constexpr const char * FullTypeName = "UnknownType";
     
-    template<> constexpr auto FullTypeName<Real32>    = ct_string("float");
-    template<> constexpr auto FullTypeName<Real64>    = ct_string("double");
-    template<> constexpr auto FullTypeName<Complex32> = ct_string("std::complex<float>");
+    template<> constexpr const char * FullTypeName<Real32>  = "float";
     
-    template<> constexpr auto FullTypeName<Complex64> = ct_string("std::complex<double>");
+    template<> constexpr const char * FullTypeName<Real64>  = "double";
     
-    template<> constexpr auto FullTypeName<std::string> = ct_string("std::string");
+    template<> constexpr const char * FullTypeName<Complex32>  = "std::complex<float>";
+    
+    template<> constexpr const char * FullTypeName<Complex64>  = "std::complex<double>";
+    
+    template<> constexpr const char * FullTypeName<std::string>  = "std::string";
     
     template<typename S, typename T>
-    constexpr auto FullTypeName<std::pair<S,T>> = ct_string("pair<" + FullTypeName<S> + "," + FullTypeName<T> + ">");
+    constexpr const char * FullTypeName<std::pair<S,T>> = "pair<?,?>";
     
     template<typename T> requires std::is_integral_v<T>
-    constexpr auto FullTypeName<T> = Scalar::IntegralTypeTraits<T>::full_name;
+    constexpr const char * FullTypeName<T> = Scalar::IntegralTypeTraits<T>::full_name;
 
     [[maybe_unused]] std::string IntegerInfo()
     {

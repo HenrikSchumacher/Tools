@@ -72,11 +72,12 @@ namespace Tools
     template<IntQ T>
     [[nodiscard]] constexpr std::string ToString( const T & value )
     {
-        if( std::is_constant_evaluated() )
-        {
-            return std::string(to_ct_string(value));
-        }
-        else
+        // TODO: We need the C++23 feature `if consteval` here.
+//        if( std::is_constant_evaluated() )
+//        {
+//            return std::string(to_ct_string(value));
+//        }
+//        else
         {
             return std::format("{:d}",value);
         }
@@ -111,10 +112,10 @@ namespace Tools
     class OutString;
     
     template<typename T>
-    [[nodiscard]] OutString ToString( cref<std::vector<T>> v );
+    [[nodiscard]] std::string ToString( cref<std::vector<T>> v );
     
     template<typename T, Size_T N>
-    [[nodiscard]] OutString ToString( const std::array<T,N> & v );
+    [[nodiscard]] std::string ToString( const std::array<T,N> & v );
     
     
     

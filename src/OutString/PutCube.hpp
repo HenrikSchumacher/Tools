@@ -4,7 +4,7 @@ template<
     typename Fmt = Format::Cube::Medium,
     IntQ Int_0, IntQ Int_1, IntQ Int_2, ArrayFun<Int_0,Int_1,Int_2> A, CharConv<Result_T<A>> C
 >
-OutString & PutCubeFun( A && a, C && to_chars, Int_0 d_0, Int_1 d_1, Int_2 d_2, bool check_sizeQ = true )
+OutString & PutCube( A && a, C && to_chars, Int_0 d_0, Int_1 d_1, Int_2 d_2, bool check_sizeQ = true )
 {
     return PutArray(
         std::forward<A>(a), std::forward<C>(to_chars), check_sizeQ,
@@ -18,9 +18,9 @@ template<
     typename Fmt = Format::Cube::Medium,
     IntQ Int_0, IntQ Int_1, IntQ Int_2, ArrayFun<Int_0,Int_1,Int_2> A
 >
-OutString & PutCubeFun( A && a, Int_0 d_0, Int_1 d_1, Int_2 d_2, bool check_sizeQ = true )
+OutString & PutCube( A && a, Int_0 d_0, Int_1 d_1, Int_2 d_2, bool check_sizeQ = true )
 {
-    return PutCubeFun<Fmt>(std::forward<A>(a), ToChars<Result_T<A>>(), d_0, d_1, d_2, check_sizeQ);
+    return PutCube<Fmt>(std::forward<A>(a), ToChars<Result_T<A>>(), d_0, d_1, d_2, check_sizeQ);
 }
 
 template<
@@ -29,7 +29,7 @@ template<
 >
 OutString & PutCube( cptr<T> a, C && to_chars, Int_0 d_0, Int_1 d_1, Int_2 d_2, bool check_sizeQ = true )
 {
-    return PutCubeFun<Fmt>(
+    return PutCube<Fmt>(
         [a,d_1,d_2]( const Int_0 i_0, const Int_1 i_1, const Int_2 i_2 )
         {
             return a[(d_1 * i_0 + i_1) * d_2 + i_2];
@@ -62,7 +62,7 @@ static OutString FromCube( A && a, C && to_chars, Int_0 d_0, Int_1 d_1, Int_2 d_
         d_2, Fmt::prefix_2, Fmt::infix_2, Fmt::suffix_2
     ) };
 
-    out.PutCubeFun<Fmt>(std::forward<A>(a), std::forward<C>(to_chars), d_0, d_1, d_2, false);
+    out.PutCube<Fmt>(std::forward<A>(a), std::forward<C>(to_chars), d_0, d_1, d_2, false);
     
     return out;
 }

@@ -1,63 +1,35 @@
 public:
 
 template<
-    typename MatrixFun_T, IntQ Int,
-    const Size_T n_prefix_0,
-    const Size_T n_infix_0,
-    const Size_T n_suffix_0,
-    const Size_T n_prefix_1,
-    const Size_T n_infix_1,
-    const Size_T n_suffix_1,
-    typename FromChars_T = FromChars<typename std::remove_reference<typename function_traits<MatrixFun_T>::return_type>::type>
+    typename Fmt = Format::Matrix::Tall,
+    IntQ Int_0, IntQ Int_1, ArrayFun<Int_0,Int_1> A, CharConv<Result_T<A>> C
 >
-InString & TakeMatrixFunction( MatrixFun_T && a, Int m, Int n,
-    const char(&prefix_0)[n_prefix_0],
-    const char(&infix_0 )[n_infix_0 ],
-    const char(&suffix_0)[n_suffix_0],
-    const char(&prefix_1)[n_prefix_1],
-    const char(&infix_1 )[n_infix_1 ],
-    const char(&suffix_1)[n_suffix_1],
-    FromChars_T && from_chars = FromChars_T()
-)
+InString & TakeMatrix( A && a, C && from_chars, Int_0 d_0, Int_1 d_1 )
 {
-    SkipChars(prefix_0);
-    if( m > Int(0) )
-    {
-        const Int i = 0;
-        SkipChars(prefix_1);
-        if( n > Int(0) )
-        {
-            const Int j = 0;
-            Take(a(i,j),std::forward<FromChars_T>(from_chars));
-            if( failedQ ) { return *this; }
-        }
-        for( Int j = 1; j < n; ++j )
-        {
-            SkipChars(infix_1);
-            Take(a(i,j),std::forward<FromChars_T>(from_chars));
-            if( failedQ ) { return *this; }
-        }
-        SkipChars(suffix_1);
-    }
-    for( Int i = 1; i < m; ++i )
-    {
-        SkipChars(infix_0);
-        SkipChars(prefix_1);
-        if( n > Int(0) )
-        {
-            const Int j = 0;
-            Take(a(i,j),std::forward<FromChars_T>(from_chars));
-            if( failedQ ) { return *this; }
-        }
-        for( Int j = 1; j < n; ++j )
-        {
-            SkipChars(infix_1);
-            Take(a(i,j),std::forward<FromChars_T>(from_chars));
-            if( failedQ ) { return *this; }
-        }
-        SkipChars(suffix_1);
-    }
-    SkipChars(suffix_0);
-    
-    return *this;
+    return TakeArray(
+        std::forward<A>(a), std::forward<C>(from_chars),
+        d_0, Fmt::prefix_0, Fmt::infix_0, Fmt::suffix_0,
+        d_1, Fmt::prefix_1, Fmt::infix_1, Fmt::suffix_1
+    );
+}
+
+template<typename Fmt = Format::Matrix::Tall, IntQ Int_0, IntQ Int_1, ArrayFun<Int_0,Int_1> A>
+InString & TakeMatrix( A && a, Int_0 d_0, Int_1 d_1  )
+{
+    return TakeMatrix<Fmt>(std::forward<A>(a), FromChars<Result_T<A>>(), d_0, d_1 );
+}
+
+template<typename Fmt = Format::Matrix::Tall, typename T, IntQ Int_0, IntQ Int_1, CharConv<T> C>
+InString & TakeMatrix( cptr<T> a, C && from_chars, Int_0 d_0, Int_1 d_1 )
+{
+    return TakeMatrix<Fmt>(
+        [a,d_1]( const Int_0 i_0, const Int_1 i_1 ) -> T { return a[i_0 * d_1 + i_1]; },
+        std::forward<C>(from_chars), d_0, d_1
+    );
+}
+
+template<typename Fmt = Format::Matrix::Tall, typename T, IntQ Int_0, IntQ Int_1>
+InString & TakeMatrix( cptr<T> a, Int_0 d_0, Int_1 d_1 )
+{
+    return TakeMatrix<Fmt>(a, FromChars<T>(), d_0, d_1);
 }

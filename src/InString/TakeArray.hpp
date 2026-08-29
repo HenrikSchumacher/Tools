@@ -19,8 +19,7 @@ InString & TakeArray( A && a, C && from_chars, Int n, Args&&... args)
     static_assert(C::implementedQ,"");
     
     takeArray(
-        std::forward<A>(a),
-        std::forward<C>(from_chars),
+        std::forward<A>(a), std::forward<C>(from_chars),
         n, std::forward<Args>(args)...
      );
 
@@ -47,8 +46,7 @@ InString & TakeArray( A && a, Int n, Args&&... args )
     using T = typename std::remove_reference<typename function_traits<A>::return_type>::type;
     
     return TakeArray(
-        std::forward<A>(a),
-        FromChars<T>(),
+        std::forward<A>(a), FromChars<T>(),
         n, std::forward<Args>(args)...
     );
 }
@@ -57,18 +55,18 @@ InString & TakeArray( A && a, Int n, Args&&... args )
 private:
 
 template<
-    NonPointerQ A, NonIntQ C, IntQ Int,
-    Stringy Prefix_T, Stringy Infix_T, Stringy Suffix_T,
+    NonPointerQ A, NonIntQ C,
+    IntQ Int, Stringy Prefix_T, Stringy Infix_T, Stringy Suffix_T,
     typename ...Args
 >
 constexpr void takeArray(
     A && a, C && from_chars,
-    Int n, Prefix_T && prefix, Infix_T  && infix, Suffix_T && suffix,
+    Int n, Prefix_T && prefix, Infix_T && infix, Suffix_T && suffix,
     Args&&... args
 )
 {
     SkipChars(prefix);
-    if( n > Int(0) )
+    if( n > Int{0} )
     {
         const Int i = 0;
         takeArray( std::bind_front(a,i), std::forward<C>(from_chars), std::forward<Args>(args)... );
@@ -82,22 +80,25 @@ constexpr void takeArray(
 }
 
 
-template<NonPointerQ A, NonIntQ C, IntQ Int, Stringy Prefix_T, Stringy Infix_T, Stringy Suffix_T>
+template<
+    NonPointerQ A, NonIntQ C,
+    IntQ Int, Stringy Prefix_T, Stringy Infix_T, Stringy Suffix_T
+>
 constexpr void takeArray(
     A && a, C && from_chars,
-    Int n, Prefix_T && prefix, Infix_T  && infix, Suffix_T && suffix
+    Int n, Prefix_T && prefix, Infix_T && infix, Suffix_T && suffix
 )
 {
     SkipChars(prefix);
-    if( n > Int(0) )
+    if( n > Int{0} )
     {
         const Int i = 0;
-        Take(a(i),std::forward<C>(from_chars));
+        Take(std::invoke(a,i), std::forward<C>(from_chars));
     }
     for( Int i = 1; i < n; ++i )
     {
         SkipChars(infix);
-        Take(a(i),std::forward<C>(from_chars));
+        Take(std::invoke(a,i), std::forward<C>(from_chars));
     }
     SkipChars(suffix);
 }

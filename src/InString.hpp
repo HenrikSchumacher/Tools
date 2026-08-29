@@ -1,6 +1,5 @@
 #pragma once
 
-#include "InString/FromChars.hpp"
 
 namespace Tools
 {
@@ -10,6 +9,10 @@ namespace Tools
      */
     class InString
     {
+        using Int = Size_T;
+        
+        template<typename A>
+        using Result_T = typename std::remove_reference<typename function_traits<A>::return_type>::type;
         
     public:
 
@@ -45,7 +48,11 @@ namespace Tools
             std::ifstream stream (file, std::ios::in | std::ios::binary);
             if( !stream )
             {
-                eprint(ClassName() + "(std::filesystem::path): Opening file " + file.string() + " failed. Returning empty InString.");
+                std::string msg = ClassName();
+                msg.append("(std::filesystem::path): Opening file ");
+                msg.append(file.string());
+                msg.append(" failed. Returning empty InString.");
+                eprint(msg);
                 return;
             }
             
@@ -63,7 +70,11 @@ namespace Tools
             
             if( FailedQ() )
             {
-                eprint(ClassName() + "(std::filesystem::path): Reading from file " + file.string() + " failed.");
+                std::string msg = ClassName();
+                msg.append("(std::filesystem::path): Reading from file ");
+                msg.append(file.string());
+                msg.append(" failed.");
+                eprint(msg);
                 return;
             }
         }
@@ -136,28 +147,10 @@ namespace Tools
         
 #include "InString/Take.hpp"
 #include "InString/Skip.hpp"
-#include "InString/TakeMatrix.hpp"
 #include "InString/TakeArray.hpp"
-
-//        static InString FromFile( cref<std::filesystem::path> file )
-//        {
-//            std::ifstream stream (file, std::ios::in | std::ios::binary);
-//            if( !stream )
-//            {
-//                eprint(ClassName() + "(std::filesystem::path): Opening file " + file.string() + " failed. Returning empty InString.");
-//                return InString();
-//            }
-//            
-//            // Obtain the size of the file.
-//            const auto file_size = std::filesystem::file_size(file);
-//            
-//            // Create a buffer.
-//            std::string s = std::string(file_size, '\0');
-//            // Read the whole file into the buffer.
-//            stream.read(s.data(), static_cast<std::streamsize>(file_size));
-//
-//            return InString(std::move(s));
-//        }
+#include "InString/TakeVector.hpp"
+#include "InString/TakeMatrix.hpp"
+#include "InString/TakeCube.hpp"
         
         InString & Pop()
         {
@@ -167,7 +160,9 @@ namespace Tools
             }
             else
             {
-                eprint(MethodName("Pop") + ": String buffer is empty. Doing nothing.");
+                std::string msg = MethodName("Pop");
+                msg.append(": String buffer is empty. Doing nothing.");
+                eprint(msg);
             }
             
             return *this;
@@ -182,7 +177,11 @@ namespace Tools
             else
             {
                 ptr = begin;
-                eprint(MethodName("Pop") + ": Buffer size was smaller than n = " + ToString(n) + ". Emptying it completely.");
+                std::string msg = MethodName("Pop");
+                msg.append(": Buffer size was smaller than n = ");
+                msg.append(ToString(n));
+                msg.append(". Emptying it completely.");
+                eprint(msg);
             }
             
             return *this;
@@ -207,9 +206,9 @@ namespace Tools
         
     public:
         
-        static constexpr std::string MethodName( const std::string & tag )
+        static constexpr std::string MethodName( std::string_view tag )
         {
-            return ClassName() + "::" + tag;
+            return ClassName().append("::").append(tag);
         }
         
         static constexpr std::string ClassName()

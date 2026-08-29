@@ -30,11 +30,11 @@ namespace Tools
 #endif
     }
     
-    template<Size_T n>
-    inline void print( const char(&c)[n]  )
-    {
-        print(std::string_view(&c[0],&c[n-1]));
-    }
+//    template<Size_T n>
+//    inline void print( const char(&c)[n]  )
+//    {
+//        print(std::string_view(&c[0],&c[n-1]));
+//    }
     
     template<Size_T N>
     inline void print( const ct_string<N> & s )
@@ -44,7 +44,7 @@ namespace Tools
     
     
     template<Size_T align = 0, typename T>
-    inline void valprint( std::string_view s, const T & value)
+    inline void valprint( std::string_view s, const T & value )
     {
         const Size_T len = (align > Size_T(0)) ? std::max(s.size(),align) : s.size();
         
@@ -56,7 +56,7 @@ namespace Tools
     }
     
     template<Size_T align = 0>
-    inline void valprint( std::string_view s, std::string_view value)
+    inline void valprint( std::string_view s, std::string_view value )
     {
         const Size_T len = (align > Size_T(0)) ? std::max(s.size(),align) : s.size();
         

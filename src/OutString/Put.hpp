@@ -9,7 +9,6 @@ OutString & PutChar( const char & c )
     return *this;
 }
 
-
 template<bool checkQ = true>
 OutString & PutChars()
 {
@@ -31,17 +30,11 @@ OutString & PutChars( const char(&c)[n] )
     return PutChars<checkQ>( &c[0], n-1 );
 }
 
-//template<bool checkQ = true>
-//OutString & PutChars( const std::string & s )
-//{
-//    return PutChars<checkQ>( &s[0], s.size() );
-//}
-//
-//template<bool checkQ = true>
-//OutString & PutChars( std::string && s )
-//{
-//    return PutChars<checkQ>( &s[0], s.size() );
-//}
+template<bool checkQ = true, Size_T n>
+OutString & Put( const char(&c)[n] )
+{
+    return PutChars<checkQ>( &c[0], n-1 );
+}
 
 template<bool checkQ = true>
 OutString & PutChars( std::string_view s )
@@ -49,17 +42,12 @@ OutString & PutChars( std::string_view s )
     return PutChars<checkQ>( &s[0], s.size() );
 }
 
-
 template<bool checkQ = true>
 OutString & Put( std::string_view s )
 {
     return PutChars<checkQ>( &s[0], s.size() );
-    
-//    if constexpr( checkQ ) { RequireFreeSpace( s.size() ); }
-//    std::copy_n( &s[0], s.size(), ptr);
-//    ptr += s.size();
-//    return *this;
 }
+
 
 template<bool checkQ = true, typename T, typename ToChars_T = ToChars<T>>
 OutString & Put( const T & x, ToChars_T && to_chars = ToChars_T()  )

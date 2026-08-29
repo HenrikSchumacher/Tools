@@ -85,7 +85,7 @@ template<
 >
 constexpr void putArray(
     A && a, C && to_chars,
-    Int n, Prefix_T && prefix, Infix_T  && infix, Suffix_T && suffix,
+    Int n, Prefix_T && prefix, Infix_T && infix, Suffix_T && suffix,
     Args&&... args
 )
 {
@@ -107,7 +107,7 @@ constexpr void putArray(
 template<NonPointerQ A, NonIntQ C, IntQ Int, Stringy Prefix_T, Stringy Infix_T, Stringy Suffix_T>
 constexpr void putArray(
     A && a, C && to_chars,
-    Int n, Prefix_T && prefix, Infix_T  && infix, Suffix_T && suffix
+    Int n, Prefix_T && prefix, Infix_T && infix, Suffix_T && suffix
 )
 {
     PutChars<false>(prefix);

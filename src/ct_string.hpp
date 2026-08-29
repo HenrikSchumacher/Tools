@@ -1,12 +1,15 @@
 namespace Tools
 {
+
     
-    template<std::size_t N>
+    template<Size_T N>
     class ct_string
     {
         // Taken from https://stackoverflow.com/a/77803192/8248900
         
-        static_assert( N > std::size_t(0) );
+        static_assert( N > Size_T(0) );
+        
+        static constexpr Size_T n = N - Size_T{1};
         
     private:
         
@@ -14,50 +17,48 @@ namespace Tools
         
     public:
         
-        constexpr ct_string()
+        consteval ct_string()
         {
-            for( std::size_t i = std::size_t(0); i < N; ++i )
+            for( Size_T i = 0; i < n; ++i )
             {
-                bytes[i] = std::size_t(0);
+                bytes[i] = ' ';
             }
+            bytes[n] = '\0';
         }
-        
-        constexpr ct_string( const ct_string & rhs )
+//        
+        consteval ct_string( const ct_string & rhs )
         {
-            for( std::size_t i = std::size_t(0); i < N; ++i )
+            for( Size_T i = Size_T(0); i < N; ++i )
             {
                 bytes[i] = rhs[i];
             }
         }
         
         // Construct from a "string literal":
-        constexpr ct_string( const char(&arr)[N] )
+        consteval ct_string( const char(&arr)[N] )
         {
-            for( std::size_t i = 0; i < N; ++i )
-            {
-                bytes[i] = arr[i];
-            }
+            for( Size_T i = 0; i < N; ++i ) { bytes[i] = arr[i]; }
         }
         
         // does not include trailing nil
         // so ct_string<10> has a max size of 9
         // if there is an earlier nil character, size()
         // is the length up to that nil
-        [[nodiscard]] constexpr std::size_t size() const
+        constexpr Size_T strlen() const
         {
-            std::size_t r = 0;
-            
-            while( r + 1 < N && bytes[r] )
+            for( Size_T r = 0; r < n; ++r )
             {
-                ++r;
+                if( bytes[r] == '\0' ) { return r; }
             }
-            return r;
+            return n;
         }
         
-        [[nodiscard]] constexpr std::size_t byte_count() const
+        consteval Size_T size() const
         {
-            return N;
+            return n;
         }
+        
+        consteval Size_T byte_count() const { return N; }
         
         template<IntQ Int>
         constexpr char & operator[](const Int i)
@@ -75,66 +76,120 @@ namespace Tools
         {
             return bytes;
         }
-        
-        constexpr operator char const*() const
+    
+        constexpr char * begin()
         {
-            return data();
+            return &bytes[0];
+        }
+    
+        constexpr char const * begin() const
+        {
+            return &bytes[0];
+        }
+    
+        constexpr char * end()
+        {
+            return &bytes[n];
+        }
+
+        constexpr char const * end() const
+        {
+            return &bytes[n];
         }
         
-        
-        constexpr const char * c_str() const
+        constexpr operator std::string_view () const
         {
-            char b [N];
-            for( Size_T i = 0; i < N; ++i )
-            {
-                b[i] = bytes[i];
-            }
-            return b;
+            return std::string_view(&bytes[0],&bytes[n]);
         }
+        
+        friend std::ostream & operator<<( std::ostream & stream, const ct_string & s )
+        {
+            return (stream << std::string_view(s));
+        }
+        
+        friend std::string ToString( const ct_string & s )
+        {
+            return std::string(&s.bytes[0],n);
+        }
+        
+//
+//        operator std::string () const
+//        {
+//            return std::string(&bytes[0],n);
+//        }
+//        
+//        constexpr operator char const*() const
+//        {
+//            return data();
+//        }
+        
+//        constexpr const char * c_str() const
+//        {
+//            char b [N];
+//            for( Size_T i = 0; i < N; ++i ) { b[i] = bytes[i]; }
+//            return b;
+//        }
     };
     
     
-    template<std::size_t M, std::size_t N>
-    [[nodiscard]] constexpr ct_string<M+N-1> operator+( ct_string<M> lhs, ct_string<N> rhs )
+    template<Size_T M, Size_T N>
+    [[nodiscard]] consteval ct_string<M+N-Size_T{1}> operator+(
+        const ct_string<M> & lhs, const ct_string<N> & rhs
+    )
     {
-        ct_string<M+N-1> result;
+        ct_string<M+N-Size_T{1}> result;
+        
         // copy up to first nil in lhs:
-        for (std::size_t i = 0; i < lhs.size(); ++i)
+        for (Size_T i = 0; i < lhs.size(); ++i)
         {
             result[i] = lhs[i];
         }
         // copy entire rhs buffer, including trailing nils:
-        for (std::size_t i = 0; i < N; ++i)
+        for (Size_T i = 0; i < rhs.size(); ++i)
         {
             result[lhs.size()+i] = rhs[i];
         }
-        
-        // zero out the leftovers, if any:
-        for( std::size_t i = lhs.size() + N; i < M+N-1; ++i )
-        {
-            result[i] = 0;
-        }
+//        
+//        // zero out the leftovers, if any:
+//        for( Size_T i = lhs.size() + N; i < M+N-1; ++i )
+//        {
+//            result[i] = 0;
+//        }
         
         return result;
     }
     
     
-    template<std::size_t M, std::size_t N>
-    [[nodiscard]] constexpr ct_string<M+N-1> operator+( ct_string<M> lhs, const char(&rhs)[N] )
+    template<Size_T M, Size_T N>
+    [[nodiscard]] consteval ct_string<M+N-Size_T{1}> operator+(
+        const char(&lhs)[M], const ct_string<N> & rhs
+    )
     {
-        return lhs + ct_string<N>( rhs );
+        return ct_string<M>(lhs) + rhs;
+    }
+    
+    template<Size_T M, Size_T N>
+    [[nodiscard]] consteval ct_string<M+N-Size_T{1}> operator+(
+        const ct_string<M> & lhs, const char(&rhs)[N]
+    )
+    {
+        return lhs + ct_string<N>(rhs);
     }
     
     // constexpr string concatenation is a C++20 feature. Older compilers might not support it.
-    template<std::size_t N>
-    [[nodiscard]] constexpr std::string operator+( ct_string<N> lhs, const std::string & rhs )
+    template<Size_T N>
+    [[nodiscard]] constexpr std::string operator+(
+        const ct_string<N> & lhs, const std::string & rhs
+    )
     {
         return lhs.data() + rhs;
     }
     
     // constexpr string concatenation is a C++20 feature. Older compilers might not support it.
-    template<std::size_t N>
-    [[nodiscard]] constexpr std::string operator+( const std::string & lhs, ct_string<N> rhs  )
+    template<Size_T N>
+    [[nodiscard]] constexpr std::string operator+(
+        const std::string & lhs, const ct_string<N> & rhs
+    )
     {
         return lhs + rhs.data();
     }
@@ -148,55 +203,50 @@ namespace Tools
     template<> constexpr ct_string<1> ct_spaces<0> = ct_string<1>("");
     
     
-    constexpr ct_string<2> to_ct_string( const bool b )
+    consteval ct_string<2> to_ct_string( const bool b )
     {
-        if( b )
-        {
-            return "1";
-        }
-        else
-        {
-            return "0";
-        }
+        return b ? "1" : "0";
     }
 
     // Slows down everything?
     template<IntQ Int>
-    constexpr ct_string<std::numeric_limits<Int>::digits10+3>
+    consteval ct_string<std::numeric_limits<Int>::digits10+3>
     to_ct_string( const Int i )
     {
+        using Int8 = std::int8_t;
+        
         constexpr Size_T N = std::numeric_limits<Int>::digits10+3;
 
         constexpr char digits [11] = "0123456789";
 
-        Int x [11];
+        Int8 x [11];
 
         ct_string<N> s;
 
         Size_T x_ptr = 0;
 
-        Int d = i % 10;
-        Int r = i / 10;
+        Int d = i % Int{10};
+        Int r = i / Int{10};
 
-        x[x_ptr++] = d;
+        x[x_ptr++] = static_cast<Int8>(d);
 
         while( r != 0 )
         {
-            d = r % 10;
-            r = r / 10;
+            d = r % Int{10};
+            r = r / Int{10};
 
-            x[x_ptr++] = d;
+            x[x_ptr++] = static_cast<Int8>(d);
         }
 
         Int s_ptr = 0;
 
-        if( i < Int(0) )
+        if( i < Int{0} )
         {
             s[s_ptr++] = '-';
         }
 
         // Reverse
-        while( x_ptr > Int(0) )
+        while( x_ptr > Int{0} )
         {
             s[s_ptr++] = digits[x[--x_ptr]];
         }

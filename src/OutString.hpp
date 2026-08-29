@@ -1,138 +1,7 @@
 #pragma once
 
-#include "OutString/ToChars.hpp"
-#include "OutString/CharCount.hpp"
-#include "OutString/CharArray.hpp"
-
 namespace Tools
 {
-    // Not a really good discriminator, but good enough to distinguish a char converter class from an integral type.
-    template<typename C, typename T>
-    concept CharConv = NonIntQ<C>;
-    
-    template<typename A, typename ...Int>
-    concept ArrayFun = NonPointerQ<A>;
-    
-    template<class T>
-    concept Stringy = std::is_convertible_v<T, std::string_view>;
-    
-    template<class T>
-    concept NonStringy = !Stringy<T>;
-    
-    namespace Format
-    {
-        namespace Vector
-        {
-            struct Default
-            {
-                static constexpr char prefix_0 [3] = "{ ";
-                static constexpr char infix_0  [3] = ", ";
-                static constexpr char suffix_0 [3] = " }";
-            };
-            
-            struct Space
-            {
-                static constexpr char prefix_0 [1] = "";
-                static constexpr char infix_0  [2] = " ";
-                static constexpr char suffix_0 [1] = "";
-            };
-            
-            struct TSV
-            {
-                static constexpr char prefix_0 [1] = "";
-                static constexpr char infix_0  [2] = "\t";
-                static constexpr char suffix_0 [1] = "";
-            };
-        }
-        
-        namespace Matrix
-        {
-            struct Tall
-            {
-                static constexpr char prefix_0 [3] = "{\n";
-                static constexpr char infix_0  [3] = ",\n";
-                static constexpr char suffix_0 [3] = "\n}";
-                static constexpr char prefix_1 [4] = " { ";
-                static constexpr char infix_1  [3] = ", ";
-                static constexpr char suffix_1 [3] = " }";
-            };
-            
-            struct Wide
-            {
-                static constexpr char prefix_0 [3] = "{ ";
-                static constexpr char infix_0  [3] = ", ";
-                static constexpr char suffix_0 [3] = " }";
-                static constexpr char prefix_1 [4] = "{ ";
-                static constexpr char infix_1  [3] = ", ";
-                static constexpr char suffix_1 [3] = " }";
-            };
-            
-            struct TSV
-            {
-                static constexpr char prefix_0 [1] = "";
-                static constexpr char infix_0  [2] = "\n";
-                static constexpr char suffix_0 [1] = "";
-                static constexpr char prefix_1 [1] = "";
-                static constexpr char infix_1  [2] = "\t";
-                static constexpr char suffix_1 [1] = "";
-            };
-            
-            struct CSV
-            {
-                static constexpr char prefix_0 [1] = "";
-                static constexpr char infix_0  [2] = "\n";
-                static constexpr char suffix_0 [1] = "";
-                static constexpr char prefix_1 [1] = "";
-                static constexpr char infix_1  [2] = ",";
-                static constexpr char suffix_1 [1] = "";
-            };
-        }
-        
-        
-        namespace Cube
-        {
-            struct Tall
-            {
-                static constexpr char prefix_0 [3] = "{\n";
-                static constexpr char infix_0  [3] = ",\n";
-                static constexpr char suffix_0 [3] = "\n}";
-                static constexpr char prefix_1 [4] = " {\n";
-                static constexpr char infix_1  [3] = ",\n";
-                static constexpr char suffix_1 [4] = "\n }";
-                static constexpr char prefix_2 [5] = "  { ";
-                static constexpr char infix_2  [3] = ", ";
-                static constexpr char suffix_2 [3] = " }";
-            };
-            
-            struct Wide
-            {
-                static constexpr char prefix_0 [3] = "{ ";
-                static constexpr char infix_0  [3] = ", ";
-                static constexpr char suffix_0 [3] = " }";
-                static constexpr char prefix_1 [3] = "{ ";
-                static constexpr char infix_1  [3] = ", ";
-                static constexpr char suffix_1 [3] = " }";
-                static constexpr char prefix_2 [3] = "{ ";
-                static constexpr char infix_2  [3] = ", ";
-                static constexpr char suffix_2 [3] = " }";
-            };
-            
-            struct Medium
-            {
-                static constexpr char prefix_0 [3] = "{\n";
-                static constexpr char infix_0  [3] = ",\n";
-                static constexpr char suffix_0 [3] = "\n}";
-                static constexpr char prefix_1 [4] = " { ";
-                static constexpr char infix_1  [3] = ", ";
-                static constexpr char suffix_1 [3] = " }";
-                static constexpr char prefix_2 [3] = "{ ";
-                static constexpr char infix_2  [3] = ", ";
-                static constexpr char suffix_2 [3] = " }";
-            };
-        }
-    }
-    
-
     /*!@brief A class to resemble `std::ostringstream`, except being faster for big arrays at the cost of somewhat limited capabilities.
      *
      * This class uses overloads of `ToChars` or interface-compatible type-to-chars converters to do its job.
@@ -482,6 +351,14 @@ namespace Tools
             return TryEmplace(x, ToChars<T>() );
         }
         
+        template<typename A, typename ...Args>
+        static OutString FromMisc( A && a, Args &&... args )
+        {
+            OutString s;
+            ((s << std::forward<A>(a) << std::forward<Args>(args)), ...);
+            return s;
+        }
+        
     public:
 
         friend Size_T CharCount( const OutString & s )
@@ -523,20 +400,52 @@ namespace Tools
         
     }; // OutString
 
-    
-    
     template<typename T>
-    [[nodiscard]] OutString ToString( cref<std::vector<T>> v )
+    [[nodiscard]] std::string ToString( cref<std::vector<T>> v )
     {
         return OutString::FromVector( &v[0], v.size() );
     }
     
     template<typename T, Size_T N>
-    [[nodiscard]] OutString ToString( const std::array<T,N> & v )
+    [[nodiscard]] std::string ToString( cref<std::array<T,N>> v )
     {
         return OutString::FromVector( &v[0], N );
     }
     
+
+    // Some convenience functions to mimic std::string_stream.
+    // Better do not use it for writing strings that need to be parsed.
+    // Better use the combo Put<<Something>> / Take<<Something>>.
+
+    template<std::size_t N>
+    OutString operator<<( OutString & s, ct_string<N> x )
+    {
+        return s.PutChars(x.c_str(),N);
+    }
+    
+    OutString operator<<( OutString & s, std::string_view x )
+    {
+        return s.Put(x);
+    }
+    
+    template<typename T>
+    OutString operator<<( OutString & s, const T & x )
+    {
+        return s.Put(x);
+    }
+    
+    template<typename T>
+    OutString operator<<( OutString & s, cref<std::vector<T>> v )
+    {
+        return s.PutVector( &v[0], v.size() );
+    }
+    
+    template<typename T, Size_T N>
+    OutString operator<<( OutString & s, cref<std::array<T,N>> v )
+    {
+        return s.PutVector( &v[0], N );
+    }
+
     
 } // Tools
 

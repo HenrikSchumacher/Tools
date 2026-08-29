@@ -468,12 +468,12 @@ namespace Tools
         
         static constexpr std::string MethodName( const std::string & tag )
         {
-            return ClassName() + "::" + tag;
+            return ClassName().append("::").append(tag);
         }
         
         static constexpr std::string ClassName()
         {
-            return std::string("Logger") + "<" + ToString(profileQ) + ">";
+            return std::string("Logger<").append(ToString(profileQ)).append(">");
         }
         
     }; // class Logger
@@ -574,6 +574,7 @@ namespace Tools
         {
             return activeQ;
         }
+        
     }; // LoggerTimer
     
 } // namespace Tools

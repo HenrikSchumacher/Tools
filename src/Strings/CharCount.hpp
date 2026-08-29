@@ -9,14 +9,15 @@ namespace Tools
         return n-1;
     }
 
-    Size_T CharCount( const std::string & s )
-    {
-        return s.size();
-    }
-
     Size_T CharCount( std::string_view s )
     {
         return s.size();
+    }
+    
+    template<typename... S>
+    Size_T CharCount( std::string_view s, S... args )
+    {
+        return s.size() + CharCount(args...);
     }
     
 } // namespace Tools
