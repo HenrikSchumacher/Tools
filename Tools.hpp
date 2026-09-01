@@ -111,6 +111,7 @@
 #include <charconv>
 #include <format>
 #include <limits>
+#include <climits>
 #include <exception>
 #include <stdexcept>
 #include <tuple>
