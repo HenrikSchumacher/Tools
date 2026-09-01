@@ -7,7 +7,7 @@ namespace Tools
     {
         // Taken from https://stackoverflow.com/a/77803192/8248900
         
-        static_assert( N > Size_T(0) );
+        static_assert( N > Size_T{0} );
         
         static constexpr Size_T n = N - Size_T{1};
         
@@ -28,7 +28,7 @@ namespace Tools
 //        
         consteval ct_string( const ct_string & rhs )
         {
-            for( Size_T i = Size_T(0); i < N; ++i )
+            for( Size_T i = Size_T{0}; i < N; ++i )
             {
                 bytes[i] = rhs[i];
             }

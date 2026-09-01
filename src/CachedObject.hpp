@@ -350,7 +350,7 @@ namespace Tools
                 s += "{ ";
                 for( auto const & p : cache )
                 {
-                    if( iter > Size_T(0) ) { s += ", "; }
+                    if( iter > Size_T{0} ) { s += ", "; }
                     s += p.first;
                     ++iter;
                 }

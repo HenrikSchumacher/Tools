@@ -46,11 +46,11 @@ namespace Tools
     template<Size_T align = 0, typename T>
     inline void valprint( std::string_view s, const T & value )
     {
-        const Size_T len = (align > Size_T(0)) ? std::max(s.size(),align) : s.size();
+        const Size_T len = (align > Size_T{0}) ? std::max(s.size(),align) : s.size();
         
-        std::string s_out (len + 3, ' ');
+        std::string s_out (len + Size_T{3}, ' ');
         std::copy_n( s.begin(), s.size(), s_out.begin() );
-        s_out[len+1] = '=';
+        s_out[len+Size_T{1}] = '=';
         s_out += ToString(value);
         print(s_out);
     }
@@ -58,12 +58,12 @@ namespace Tools
     template<Size_T align = 0>
     inline void valprint( std::string_view s, std::string_view value )
     {
-        const Size_T len = (align > Size_T(0)) ? std::max(s.size(),align) : s.size();
+        const Size_T len = (align > Size_T{0}) ? std::max(s.size(),align) : s.size();
         
-        std::string s_out (len + 3 + value.size(),' ');
+        std::string s_out (len + Size_T{3} + value.size(),' ');
         std::copy_n( s.begin(), s.size(), s_out.begin() );
-        s_out[len+1] = '=';
-        std::copy_n( value.begin(), value.size(), &s_out[len + 3] );
+        s_out[len+Size_T{1}] = '=';
+        std::copy_n( value.begin(), value.size(), &s_out[len + Size_T{3}] );
         print(s_out);
     }
 
