@@ -20,7 +20,7 @@ namespace Tools
     public:
 
         OutString()
-        :   OutString { Int(16) }
+        :   OutString { Int{16} }
         {}
     
         explicit OutString( Int n )
@@ -44,7 +44,7 @@ namespace Tools
         {}
 
         OutString( Size_T size_, char  x )
-        :   OutString { Size_T(size_) }
+        :   OutString { size_ }
         {
             std::fill_n(buffer,size_,x);
         }
@@ -200,7 +200,7 @@ namespace Tools
         {
             if constexpr ( checkQ )
             {
-                RequireFreeSpace( Int(n) );
+                RequireFreeSpace(n);
             }
             size += n;
             
@@ -209,7 +209,7 @@ namespace Tools
         
         OutString & Pop()
         {
-            if( size > Int(0) )
+            if( size > Int{0} )
             {
                 --size;
             }
@@ -239,7 +239,7 @@ namespace Tools
         
         bool EmptyQ() const
         {
-            return size == Size_T(0);
+            return size == Size_T{0};
         }
         
         bool FullQ() const
@@ -273,7 +273,8 @@ namespace Tools
         {
             if( n > capacity )
             {
-                Resize(Int(2) * capacity + size + n);
+//                Resize(Int{2} * capacity + size + n);
+                Resize(n);
             }
             return *this;
         }
@@ -282,6 +283,7 @@ namespace Tools
         {
             if( size + n > capacity )
             {
+//                Resize( capacity + size + n );
                 Resize( capacity + size + n );
             }
             return *this;
@@ -289,7 +291,11 @@ namespace Tools
         
         OutString & Expand()
         {
-            RequireCapacity( Int(2) * capacity );
+//            RequireCapacity( Int{2} * capacity );
+            
+            RequireCapacity(
+                (capacity <= Int{2}) ? Int{8} : (Int{3} * Int{capacity})/Int{2}
+            );
             return *this;
         }
         
