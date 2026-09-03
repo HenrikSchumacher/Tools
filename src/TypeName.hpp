@@ -195,10 +195,12 @@ namespace Tools
     template <typename T>
     constexpr auto PrettyTypeName()
     {
-        std::string_view name, prefix, suffix;
+        std::string_view name;
+        std::string_view prefix;
+        std::string_view suffix;
     #if defined(TOOLS_COMPILER_IS_ANY_CLANG)
         name = __PRETTY_FUNCTION__;
-        prefix = "auto Tools::PrettyTypeName() [T =";
+        prefix = "auto Tools::PrettyTypeName() [T = ";
         suffix = "]";
     #elif defined(TOOLS_COMPILER_IS_GCC)
         name = __PRETTY_FUNCTION__;
@@ -208,6 +210,10 @@ namespace Tools
         name = __FUNCSIG__;
         prefix = "auto __cdecl Tools::PrettyTypeName<";
         suffix = ">(void)";
+    #elif
+        name = "UnknownFunction";
+        prefix = "";
+        suffix = "";
     #endif
         name.remove_prefix(prefix.size());
         name.remove_suffix(suffix.size());
