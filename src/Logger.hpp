@@ -538,6 +538,12 @@ namespace Tools
             return ClassName() + "::" + tag;
         }
         
+        template<Size_T N>
+        static consteval auto MethodName( const char(&tag)[N] )
+        {
+            return MethodName( ct_string(tag) );
+        }
+        
         static consteval auto ClassName()
         {
             return ct_string("Logger<") + to_ct_string(profileQ) + ">";
