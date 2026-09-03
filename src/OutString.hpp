@@ -375,15 +375,15 @@ namespace Tools
 //        }
         
         
-        friend OutString & operator<<( OutString & s, const OutString & x )
+        friend OutString & operator<<(       OutString & tgt, const OutString & src )
         {
-            return s.Put(x.View());
+            return tgt.Put(src.View());
         }
         
-//        friend OutString & operator<<( OutString & s, OutString && x )
-//        {
-//            return s.Put(x.View());
-//        }
+        friend OutString & operator>>( const OutString & src,       OutString & tgt )
+        {
+            return tgt.Put(src.View());
+        }
         
         static OutString FromMisc( OutString && a )
         {
@@ -391,11 +391,13 @@ namespace Tools
             return s;
         }
         
+        
         template<typename A>
         static OutString FromMisc( const A & a )
         {
-//            OutString s;
-            OutString s ( CharCount(a) );
+            // TODO: Find better way to predict CharCount. Or just give up on that.
+            OutString s;
+//            OutString s ( CharCount(a) );
             s << a;
             return s;
         }
@@ -404,7 +406,7 @@ namespace Tools
         static OutString FromMisc( OutString && a, const Args &... args )
         {
             OutString s = std::move(a);
-            s.RequireFreeSpace( CharCount(args...) );
+//            s.RequireFreeSpace( CharCount(args...) );
             (s << ... << args);
             return s;
         }
@@ -412,8 +414,8 @@ namespace Tools
         template<typename A, typename ...Args>
         static OutString FromMisc( const A & a, const Args &... args )
         {
-//            OutString s;
-            OutString s ( CharCount(a) + CharCount(args...) );
+            OutString s;
+//            OutString s ( CharCount(a) + CharCount(args...) );
             s << a;
             (s << ... << args);
             return s;
@@ -435,9 +437,10 @@ namespace Tools
             return std::string(begin(),ptr());
         }
         
-        friend std::ostream & operator<<( std::ostream & out, const OutString & in )
+        template<typename C, typename T>
+        friend std::basic_ostream<C,T> & operator<<( std::basic_ostream<C,T> & tgt, const OutString & src )
         {
-            return (out << std::string_view(in));
+            return (tgt << std::string_view(src));
         }
         
     public:
