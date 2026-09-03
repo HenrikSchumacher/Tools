@@ -191,7 +191,6 @@ namespace Tools
         
     public:
         
-//        /*!@brief Print message `s` to log file.*/
 //        template<bool tabsQ = true, typename A>
 //        void LogPrint( A && a )
 //        {
