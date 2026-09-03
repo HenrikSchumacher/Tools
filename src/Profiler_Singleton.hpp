@@ -6,7 +6,6 @@ namespace Tools
     {
     public:
         
-
         /*!@brief One global instance of the `Logger` to be used by `logprint`, `logvalprint` and other helper functions.
          *
          * We deliberately do not use a singleton here because nonconstant `static` variables behave strangely in shared library environment. This way, each compilation target gets it own copy of `logger`. This is intended, because this code may be used in many small dynamic libraries to be run from one central process. `static` variables would require us to have all these libraries compiled with the same settings `TOOLS_ENABLE_PROFILER`. And this would force us to recompile all libraries if we ever want to use only one of them with profiling information.
@@ -57,81 +56,94 @@ namespace Tools
 
     
     /*!@brief Print message `s` to log file specified by `Tools::GetLogger().LogFile()`.*/
-    template<bool tabsQ = true>
-    static inline void logprint( std::string_view s )
+    template<bool printQ = true, bool tabsQ = true, typename ...Args>
+    inline void logprint( const Args &... args )
     {
-        Profiler::GetLogger().LogPrint<tabsQ>(s);
+        Profiler::GetLogger().template LogPrint<printQ,tabsQ>(args...);
     }
     
     /*!@brief Print value of `value` associated to tag `tag` to log file specified by `Tools::GetLogger().LogFile()`.*/
-    template<bool tabsQ = true, typename T>
+    template<bool printQ = true, bool tabsQ = true, typename T>
     static inline void logvalprint( std::string_view tag, const T & value )
     {
-        Profiler::GetLogger().LogValPrint<tabsQ>(tag,value);
+        Profiler::GetLogger().template LogValPrint<printQ,tabsQ>(tag,value);
     }
-    
     
 #define TOOLS_LOGDUMP(x) Tools::logvalprint( std::string_view(#x), x );
     
 #define TOOLS_DDUMP(x) Tools::logvalprint( std::string_view(#x), x ); Tools::valprint( std::string_view(#x), x );
     
     /*!@brief Print WARNING message with text `s`. This is sent to `std::cerr` and to the log file specified by `Tools::logger.LogFile()`.*/
-    static inline void wprint( std::string_view s )
+    
+    template<typename ...Args>
+    inline void wprint( const Args &... args )
     {
-        std::string msg ("WARNING: ");
-        msg += s;
-#if defined(LTEMPLATE_H) || defined(TENSORS_MMA_HPP)
-        print( msg );
-#endif
-        {
-            const std::lock_guard<std::mutex> cerr_lock { Tools::cerr_mutex };
-            std::cerr << msg << std::endl;
-        }
-        logprint<false>(msg);
+        Profiler::GetLogger().WarningPrint(args...);
     }
+    
+//    static inline void wprint( std::string_view s )
+//    {
+//        std::string msg ("WARNING: ");
+//        msg += s;
+//#if defined(LTEMPLATE_H) || defined(TENSORS_MMA_HPP)
+//        print( msg );
+//#endif
+//        {
+//            const std::lock_guard<std::mutex> cerr_lock { Tools::cerr_mutex };
+//            std::cerr << msg << std::endl;
+//        }
+//        logprint<false>(msg);
+//    }
     
     /*!@brief Print a NOTE message with text `s`. This is sent to the log file specified by `Tools::GetLogger().LogFile()`.*/
-    static inline void nprint( std::string_view s )
+    template<typename ...Args>
+    inline void nprint( const Args &... args )
     {
-        std::string msg ("NOTE: ");
-        msg += s;
 #if defined(LTEMPLATE_H) || defined(TENSORS_MMA_HPP)
-        print( msg );
+        print("NOTE: ", args...);
 #endif
-        logprint<false>(msg);
+        logprint<false>("NOTE: ", args...);
     }
     
-    /*!@brief Print a ERROR message with text `s`. This is sent to `std::cout` and `std::cerr` and to the log file specified by `Tools::GetLogger().LogFile()`..*/
-    inline void eprint( std::string_view s )
+    /*!@brief Print a ERROR message with text `s`. This is sent to `std::cout` and `std::cerr` and to the log file specified by `Tools::GetLogger().LogFile()`.*/
+    template<typename ...Args>
+    inline void eprint( const Args &... args )
     {
-        Profiler::GetLogger().ErrorPrint(s);
+        Profiler::GetLogger().ErrorPrint(args...);
     }
     
     /*!@brief Created an error with `s`. A message is sent to `std::cerr` and to the log file specified by `Tools::GetLogger().LogFile()`. Afterwards, a `std::runtime_error` is throw with this message attached.*/
-    static inline void error( std::string_view s )
+    template<typename ...Args>
+    inline void error( const Args &... args )
     {
-        std::string msg ("ERROR: ");
-        msg += s;
-        
-#if defined(LTEMPLATE_H) || defined(TENSORS_MMA_HPP)
-        print( msg );
-#endif
-        {
-            const std::lock_guard<std::mutex> cerr_lock { Tools::cerr_mutex };
-            std::cerr << msg << std::endl;
-        }
-        logprint<false>( msg );
-        throw std::runtime_error(msg);
+        Profiler::GetLogger().Error(args...);
     }
+    
+//    static inline void error( std::string_view s )
+//    {
+//        std::string msg ("ERROR: ");
+//        msg += s;
+//        
+//#if defined(LTEMPLATE_H) || defined(TENSORS_MMA_HPP)
+//        print( msg );
+//#endif
+//        {
+//            const std::lock_guard<std::mutex> cerr_lock { Tools::cerr_mutex };
+//            std::cerr << msg << std::endl;
+//        }
+//        logprint<false>( msg );
+//        throw std::runtime_error(msg);
+//    }
     
    
     /*!@brief Like `logprint`, but only active if macro `TOOLS_ENABLE_PROFILER` is defined.*/
-    static inline void pprint( std::string_view s )
+    template<bool tabsQ = true, typename ...Args>
+    inline void pprint( const Args &... args )
     {
 #ifdef TOOLS_ENABLE_PROFILER
-        Profiler::GetLogger().ProfilePrint(s);
+        Profiler::GetLogger().template ProfilePrint<tabsQ>(args...);
 #else
-        (void)s;
+        Void{args...};
 #endif
     }
 
@@ -142,8 +154,7 @@ namespace Tools
 #ifdef TOOLS_ENABLE_PROFILER
         Profiler::GetLogger().ProfileValPrint(tag,value);
 #else
-        (void)tag;
-        (void)value;
+        Void{tag,value};
 #endif
     }
 

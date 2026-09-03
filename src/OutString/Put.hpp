@@ -42,11 +42,54 @@ OutString & PutChars( std::string_view s )
     return PutChars<checkQ>( &s[0], s.size() );
 }
 
+
 template<bool checkQ = true>
 OutString & Put( std::string_view s )
 {
     return PutChars<checkQ>( &s[0], s.size() );
 }
+
+template<bool checkQ = true>
+OutString & Put( std::string && s )
+{
+    return PutChars<checkQ>( &s[0], s.size() );
+}
+
+template<bool checkQ = true>
+OutString & Put( const std::string & s )
+{
+    return PutChars<checkQ>( &s[0], s.size() );
+}
+
+template<bool checkQ = true>
+OutString & Put( OutString && s )
+{
+    return PutChars<checkQ>( &s[0], s.Size() );
+}
+
+template<bool checkQ = true>
+OutString & Put( const OutString & s )
+{
+    return PutChars<checkQ>( &s[0], s.Size() );
+}
+
+template<bool checkQ = true, Size_T N>
+OutString & Put( ct_string<N> && s )
+{
+    return PutChars<checkQ>( &s[0], N - Size_T{1} );
+}
+
+template<bool checkQ = true, Size_T N>
+OutString & Put( const ct_string<N> & s )
+{
+    return PutChars<checkQ>( &s[0], N - Size_T{1} );
+}
+
+//template<bool checkQ = true>
+//OutString & Put( std::string_view && s )
+//{
+//    return PutChars<checkQ>( &s[0], s.size() );
+//}
 
 
 template<bool checkQ = true, typename T, typename ToChars_T = ToChars<T>>

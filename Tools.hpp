@@ -115,7 +115,7 @@
 #include <exception>
 #include <stdexcept>
 #include <tuple>
-
+#include <source_location>
 
 
 // In case somebody got the idea to ruin all other people's code.
@@ -462,6 +462,11 @@ namespace Tools
         return dest;
     }
 
+    struct Void
+    {
+        template<typename ...Args> Void(Args const & ... ) {}
+    };
+    
 } // namespace Tools
 
 #include <complex>
@@ -471,11 +476,16 @@ namespace Tools
 
 #include "src/FunctionTraits.hpp"
 
+#include "src/Strings.hpp"
+#include "src/OutString.hpp"
 #include "src/Print.hpp"
+
 #include "src/Time.hpp"
 #include "src/FileSystem.hpp"
 #include "src/Logger.hpp"
 #include "src/Profiler_Singleton.hpp"
+#include "src/Messenger.hpp"
+
 #include "src/BLAS_Enums.hpp"
 #include "src/Integers.hpp"
 #include "src/Scalars.hpp"
@@ -485,9 +495,8 @@ namespace Tools
 
 #include "src/BitFiddling.hpp"
 
-#include "src/Strings.hpp"
-#include "src/OutString.hpp"
 #include "src/InString.hpp"
+
 
 #define _USE_MATH_DEFINES
 #include <cmath>

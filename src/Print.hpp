@@ -30,42 +30,95 @@ namespace Tools
 #endif
     }
     
-//    template<Size_T n>
-//    inline void print( const char(&c)[n]  )
-//    {
-//        print(std::string_view(&c[0],&c[n-1]));
-//    }
-    
-    template<Size_T N>
-    inline void print( const ct_string<N> & s )
+    template<bool printQ = true, Stringy T>
+    inline void print( const T & x )
     {
-        print( s.data() );
+        if constexpr ( printQ )
+        {
+            print(std::string_view(x));
+        }
+        else
+        {
+            (void)x;
+        }
+    }
+    
+    template<bool printQ = true, typename T, typename ...Args>
+    inline void print( T && x, const Args &... args )
+    {
+        if constexpr ( printQ )
+        {
+            // We forward the first argument's type because it could be an OutString &&
+            
+            print(
+                OutString::FromMisc(std::forward<T>(x),args...).View()
+            );
+        }
+        else
+        {
+            Void{x,args...};
+        }
     }
     
     
-    template<Size_T align = 0, typename T>
-    inline void valprint( std::string_view s, const T & value )
-    {
-        const Size_T len = (align > Size_T{0}) ? std::max(s.size(),align) : s.size();
-        
-        std::string s_out (len + Size_T{3}, ' ');
-        std::copy_n( s.begin(), s.size(), s_out.begin() );
-        s_out[len+Size_T{1}] = '=';
-        s_out += ToString(value);
-        print(s_out);
-    }
-    
-    template<Size_T align = 0>
+    template<bool printQ = true, Size_T align = 0>
     inline void valprint( std::string_view s, std::string_view value )
     {
-        const Size_T len = (align > Size_T{0}) ? std::max(s.size(),align) : s.size();
+        if constexpr ( printQ )
+        {
+            if constexpr ( align == Size_T{0} )
+            {
+                print( s, " = ", value );
+            }
+            else
+            {
+                print( ct_string<align+Size_T{1}>(), s, " = ", value );
+            }
+        }
+        else
+        {
+            Void{s,value};
+        }
         
-        std::string s_out (len + Size_T{3} + value.size(),' ');
-        std::copy_n( s.begin(), s.size(), s_out.begin() );
-        s_out[len+Size_T{1}] = '=';
-        std::copy_n( value.begin(), value.size(), &s_out[len + Size_T{3}] );
-        print(s_out);
+//        const Size_T len = (align > Size_T{0}) ? std::max(s.size(),align) : s.size();
+//
+//        std::string s_out (len + Size_T{3} + value.size(),' ');
+//        std::copy_n( s.begin(), s.size(), s_out.begin() );
+//        s_out[len+Size_T{1}] = '=';
+//        std::copy_n( value.begin(), value.size(), &s_out[len + Size_T{3}] );
+//        print(s_out);
     }
+    
+    template<bool printQ = true, Size_T align = 0, typename T>
+    inline void valprint( std::string_view s, const T & value )
+    {
+        if constexpr ( printQ )
+        {
+            if constexpr ( align == Size_T{0} )
+            {
+                // Calling ToString here is not ideal, but it is robust.
+                print( s, " = ", ToString(value) );
+            }
+            else
+            {
+                // Calling ToString here is not ideal, but it is robust.
+                print( ct_string<align+Size_T{1}>(), s, " = ", ToString(value) );
+            }
+        }
+        else
+        {
+            Void{s,value};
+        }
+//        const Size_T len = (align > Size_T{0}) ? std::max(s.size(),align) : s.size();
+//        
+//        std::string s_out (len + Size_T{3}, ' ');
+//        std::copy_n( s.begin(), s.size(), s_out.begin() );
+//        s_out[len+Size_T{1}] = '=';
+//        s_out += ToString(value);
+//        print(s_out);
+    }
+    
+    
 
 } // namespace Tools
 

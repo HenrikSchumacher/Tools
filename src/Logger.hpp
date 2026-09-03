@@ -106,7 +106,10 @@ namespace Tools
             const bool appendQ = false
         )
         {
-            if constexpr ( verboseQ ) { print(MethodName("Clear") + "(dir,log_name,prof_name,silentQ,appendQ)"); }
+            if constexpr ( verboseQ )
+            {
+                print(MethodName("Clear(dir,log_name,prof_name,silentQ,appendQ)"));
+            }
             
             const Lock_T log_lock { log_mutex };
             
@@ -120,7 +123,7 @@ namespace Tools
             {
                 if( !silentQ )
                 {
-                    print( std::string("Log     will be written to ") + log_file.string() + "." );
+                    print("Log     will be written to ", log_file.string(), "." );
                 }
                 log << std::setprecision(16);
             }
@@ -145,7 +148,7 @@ namespace Tools
                 {
                     if( !silentQ )
                     {
-                        print( std::string("Profile will be written to ") + prof_file.string() + ".");
+                        print("Profile will be written to ", prof_file.string(), ".");
                     }
                 }
                 else
@@ -171,80 +174,161 @@ namespace Tools
             if constexpr ( verboseQ ) { print(Info()); }
         }
         
+    private:
+        
         /*!@brief Print message `s` to log file.*/
-        template<bool tabsQ = true>
-        void LogPrint( std::string_view s )
+        void LogPrint_Raw( std::string_view s )
         {
             if constexpr ( verboseQ )
             {
-                print(MethodName("LogPrint"));
+                print(MethodName("LogPrint_Raw"));
                 print(Info());
             }
             
             const Lock_T log_lock { log_mutex };
-            
-            if constexpr ( tabsQ && profileQ)
-            {
-                for( Size_T i = 0; i < stack.size()+1; ++i ) { log << "  "; }
-            }
-            log << s << "\n" << std::endl;
+            log << s << std::endl;
         }
         
-        /*!@brief Print value of `value` associated to tag `tag` to log file.*/
-        template<bool tabsQ = true, typename T>
-        void LogValPrint( std::string_view tag, const T & value )
+    public:
+        
+//        /*!@brief Print message `s` to log file.*/
+//        template<bool tabsQ = true, typename A>
+//        void LogPrint( A && a )
+//        {
+//            // We forward the first argument's type because it could be an OutString &&
+//            if constexpr ( tabsQ )
+//            {
+//                LogPrint_Raw<tabsQ>(OutString::FromMisc(
+//                    OutString(' ', 2 * stack.size() + 1),
+//                    std::forward<A>(a)
+//                ).View());
+//            }
+//            else
+//            {
+//                LogPrint_Raw<tabsQ>(OutString::FromMisc(
+//                    std::forward<A>(a)
+//                ).View());
+//            }
+//        }
+        
+        /*!@brief Print items to log file, using convertion by `OutString`.*/
+        template<bool printQ = true, bool tabsQ = true, typename A, typename ...Args>
+        inline void LogPrint( const A & a, const Args &... args )
         {
-            if constexpr ( verboseQ )
+            if constexpr ( printQ )
             {
-                print(MethodName("LogValPrint"));
-                print(Info());
-            }
-            
-            const Lock_T log_lock { log_mutex };
-            
-            if constexpr ( tabsQ && profileQ )
-            {
-                for( Size_T i = 0; i < stack.size()+1; ++i ) { log <<  "  "; }
-            }
-            log << tag << " = " << ToString(value) << "\n" << std::endl;
-        }
-        
-        
-        /*!@brief Print message `s` to `std::cerr` and to log file.*/
-        template<bool tabsQ = true>
-        void ErrorPrint( std::string_view s )
-        {
-            if constexpr ( verboseQ )
-            {
-                print(MethodName("ErrorPrint"));
-                print(Info());
-            }
-            
-            std::string msg ("ERROR: ");
-            msg += s;
-            
-    #if defined(LTEMPLATE_H) || defined(TENSORS_MMA_HPP)
-            print( msg );
-    #endif
-            {
-                const Lock_T cerr_lock { Tools::cerr_mutex };
-                std::cerr << msg << std::endl;
-            }
-            this->template LogPrint<false>( msg );
-        }
-        
-        
-        /*!@brief Print message `s` to log file.*/
-        template<bool tabsQ = true>
-        void ProfilePrint( std::string_view s )
-        {
-            if constexpr ( profileQ )
-            {
-                this->LogPrint<tabsQ>(s);
+                if constexpr ( tabsQ )
+                {
+                    // We forward the first argument's type because it could be an OutString &&
+                    LogPrint_Raw(OutString::FromMisc(
+                        OutString(Size_T{2}*stack.size()+Size_T{1},' '),
+                        a,
+                        args...
+                    ).View());
+                }
+                else
+                {
+                    // We forward the first argument's type because it could be an OutString &&
+                    LogPrint_Raw(OutString::FromMisc(
+                        a,
+                        args...
+                    ).View());
+                }
             }
             else
             {
-                (void) s;
+                Void{a,args...};
+            }
+        }
+
+        /*!@brief Print value of `value` associated to tag `tag` to log file.*/
+        template<bool printQ = true, bool tabsQ = true>
+        void LogValPrint( std::string_view tag, std::string_view value )
+        {
+            LogPrint<printQ,tabsQ>( tag, " = ", value );
+        }
+        
+        /*!@brief Print value of `value` associated to tag `tag` to log file.*/
+        template<bool printQ = true, bool tabsQ = true, typename T>
+        void LogValPrint( std::string_view tag, const T & value )
+        {
+            if constexpr ( printQ )
+            {
+                LogPrint<printQ,tabsQ>( tag, " = ", ToString(value) );
+            }
+            else
+            {
+                Void{tag,value};
+            }
+        }
+        
+    private:
+        
+        /*!@brief Print message `s` to `std::cerr` and to log file.*/
+        template<bool throwQ = false>
+        void ErrorPrint_Raw( std::string_view s )
+        {
+            if constexpr ( verboseQ )
+            {
+                print(MethodName("ErrorPrint_Raw"));
+                print(Info());
+            }
+            
+    #if defined(LTEMPLATE_H) || defined(TENSORS_MMA_HPP)
+            print(s);
+    #endif
+            {
+                const Lock_T cerr_lock { Tools::cerr_mutex };
+                std::cerr << s << std::endl;
+            }
+            this->template LogPrint<true,false>(s);
+            
+            if constexpr ( throwQ )
+            {
+                throw std::runtime_error(std::string(s));
+            }
+        }
+        
+        template<bool throwQ = false, typename ...Args>
+        void ErrorPrint_Raw( const Args &... args )
+        {
+            ErrorPrint_Raw<throwQ>(OutString::FromMisc(args...).View());
+        }
+        
+    public:
+        
+        /*!@brief Print arguments to as ERROR `std::cerr` and to log file.*/
+        template<typename ...Args>
+        void ErrorPrint( const Args &... args )
+        {
+            ErrorPrint_Raw("ERROR: ", args...);
+        }
+        
+        /*!@brief Print message `s` as WARNING to `std::cerr` and to log file.*/
+        template<typename ...Args>
+        void WarningPrint( const Args &... args )
+        {
+            ErrorPrint_Raw("WARNING: ", args...);
+        }
+        
+        /*!@brief Print arguments to as ERROR `std::cerr` and to log file. Then throw an exception.*/
+        template<typename ...Args>
+        void Error( const Args &... args )
+        {
+            ErrorPrint_Raw<true>("ERROR: ", args...);
+        }
+        
+        /*!@brief Print message `s` to log file.*/
+        template<bool tabsQ = true, typename ...Args>
+        void ProfilePrint( const Args &... args )
+        {
+            if constexpr ( profileQ )
+            {
+                this->LogPrint<tabsQ>(args...);
+            }
+            else
+            {
+                Void{args...};
             }
         }
         
@@ -258,19 +342,18 @@ namespace Tools
             }
             else
             {
-                (void)tag;
-                (void)value;
+                Void{tag,value};
             }
         }
         
         /*!@brief Record the start time of an event with tag `tag`.*/
-        void Tic( const std::string & tag )
+        void Tic( std::string_view tag )
         {
             if constexpr ( profileQ )
             {
                 if constexpr ( verboseQ )
                 {
-                    print(MethodName("Tic") + "(" + tag + ")");
+                    print(MethodName("Tic"), "(", tag, ")");
                     print(Info());
                 }
                 
@@ -278,7 +361,7 @@ namespace Tools
                 
                 const Lock_T prof_lock { prof_mutex };
                 
-                stack.emplace_back( id_counter++, stack.back().id, tag );
+                stack.emplace_back( id_counter++, stack.back().id, std::string(tag) );
                 
                 double start_time = Tools::Duration( stack[0].time, stack.back().time );
                 
@@ -290,18 +373,18 @@ namespace Tools
             }
             else
             {
-                (void)tag;
+                Void{tag};
             }
         }
         
         /*!@brief Record the end time of an event with tag `tag`.*/
-        void Toc( const std::string & tag )
+        void Toc( std::string_view tag )
         {
             if constexpr ( profileQ )
             {
                 if constexpr ( verboseQ )
                 {
-                    print(MethodName("Toc") + "(" + tag + ")");
+                    print(MethodName("Toc"), "(", tag, ")");
                     print(Info());
                 }
                 
@@ -341,12 +424,12 @@ namespace Tools
                     }
                     else
                     {
-                        ErrorPrint( std::string("Unmatched Toc detected. Tag requested = ") + tag + ". Tag found = " + node.tag + ".");
+                        ErrorPrint("Unmatched Toc detected. Tag requested = ", tag, ". Tag found = ", node.tag, ".");
                     }
                 }
                 else
                 {
-                    ErrorPrint( std::string("Unmatched Toc detected. Stack empty. Label = ") + tag + ".");
+                    ErrorPrint("Unmatched Toc detected. Stack empty. Label = ", tag, ".");
                 }
             }
             else
@@ -431,31 +514,15 @@ namespace Tools
                 return prof_file;
             }
             
-            std::string Info() const
+            OutString Info() const
             {
-                std::string s;
-                
-                s += "Info for instance of ";
-                s += ClassName();
-                s += "\n";
-                
-                s += "construction_date = " ;
-                s += construction_date;
-                s += "\n";
-                
-                s += "log_file = " ;
-                s += log_file.string();
-                s += "\n";
-                
-                s += "prof_file = " ;
-                s += prof_file.string();
-                s += "\n";
-                
-                s += "blocker_count = " ;
-                s += Tools::ToString(blocker_count);
-                s += "\n";
-                
-                return s;
+                return OutString::FromMisc(
+                    "Info for instance of ", ClassName(), "\n",
+                    "construction_date = ", construction_date, "\n",
+                    "log_file = ", log_file.string(), "\n",
+                    "prof_file = ", prof_file.string(), "\n",
+                    "blocker_count = ", blocker_count, "\n"
+                );
             }
             
             const StackNode & StackTop() const
@@ -463,17 +530,17 @@ namespace Tools
                 return stack.back();
             }
         
-        
     public:
         
-        static constexpr std::string MethodName( const std::string & tag )
+        template<Size_T N>
+        static consteval auto MethodName( const ct_string<N> & tag )
         {
-            return ClassName().append("::").append(tag);
+            return ClassName() + "::" + tag;
         }
         
-        static constexpr std::string ClassName()
+        static consteval auto ClassName()
         {
-            return std::string("Logger<").append(ToString(profileQ)).append(">");
+            return ct_string("Logger<") + to_ct_string(profileQ) + ">";
         }
         
     }; // class Logger

@@ -84,17 +84,17 @@ namespace Tools
         }
     };
 
-    inline void tic(const std::string & s)
+    inline void tic( std::string_view s )
     {
-        print( s + "..." );
+        print(s, "...");
+        
         {
             const std::lock_guard<std::mutex> timer_lock( Timer::mutex );
-            
             Timer::stack.push_back(Clock::now());
         }
     }
 
-    inline double toc(const std::string & s)
+    inline double toc( std::string_view s )
     {
         double duration = 0;
         
@@ -105,11 +105,11 @@ namespace Tools
                 duration = Tools::Duration( Timer::stack.back(), Clock::now() );
                 Timer::stack.pop_back();
             }
-            print( std::to_string(duration) + " s.");
+            print(duration, " s.");
         }
         else
         {
-            print("Unmatched toc detected. Label =  " + s);
+            print("Unmatched toc detected. Label =  ", s);
         }
         
         return duration;

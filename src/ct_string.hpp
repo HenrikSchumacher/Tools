@@ -112,6 +112,31 @@ namespace Tools
             return std::string(&s.bytes[0],n);
         }
         
+  
+//        friend constexpr Size_T CharCount( ct_string s )
+//        {
+//            (void)s;
+//            return N - Size_T{1};
+//        }
+        
+        friend constexpr Size_T CharCount( const ct_string & s )
+        {
+            (void)s;
+            return N-Size_T{1};
+        }
+
+//        friend constexpr Size_T CharCount( ct_string & s )
+//        {
+//            (void)s;
+//            return N-Size_T{1};
+//        }
+//        
+//        friend constexpr Size_T CharCount( ct_string && s )
+//        {
+//            (void)s;
+//            return N-1;
+//        }
+        
 //
 //        operator std::string () const
 //        {

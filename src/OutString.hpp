@@ -43,7 +43,7 @@ namespace Tools
         :   OutString( &s[0], s.size() )
         {}
 
-        OutString( Size_T size_, char  x )
+        OutString( Size_T size_, char x )
         :   OutString { size_ }
         {
             std::fill_n(buffer,size_,x);
@@ -321,7 +321,7 @@ namespace Tools
         
     private:
 
-        constexpr bool TryEmplaceChar( const char & c )
+        bool TryEmplaceChar( const char & c )
         {
             if( size >= capacity )
             {
@@ -336,7 +336,7 @@ namespace Tools
         }
         
         template<typename T, CharConv<T> C = ToChars<T>>
-        constexpr bool TryEmplace( const T & x, C && to_chars )
+        bool TryEmplace( const T & x, C && to_chars )
         {
             char * p = ptr();
             auto r = to_chars(p, end(), x);
@@ -352,17 +352,9 @@ namespace Tools
         }
         
         template<typename T>
-        constexpr bool TryEmplace( const T & x )
+        bool TryEmplace( const T & x )
         {
             return TryEmplace(x, ToChars<T>() );
-        }
-        
-        template<typename A, typename ...Args>
-        static OutString FromMisc( A && a, Args &&... args )
-        {
-            OutString s;
-            ((s << std::forward<A>(a) << std::forward<Args>(args)), ...);
-            return s;
         }
         
     public:
@@ -371,6 +363,62 @@ namespace Tools
         {
             return s.Size();
         }
+//
+//        friend Size_T CharCount( OutString & s )
+//        {
+//            return s.Size();
+//        }
+//        
+//        friend Size_T CharCount( OutString && s )
+//        {
+//            return s.Size();
+//        }
+        
+        
+        friend OutString & operator<<( OutString & s, const OutString & x )
+        {
+            return s.Put(x.View());
+        }
+        
+//        friend OutString & operator<<( OutString & s, OutString && x )
+//        {
+//            return s.Put(x.View());
+//        }
+        
+        static OutString FromMisc( OutString && a )
+        {
+            OutString s = std::move(a);
+            return s;
+        }
+        
+        template<typename A>
+        static OutString FromMisc( const A & a )
+        {
+//            OutString s;
+            OutString s ( CharCount(a) );
+            s << a;
+            return s;
+        }
+        
+        template<typename ...Args>
+        static OutString FromMisc( OutString && a, const Args &... args )
+        {
+            OutString s = std::move(a);
+            s.RequireFreeSpace( CharCount(args...) );
+            (s << ... << args);
+            return s;
+        }
+        
+        template<typename A, typename ...Args>
+        static OutString FromMisc( const A & a, const Args &... args )
+        {
+//            OutString s;
+            OutString s ( CharCount(a) + CharCount(args...) );
+            s << a;
+            (s << ... << args);
+            return s;
+        }
+        
         
         std::string_view View() const
         {
@@ -393,15 +441,10 @@ namespace Tools
         }
         
     public:
-        
-        static constexpr std::string MethodName( const std::string & tag )
+
+        static consteval auto ClassName()
         {
-            return ClassName() + "::" + tag;
-        }
-        
-        static constexpr std::string ClassName()
-        {
-            return "OutString";
+            return ct_string("OutString");
         }
         
     }; // OutString
@@ -418,41 +461,29 @@ namespace Tools
         return OutString::FromVector( &v[0], N );
     }
     
-
     // Some convenience functions to mimic std::string_stream.
     // Better do not use it for writing strings that need to be parsed.
     // Better use the combo Put<<Something>> / Take<<Something>>.
 
-    template<std::size_t N>
-    OutString operator<<( OutString & s, ct_string<N> x )
-    {
-        return s.PutChars(x.c_str(),N);
-    }
-    
-    OutString operator<<( OutString & s, std::string_view x )
+    template<typename T>
+    OutString & operator<<( OutString & s, const T & x )
     {
         return s.Put(x);
     }
     
     template<typename T>
-    OutString operator<<( OutString & s, const T & x )
-    {
-        return s.Put(x);
-    }
-    
-    template<typename T>
-    OutString operator<<( OutString & s, cref<std::vector<T>> v )
+    OutString & operator<<( OutString & s, cref<std::vector<T>> v )
     {
         return s.PutVector( &v[0], v.size() );
     }
     
     template<typename T, Size_T N>
-    OutString operator<<( OutString & s, cref<std::array<T,N>> v )
+    OutString & operator<<( OutString & s, cref<std::array<T,N>> v )
     {
         return s.PutVector( &v[0], N );
     }
-
     
+
 } // Tools
 
 

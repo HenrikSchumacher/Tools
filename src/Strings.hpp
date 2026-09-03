@@ -1,5 +1,16 @@
 #pragma once
 
+
+namespace Tools
+{
+
+    template<class T>
+    concept Stringy = std::is_convertible_v<T,std::string_view>;
+    
+    template<class T>
+    concept NonStringy = !Stringy<T>;
+}
+
 #include "Strings/ToChars.hpp"
 #include "Strings/FromChars.hpp"
 #include "Strings/CharCount.hpp"
@@ -14,12 +25,6 @@ namespace Tools
     
     template<typename A, typename ...Int>
     concept ArrayFun = NonPointerQ<A>;
-    
-    template<class T>
-    concept Stringy = std::is_convertible_v<T, std::string_view>;
-    
-    template<class T>
-    concept NonStringy = !Stringy<T>;
     
     namespace Format
     {
@@ -133,5 +138,5 @@ namespace Tools
             };
         }
     }
-    
+
 } // namespace Tools

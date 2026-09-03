@@ -45,14 +45,12 @@ namespace Tools
         
         explicit InString ( cref<std::filesystem::path> file )
         {
+            constexpr auto tag = ct_string("InString(cref<std::filesystem::path>)");
+            
             std::ifstream stream (file, std::ios::in | std::ios::binary);
             if( !stream )
             {
-                std::string msg = ClassName();
-                msg.append("(std::filesystem::path): Opening file ");
-                msg.append(file.string());
-                msg.append(" failed. Returning empty InString.");
-                eprint(msg);
+                Msgr::eprint(tag, "Opening file ", file.string(), " failed. Returning empty InString.");
                 return;
             }
             
@@ -70,11 +68,7 @@ namespace Tools
             
             if( FailedQ() )
             {
-                std::string msg = ClassName();
-                msg.append("(std::filesystem::path): Reading from file ");
-                msg.append(file.string());
-                msg.append(" failed.");
-                eprint(msg);
+                Msgr::eprint(tag, "Reading from file ", file.string(), " failed.");
                 return;
             }
         }
@@ -160,9 +154,7 @@ namespace Tools
             }
             else
             {
-                std::string msg = MethodName("Pop");
-                msg.append(": String buffer is empty. Doing nothing.");
-                eprint(msg);
+                Msgr::eprint("Pop", "String buffer is empty. Doing nothing.");
             }
             
             return *this;
@@ -177,11 +169,7 @@ namespace Tools
             else
             {
                 ptr = begin;
-                std::string msg = MethodName("Pop");
-                msg.append(": Buffer size was smaller than n = ");
-                msg.append(ToString(n));
-                msg.append(". Emptying it completely.");
-                eprint(msg);
+                Msgr::eprint("Pop", ": Buffer size was smaller than n = ", n, ". Emptying it completely.");
             }
             
             return *this;
@@ -206,14 +194,11 @@ namespace Tools
         
     public:
         
-        static constexpr std::string MethodName( std::string_view tag )
-        {
-            return ClassName().append("::").append(tag);
-        }
+        using Msgr = Tools::Messenger<InString>;
         
-        static constexpr std::string ClassName()
+        static consteval auto ClassName()
         {
-            return "InString";
+            return ct_string("InString");
         }
     };
     
