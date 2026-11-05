@@ -10,6 +10,7 @@ namespace Tools
         using Real    = Scalar::Real<Scal>;
         using Complex = Scalar::Complex<Real>;
         
+        static_assert( Scalar::FloatQ<Real>, "" );
         static_assert( Scalar::RealQ<Scal> || Scalar::ComplexQ<Scal>, "" );
         
     private:
@@ -17,28 +18,11 @@ namespace Tools
         Real x = 0.5; // mantissa of real part
         Real y = 0;   // mantissa of imag part
         
-//        Int e_x = 1; // mantissa of real part
-//        Int e_y = 0; // mantissa of imag part
-        
         Int  e = 1; // common exponent
         
     public:
         
         ProductAccumulator() = default;
-        
-//        ProductAccumulator( const Scal init, Int shift )
-//        {
-//            if constexpr ( Scalar::RealQ<Scal> )
-//            {
-//                std::tie(x,e)   = mantissa_exponent( init );
-//            }
-//            else
-//            {
-//                std::tie(x,y,e) = mantissa_exponent( init );
-//            }
-//            
-//            e += shift;
-//        }
         
         ProductAccumulator( cref<Scal> init )
         {
@@ -63,7 +47,7 @@ namespace Tools
         
     private:
         
-        std::tuple<Real,Int> mantissa_exponent( const Real z )
+        static std::tuple<Real,Int> mantissa_exponent( const Real z )
         {
             int exponent;
             Real mantissa = std::frexp( z, &exponent );
@@ -71,7 +55,7 @@ namespace Tools
             return std::tuple<Real,Int>(mantissa,exponent);
         }
         
-        std::tuple<Real,Real,Int> mantissa_exponent( const Complex z )
+        static std::tuple<Real,Real,Int> mantissa_exponent( const Complex z )
         {
             auto [u,e_u] = mantissa_exponent( Re(z) );
             auto [v,e_v] = mantissa_exponent( Im(z) );
@@ -280,17 +264,6 @@ namespace Tools
         
         std::pair<Scal,Int> MantissaExponent10()  const
         {
-            // An infinite mantissa would never leave the scaling loops below (inf * 0.1 == inf).
-            if( !std::isfinite(x) || !std::isfinite(y) )
-            {
-                return std::pair(Mantissa2(),Int(0));
-            }
-
-            if( (x == Real(0)) && (y == Real(0)) )
-            {
-                return std::pair(Scal(0),Int(0));
-            }
-
 //            constexpr Real conversion_factor = std::log(Real(2)) / std::log(Real(10));
             constexpr Real conversion_factor = 0.3010299956639812;
             
@@ -301,6 +274,16 @@ namespace Tools
             
             if constexpr ( Scalar::RealQ<Scal> )
             {
+                if( !std::isfinite(x) )
+                {
+                    return std::pair(Mantissa2(),Int(0));
+                }
+
+                if( (x == Real(0)) )
+                {
+                    return std::pair(Scal(0),Int(0));
+                }
+                
                 Real exponent10 = e * conversion_factor;
                 Int  e10 = std::trunc(exponent10);
                 Real x10 = x * exp10( exponent10 - e10 );
@@ -321,6 +304,17 @@ namespace Tools
             }
             else
             {
+                // An infinite mantissa would never leave the scaling loops below (inf * 0.1 == inf).
+                if( !std::isfinite(x) || !std::isfinite(y) )
+                {
+                    return std::pair(Mantissa2(),Int(0));
+                }
+
+                if( (x == Real(0)) && (y == Real(0)) )
+                {
+                    return std::pair(Scal(0),Int(0));
+                }
+                
                 Real    exponent10 = e * conversion_factor;
                 Int     e10 = std::trunc(exponent10);
                 Complex z10 = Complex(x,y) * exp10( exponent10 - e10 );
@@ -346,11 +340,11 @@ namespace Tools
         {
             if constexpr ( Scalar::RealQ<Scal> )
             {
-                return std::string("{ ") + ToString(a.x) + ", " + ToString(a.e) + " } ";
+                return OutString::FromMisc("{ ", a.x,  ", ", a.e, " } ");
             }
             else
             {
-                return std::string("{ ") + ToString(a.x) + ", " + ToString(a.y) + ", " + ToString(a.e) + " } ";
+                return OutString::FromMisc("{ ", a.x, ", ", a.y, ", ", a.e, " } ");
             }
         }
         
