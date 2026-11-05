@@ -72,21 +72,18 @@ namespace Tools
             }
             else
             {
-                print( ct_string<align+Size_T{1}>(), s, " = ", value );
+                const Size_T len = std::max(s.size(),align);
+                std::string s_out (len + Size_T{3} + value.size(),' ');
+                std::copy_n( s.begin(), s.size(), s_out.begin() );
+                s_out[len+Size_T{1}] = '=';
+                std::copy_n( value.begin(), value.size(), &s_out[len + Size_T{3}] );
+                print(s_out);
             }
         }
         else
         {
             Void{s,value};
         }
-        
-//        const Size_T len = (align > Size_T{0}) ? std::max(s.size(),align) : s.size();
-//
-//        std::string s_out (len + Size_T{3} + value.size(),' ');
-//        std::copy_n( s.begin(), s.size(), s_out.begin() );
-//        s_out[len+Size_T{1}] = '=';
-//        std::copy_n( value.begin(), value.size(), &s_out[len + Size_T{3}] );
-//        print(s_out);
     }
     
     template<bool printQ = true, Size_T align = 0, typename T>
@@ -102,24 +99,22 @@ namespace Tools
             else
             {
                 // Calling ToString here is not ideal, but it is robust.
-                print( ct_string<align+Size_T{1}>(), s, " = ", ToString(value) );
+                valprint(s, ToString(value));
+                
+//                const Size_T len = std::max(s.size(),align);
+//        
+//                std::string s_out (len + Size_T{3}, ' ');
+//                std::copy_n( s.begin(), s.size(), s_out.begin() );
+//                s_out[len+Size_T{1}] = '=';
+//                s_out += ToString(value);
+//                print(s_out);
             }
         }
         else
         {
             Void{s,value};
         }
-//        const Size_T len = (align > Size_T{0}) ? std::max(s.size(),align) : s.size();
-//        
-//        std::string s_out (len + Size_T{3}, ' ');
-//        std::copy_n( s.begin(), s.size(), s_out.begin() );
-//        s_out[len+Size_T{1}] = '=';
-//        s_out += ToString(value);
-//        print(s_out);
     }
-    
-    
-
 } // namespace Tools
 
 
