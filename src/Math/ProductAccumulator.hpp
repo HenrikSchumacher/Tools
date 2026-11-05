@@ -280,11 +280,17 @@ namespace Tools
         
         std::pair<Scal,Int> MantissaExponent10()  const
         {
-            if( x == Scal(0) )
+            // An infinite mantissa would never leave the scaling loops below (inf * 0.1 == inf).
+            if( !std::isfinite(x) || !std::isfinite(y) )
+            {
+                return std::pair(Mantissa2(),Int(0));
+            }
+
+            if( (x == Real(0)) && (y == Real(0)) )
             {
                 return std::pair(Scal(0),Int(0));
             }
-            
+
 //            constexpr Real conversion_factor = std::log(Real(2)) / std::log(Real(10));
             constexpr Real conversion_factor = 0.3010299956639812;
             
@@ -302,7 +308,7 @@ namespace Tools
                 while( Abs(x10) < Real(1) )
                 {
                     x10 *= Real(10);
-                    ++e10;
+                    --e10;
                 }
                 
                 while( Abs(x10) >= Real(10) )
