@@ -86,8 +86,7 @@ namespace Tools
 
                 default:
                 {
-                    Real exp = exponent;
-                    return Power(base, exp);
+                    return Power(base, static_cast<Real>(exponent));
                 }
             }
         }
@@ -576,6 +575,12 @@ namespace Tools
     template<IntQ Int, FloatQ Real>
     Int Round( cref<Real> x )
     {
+        if( !FiniteQ(x) )
+        {
+            eprint("Round: Trying to round a non-finite floating-point number to an integer. This is undefined behavior. Returning 0.");
+            return Int{0};
+        }
+        
         // Rounds ties way from 0, i.e., std::round(0.5) == 1. and std::round(-0.5) == -1.
         return static_cast<Int>(std::round(x));
     }

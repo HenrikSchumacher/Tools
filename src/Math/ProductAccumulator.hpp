@@ -130,12 +130,14 @@ namespace Tools
         {
             if constexpr ( Scalar::RealQ<Scal> )
             {
-                Real log2_b = std::log2(m) * exponent;
+                Real log2_b = std::log2(m) * static_cast<Real>(exponent);
                 
-                Int q = std::trunc(log2_b);
+                // TODO: Warning: potentially undefined behavior if log2_b us not finite.
+                Real q_Real = std::trunc(log2_b);
+                Int  q      = static_cast<Int>(q_Real);
 
                 ProductAccumulator<Real,Int> b;
-                b.m = std::exp2(log2_b - q);
+                b.m = std::exp2(log2_b - q_Real);
                 b.e = e * exponent + q;
                 
                 // Normalization step. Maybe obsolete.
@@ -161,7 +163,7 @@ namespace Tools
                 ProductAccumulator<Real,Int> R = r.Power(exponent);
                 
                 // argument of mantissa^exponent
-                Real Theta = exponent * std::atan2(Im(m),Re(m));
+                Real Theta = static_cast<Real>(exponent) * std::atan2(Im(m),Re(m));
                 
                 ProductAccumulator<Complex,Int> b;
                 
@@ -208,7 +210,7 @@ namespace Tools
         {
             // An infinite mantissa would never leave the scaling loops below (inf * 0.1 == inf).
             
-            if( !std::isfinite(m) )
+            if( !FiniteQ(m) )
             {
                 return {Mantissa2(),Int{0}};
             }
@@ -226,9 +228,10 @@ namespace Tools
                 return std::pow( Real{10}, x_ );
             };
             
-            Real exponent10 = e * conversion_factor;
-            Int  e10 = std::trunc(exponent10);
-            Scal m10 = m * exp10( exponent10 - e10 );
+            Real exponent10 = static_cast<Real>(e) * conversion_factor;
+            Real e10_Real   = std::trunc(exponent10);
+            Int  e10        = static_cast<Int>(e10_Real);
+            Scal m10        = m * exp10( exponent10 - e10_Real );
             
             // If RealQ<Scal>, then Abs is probably faster than AbsSquared.
             // But if ComplexQ<Scal>, then AbsSquared will be faster.
