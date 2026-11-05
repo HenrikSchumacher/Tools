@@ -412,38 +412,23 @@ namespace Tools
 //        return R(100) * scalar_cast<R>(a) / scalar_cast<R>(b);
 //    }
     
-//    template<typename Scal>
-//    inline constexpr bool NaNQ( cref<Scal> x )
-//    {
-//        // TODO: Does not work with `-ffast-math` option.
-//        if constexpr ( Scalar::RealQ<Scal> )
-//        {
-//            return std::isnan(x);
-//        }
-//        else if constexpr ( Scalar::ComplexQ<Scal> )
-//        {
-//            return NaNQ( Re(x) ) || NaNQ( Im(x) );
-//        }
-//        else
-//        {
-//            return true;
-//        }
-//    }
-    
     template<typename Scal>
     inline constexpr bool NaNQ( cref<Scal> x )
     {
         TOOLS_MAKE_FP_STRICT();
         
-        // Works also with `-ffast-math` option?
+        // Does with work also with `-ffast-math` option?
         if constexpr ( FloatQ<Scal> && Scalar::RealQ<Scal> )
         {
-//            return std::isnan(x) || (ToString(x) == "nan");
             return std::isnan(x);
         }
         else if constexpr ( Scalar::ComplexQ<Scal> )
         {
-            return NaNQ( Re(x) ) || NaNQ( Im(x) );
+            return std::isnan(Re(x)) || std::isnan(Im(x));
+        }
+        else if constexpr ( IntQ<Scal> )
+        {
+            return false;
         }
         else
         {
@@ -451,31 +436,29 @@ namespace Tools
         }
     }
     
-    //    template<typename Scal>
-    //    inline constexpr bool NaNQ( cref<Scal> x )
-    //    {
-    //        // This is a work-around to detect NaNs under -ffast-math option.
-    //        // Not sure whether this is portable.
-    //        if constexpr ( Scalar::RealQ<Scal> )
-    //        {
-    ////            return !(
-    ////                (std::numeric_limits<Scal>::lowest() <= x)
-    ////                &&
-    ////                ( x <=  std::numeric_limits<Scal>::max() )
-    ////            );
-    //
-    //            // This works at least for Apple clang.
-    //            return (x < std::numeric_limits<Scal>::lowest());
-    //        }
-    //        else if constexpr ( Scalar::ComplexQ<Scal> )
-    //        {
-    //            return NaNQ( Re(x) ) || NaNQ( Im(x) );
-    //        }
-    //        else
-    //        {
-    //            return true;
-    //        }
-    //    }
+    template<typename Scal>
+    inline constexpr bool FiniteQ( cref<Scal> x )
+    {
+        TOOLS_MAKE_FP_STRICT();
+        
+        // Does with work also with `-ffast-math` option?
+        if constexpr ( FloatQ<Scal> && Scalar::RealQ<Scal> )
+        {
+            return std::isfinite(x);
+        }
+        else if constexpr ( Scalar::ComplexQ<Scal> )
+        {
+            return std::isfinite(Re(x)) && std::isfinite(Im(x));
+        }
+        else if constexpr ( IntQ<Scal> )
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
     
 #define ASSERT_REAL(R) static_assert( Scalar::RealQ<R>, "Template parameter " #R " must be a real-valued type." );
     
