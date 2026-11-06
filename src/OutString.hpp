@@ -485,7 +485,6 @@ namespace Tools
     {
         return s.PutVector( &v[0], N );
     }
-    
 
 } // Tools
 

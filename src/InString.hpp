@@ -202,6 +202,13 @@ namespace Tools
         }
     };
     
+    
+//    template<typename T>
+//    OutString & operator<<( OutString & s, InString & s_in )
+//    {
+//        return s << s_in.View();
+//    }
+    
 } // Tools
 
 
