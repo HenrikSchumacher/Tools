@@ -75,9 +75,9 @@ namespace Tools
             Tools::wprint(Class_T::ClassName(), "::", tag, ": ", args...);
         }
         
-        static constexpr std::string ClassName()
+        static constexpr auto ClassName()
         {
-            return "Messenger";
+            return ct_string("Messenger");
         }
         
     }; // class Messenger
