@@ -210,7 +210,7 @@ namespace Tools
         name = __FUNCSIG__;
         prefix = "auto __cdecl Tools::PrettyTypeName<";
         suffix = ">(void)";
-    #elif
+    #else
         name = "UnknownFunction";
         prefix = "";
         suffix = "";
