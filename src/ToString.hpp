@@ -69,18 +69,22 @@ namespace Tools
         return std::format( "{:p}", (void const *)ptr );
     }
 
+#if defined(TOOLS_INT128_AVAILABLE) && defined(COMPILER_IS_MSVC)
+    [[nodiscard]] constexpr std::string ToString( const Int128 & value )
+    {
+        return std::format("{:d}",value);
+    }
+    
+    [[nodiscard]] constexpr std::string ToString( const UInt128 & value )
+    {
+        return std::format("{:d}",value);
+    }
+#endif // defined(TOOLS_INT128_AVAILABLE) && defined(COMPILER_IS_MSVC)
+    
     template<IntQ T>
     [[nodiscard]] constexpr std::string ToString( const T & value )
     {
-        // TODO: We need the C++23 feature `if consteval` here.
-//        if( std::is_constant_evaluated() )
-//        {
-//            return std::string(to_ct_string(value));
-//        }
-//        else
-        {
-            return std::format("{:d}",value);
-        }
+        return std::format("{:d}",value);
     }
     
     

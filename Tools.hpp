@@ -13,7 +13,7 @@
     #define TOOLS_COMPILER_IS_MSVC
 #endif
 
-// We do not treat Apple Clang, ClangCL and clang as three different compilers.
+// We do treat Apple Clang, ClangCL and clang as three different compilers.
 #if defined(__clang__) && !defined(__apple_build_version__) && !defined(_MSC_VER)
     #define TOOLS_COMPILER_IS_CLANG
 #endif
@@ -26,7 +26,11 @@
     #define TOOLS_COMPILER_IS_APPLE_CLANG
 #endif
 
-#if defined(TOOLS_COMPILER_IS_CLANG) || defined(TOOLS_COMPILER_IS_APPLE_CLANG) || defined(TOOLS_COMPILER_IS_CLANGCL) && !defined(_MSC_VER)
+//#if defined(TOOLS_COMPILER_IS_CLANG) || defined(TOOLS_COMPILER_IS_APPLE_CLANG) || defined(TOOLS_COMPILER_IS_CLANGCL) && !defined(_MSC_VER)
+//    #define TOOLS_COMPILER_IS_ANY_CLANG
+//#endif
+
+#if defined(TOOLS_COMPILER_IS_CLANG) || defined(TOOLS_COMPILER_IS_APPLE_CLANG) || defined(TOOLS_COMPILER_IS_CLANGCL)
     #define TOOLS_COMPILER_IS_ANY_CLANG
 #endif
 
