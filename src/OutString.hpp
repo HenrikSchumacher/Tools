@@ -486,6 +486,11 @@ namespace Tools
         return s.PutVector( &v[0], N );
     }
 
+    OutString & operator<<( OutString & s, const std::filesystem::path & path )
+    {
+        return s << std::string_view(path.c_str());
+    }
+    
 } // Tools
 
 

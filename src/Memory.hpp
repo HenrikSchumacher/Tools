@@ -16,8 +16,6 @@ namespace Tools
 #if !defined(TOOLS_NO_PREFETCH) && (defined(TOOLS_COMPILER_IS_GCC) || defined(TOOLS_COMPILER_IS_ANY_CLANG))
     #define TOOLS_PREFETCH __builtin_prefetch
 #else
-    #define TOOLS_PREFETCH( a )
-    #define TOOLS_PREFETCH( a, b )
     #define TOOLS_PREFETCH( a, b, c )
 #endif
     
