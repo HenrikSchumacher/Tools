@@ -50,7 +50,7 @@ namespace Tools
             std::ifstream stream (file, std::ios::in | std::ios::binary);
             if( !stream )
             {
-                Msgr::eprint(tag, "Opening file ", file.string(), " failed. Returning empty InString.");
+                Msgr::eprint(tag, "Opening file ", file, " failed. Returning empty InString.");
                 return;
             }
             
@@ -68,7 +68,7 @@ namespace Tools
             
             if( FailedQ() )
             {
-                Msgr::eprint(tag, "Reading from file ", file.string(), " failed.");
+                Msgr::eprint(tag, "Reading from file ", file, " failed.");
                 return;
             }
         }
