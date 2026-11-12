@@ -488,7 +488,12 @@ namespace Tools
 
     OutString & operator<<( OutString & s, const std::filesystem::path & path )
     {
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+        // On Windows path::value_type is wchar_t, so c_str() cannot be viewed as chars.
+        return s << std::string_view(path.string());
+#else
         return s << std::string_view(path.c_str());
+#endif
     }
     
 } // Tools
